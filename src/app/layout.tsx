@@ -67,6 +67,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://agenticconsciousness.com.au',
   },
+  icons: {
+    icon: '/favicon.svg',
+  },
 };
 
 export default function RootLayout({
