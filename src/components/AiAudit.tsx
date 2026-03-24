@@ -239,10 +239,10 @@ export default function AiAudit() {
           <div className="flex flex-col gap-6">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-text-ghost">
+                <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-text-dim">
                   Your snapshot will appear here
                 </div>
-                <p className="text-[0.85rem] text-text-ghost leading-[1.7] font-light">
+                <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
                   Fill out the form and run your free AI audit. We&apos;ll identify your top three
                   automation opportunities — ranked by speed to value and tailored to your
                   industry.

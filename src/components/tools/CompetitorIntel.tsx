@@ -176,10 +176,10 @@ export default function CompetitorIntel() {
           <div className="flex flex-col gap-5">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-ghost">
+                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-dim">
                   Intelligence report will appear here
                 </div>
-                <p className="text-[0.85rem] text-text-ghost leading-[1.7] font-light">
+                <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
                   Enter a competitor name and Claude will analyse their positioning, pricing strategy, strengths, weaknesses, and where you have the best opportunity to differentiate.
                 </p>
                 <div className="mt-4 border-t border-border-subtle pt-6 flex flex-col gap-3">

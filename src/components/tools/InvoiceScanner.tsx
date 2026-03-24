@@ -279,7 +279,7 @@ export default function InvoiceScanner() {
                 <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-dim">
                   Extracted data will appear here
                 </div>
-                <p className="text-[0.85rem] text-text-ghost leading-[1.7] font-light">
+                <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
                   Upload an invoice and Claude will extract supplier details, line items, totals, and classify the expense automatically.
                 </p>
                 <div className="mt-4 border-t border-border-subtle pt-6 flex flex-col gap-3">

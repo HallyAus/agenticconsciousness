@@ -266,10 +266,10 @@ export default function QuoteGenerator() {
           <div className="flex flex-col gap-5">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-ghost">
+                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-dim">
                   Your quote will appear here
                 </div>
-                <p className="text-[0.85rem] text-text-ghost leading-[1.7] font-light">
+                <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
                   Fill in the details and Claude will generate a professional quote document with itemised pricing, GST, payment terms, and next steps.
                 </p>
                 <div className="mt-4 border-t border-border-subtle pt-6 flex flex-col gap-3">
