@@ -206,7 +206,7 @@ export default function AiAudit() {
                   onChange={(e) => setPainPoint(e.target.value.slice(0, 500))}
                   placeholder="e.g. Quoting takes our estimators 3+ hours per job and we're losing work to faster competitors..."
                   rows={5}
-                  className="w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] transition-colors duration-150 placeholder:text-text-ghost"
+                  className="w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] transition-colors duration-150 placeholder:text-text-dim"
                   required
                 />
                 <div
@@ -265,7 +265,7 @@ export default function AiAudit() {
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
                 <AiLoading text="Analysing your business profile..." />
-                <p className="text-[0.75rem] text-text-ghost font-mono tracking-[1px]">
+                <p className="text-[0.75rem] text-text-dim font-mono tracking-[1px]">
                   Identifying opportunities specific to your industry and pain point...
                 </p>
               </div>

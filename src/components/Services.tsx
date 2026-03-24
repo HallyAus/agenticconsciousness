@@ -31,7 +31,7 @@ export default function Services() {
                   }`,
                 }}
               >
-                <div className="text-[4rem] font-black text-text-dead leading-none mb-4">
+                <div className="text-[4rem] font-black text-text-ghost leading-none mb-4">
                   {service.num}
                 </div>
                 <h3 className="text-[1.15rem] font-black text-white tracking-snug mb-3">

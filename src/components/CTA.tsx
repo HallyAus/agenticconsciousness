@@ -14,7 +14,7 @@ interface AiResult {
 type Step = 'challenge' | 'recommend' | 'done';
 
 const INPUT_CLASS =
-  'w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary py-3 px-4 font-display text-[0.85rem] placeholder:text-text-ghost transition-colors duration-150';
+  'w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary py-3 px-4 font-display text-[0.85rem] placeholder:text-text-dim transition-colors duration-150';
 
 export default function CTA() {
   const [step, setStep] = useState<Step>('challenge');

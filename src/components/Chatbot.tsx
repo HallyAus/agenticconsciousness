@@ -178,14 +178,14 @@ export default function Chatbot() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything..."
               maxLength={2000}
-              className="flex-1 bg-ac-black border border-border-subtle py-[0.6rem] px-[0.8rem] text-text-primary font-display text-[0.8rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-ghost"
+              className="flex-1 bg-ac-black border border-border-subtle py-[0.6rem] px-[0.8rem] text-text-primary font-display text-[0.8rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim"
               aria-label="Chat message"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="bg-ac-red border-none text-white px-[1.2rem] font-display text-[0.65rem] font-black tracking-[2px] cursor-pointer transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-30 disabled:cursor-not-allowed"
+              className="bg-ac-red border-none text-white px-[1.2rem] font-display text-[0.65rem] font-black tracking-[2px] cursor-pointer transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed"
             >
               SEND
             </button>

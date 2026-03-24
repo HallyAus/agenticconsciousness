@@ -54,12 +54,12 @@ export default function SendToEmail({ resultText, toolName }: SendToEmailProps) 
         value={email}
         onChange={(e) => { setEmail(e.target.value); setError(''); }}
         placeholder="Email results to..."
-        className="bg-ac-black border border-border-subtle py-2 px-3 text-text-primary font-display text-[0.75rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-ghost w-[200px]"
+        className="bg-ac-black border border-border-subtle py-2 px-3 text-text-primary font-display text-[0.75rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim w-[200px]"
       />
       <button
         type="submit"
         disabled={sending}
-        className="font-mono text-[0.6rem] tracking-[2px] uppercase py-2 px-4 transition-all duration-200 cursor-pointer border border-ac-red bg-transparent text-ac-red hover:bg-ac-red hover:text-white disabled:opacity-30"
+        className="font-mono text-[0.6rem] tracking-[2px] uppercase py-2 px-4 transition-all duration-200 cursor-pointer border border-ac-red bg-transparent text-ac-red hover:bg-ac-red hover:text-white disabled:opacity-40"
       >
         {sending ? '...' : 'SEND'}
       </button>

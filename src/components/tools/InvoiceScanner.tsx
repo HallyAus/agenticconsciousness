@@ -42,10 +42,10 @@ interface InvoiceResult {
 }
 
 const inputClass =
-  'w-full bg-ac-black border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-ghost';
+  'w-full bg-ac-black border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim';
 
 const btnClass =
-  'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer border-none';
+  'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
 
 export default function InvoiceScanner() {
   const [mode, setMode] = useState<'text' | 'file'>('text');
@@ -329,7 +329,7 @@ export default function InvoiceScanner() {
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
                 <AiLoading text="Scanning invoice..." />
-                <p className="text-[0.75rem] text-text-ghost font-mono tracking-[1px]">
+                <p className="text-[0.75rem] text-text-dim font-mono tracking-[1px]">
                   Extracting supplier details, line items, and classifying expense...
                 </p>
               </div>
