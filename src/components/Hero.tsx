@@ -12,6 +12,7 @@ const counters = [
   { value: '21+', label: 'Years experience' },
   { value: '3', label: 'Service pillars' },
   { value: '100%', label: 'AI-powered' },
+  { value: 'AU-wide', label: 'National coverage' },
 ];
 
 export default function Hero() {

@@ -1,0 +1,38 @@
+# Agentic Consciousness
+
+> AI consulting for Australian businesses. Strategy, implementation, automation.
+
+## About
+
+Agentic Consciousness is an AI consulting company founded by Daniel Hall with 21+ years of industry experience. We help businesses understand, implement, and scale AI — from strategy workshops to full automation pipelines.
+
+## Services
+
+- AI Strategy & Workshops: Custom sessions, opportunity mapping, practical roadmaps
+- AI Tool Implementation: Deploy ChatGPT, Claude, Copilot, custom models into workflows
+- Automation & Agents: End-to-end autonomous pipelines for document processing, customer service, scheduling
+
+## Contact
+
+- Website: https://agenticconsciousness.com.au
+- Email: ai@agenticconsciousness.com.au
+- Location: Australia (nationally available)
+
+## Free Tools
+
+- AI Business Audit: https://agenticconsciousness.com.au/#ai-audit
+- Invoice Scanner: https://agenticconsciousness.com.au/tools
+- Quote Generator: https://agenticconsciousness.com.au/tools
+- Competitor Intel: https://agenticconsciousness.com.au/tools
+
+## Blog
+
+- https://agenticconsciousness.com.au/blog
+- RSS: https://agenticconsciousness.com.au/feed.xml
+
+## Process
+
+1. Free discovery call
+2. AI readiness audit
+3. Implementation sprint
+4. Optimise and scale

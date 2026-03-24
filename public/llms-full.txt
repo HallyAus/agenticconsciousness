@@ -1,0 +1,58 @@
+# Agentic Consciousness
+
+> AI consulting for Australian businesses. Strategy, implementation, automation.
+
+## About
+
+Agentic Consciousness is an AI consulting company founded by Daniel Hall with 21+ years of industry experience. We help businesses understand, implement, and scale AI — from strategy workshops to full automation pipelines.
+
+Daniel Hall brings deep technical expertise across software development, systems integration, and modern AI tooling. The company works nationally across Australia, with clients in a range of industries from professional services to trade and manufacturing.
+
+## Services
+
+### AI Strategy & Workshops
+
+Custom sessions tailored to your business. We map your current operations, identify high-value AI opportunities, and produce a practical roadmap you can act on immediately. No jargon, no vendor lock-in — just honest guidance on where AI will actually move the needle for you.
+
+### AI Tool Implementation
+
+Deploy ChatGPT, Claude, Microsoft Copilot, custom fine-tuned models, or retrieval-augmented generation (RAG) systems into your existing workflows. We handle the integration, staff training, and ongoing optimisation so your team actually uses the tools.
+
+### Automation & Agents
+
+End-to-end autonomous pipelines for document processing, customer service, lead qualification, scheduling, reporting, and more. We build agentic systems that operate with minimal human oversight — freeing your team to focus on work that matters.
+
+## Contact
+
+- Website: https://agenticconsciousness.com.au
+- Email: ai@agenticconsciousness.com.au
+- Location: Australia (nationally available)
+
+## Free Tools
+
+- AI Business Audit: https://agenticconsciousness.com.au/#ai-audit
+- Invoice Scanner: https://agenticconsciousness.com.au/tools
+- Quote Generator: https://agenticconsciousness.com.au/tools
+- Competitor Intel: https://agenticconsciousness.com.au/tools
+
+## Blog
+
+AI insights written by our AI, reviewed by our team — because we practise what we preach.
+
+- https://agenticconsciousness.com.au/blog
+- RSS: https://agenticconsciousness.com.au/feed.xml
+
+## Process
+
+1. Free discovery call — 30 minutes, no obligation
+2. AI readiness audit — assess your systems, data, and team
+3. Implementation sprint — build and deploy in weeks, not months
+4. Optimise and scale — iterate based on real results
+
+## Why Agentic Consciousness
+
+- 21+ years of industry experience
+- Nationally available across Australia
+- We build with the same tools we recommend
+- Transparent pricing, no lock-in contracts
+- Focused on practical outcomes, not theoretical possibilities

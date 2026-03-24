@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/blog';
+import EmailCapture from '@/components/EmailCapture';
 
 export const metadata: Metadata = {
   title: 'Insights',
@@ -72,6 +73,10 @@ export default function BlogPage() {
               ))}
             </div>
           )}
+
+          <div className="mt-14">
+            <EmailCapture />
+          </div>
         </div>
       </section>
     </main>
