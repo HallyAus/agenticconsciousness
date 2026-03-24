@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import AiLoading from '@/components/AiLoading';
+import StagedLoading from '@/components/StagedLoading';
 import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
@@ -41,11 +41,51 @@ interface InvoiceResult {
   };
 }
 
+const EXAMPLE_INVOICE = `TAX INVOICE
+
+Officeworks Pty Ltd
+ABN: 36 004 763 526
+123 Innovation Drive, Richmond VIC 3121
+Phone: 1300 633 423
+
+Invoice Number: INV-2026-08842
+Invoice Date: 20 March 2026
+Due Date: 19 April 2026
+Payment Terms: Net 30
+
+Bill To:
+Agentic Consciousness Pty Ltd
+
+Description                          Qty    Unit Price    Amount
+------------------------------------------------------------------
+HP LaserJet Pro MFP M428fdw          1      $549.00      $549.00
+A4 Copy Paper 80gsm (5 reams)        10     $6.50        $65.00
+Logitech MX Master 3S Mouse          2      $149.00      $298.00
+USB-C Hub 7-in-1 Adapter             3      $89.95       $269.85
+Brother TN-2450 Toner Cartridge      4      $65.00       $260.00
+
+                                     Subtotal:  $1,441.85
+                                     GST (10%): $144.19
+                                     TOTAL:     $1,586.04
+
+Payment: Bank Transfer
+BSB: 013-140
+Account: 2876 5501
+Reference: INV-2026-08842`;
+
 const inputClass =
   'w-full bg-ac-black border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim';
 
 const btnClass =
   'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
+
+const STAGED_STEPS = [
+  'Reading document...',
+  'Extracting fields...',
+  'Identifying line items...',
+  'Classifying expense...',
+  'Complete.',
+];
 
 export default function InvoiceScanner() {
   const [mode, setMode] = useState<'text' | 'file'>('text');
@@ -55,6 +95,7 @@ export default function InvoiceScanner() {
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [apiDone, setApiDone] = useState(false);
   const [result, setResult] = useState<InvoiceResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [remainingUses, setRemainingUses] = useState<number>(() => getUsesRemaining());
@@ -105,6 +146,24 @@ export default function InvoiceScanner() {
     handleFileChange(fakeEvent);
   }
 
+  function handleTryExample() {
+    setMode('text');
+    setText(EXAMPLE_INVOICE);
+    setError(null);
+  }
+
+  function handleScanAnother() {
+    setResult(null);
+    setApiDone(false);
+    setText('');
+    setImageData(null);
+    setPdfData(null);
+    setFilePreview(null);
+    setFileName(null);
+    setError(null);
+    if (fileRef.current) fileRef.current.value = '';
+  }
+
   const canSubmit =
     !loading &&
     remainingUses > 0 &&
@@ -122,6 +181,7 @@ export default function InvoiceScanner() {
     }
 
     setLoading(true);
+    setApiDone(false);
     setError(null);
     setResult(null);
 
@@ -145,12 +205,18 @@ export default function InvoiceScanner() {
       } else {
         const next = incrementRateLimit();
         setRemainingUses(Math.max(0, MAX_TOOL_USES - next.count));
-        setResult(data);
+        setApiDone(true);
+        // Brief delay so "Complete." step is visible before results appear
+        setTimeout(() => {
+          setResult(data);
+          setLoading(false);
+        }, 600);
+        return;
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
-      setLoading(false);
+      if (!apiDone) setLoading(false);
     }
   }
 
@@ -170,6 +236,181 @@ export default function InvoiceScanner() {
     ];
     return rows.map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
   }
+
+  const cards = result
+    ? [
+        // Card 0: Supplier
+        <div
+          key="supplier"
+          style={{
+            background: 'var(--bg-card)',
+            borderTop: '3px solid var(--red)',
+            padding: '20px',
+            opacity: 0,
+            animation: 'fadeInUp 0.4s ease-out 0s forwards',
+          }}
+        >
+          <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
+            SUPPLIER
+          </div>
+          <div className="text-[1.1rem] font-black text-text-primary mb-3 leading-tight">
+            {result.supplier.name ?? '—'}
+          </div>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+            {[
+              ['ABN', result.supplier.abn],
+              ['Address', result.supplier.address],
+              ['Contact', result.supplier.contact],
+            ].map(([label, value]) => (
+              <div key={label}>
+                <div className="font-mono text-[0.5rem] tracking-[1px] uppercase mb-1" style={{ color: 'var(--text-ghost)' }}>{label}</div>
+                <div className="text-[0.82rem] font-light" style={{ color: 'var(--text-primary)' }}>{value ?? '—'}</div>
+              </div>
+            ))}
+          </div>
+        </div>,
+
+        // Card 1: Invoice Details
+        <div
+          key="invoice"
+          style={{
+            background: 'var(--bg-card)',
+            borderTop: '3px solid var(--border-subtle)',
+            padding: '20px',
+            opacity: 0,
+            animation: 'fadeInUp 0.4s ease-out 0.1s forwards',
+          }}
+        >
+          <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
+            INVOICE DETAILS
+          </div>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+            {[
+              ['Invoice No.', result.invoice.number],
+              ['Date', result.invoice.date],
+              ['Due Date', result.invoice.dueDate],
+              ['Terms', result.invoice.paymentTerms],
+            ].map(([label, value]) => (
+              <div key={label}>
+                <div className="font-mono text-[0.5rem] tracking-[1px] uppercase mb-1" style={{ color: 'var(--text-ghost)' }}>{label}</div>
+                <div className="text-[0.82rem] font-light" style={{ color: 'var(--text-primary)' }}>{value ?? '—'}</div>
+              </div>
+            ))}
+          </div>
+        </div>,
+
+        // Card 2: Line Items
+        <div
+          key="lineitems"
+          style={{
+            background: 'var(--bg-card)',
+            borderTop: '3px solid var(--border-subtle)',
+            padding: '20px',
+            opacity: 0,
+            animation: 'fadeInUp 0.4s ease-out 0.2s forwards',
+          }}
+        >
+          <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
+            LINE ITEMS
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[0.78rem]">
+              <thead>
+                <tr style={{ background: 'var(--red)' }}>
+                  {['Description', 'Qty', 'Unit Price', 'Amount'].map((h, hi) => (
+                    <th
+                      key={h}
+                      style={{ color: 'white' }}
+                      className={`font-mono text-[0.5rem] tracking-[1px] uppercase py-2 px-2 text-left ${hi === 3 ? 'text-right' : ''}`}
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {result.lineItems.map((item, i) => (
+                  <tr
+                    key={i}
+                    style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-card-hover)' }}
+                  >
+                    <td className="py-2 px-2 font-light" style={{ color: 'var(--text-primary)' }}>{item.description}</td>
+                    <td className="py-2 px-2" style={{ color: 'var(--text-dim)' }}>{item.qty ?? '—'}</td>
+                    <td className="py-2 px-2" style={{ color: 'var(--text-dim)' }}>{item.unitPrice ?? '—'}</td>
+                    <td className="py-2 px-2 text-right" style={{ color: 'var(--text-primary)' }}>{item.amount ?? '—'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {/* Totals */}
+          <div className="mt-4 pt-3 flex flex-col gap-1" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+            {[
+              ['Subtotal', result.totals.subtotal],
+              [`GST (10%)`, result.totals.gst],
+            ].map(([label, value]) => (
+              <div key={label} className="flex justify-between text-[0.82rem]">
+                <span style={{ color: 'var(--text-dim)' }}>{label}</span>
+                <span className="font-light" style={{ color: 'var(--text-primary)' }}>{value ?? '—'}</span>
+              </div>
+            ))}
+            <div className="flex justify-between text-[0.9rem] font-black pt-2 mt-1" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+              <span style={{ color: 'var(--text-primary)' }}>TOTAL</span>
+              <span style={{ color: 'var(--red)' }}>{result.totals.total ?? '—'}</span>
+            </div>
+          </div>
+        </div>,
+
+        // Card 3: AI Classification
+        <div
+          key="classification"
+          style={{
+            background: 'var(--bg-card)',
+            borderTop: '3px solid var(--border-subtle)',
+            padding: '20px',
+            opacity: 0,
+            animation: 'fadeInUp 0.4s ease-out 0.3s forwards',
+          }}
+        >
+          <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
+            AI CLASSIFICATION
+          </div>
+          <div className="flex flex-wrap gap-2 mb-3">
+            <span
+              className="font-mono text-[0.65rem] tracking-[1px] uppercase px-2 py-1"
+              style={{ border: '1px solid var(--border-subtle)', color: 'var(--text-dim)' }}
+            >
+              {result.classification.category}
+            </span>
+            <span
+              className="font-mono text-[0.65rem] tracking-[1px] uppercase px-2 py-1"
+              style={
+                result.classification.type === 'Business'
+                  ? { border: '1px solid var(--red)', color: 'var(--red-text)' }
+                  : { border: '1px solid var(--border-subtle)', color: 'var(--text-dim)' }
+              }
+            >
+              {result.classification.type}
+            </span>
+            <span
+              className="font-mono text-[0.65rem] tracking-[1px] uppercase px-2 py-1"
+              style={
+                result.classification.taxDeductible
+                  ? { border: '1px solid var(--status-green)', color: 'var(--status-green)' }
+                  : { border: '1px solid var(--border-subtle)', color: 'var(--text-dim)' }
+              }
+            >
+              {result.classification.taxDeductible ? 'Tax Deductible' : 'Not Deductible'}
+            </span>
+          </div>
+          {result.classification.notes && (
+            <p className="text-[0.8rem] font-light leading-[1.6]" style={{ color: 'var(--text-dim)' }}>
+              {result.classification.notes}
+            </p>
+          )}
+        </div>,
+      ]
+    : [];
 
   return (
     <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
@@ -205,6 +446,24 @@ export default function InvoiceScanner() {
                   {m === 'text' ? 'Paste Text' : 'Upload File'}
                 </button>
               ))}
+            </div>
+
+            {/* Try an example button */}
+            <div>
+              <button
+                type="button"
+                onClick={handleTryExample}
+                className="font-display text-[0.7rem] font-bold tracking-[2px] uppercase py-[6px] px-[14px] transition-colors duration-200 cursor-pointer bg-transparent"
+                style={{
+                  border: '1px solid var(--red-pill-border)',
+                  color: 'var(--red-text)',
+                  borderRadius: 0,
+                }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--red-faint)'; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
+              >
+                TRY AN EXAMPLE
+              </button>
             </div>
 
             {mode === 'text' ? (
@@ -328,146 +587,34 @@ export default function InvoiceScanner() {
 
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
-                <AiLoading text="Scanning invoice..." />
-                <p className="text-[0.75rem] text-text-dim font-mono tracking-[1px]">
-                  Extracting supplier details, line items, and classifying expense...
-                </p>
+                <StagedLoading
+                  steps={STAGED_STEPS}
+                  isComplete={apiDone}
+                />
               </div>
             )}
 
             {result && (
               <div className="flex flex-col gap-5">
-                {/* Supplier */}
-                <div className="bg-ac-card border-t-[3px] border-ac-red p-5">
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-3">
-                    Supplier
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-                    {[
-                      ['Name', result.supplier.name],
-                      ['ABN', result.supplier.abn],
-                      ['Address', result.supplier.address],
-                      ['Contact', result.supplier.contact],
-                    ].map(([label, value]) => (
-                      <div key={label}>
-                        <div className="font-mono text-[0.5rem] tracking-[1px] uppercase text-text-ghost mb-1">{label}</div>
-                        <div className="text-[0.82rem] text-text-primary font-light">{value ?? '—'}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                {cards}
 
-                {/* Invoice details */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
-                    Invoice Details
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-                    {[
-                      ['Invoice No.', result.invoice.number],
-                      ['Date', result.invoice.date],
-                      ['Due Date', result.invoice.dueDate],
-                      ['Terms', result.invoice.paymentTerms],
-                    ].map(([label, value]) => (
-                      <div key={label}>
-                        <div className="font-mono text-[0.5rem] tracking-[1px] uppercase text-text-ghost mb-1">{label}</div>
-                        <div className="text-[0.82rem] text-text-primary font-light">{value ?? '—'}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Line items */}
-                {result.lineItems.length > 0 && (
-                  <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
-                      Line Items
-                    </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-[0.78rem]">
-                        <thead>
-                          <tr className="border-b border-border-subtle">
-                            {['Description', 'Qty', 'Unit Price', 'Amount'].map((h) => (
-                              <th key={h} className="font-mono text-[0.5rem] tracking-[1px] uppercase text-text-ghost pb-2 text-left pr-4 last:pr-0 last:text-right">
-                                {h}
-                              </th>
-                            ))}
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {result.lineItems.map((item, i) => (
-                            <tr key={i} className="border-b border-border-subtle last:border-0">
-                              <td className="py-2 pr-4 text-text-primary font-light">{item.description}</td>
-                              <td className="py-2 pr-4 text-text-dim">{item.qty ?? '—'}</td>
-                              <td className="py-2 pr-4 text-text-dim">{item.unitPrice ?? '—'}</td>
-                              <td className="py-2 text-text-primary text-right">{item.amount ?? '—'}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-
-                {/* Totals */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
-                    Totals ({result.totals.currency})
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    {[
-                      ['Subtotal', result.totals.subtotal],
-                      ['GST (10%)', result.totals.gst],
-                    ].map(([label, value]) => (
-                      <div key={label} className="flex justify-between text-[0.82rem]">
-                        <span className="text-text-dim">{label}</span>
-                        <span className="text-text-primary font-light">{value ?? '—'}</span>
-                      </div>
-                    ))}
-                    <div className="flex justify-between text-[0.9rem] font-black border-t border-border-subtle pt-2 mt-1">
-                      <span className="text-text-primary">Total</span>
-                      <span className="text-ac-red">{result.totals.total ?? '—'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Classification */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
-                    AI Classification
-                  </div>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    <span className="font-mono text-[0.65rem] tracking-[1px] uppercase border border-border-subtle text-text-dim px-2 py-1">
-                      {result.classification.category}
-                    </span>
-                    <span className={`font-mono text-[0.65rem] tracking-[1px] uppercase border px-2 py-1 ${
-                      result.classification.type === 'Business'
-                        ? 'border-ac-red text-ac-red'
-                        : 'border-border-subtle text-text-dim'
-                    }`}>
-                      {result.classification.type}
-                    </span>
-                    <span className={`font-mono text-[0.65rem] tracking-[1px] uppercase border px-2 py-1 ${
-                      result.classification.taxDeductible
-                        ? 'border-[var(--status-green)] text-[var(--status-green)]'
-                        : 'border-border-subtle text-text-dim'
-                    }`}>
-                      {result.classification.taxDeductible ? 'Tax Deductible' : 'Not Deductible'}
-                    </span>
-                  </div>
-                  {result.classification.notes && (
-                    <p className="text-[0.8rem] text-text-dim font-light leading-[1.6]">
-                      {result.classification.notes}
-                    </p>
-                  )}
-                </div>
-
-                {/* Copy + Email buttons */}
+                {/* Copy + Email + Scan Another buttons */}
                 <div className="flex gap-3 flex-wrap items-center">
                   <CopyButton text={buildCsv(result)} label="COPY CSV" />
                   <CopyButton text={JSON.stringify(result, null, 2)} label="COPY JSON" />
                   <SendToEmail resultText={JSON.stringify(result, null, 2)} toolName="Invoice Scanner" />
                 </div>
+
+                <button
+                  type="button"
+                  onClick={handleScanAnother}
+                  className="w-full font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 cursor-pointer border-none text-white"
+                  style={{ background: 'var(--red)' }}
+                  onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'white'; (e.currentTarget as HTMLButtonElement).style.color = '#000'; }}
+                  onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--red)'; (e.currentTarget as HTMLButtonElement).style.color = 'white'; }}
+                >
+                  SCAN ANOTHER
+                </button>
               </div>
             )}
           </div>
