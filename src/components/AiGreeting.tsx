@@ -51,6 +51,13 @@ export default function AiGreeting() {
     setDisplayedText('');
     setIsTyping(true);
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      setDisplayedText(greeting);
+      setIsTyping(false);
+      return;
+    }
+
     const interval = setInterval(() => {
       if (index < greeting.length) {
         setDisplayedText(greeting.slice(0, index + 1));
@@ -68,7 +75,7 @@ export default function AiGreeting() {
     <div className="min-h-[3.5rem]">
       <div className="ai-greeting">
         {displayedText || (
-          <span style={{ opacity: 0.3 }}>Initialising AI...</span>
+          <span style={{ opacity: 0.6 }}>Initialising AI...</span>
         )}
         {isTyping && displayedText && <span className="ai-cursor" />}
       </div>

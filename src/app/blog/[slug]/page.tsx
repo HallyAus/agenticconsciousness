@@ -113,7 +113,10 @@ function renderMarkdown(md: string): string {
     .replace(/^## (.+)$/gm, '<h2 class="text-[1.3rem] font-bold text-white mt-10 mb-4 tracking-[-0.5px]">$1</h2>')
     .replace(/^### (.+)$/gm, '<h3 class="text-[1.1rem] font-bold text-white mt-8 mb-3">$1</h3>')
     .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-ac-red no-underline hover:underline">$1</a>')
+    .replace(/\[(.+?)\]\((.+?)\)/g, (_, text, href) => {
+      const safeHref = /^(https?:|\/|#|mailto:)/.test(href) ? href.replace(/"/g, '&quot;') : '#';
+      return `<a href="${safeHref}" class="text-ac-red no-underline hover:underline" rel="noopener noreferrer">${text}</a>`;
+    })
     .replace(/^- (.+)$/gm, '<li class="text-text-dim font-light leading-[1.7] ml-4 mb-1">$1</li>')
     .replace(/(<li.*<\/li>\n?)+/g, '<ul class="mb-6 list-none">$&</ul>')
     .replace(/^(?!<[hula])((?!^$).+)$/gm, '<p class="text-text-dim font-light leading-[1.7] mb-4 max-w-[680px]">$1</p>')

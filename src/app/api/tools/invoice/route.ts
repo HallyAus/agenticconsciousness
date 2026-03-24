@@ -137,7 +137,13 @@ Rules:
       })
     );
 
-    const result = JSON.parse(rawText);
+    let result;
+    try {
+      result = JSON.parse(rawText);
+    } catch {
+      console.error('Failed to parse AI response');
+      return NextResponse.json({ error: 'Invalid response format. Please try again.' }, { status: 500 });
+    }
     return NextResponse.json(result);
   } catch (error) {
     console.error('Invoice API error:', error);

@@ -79,7 +79,7 @@ export default function CTA() {
   }
 
   return (
-    <section id="contact" className="py-28 px-10 relative overflow-hidden max-md:px-5 max-sm:py-20">
+    <section id="contact" aria-label="Contact us" className="py-28 px-10 relative overflow-hidden max-md:px-5 max-sm:py-20">
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
           <div className="bg-ac-card border-2 border-ac-red py-20 px-12 relative max-sm:py-12 max-sm:px-6">

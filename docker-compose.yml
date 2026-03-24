@@ -29,6 +29,9 @@ services:
         limits:
           memory: 512M
           cpus: "1.0"
+    volumes:
+      - ac-data:/app/data
+      - ac-blog:/app/content/blog
 
   tunnel:
     image: cloudflare/cloudflared:latest
@@ -45,3 +48,7 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
+
+volumes:
+  ac-data:
+  ac-blog:

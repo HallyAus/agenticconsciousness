@@ -40,6 +40,14 @@ export default function Chatbot() {
   }, []);
 
   useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) setIsOpen(false);
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [isOpen]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
@@ -92,7 +100,7 @@ export default function Chatbot() {
             const name = firstUserMsg
               .replace(/^(i'm|my name is|it's|call me|hey i'm|hi i'm)\s*/i, '')
               .trim();
-            if (name.length > 0 && name.length < 20) {
+            if (name.length > 0 && name.length < 25 && /^[a-zA-Z\s'-]+$/.test(name)) {
               setVisitorName(name);
               localStorage.setItem('ac-visitor-name', name);
             }
@@ -158,7 +166,7 @@ export default function Chatbot() {
             ))}
             {isLoading && (
               <div className="self-start bg-ac-block border-l-2 border-ac-red py-[0.7rem] px-[0.9rem] animate-msg-in">
-                <div className="inline-flex gap-1">
+                <div className="inline-flex gap-1" aria-label="AI is typing">
                   <span className="w-[5px] h-[5px] bg-ac-red animate-dot-pulse" />
                   <span className="w-[5px] h-[5px] bg-ac-red animate-dot-pulse [animation-delay:0.15s]" />
                   <span className="w-[5px] h-[5px] bg-ac-red animate-dot-pulse [animation-delay:0.3s]" />

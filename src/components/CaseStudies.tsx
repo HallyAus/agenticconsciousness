@@ -3,7 +3,7 @@ import { CASE_STUDIES } from '@/lib/constants';
 
 export default function CaseStudies() {
   return (
-    <section id="cases" className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section id="cases" aria-label="Case studies" className="py-28 px-10 max-md:px-5 max-sm:py-20">
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">

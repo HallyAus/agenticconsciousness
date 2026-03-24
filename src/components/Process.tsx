@@ -3,7 +3,7 @@ import { PROCESS_STEPS } from '@/lib/constants';
 
 export default function Process() {
   return (
-    <section id="process" className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section id="process" aria-label="Our methodology" className="py-28 px-10 max-md:px-5 max-sm:py-20">
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">

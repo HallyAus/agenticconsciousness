@@ -58,7 +58,14 @@ Rules:
       .map((block) => block.text)
       .join('');
 
-    return NextResponse.json(JSON.parse(text));
+    let result;
+    try {
+      result = JSON.parse(text);
+    } catch {
+      console.error('Failed to parse AI response');
+      return NextResponse.json({ error: 'Invalid response format. Please try again.' }, { status: 500 });
+    }
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Smart contact error:', error);
     return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });

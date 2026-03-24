@@ -103,7 +103,7 @@ export default function AiAudit() {
     'w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 appearance-none cursor-pointer transition-colors duration-150';
 
   return (
-    <section id="ai-audit" className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section id="ai-audit" aria-label="AI business audit" className="py-28 px-10 max-md:px-5 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         {/* Header */}
         <div className="mb-14">

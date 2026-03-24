@@ -1,13 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { NAV_LINKS } from '@/lib/constants';
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && menuOpen) setMenuOpen(false);
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [menuOpen]);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[1000] px-10 h-[60px] flex justify-between items-center bg-[rgba(10,10,10,0.92)] backdrop-blur-[12px] border-b-2 border-ac-red max-md:px-5">
+    <nav aria-label="Main navigation" className="fixed top-0 left-0 right-0 z-[1000] px-10 h-[60px] flex justify-between items-center bg-[rgba(10,10,10,0.92)] backdrop-blur-[12px] border-b-2 border-ac-red max-md:px-5">
       <a href="#" className="font-display text-[1.1rem] font-black text-white tracking-snug no-underline">
         AC<span className="text-ac-red">_</span>
       </a>
