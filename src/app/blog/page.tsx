@@ -56,7 +56,7 @@ export default function BlogPage() {
                   </div>
 
                   <div className="p-6">
-                    <h2 className="text-[1rem] font-black text-white tracking-[-0.3px] mb-1">
+                    <h2 className="text-[1rem] font-black text-text-primary tracking-[-0.3px] mb-1">
                       {post.title}
                     </h2>
                     <p className="text-[0.8rem] text-text-dim font-light leading-[1.5]">

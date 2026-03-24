@@ -278,7 +278,7 @@ export default function AiAudit() {
                   <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-2">
                     AI Opportunity Snapshot
                   </div>
-                  <h3 className="text-[1.4rem] font-black tracking-tight leading-tight text-white">
+                  <h3 className="text-[1.4rem] font-black tracking-tight leading-tight text-text-primary">
                     {result.headline}
                   </h3>
                 </div>
@@ -291,7 +291,7 @@ export default function AiAudit() {
                       className="bg-ac-card border-t-[3px] border-ac-red p-6"
                     >
                       <div className="flex items-start justify-between gap-4 mb-3">
-                        <h4 className="text-[0.95rem] font-black text-white leading-tight">
+                        <h4 className="text-[0.95rem] font-black text-text-primary leading-tight">
                           {opp.title}
                         </h4>
                         <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">

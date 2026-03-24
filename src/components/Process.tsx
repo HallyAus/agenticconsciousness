@@ -30,7 +30,7 @@ export default function Process() {
                 <div className="font-mono text-[0.7rem] text-ac-red tracking-[3px] mb-4">
                   {step.phase}
                 </div>
-                <h3 className="text-[1rem] font-black text-white tracking-[-0.3px] mb-[0.6rem]">
+                <h3 className="text-[1rem] font-black text-text-primary tracking-[-0.3px] mb-[0.6rem]">
                   {step.title}
                 </h3>
                 <p className="text-[0.8rem] text-text-dim leading-[1.6] font-light">

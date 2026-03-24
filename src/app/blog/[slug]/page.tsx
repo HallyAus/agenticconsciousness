@@ -45,7 +45,7 @@ export default async function BlogPost({ params }: Props) {
         <div className="max-w-[720px] mx-auto">
           <Link
             href="/blog"
-            className="font-display text-[0.7rem] font-bold tracking-[2px] uppercase text-ac-red no-underline hover:text-white transition-colors mb-12 block"
+            className="font-display text-[0.7rem] font-bold tracking-[2px] uppercase text-ac-red no-underline hover:text-text-primary transition-colors mb-12 block"
           >
             ← Back to insights
           </Link>
@@ -110,9 +110,9 @@ export default async function BlogPost({ params }: Props) {
 // Simple markdown renderer (no external deps)
 function renderMarkdown(md: string): string {
   return md
-    .replace(/^## (.+)$/gm, '<h2 class="text-[1.3rem] font-bold text-white mt-10 mb-4 tracking-[-0.5px]">$1</h2>')
-    .replace(/^### (.+)$/gm, '<h3 class="text-[1.1rem] font-bold text-white mt-8 mb-3">$1</h3>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+    .replace(/^## (.+)$/gm, '<h2 class="text-[1.3rem] font-bold text-text-primary mt-10 mb-4 tracking-[-0.5px]">$1</h2>')
+    .replace(/^### (.+)$/gm, '<h3 class="text-[1.1rem] font-bold text-text-primary mt-8 mb-3">$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong class="font-bold text-text-primary">$1</strong>')
     .replace(/\[(.+?)\]\((.+?)\)/g, (_, text, href) => {
       const safeHref = /^(https?:|\/|#|mailto:)/.test(href) ? href.replace(/"/g, '&quot;') : '#';
       return `<a href="${safeHref}" class="text-ac-red no-underline hover:underline" rel="noopener noreferrer">${text}</a>`;

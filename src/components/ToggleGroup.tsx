@@ -16,7 +16,7 @@ export default function ToggleGroup({ options, value, onChange }: ToggleGroupPro
           className={`font-display text-[0.65rem] font-bold tracking-[1px] uppercase py-2 px-4 transition-all duration-200 cursor-pointer border border-border-subtle ${
             value === option
               ? 'bg-ac-red text-white border-ac-red'
-              : 'bg-transparent text-text-dim hover:text-white'
+              : 'bg-transparent text-text-dim hover:text-text-primary'
           }`}
         >
           {option}

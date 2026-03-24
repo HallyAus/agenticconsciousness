@@ -40,7 +40,7 @@ export default function SendToEmail({ resultText, toolName }: SendToEmailProps) 
   if (sent) {
     return (
       <div className="flex items-center gap-2 py-2">
-        <span className="font-mono text-[0.65rem] tracking-[1px] uppercase text-[#39ff14]">
+        <span className="font-mono text-[0.65rem] tracking-[1px] uppercase text-[var(--status-green)]">
           Sent to {email} ✓
         </span>
       </div>

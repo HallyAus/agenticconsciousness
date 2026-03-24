@@ -199,7 +199,7 @@ export default function InvoiceScanner() {
                   className={`font-display text-[0.65rem] font-bold tracking-[1px] uppercase py-2 px-4 transition-all duration-200 cursor-pointer border border-border-subtle ${
                     mode === m
                       ? 'bg-ac-red text-white border-ac-red'
-                      : 'bg-transparent text-text-dim hover:text-white'
+                      : 'bg-transparent text-text-dim hover:text-text-primary'
                   }`}
                 >
                   {m === 'text' ? 'Paste Text' : 'Upload File'}
@@ -278,7 +278,7 @@ export default function InvoiceScanner() {
 
             {remainingUses <= 0 ? (
               <div className="bg-ac-card border-2 border-ac-red p-6 text-center">
-                <p className="text-[0.9rem] font-black text-white mb-2">You&apos;ve hit the limit.</p>
+                <p className="text-[0.9rem] font-black text-text-primary mb-2">You&apos;ve hit the limit.</p>
                 <p className="text-text-dim text-[0.8rem] font-light mb-4">
                   Imagine these tools running 24/7, customised for your business — that&apos;s what we build.
                 </p>
@@ -425,7 +425,7 @@ export default function InvoiceScanner() {
                       </div>
                     ))}
                     <div className="flex justify-between text-[0.9rem] font-black border-t border-border-subtle pt-2 mt-1">
-                      <span className="text-white">Total</span>
+                      <span className="text-text-primary">Total</span>
                       <span className="text-ac-red">{result.totals.total ?? '—'}</span>
                     </div>
                   </div>
@@ -449,7 +449,7 @@ export default function InvoiceScanner() {
                     </span>
                     <span className={`font-mono text-[0.65rem] tracking-[1px] uppercase border px-2 py-1 ${
                       result.classification.taxDeductible
-                        ? 'border-[#39ff14] text-[#39ff14]'
+                        ? 'border-[var(--status-green)] text-[var(--status-green)]'
                         : 'border-border-subtle text-text-dim'
                     }`}>
                       {result.classification.taxDeductible ? 'Tax Deductible' : 'Not Deductible'}

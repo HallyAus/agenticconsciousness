@@ -43,7 +43,7 @@ export default function About() {
                 <div className="text-[2rem] font-black text-ac-red tracking-[-1px] mb-1">
                   {block.highlight}
                 </div>
-                <h3 className="text-[1rem] font-black text-white mb-2">{block.title}</h3>
+                <h3 className="text-[1rem] font-black text-text-primary mb-2">{block.title}</h3>
                 <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
                   {block.desc}
                 </p>

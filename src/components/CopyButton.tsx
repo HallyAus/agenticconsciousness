@@ -33,7 +33,7 @@ export default function CopyButton({ text, label = 'COPY' }: CopyButtonProps) {
       onClick={handleCopy}
       className={`font-mono text-[0.6rem] tracking-[2px] uppercase py-2 px-4 transition-all duration-200 cursor-pointer border bg-transparent ${
         copied
-          ? 'border-[#39ff14] text-[#39ff14]'
+          ? 'border-[var(--status-green)] text-[var(--status-green)]'
           : 'border-ac-red text-ac-red hover:bg-ac-red hover:text-white'
       }`}
     >

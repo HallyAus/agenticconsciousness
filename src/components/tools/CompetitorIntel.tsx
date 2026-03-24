@@ -25,8 +25,8 @@ const btnClass =
 
 function confidencePill(level: 'High' | 'Medium' | 'Low') {
   const styles: Record<string, string> = {
-    High: 'border-[#39ff14] text-[#39ff14]',
-    Medium: 'border-[#f59e0b] text-[#f59e0b]',
+    High: 'border-[var(--status-green)] text-[var(--status-green)]',
+    Medium: 'border-[var(--red-dim)] text-[var(--red-dim)]',
     Low: 'border-border-subtle text-text-dim',
   };
   return (
@@ -176,7 +176,7 @@ export default function CompetitorIntel() {
 
             {remainingUses <= 0 ? (
               <div className="bg-ac-card border-2 border-ac-red p-6 text-center">
-                <p className="text-[0.9rem] font-black text-white mb-2">You&apos;ve hit the limit.</p>
+                <p className="text-[0.9rem] font-black text-text-primary mb-2">You&apos;ve hit the limit.</p>
                 <p className="text-text-dim text-[0.8rem] font-light mb-4">
                   Imagine these tools running 24/7, customised for your business — that&apos;s what we build.
                 </p>
@@ -242,7 +242,7 @@ export default function CompetitorIntel() {
                       <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-1">
                         Competitor
                       </div>
-                      <h3 className="text-[1.2rem] font-black text-white">{result.companyName}</h3>
+                      <h3 className="text-[1.2rem] font-black text-text-primary">{result.companyName}</h3>
                     </div>
                     {confidencePill(result.confidenceLevel)}
                   </div>
@@ -267,7 +267,7 @@ export default function CompetitorIntel() {
                     <ol className="flex flex-col gap-2">
                       {result.strengths.map((s, i) => (
                         <li key={i} className="text-[0.8rem] text-text-dim font-light leading-[1.6] flex gap-2">
-                          <span className="font-mono text-[0.6rem] text-[#39ff14] mt-0.5 flex-shrink-0">+</span>
+                          <span className="font-mono text-[0.6rem] text-[var(--status-green)] mt-0.5 flex-shrink-0">+</span>
                           <span>{s}</span>
                         </li>
                       ))}

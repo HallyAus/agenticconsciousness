@@ -30,7 +30,7 @@ export default function CaseStudies() {
                   {cs.industry}
                 </div>
                 <div className="p-8">
-                  <h3 className="text-[1.1rem] font-black text-white tracking-[-0.3px] mb-2">
+                  <h3 className="text-[1.1rem] font-black text-text-primary tracking-[-0.3px] mb-2">
                     {cs.title}
                   </h3>
                   <p className="text-[0.85rem] text-text-dim font-light leading-[1.6] max-w-[500px]">
@@ -40,7 +40,7 @@ export default function CaseStudies() {
                 <div className="flex flex-col justify-center gap-4 py-8 px-10 border-l border-border-subtle max-[900px]:flex-row max-[900px]:border-l-0 max-[900px]:border-t max-[900px]:border-border-subtle">
                   {cs.metrics.map((m) => (
                     <div key={m.label}>
-                      <div className="text-[1.8rem] font-black text-white tracking-[-1px] leading-none">
+                      <div className="text-[1.8rem] font-black text-text-primary tracking-[-1px] leading-none">
                         {m.value}
                       </div>
                       <div className="font-mono text-[0.65rem] text-text-dim tracking-[2px] uppercase">

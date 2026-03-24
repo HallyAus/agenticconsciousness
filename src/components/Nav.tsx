@@ -16,8 +16,8 @@ export default function Nav() {
   }, [menuOpen]);
 
   return (
-    <nav aria-label="Main navigation" className="fixed top-0 left-0 right-0 z-[1000] px-10 h-[60px] flex justify-between items-center bg-[rgba(10,10,10,0.92)] backdrop-blur-[12px] border-b-2 border-ac-red max-md:px-5">
-      <a href="#" className="font-display text-[1.1rem] font-black text-white tracking-snug no-underline">
+    <nav aria-label="Main navigation" className="fixed top-0 left-0 right-0 z-[1000] px-10 h-[60px] flex justify-between items-center bg-[var(--bg-nav)] backdrop-blur-[12px] border-b-2 border-ac-red max-md:px-5">
+      <a href="#" className="font-display text-[1.1rem] font-black text-text-primary tracking-snug no-underline">
         AC<span className="text-ac-red">_</span>
       </a>
 
@@ -27,7 +27,7 @@ export default function Nav() {
           <li key={link.href}>
             <a
               href={link.href}
-              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-white"
+              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary"
             >
               {link.label}
             </a>
@@ -58,13 +58,13 @@ export default function Nav() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="fixed top-[60px] left-0 right-0 flex-col bg-[rgba(10,10,10,0.98)] border-b-2 border-ac-red p-6 gap-4 z-[999] hidden max-md:flex">
+        <div className="fixed top-[60px] left-0 right-0 flex-col bg-[var(--bg-nav)] border-b-2 border-ac-red p-6 gap-4 z-[999] hidden max-md:flex">
           {/* Primary — homepage sections */}
           {NAV_LINKS.filter(l => l.href.startsWith('/#')).map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-white"
+              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
@@ -79,7 +79,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
-              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-white"
+              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}

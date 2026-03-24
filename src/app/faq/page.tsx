@@ -70,7 +70,7 @@ export default function FAQPage() {
             <div className="flex flex-col gap-[2px]">
               {faqs.map((faq) => (
                 <div key={faq.q} className="bg-ac-card p-8 border-l-[3px] border-ac-red">
-                  <h2 className="text-[1rem] font-black text-white mb-3">{faq.q}</h2>
+                  <h2 className="text-[1rem] font-black text-text-primary mb-3">{faq.q}</h2>
                   <p className="text-[0.85rem] text-text-dim font-light leading-[1.7]">{faq.a}</p>
                 </div>
               ))}

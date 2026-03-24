@@ -267,7 +267,7 @@ export default function QuoteGenerator() {
 
             {remainingUses <= 0 ? (
               <div className="bg-ac-card border-2 border-ac-red p-6 text-center">
-                <p className="text-[0.9rem] font-black text-white mb-2">You&apos;ve hit the limit.</p>
+                <p className="text-[0.9rem] font-black text-text-primary mb-2">You&apos;ve hit the limit.</p>
                 <p className="text-text-dim text-[0.8rem] font-light mb-4">
                   Imagine these tools running 24/7, customised for your business — that&apos;s what we build.
                 </p>
@@ -331,7 +331,7 @@ export default function QuoteGenerator() {
                   <div className="flex justify-between items-start gap-4 flex-wrap">
                     <div>
                       <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-1">Quote Reference</div>
-                      <div className="text-[1.1rem] font-black text-white">{result.reference}</div>
+                      <div className="text-[1.1rem] font-black text-text-primary">{result.reference}</div>
                     </div>
                     <div className="text-right">
                       <div className="font-mono text-[0.5rem] tracking-[1px] uppercase text-text-ghost mb-1">Date</div>
@@ -403,7 +403,7 @@ export default function QuoteGenerator() {
                       <span className="text-text-primary w-24 text-right">{formatAud(result.gst)}</span>
                     </div>
                     <div className="flex gap-8 text-[0.9rem] font-black border-t border-border-subtle pt-2 mt-1">
-                      <span className="text-white">Total AUD</span>
+                      <span className="text-text-primary">Total AUD</span>
                       <span className="text-ac-red w-24 text-right">{formatAud(result.total)}</span>
                     </div>
                   </div>

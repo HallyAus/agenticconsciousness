@@ -29,7 +29,7 @@ export default function EmailCapture() {
   if (submitted) {
     return (
       <div className="bg-ac-card border-2 border-ac-red p-8 text-center">
-        <div className="text-[1rem] font-black text-white mb-2">You're in.</div>
+        <div className="text-[1rem] font-black text-text-primary mb-2">You're in.</div>
         <p className="text-text-dim text-[0.85rem] font-light">
           We'll send you AI insights worth reading. No spam.
         </p>
@@ -39,7 +39,7 @@ export default function EmailCapture() {
 
   return (
     <div className="bg-ac-card border-2 border-ac-red p-8">
-      <div className="text-[1rem] font-black text-white mb-2">Get AI insights weekly</div>
+      <div className="text-[1rem] font-black text-text-primary mb-2">Get AI insights weekly</div>
       <p className="text-text-dim text-[0.85rem] font-light mb-4">
         Practical AI strategies for Australian businesses. No fluff. Unsubscribe anytime.
       </p>

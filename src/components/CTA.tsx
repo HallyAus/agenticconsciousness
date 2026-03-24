@@ -84,7 +84,7 @@ export default function CTA() {
         <div className="max-w-[1200px] mx-auto">
           <div className="bg-ac-card border-2 border-ac-red py-20 px-12 relative max-sm:py-12 max-sm:px-6">
             {/* Ghost watermark */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20rem] font-black text-text-dead pointer-events-none tracking-[-10px] select-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20rem] font-black text-[var(--ghost-watermark)] pointer-events-none tracking-[-10px] select-none">
               AC
             </div>
 

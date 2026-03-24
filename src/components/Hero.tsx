@@ -28,7 +28,7 @@ export default function Hero() {
               className={`text-[0.7rem] font-black tracking-[2.5px] uppercase py-[0.35rem] px-[0.9rem] ${
                 tag.primary
                   ? 'bg-ac-red text-white'
-                  : 'bg-[rgba(255,255,255,0.05)] text-text-dim'
+                  : 'bg-[var(--tag-ghost-bg)] text-text-dim'
               }`}
             >
               {tag.label}
@@ -39,7 +39,7 @@ export default function Hero() {
 
       <ScrollReveal delay={0.05}>
         <h1 className="font-display font-black leading-[0.92] tracking-brutal mb-8">
-          <span className="block text-[clamp(3.5rem,9vw,7rem)] text-white">AGENTIC</span>
+          <span className="block text-[clamp(3.5rem,9vw,7rem)] text-text-primary">AGENTIC</span>
           <span className="block text-[clamp(3.5rem,9vw,7rem)] text-ac-red">CONSCIOUSNESS</span>
         </h1>
       </ScrollReveal>

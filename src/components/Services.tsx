@@ -31,10 +31,10 @@ export default function Services() {
                   }`,
                 }}
               >
-                <div className="text-[4rem] font-black text-text-ghost leading-none mb-4">
+                <div className="text-[4rem] font-black text-[var(--ghost-number)] leading-none mb-4">
                   {service.num}
                 </div>
-                <h3 className="text-[1.15rem] font-black text-white tracking-snug mb-3">
+                <h3 className="text-[1.15rem] font-black text-text-primary tracking-snug mb-3">
                   {service.title}
                 </h3>
                 <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">

@@ -140,9 +140,9 @@ export default function Chatbot() {
       {isOpen && (
         <div className="fixed bottom-[5.5rem] right-6 z-[9999] w-[400px] max-w-[calc(100vw-1.5rem)] h-[500px] max-h-[calc(100vh-8rem)] bg-ac-black border-2 border-ac-red flex flex-col overflow-hidden animate-chat-in max-sm:right-0 max-sm:bottom-[4.5rem] max-sm:w-full max-sm:max-w-full max-sm:h-[calc(100vh-6rem)] max-sm:border-l-0 max-sm:border-r-0">
           <div className="py-3 px-4 border-b-2 border-ac-red flex items-center gap-3 bg-ac-card">
-            <div className="w-[7px] h-[7px] bg-[#39ff14] animate-blink" />
+            <div className="w-[7px] h-[7px] bg-[var(--status-green)] animate-blink" />
             <div>
-              <div className="text-[0.7rem] font-black tracking-[2px] uppercase text-white">
+              <div className="text-[0.7rem] font-black tracking-[2px] uppercase text-text-primary">
                 AC Neural Agent
               </div>
               <div className="font-mono text-[0.55rem] text-text-dim">
