@@ -1,4 +1,5 @@
 import ScrollReveal from '@/components/ScrollReveal';
+import AiGreeting from '@/components/AiGreeting';
 
 const tags = [
   { label: 'AI', primary: true },
@@ -43,9 +44,9 @@ export default function Hero() {
       </ScrollReveal>
 
       <ScrollReveal delay={0.1}>
-        <p className="text-[1.05rem] text-text-dim max-w-[460px] leading-[1.7] font-light border-l-[3px] border-ac-red pl-5 mb-10">
-          We don&apos;t just advise — we build and deploy AI systems that run your business better than you thought possible.
-        </p>
+        <div className="mb-10">
+          <AiGreeting />
+        </div>
       </ScrollReveal>
 
       <ScrollReveal delay={0.15}>
