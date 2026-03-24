@@ -7,8 +7,8 @@ export default function Footer() {
         AC<span className="text-ac-red">_</span>
       </div>
 
-      <ul className="flex gap-8 list-none">
-        {NAV_LINKS.map((link) => (
+      <ul className="flex gap-x-6 gap-y-2 list-none flex-wrap justify-center max-sm:gap-x-4">
+        {NAV_LINKS.filter((l) => ['Services', 'Tools', 'Insights', 'FAQ'].includes(l.label)).map((link) => (
           <li key={link.href}>
             <a
               href={link.href}

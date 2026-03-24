@@ -52,7 +52,7 @@ export default async function BlogPost({ params }: Props) {
           </h1>
 
           <div className="flex items-center gap-4 mb-12 flex-wrap">
-            <span className="font-mono text-[0.55rem] text-text-dim tracking-[1px] uppercase">
+            <span className="font-mono text-[0.65rem] text-text-dim tracking-[1px] uppercase">
               {new Date(post.publishedAt).toLocaleDateString('en-AU', {
                 day: 'numeric',
                 month: 'long',
@@ -60,18 +60,18 @@ export default async function BlogPost({ params }: Props) {
               })}
             </span>
             <span className="text-text-ghost">·</span>
-            <span className="font-mono text-[0.55rem] text-text-dim tracking-[1px] uppercase">
+            <span className="font-mono text-[0.65rem] text-text-dim tracking-[1px] uppercase">
               {post.author}
             </span>
             <span className="text-text-ghost">·</span>
-            <span className="font-mono text-[0.55rem] text-text-dim tracking-[1px] uppercase">
+            <span className="font-mono text-[0.65rem] text-text-dim tracking-[1px] uppercase">
               {readingTime} min read
             </span>
-            <div className="flex gap-1 ml-auto">
+            <div className="flex gap-1 flex-wrap max-sm:basis-full max-sm:mt-2">
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="font-mono text-[0.5rem] tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
+                  className="font-mono text-[0.6rem] tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
                 >
                   {tag}
                 </span>
