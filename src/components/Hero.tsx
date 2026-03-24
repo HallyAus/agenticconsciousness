@@ -1,15 +1,19 @@
+'use client';
+
+import { useState, useLayoutEffect } from 'react';
 import ScrollReveal from '@/components/ScrollReveal';
 import AiGreeting from '@/components/AiGreeting';
 import AnimatedCounter from '@/components/AnimatedCounter';
+import { getPersonalisedContent, DEFAULT, type PersonalisedContent } from '@/lib/personalisation';
 
-const tags = [
+const DEFAULT_TAGS = [
   { label: 'AI', primary: true },
   { label: 'Consulting', primary: false },
   { label: 'Automation', primary: false },
   { label: 'Strategy', primary: false },
 ];
 
-const counters = [
+const BASE_COUNTERS = [
   { value: '21+', label: 'Years experience' },
   { value: '3', label: 'Service pillars' },
   { value: '100%', label: 'AI-powered' },
@@ -17,31 +21,58 @@ const counters = [
 ];
 
 export default function Hero() {
+  const [content, setContent] = useState<PersonalisedContent>(DEFAULT);
+
+  useLayoutEffect(() => {
+    const personalised = getPersonalisedContent();
+    setContent(personalised);
+
+    console.log(JSON.stringify({
+      event: 'personalisation',
+      type: personalised === DEFAULT ? 'default' : 'personalised',
+      variant: personalised.headline2,
+      timestamp: new Date().toISOString(),
+    }));
+  }, []);
+
+  const isPersonalised = content !== DEFAULT;
+  const hasTagline = Boolean(content.tagline);
+
+  const counters = content.showLocation
+    ? [...BASE_COUNTERS, { value: content.showLocation, label: 'Serving' }]
+    : BASE_COUNTERS;
+
   return (
     <section className="min-h-screen flex flex-col justify-center pt-32 pb-16 px-10 relative max-md:px-5 max-md:pt-28 max-md:pb-12">
       <div className="absolute top-[60px] right-0 w-[40%] h-[70%] bg-gradient-to-b from-ac-red-glow to-transparent pointer-events-none" />
 
       <ScrollReveal>
         <div className="flex gap-2 mb-8 flex-wrap">
-          {tags.map((tag) => (
-            <span
-              key={tag.label}
-              className={`text-[0.7rem] font-black tracking-[2.5px] uppercase py-[0.35rem] px-[0.9rem] ${
-                tag.primary
-                  ? 'bg-ac-red text-white'
-                  : 'bg-[var(--tag-ghost-bg)] text-text-dim'
-              }`}
-            >
-              {tag.label}
+          {hasTagline ? (
+            <span className="text-[0.7rem] font-black tracking-[2.5px] uppercase py-[0.35rem] px-[0.9rem] bg-ac-red text-white">
+              {content.tagline}
             </span>
-          ))}
+          ) : (
+            DEFAULT_TAGS.map((tag) => (
+              <span
+                key={tag.label}
+                className={`text-[0.7rem] font-black tracking-[2.5px] uppercase py-[0.35rem] px-[0.9rem] ${
+                  tag.primary
+                    ? 'bg-ac-red text-white'
+                    : 'bg-[var(--tag-ghost-bg)] text-text-dim'
+                }`}
+              >
+                {tag.label}
+              </span>
+            ))
+          )}
         </div>
       </ScrollReveal>
 
       <ScrollReveal delay={0.05}>
         <h1 className="font-display font-black leading-[0.92] tracking-brutal mb-8">
-          <span className="block text-[clamp(3.5rem,9vw,7rem)] text-text-primary">AGENTIC</span>
-          <span className="block text-[clamp(3.5rem,9vw,7rem)] text-ac-red">CONSCIOUSNESS</span>
+          <span className="block text-[clamp(3.5rem,9vw,7rem)] text-text-primary">{content.headline1}</span>
+          <span className="block text-[clamp(3.5rem,9vw,7rem)] text-ac-red">{content.headline2}</span>
         </h1>
       </ScrollReveal>
 
