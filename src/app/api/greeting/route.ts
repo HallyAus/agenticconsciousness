@@ -22,16 +22,33 @@ export async function POST(req: NextRequest) {
   try {
     const { timeOfDay, dayOfWeek, hour, returning } = await req.json();
 
-    // Cloudflare Tunnel provides cf-ipcountry only (no city/region on free plan)
     const country = req.headers.get('cf-ipcountry') || null;
 
-    const cacheKey = `${timeOfDay}-${hour}-${country || 'unknown'}-${returning ? 'ret' : 'new'}`;
+    // IP geolocation for city (free API, cached per IP)
+    let city: string | null = null;
+    let region: string | null = null;
+    if (ip && ip !== 'unknown') {
+      try {
+        const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=city,regionName,country`, {
+          signal: AbortSignal.timeout(2000), // 2s timeout, don't slow down the greeting
+        });
+        if (geoRes.ok) {
+          const geo = await geoRes.json();
+          if (geo.city) city = geo.city;
+          if (geo.regionName) region = geo.regionName;
+        }
+      } catch {
+        // Geo lookup failed — continue without it
+      }
+    }
+
+    const locationKey = city || country || 'unknown';
+    const cacheKey = `${timeOfDay}-${hour}-${locationKey}-${returning ? 'ret' : 'new'}`;
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
       return NextResponse.json({ greeting: cached.greeting });
     }
 
-    // Build context string
     const countryNames: Record<string, string> = {
       AU: 'Australia', US: 'the United States', GB: 'the UK', NZ: 'New Zealand',
       CA: 'Canada', DE: 'Germany', FR: 'France', JP: 'Japan', SG: 'Singapore',
@@ -40,8 +57,12 @@ export async function POST(req: NextRequest) {
     const countryName = country ? (countryNames[country] || country) : null;
 
     let context = `a ${dayOfWeek} ${timeOfDay} (${hour}:00)`;
-    if (country === 'AU') {
-      context += `. Visitor is in Australia — reference Australian business context naturally`;
+    if (city && country === 'AU') {
+      context += `. Visitor is in ${city}${region ? `, ${region}` : ''}, Australia`;
+    } else if (city) {
+      context += `. Visitor is in ${city}${countryName ? `, ${countryName}` : ''}`;
+    } else if (country === 'AU') {
+      context += `. Visitor is in Australia`;
     } else if (countryName) {
       context += `. Visitor is from ${countryName}`;
     }
@@ -57,7 +78,8 @@ export async function POST(req: NextRequest) {
 Rules:
 - Maximum 2 sentences
 - Reference the time of day naturally
-- For Australian visitors: reference something specific to Australian business (e.g. "Australian businesses are waking up to AI", "Across Australia, the smart ones are automating", mention EOFY if near June, mention the season). Make it feel local without stereotypes.
+- If a city is provided, reference it naturally (e.g. "Morning in Melbourne — perfect time to automate", "Brisbane's buzzing with AI adoption"). Make it feel personal, not forced.
+- For Australian visitors without a city: reference Australian business context generally.
 - For international visitors: acknowledge their country warmly (e.g. "Connecting from the UK? AI doesn't care about timezones.")
 - If returning visitor: acknowledge it subtly ("Back for more?", "Good to see you again")
 - Mention AI or automation naturally
