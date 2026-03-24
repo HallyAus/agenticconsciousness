@@ -4,6 +4,7 @@ import Services from '@/components/Services';
 import Process from '@/components/Process';
 import CaseStudies from '@/components/CaseStudies';
 import About from '@/components/About';
+import AiAudit from '@/components/AiAudit';
 import CTA from '@/components/CTA';
 import Footer from '@/components/Footer';
 import Divider from '@/components/Divider';
@@ -23,6 +24,8 @@ export default function Home() {
         <CaseStudies />
         <Divider />
         <About />
+        <Divider />
+        <AiAudit />
         <Divider />
         <CTA />
       </main>
