@@ -101,7 +101,7 @@ export default function Chatbot() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-[0.6rem] [&::-webkit-scrollbar]:w-[2px] [&::-webkit-scrollbar-thumb]:bg-ac-red" aria-live="polite">
+          <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-[0.6rem] [&::-webkit-scrollbar]:w-[2px] [&::-webkit-scrollbar-thumb]:bg-ac-red" aria-live="polite" role="log" aria-label="Chat messages">
             {messages.map((msg, i) => (
               <div
                 key={i}
