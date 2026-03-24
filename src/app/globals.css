@@ -2,6 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── THEME: Light Mode (default) ── */
+:root {
+  --bg-page: #f0ede6;
+  --bg-card: #e8e5dd;
+  --bg-card-hover: #dedad1;
+  --bg-nav: rgba(240, 237, 230, 0.95);
+  --bg-gap: rgba(0, 0, 0, 0.06);
+
+  --text-primary: #0a0a0a;
+  --text-body: rgba(0, 0, 0, 0.75);
+  --text-dim: rgba(0, 0, 0, 0.5);
+  --text-ghost: rgba(0, 0, 0, 0.15);
+  --text-dead: rgba(0, 0, 0, 0.05);
+
+  --red: #ff3d00;
+  --red-text: #d63400;
+  --red-dim: rgba(214, 52, 0, 0.6);
+  --red-faint: rgba(214, 52, 0, 0.1);
+  --red-pill-border: rgba(214, 52, 0, 0.3);
+  --red-ghost: rgba(214, 52, 0, 0.5);
+
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-red: #ff3d00;
+
+  --ghost-number: rgba(214, 52, 0, 0.35);
+  --ghost-watermark: rgba(214, 52, 0, 0.12);
+
+  --tag-ghost-bg: rgba(0, 0, 0, 0.05);
+  --tag-ghost-text: rgba(0, 0, 0, 0.45);
+
+  --status-green: #1a8c0a;
+
+  --chat-bot-bg: #e8e5dd;
+  --chat-user-bg: #ff3d00;
+}
+
+/* ── THEME: Dark Mode ── */
+[data-theme="dark"] {
+  --bg-page: #0a0a0a;
+  --bg-card: #111111;
+  --bg-card-hover: #161616;
+  --bg-nav: rgba(10, 10, 10, 0.92);
+  --bg-gap: rgba(255, 255, 255, 0.08);
+
+  --text-primary: #ffffff;
+  --text-body: rgba(255, 255, 255, 0.88);
+  --text-dim: rgba(255, 255, 255, 0.55);
+  --text-ghost: rgba(255, 255, 255, 0.15);
+  --text-dead: rgba(255, 255, 255, 0.06);
+
+  --red: #ff3d00;
+  --red-text: #ff3d00;
+  --red-dim: rgba(255, 61, 0, 0.6);
+  --red-faint: rgba(255, 61, 0, 0.1);
+  --red-pill-border: rgba(255, 61, 0, 0.25);
+  --red-ghost: rgba(255, 61, 0, 0.5);
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-red: #ff3d00;
+
+  --ghost-number: rgba(255, 61, 0, 0.35);
+  --ghost-watermark: rgba(255, 61, 0, 0.15);
+
+  --tag-ghost-bg: rgba(255, 255, 255, 0.05);
+  --tag-ghost-text: rgba(255, 255, 255, 0.4);
+
+  --status-green: #39ff14;
+
+  --chat-bot-bg: #1a1a1a;
+  --chat-user-bg: #ff3d00;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -13,14 +85,15 @@ html {
 }
 
 body {
-  background: #0a0a0a;
-  color: rgba(255, 255, 255, 0.88);
+  background: var(--bg-page);
+  color: var(--text-body);
   font-family: var(--font-display), 'Be Vietnam Pro', sans-serif;
   overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
 }
 
 ::selection {
-  background: #ff3d00;
+  background: var(--red);
   color: #ffffff;
 }
 
@@ -28,10 +101,10 @@ body {
   width: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: var(--bg-page);
 }
 ::-webkit-scrollbar-thumb {
-  background: #ff3d00;
+  background: var(--red);
 }
 
 /* Noise texture overlay */
@@ -49,11 +122,11 @@ body::before {
 /* AI Greeting typewriter */
 .ai-greeting {
   font-size: 1.05rem;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-dim);
   max-width: 460px;
   line-height: 1.7;
   font-weight: 300;
-  border-left: 3px solid #ff3d00;
+  border-left: 3px solid var(--red);
   padding-left: 1.25rem;
 }
 
@@ -61,7 +134,7 @@ body::before {
   display: inline-block;
   width: 2px;
   height: 1em;
-  background-color: #ff3d00;
+  background-color: var(--red);
   margin-left: 2px;
   vertical-align: text-bottom;
   animation: cursorBlink 0.8s infinite;
@@ -70,6 +143,32 @@ body::before {
 @keyframes cursorBlink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
+}
+
+/* Glitch reveal animation */
+@keyframes glitchReveal {
+  0% {
+    opacity: 0;
+    transform: translateX(-8px);
+    filter: blur(4px);
+  }
+  20% {
+    opacity: 1;
+    color: var(--red);
+    transform: translateX(3px);
+    filter: blur(0);
+  }
+  40% {
+    transform: translateX(-2px);
+    color: var(--text-primary);
+  }
+  60% {
+    transform: translateX(1px);
+  }
+  100% {
+    transform: translateX(0);
+    color: var(--text-primary);
+  }
 }
 
 /* Reduced motion */

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { NAV_LINKS } from '@/lib/constants';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,12 +36,15 @@ export default function Nav() {
       </ul>
 
       {/* Desktop CTA */}
-      <a
-        href="#contact"
-        className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black max-md:hidden"
-      >
-        Talk to us
-      </a>
+      <div className="flex items-center gap-3 max-md:hidden">
+        <ThemeToggle />
+        <a
+          href="#contact"
+          className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black"
+        >
+          Talk to us
+        </a>
+      </div>
 
       {/* Mobile hamburger */}
       <button
@@ -82,13 +86,16 @@ export default function Nav() {
             </a>
           ))}
 
-          <a
-            href="#contact"
-            className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black text-center"
-            onClick={() => setMenuOpen(false)}
-          >
-            Talk to us
-          </a>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <a
+              href="#contact"
+              className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black text-center flex-1"
+              onClick={() => setMenuOpen(false)}
+            >
+              Talk to us
+            </a>
+          </div>
         </div>
       )}
     </nav>

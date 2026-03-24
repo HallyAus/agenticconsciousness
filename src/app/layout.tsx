@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Be_Vietnam_Pro, Space_Mono } from 'next/font/google';
 import './globals.css';
 import StructuredData from '@/components/StructuredData';
+import ThemeProvider from '@/components/ThemeProvider';
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['latin'],
@@ -76,16 +77,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${beVietnamPro.variable} ${spaceMono.variable}`}>
+    <html lang="en" className={`${beVietnamPro.variable} ${spaceMono.variable}`} data-theme="dark">
       <body>
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[10000] focus:bg-ac-red focus:text-white focus:p-4 focus:text-sm focus:font-bold"
-        >
-          Skip to content
-        </a>
-        <StructuredData />
-        {children}
+        <ThemeProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[10000] focus:bg-ac-red focus:text-white focus:p-4 focus:text-sm focus:font-bold"
+          >
+            Skip to content
+          </a>
+          <StructuredData />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
