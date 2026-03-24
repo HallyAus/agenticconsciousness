@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.env.local
+.env
+reference
+memory
+strategy
+specs
+docs
+.claude
+*.md
+!README.md
