@@ -38,3 +38,6 @@ node_modules/
 out/
 *.tsbuildinfo
 next-env.d.ts
+
+# Contact form leads (persist in Docker volume, not git)
+data/leads.jsonl

@@ -66,9 +66,9 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://agenticconsciousness.com.au',
-  },
-  icons: {
-    icon: '/favicon.svg',
+    types: {
+      'application/rss+xml': '/feed.xml',
+    },
   },
 };
 
