@@ -1,5 +1,7 @@
 import ScrollReveal from '@/components/ScrollReveal';
 import { CASE_STUDIES } from '@/lib/constants';
+import AnimatedCounter from '@/components/AnimatedCounter';
+import GlitchTitle from '@/components/GlitchTitle';
 
 export default function CaseStudies() {
   return (
@@ -11,9 +13,11 @@ export default function CaseStudies() {
               <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
                 003 / RESULTS
               </div>
-              <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
-                Proof of work.
-              </h2>
+              <GlitchTitle>
+                <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
+                  Proof of work.
+                </h2>
+              </GlitchTitle>
             </div>
             <div className="text-[0.95rem] text-text-dim max-w-[400px] font-light leading-[1.7]">
               Real outcomes. Names changed to protect the competitive advantage we gave them.
@@ -40,9 +44,10 @@ export default function CaseStudies() {
                 <div className="flex flex-col justify-center gap-4 py-8 px-10 border-l border-border-subtle max-[900px]:flex-row max-[900px]:border-l-0 max-[900px]:border-t max-[900px]:border-border-subtle">
                   {cs.metrics.map((m) => (
                     <div key={m.label}>
-                      <div className="text-[1.8rem] font-black text-text-primary tracking-[-1px] leading-none">
-                        {m.value}
-                      </div>
+                      <AnimatedCounter
+                        value={m.value}
+                        className="text-[1.8rem] font-black text-text-primary tracking-[-1px] leading-none"
+                      />
                       <div className="font-mono text-[0.65rem] text-text-dim tracking-[2px] uppercase">
                         {m.label}
                       </div>

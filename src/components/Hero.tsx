@@ -1,5 +1,6 @@
 import ScrollReveal from '@/components/ScrollReveal';
 import AiGreeting from '@/components/AiGreeting';
+import AnimatedCounter from '@/components/AnimatedCounter';
 
 const tags = [
   { label: 'AI', primary: true },
@@ -71,9 +72,10 @@ export default function Hero() {
         <div className="flex gap-16 mt-20 pt-12 border-t border-border-subtle max-md:gap-8 max-md:flex-wrap">
           {counters.map((c) => (
             <div key={c.label}>
-              <div className="text-[2.5rem] font-black text-ac-red tracking-tight leading-none">
-                {c.value}
-              </div>
+              <AnimatedCounter
+                value={c.value}
+                className="text-[2.5rem] font-black text-ac-red tracking-tight leading-none"
+              />
               <div className="font-mono text-[0.65rem] text-text-dim tracking-[2px] uppercase mt-[0.4rem]">
                 {c.label}
               </div>

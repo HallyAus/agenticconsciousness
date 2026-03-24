@@ -3,6 +3,7 @@ import { Be_Vietnam_Pro, Space_Mono } from 'next/font/google';
 import './globals.css';
 import StructuredData from '@/components/StructuredData';
 import ThemeProvider from '@/components/ThemeProvider';
+import ScrollProgress from '@/components/ScrollProgress';
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['latin'],
@@ -80,6 +81,7 @@ export default function RootLayout({
     <html lang="en" className={`${beVietnamPro.variable} ${spaceMono.variable}`} data-theme="dark">
       <body>
         <ThemeProvider>
+          <ScrollProgress />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[10000] focus:bg-ac-red focus:text-white focus:p-4 focus:text-sm focus:font-bold"

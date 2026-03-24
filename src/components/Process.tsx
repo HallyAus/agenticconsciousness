@@ -1,5 +1,6 @@
 import ScrollReveal from '@/components/ScrollReveal';
 import { PROCESS_STEPS } from '@/lib/constants';
+import GlitchTitle from '@/components/GlitchTitle';
 
 export default function Process() {
   return (
@@ -11,9 +12,11 @@ export default function Process() {
               <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
                 002 / METHOD
               </div>
-              <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
-                How we work.
-              </h2>
+              <GlitchTitle>
+                <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
+                  How we work.
+                </h2>
+              </GlitchTitle>
             </div>
             <div className="text-[0.95rem] text-text-dim max-w-[400px] font-light leading-[1.7]">
               A proven framework. Zero to autonomous in four phases.
