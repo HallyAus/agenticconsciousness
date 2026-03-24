@@ -107,7 +107,7 @@ export default function AiAudit() {
       <div className="max-w-[1200px] mx-auto">
         {/* Header */}
         <div className="mb-14">
-          <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
             005 / AI AUDIT
           </div>
           <div className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-5">
@@ -126,7 +126,7 @@ export default function AiAudit() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Industry */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Industry
               </label>
               <div className="relative">
@@ -162,7 +162,7 @@ export default function AiAudit() {
 
             {/* Business size */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Business Size
               </label>
               <div className="relative">
@@ -197,7 +197,7 @@ export default function AiAudit() {
 
             {/* Pain point */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Biggest Pain Point
               </label>
               <div className="relative">
@@ -206,11 +206,11 @@ export default function AiAudit() {
                   onChange={(e) => setPainPoint(e.target.value.slice(0, 500))}
                   placeholder="e.g. Quoting takes our estimators 3+ hours per job and we're losing work to faster competitors..."
                   rows={5}
-                  className="w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] transition-colors duration-150 placeholder:text-text-dead"
+                  className="w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] transition-colors duration-150 placeholder:text-text-ghost"
                   required
                 />
                 <div
-                  className={`text-right font-mono text-[0.55rem] tracking-[1px] mt-1 ${isOverLimit ? 'text-ac-red' : 'text-text-dim'}`}
+                  className={`text-right font-mono text-[0.65rem] tracking-[1px] mt-1 ${isOverLimit ? 'text-ac-red' : 'text-text-dim'}`}
                 >
                   {charCount} / 500
                 </div>
@@ -242,7 +242,7 @@ export default function AiAudit() {
                 <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-text-ghost">
                   Your snapshot will appear here
                 </div>
-                <p className="text-[0.85rem] text-text-dead leading-[1.7] font-light">
+                <p className="text-[0.85rem] text-text-ghost leading-[1.7] font-light">
                   Fill out the form and run your free AI audit. We&apos;ll identify your top three
                   automation opportunities — ranked by speed to value and tailored to your
                   industry.
@@ -265,7 +265,7 @@ export default function AiAudit() {
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
                 <AiLoading text="Analysing your business profile..." />
-                <p className="text-[0.75rem] text-text-dead font-mono tracking-[1px]">
+                <p className="text-[0.75rem] text-text-ghost font-mono tracking-[1px]">
                   Identifying opportunities specific to your industry and pain point...
                 </p>
               </div>
@@ -275,7 +275,7 @@ export default function AiAudit() {
               <div className="flex flex-col gap-6">
                 {/* Headline */}
                 <div>
-                  <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-2">
+                  <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-2">
                     AI Opportunity Snapshot
                   </div>
                   <h3 className="text-[1.4rem] font-black tracking-tight leading-tight text-white">
@@ -296,7 +296,7 @@ export default function AiAudit() {
                         </h4>
                         <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
                           <span
-                            className={`font-mono text-[0.55rem] tracking-[1px] uppercase border px-2 py-1 ${
+                            className={`font-mono text-[0.65rem] tracking-[1px] uppercase border px-2 py-1 ${
                               opp.impact === 'High'
                                 ? 'border-ac-red text-ac-red'
                                 : 'border-border-subtle text-text-dim'
@@ -304,7 +304,7 @@ export default function AiAudit() {
                           >
                             {opp.impact} impact
                           </span>
-                          <span className="font-mono text-[0.55rem] tracking-[1px] uppercase border border-border-subtle text-text-dim px-2 py-1">
+                          <span className="font-mono text-[0.65rem] tracking-[1px] uppercase border border-border-subtle text-text-dim px-2 py-1">
                             {opp.timeframe}
                           </span>
                         </div>

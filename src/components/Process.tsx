@@ -8,7 +8,7 @@ export default function Process() {
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
             <div>
-              <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+              <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
                 002 / METHOD
               </div>
               <div className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
@@ -27,7 +27,7 @@ export default function Process() {
                 className="group bg-ac-card py-8 px-6 relative transition-colors duration-300 hover:bg-ac-card-hover"
               >
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-ac-red scale-x-0 origin-left transition-transform duration-[400ms] group-hover:scale-x-100" />
-                <div className="font-mono text-[0.6rem] text-ac-red tracking-[3px] mb-4">
+                <div className="font-mono text-[0.7rem] text-ac-red tracking-[3px] mb-4">
                   {step.phase}
                 </div>
                 <h3 className="text-[1rem] font-black text-white tracking-[-0.3px] mb-[0.6rem]">

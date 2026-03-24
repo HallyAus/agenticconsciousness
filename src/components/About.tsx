@@ -29,7 +29,7 @@ export default function About() {
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
           <div className="mb-14">
-            <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+            <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
               004 / ABOUT
             </div>
             <div className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">

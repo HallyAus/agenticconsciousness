@@ -24,7 +24,7 @@ export default function Hero() {
           {tags.map((tag) => (
             <span
               key={tag.label}
-              className={`text-[0.6rem] font-black tracking-[2.5px] uppercase py-[0.35rem] px-[0.9rem] ${
+              className={`text-[0.7rem] font-black tracking-[2.5px] uppercase py-[0.35rem] px-[0.9rem] ${
                 tag.primary
                   ? 'bg-ac-red text-white'
                   : 'bg-[rgba(255,255,255,0.05)] text-text-dim'
@@ -73,7 +73,7 @@ export default function Hero() {
               <div className="text-[2.5rem] font-black text-ac-red tracking-tight leading-none">
                 {c.value}
               </div>
-              <div className="font-mono text-[0.6rem] text-text-dim tracking-[2px] uppercase mt-[0.4rem]">
+              <div className="font-mono text-[0.65rem] text-text-dim tracking-[2px] uppercase mt-[0.4rem]">
                 {c.label}
               </div>
             </div>

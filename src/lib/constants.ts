@@ -28,13 +28,13 @@ export const INITIAL_BOT_MESSAGE =
   "I'm the Agentic Consciousness AI. Ask me about our services, AI strategy, or how we can upgrade your business. I'm not a chatbot template — I'm Claude, running live.";
 
 export const NAV_LINKS = [
-  { label: 'Services', href: '#services' },
-  { label: 'Method', href: '#process' },
-  { label: 'Work', href: '#cases' },
-  { label: 'AI Audit', href: '#ai-audit' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Method', href: '/#process' },
+  { label: 'Work', href: '/#cases' },
+  { label: 'AI Audit', href: '/#ai-audit' },
   { label: 'Insights', href: '/blog' },
   { label: 'Tools', href: '/tools' },
-  { label: 'About', href: '#about' },
+  { label: 'About', href: '/#about' },
   { label: 'FAQ', href: '/faq' },
 ] as const;
 

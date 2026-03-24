@@ -8,7 +8,7 @@ export default function CaseStudies() {
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
             <div>
-              <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+              <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
                 003 / RESULTS
               </div>
               <div className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
@@ -26,7 +26,7 @@ export default function CaseStudies() {
                 key={cs.title}
                 className="grid grid-cols-[200px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-stretch max-[900px]:grid-cols-1"
               >
-                <div className="flex items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red text-center max-[900px]:border-r-0 max-[900px]:border-b-2 max-[900px]:p-4">
+                <div className="flex items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red text-center max-[900px]:border-r-0 max-[900px]:border-b-2 max-[900px]:p-4">
                   {cs.industry}
                 </div>
                 <div className="p-8">
@@ -43,7 +43,7 @@ export default function CaseStudies() {
                       <div className="text-[1.8rem] font-black text-white tracking-[-1px] leading-none">
                         {m.value}
                       </div>
-                      <div className="font-mono text-[0.55rem] text-text-dim tracking-[2px] uppercase">
+                      <div className="font-mono text-[0.65rem] text-text-dim tracking-[2px] uppercase">
                         {m.label}
                       </div>
                     </div>

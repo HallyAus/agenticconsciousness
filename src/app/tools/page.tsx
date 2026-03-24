@@ -15,7 +15,7 @@ export default function ToolsPage() {
       {/* Hero */}
       <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
         <div className="max-w-[1200px] mx-auto">
-          <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
             FREE AI TOOLS
           </div>
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-4">

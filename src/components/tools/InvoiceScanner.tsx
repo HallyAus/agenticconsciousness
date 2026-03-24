@@ -46,10 +46,12 @@ const btnClass =
   'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer border-none';
 
 export default function InvoiceScanner() {
-  const [mode, setMode] = useState<'text' | 'image'>('text');
+  const [mode, setMode] = useState<'text' | 'file'>('text');
   const [text, setText] = useState('');
-  const [imageData, setImageData] = useState<{ data: string; mediaType: 'image/jpeg' | 'image/png' } | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageData, setImageData] = useState<{ data: string; mediaType: 'image/jpeg' | 'image/png' | 'image/webp' } | null>(null);
+  const [pdfData, setPdfData] = useState<{ data: string } | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<InvoiceResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -59,25 +61,35 @@ export default function InvoiceScanner() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Image must be under 5MB.');
+    if (file.size > 10 * 1024 * 1024) {
+      setError('File must be under 10MB.');
       return;
     }
 
-    const mediaType = file.type as 'image/jpeg' | 'image/png';
-    if (mediaType !== 'image/jpeg' && mediaType !== 'image/png') {
-      setError('Only JPG and PNG images are supported.');
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+    if (!validTypes.includes(file.type)) {
+      setError('Supported formats: JPG, PNG, WebP, PDF.');
       return;
     }
 
     setError(null);
+    setFileName(file.name);
+
     const reader = new FileReader();
     reader.onload = (ev) => {
       const dataUrl = ev.target?.result as string;
-      setImagePreview(dataUrl);
-      // Strip data:image/...;base64, prefix
       const base64 = dataUrl.split(',')[1];
-      setImageData({ data: base64, mediaType });
+
+      if (file.type === 'application/pdf') {
+        setPdfData({ data: base64 });
+        setImageData(null);
+        setFilePreview(null);
+      } else {
+        const mediaType = file.type as 'image/jpeg' | 'image/png' | 'image/webp';
+        setImageData({ data: base64, mediaType });
+        setPdfData(null);
+        setFilePreview(dataUrl);
+      }
     };
     reader.readAsDataURL(file);
   }
@@ -92,7 +104,7 @@ export default function InvoiceScanner() {
 
   const canSubmit =
     !loading &&
-    ((mode === 'text' && text.trim().length >= 10) || (mode === 'image' && imageData !== null));
+    ((mode === 'text' && text.trim().length >= 10) || (mode === 'file' && (imageData !== null || pdfData !== null)));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -104,7 +116,11 @@ export default function InvoiceScanner() {
 
     try {
       const body =
-        mode === 'text' ? { text } : { image: imageData };
+        mode === 'text'
+          ? { text }
+          : pdfData
+            ? { pdf: pdfData }
+            : { image: imageData };
 
       const res = await fetch('/api/tools/invoice', {
         method: 'POST',
@@ -146,14 +162,14 @@ export default function InvoiceScanner() {
     <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
-          <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
             TOOL 01 / INVOICE SCANNER
           </div>
           <h2 className="text-[clamp(1.5rem,3vw,2rem)] font-black tracking-tight leading-none mb-4">
             Scan any invoice instantly.
           </h2>
           <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[480px]">
-            Paste invoice text or upload a photo. Claude extracts every field and classifies it for your records.
+            Paste invoice text or upload a file (PDF, JPG, PNG). Claude extracts every field and classifies it for your records.
           </p>
         </div>
 
@@ -162,7 +178,7 @@ export default function InvoiceScanner() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Mode toggle */}
             <div className="flex gap-0">
-              {(['text', 'image'] as const).map((m) => (
+              {(['text', 'file'] as const).map((m) => (
                 <button
                   key={m}
                   type="button"
@@ -173,14 +189,14 @@ export default function InvoiceScanner() {
                       : 'bg-transparent text-text-dim hover:text-white'
                   }`}
                 >
-                  {m === 'text' ? 'Paste Text' : 'Upload Image'}
+                  {m === 'text' ? 'Paste Text' : 'Upload File'}
                 </button>
               ))}
             </div>
 
             {mode === 'text' ? (
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+                <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                   Invoice Text
                 </label>
                 <textarea
@@ -189,14 +205,14 @@ export default function InvoiceScanner() {
                   placeholder="Paste your invoice text here..."
                   className={`${inputClass} min-h-[280px] resize-y`}
                 />
-                <div className="font-mono text-[0.55rem] tracking-[1px] text-text-dim text-right">
+                <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-right">
                   {text.length.toLocaleString()} / 15,000
                 </div>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
-                  Invoice Image (JPG / PNG, max 5MB)
+                <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+                  Invoice File (PDF, JPG, PNG — max 10MB)
                 </label>
                 <div
                   onDrop={handleDrop}
@@ -204,18 +220,26 @@ export default function InvoiceScanner() {
                   onClick={() => fileRef.current?.click()}
                   className="border border-dashed border-border-subtle min-h-[280px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-ac-red transition-colors duration-200 p-6"
                 >
-                  {imagePreview ? (
+                  {filePreview ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
-                      src={imagePreview}
+                      src={filePreview}
                       alt="Invoice preview"
                       className="max-h-[240px] object-contain"
                     />
+                  ) : fileName && pdfData ? (
+                    <div className="text-center">
+                      <div className="text-ac-red text-[2rem] mb-2">PDF</div>
+                      <div className="font-mono text-[0.7rem] text-text-primary">{fileName}</div>
+                    </div>
                   ) : (
                     <>
                       <div className="text-text-ghost text-[2rem]">↑</div>
-                      <div className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim text-center">
-                        Drop image here or click to upload
+                      <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim text-center">
+                        Drop file here or click to upload
+                      </div>
+                      <div className="font-mono text-[0.5rem] text-text-ghost">
+                        PDF, JPG, PNG, WebP
                       </div>
                     </>
                   )}
@@ -223,17 +247,17 @@ export default function InvoiceScanner() {
                 <input
                   ref={fileRef}
                   type="file"
-                  accept="image/jpeg,image/png"
+                  accept="application/pdf,image/jpeg,image/png,image/webp"
                   onChange={handleFileChange}
                   className="hidden"
                 />
-                {imagePreview && (
+                {(filePreview || pdfData) && (
                   <button
                     type="button"
-                    onClick={() => { setImageData(null); setImagePreview(null); if (fileRef.current) fileRef.current.value = ''; }}
-                    className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim hover:text-ac-red transition-colors duration-200 text-left"
+                    onClick={() => { setImageData(null); setPdfData(null); setFilePreview(null); setFileName(null); if (fileRef.current) fileRef.current.value = ''; }}
+                    className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim hover:text-ac-red transition-colors duration-200 text-left"
                   >
-                    ✕ Remove image
+                    ✕ Remove file
                   </button>
                 )}
               </div>
@@ -252,11 +276,11 @@ export default function InvoiceScanner() {
           <div className="flex flex-col gap-6">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-text-ghost">
+                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-dim">
                   Extracted data will appear here
                 </div>
-                <p className="text-[0.85rem] text-text-dead leading-[1.7] font-light">
-                  Paste invoice text or upload a photo. Claude will extract supplier details, line items, totals, and classify the expense automatically.
+                <p className="text-[0.85rem] text-text-ghost leading-[1.7] font-light">
+                  Upload an invoice and Claude will extract supplier details, line items, totals, and classify the expense automatically.
                 </p>
                 <div className="mt-4 border-t border-border-subtle pt-6 flex flex-col gap-3">
                   {['Supplier Details', 'Line Items', 'Classification'].map((label) => (
@@ -273,7 +297,7 @@ export default function InvoiceScanner() {
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
                 <AiLoading text="Scanning invoice..." />
-                <p className="text-[0.75rem] text-text-dead font-mono tracking-[1px]">
+                <p className="text-[0.75rem] text-text-ghost font-mono tracking-[1px]">
                   Extracting supplier details, line items, and classifying expense...
                 </p>
               </div>
@@ -283,7 +307,7 @@ export default function InvoiceScanner() {
               <div className="flex flex-col gap-5">
                 {/* Supplier */}
                 <div className="bg-ac-card border-t-[3px] border-ac-red p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-ac-red mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-3">
                     Supplier
                   </div>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-2">
@@ -303,7 +327,7 @@ export default function InvoiceScanner() {
 
                 {/* Invoice details */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Invoice Details
                   </div>
                   <div className="grid grid-cols-2 gap-x-6 gap-y-2">
@@ -324,7 +348,7 @@ export default function InvoiceScanner() {
                 {/* Line items */}
                 {result.lineItems.length > 0 && (
                   <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                    <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                       Line Items
                     </div>
                     <div className="overflow-x-auto">
@@ -355,7 +379,7 @@ export default function InvoiceScanner() {
 
                 {/* Totals */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Totals ({result.totals.currency})
                   </div>
                   <div className="flex flex-col gap-1">
@@ -377,21 +401,21 @@ export default function InvoiceScanner() {
 
                 {/* Classification */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     AI Classification
                   </div>
                   <div className="flex flex-wrap gap-2 mb-3">
-                    <span className="font-mono text-[0.55rem] tracking-[1px] uppercase border border-border-subtle text-text-dim px-2 py-1">
+                    <span className="font-mono text-[0.65rem] tracking-[1px] uppercase border border-border-subtle text-text-dim px-2 py-1">
                       {result.classification.category}
                     </span>
-                    <span className={`font-mono text-[0.55rem] tracking-[1px] uppercase border px-2 py-1 ${
+                    <span className={`font-mono text-[0.65rem] tracking-[1px] uppercase border px-2 py-1 ${
                       result.classification.type === 'Business'
                         ? 'border-ac-red text-ac-red'
                         : 'border-border-subtle text-text-dim'
                     }`}>
                       {result.classification.type}
                     </span>
-                    <span className={`font-mono text-[0.55rem] tracking-[1px] uppercase border px-2 py-1 ${
+                    <span className={`font-mono text-[0.65rem] tracking-[1px] uppercase border px-2 py-1 ${
                       result.classification.taxDeductible
                         ? 'border-[#39ff14] text-[#39ff14]'
                         : 'border-border-subtle text-text-dim'

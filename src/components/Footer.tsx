@@ -20,7 +20,7 @@ export default function Footer() {
         ))}
       </ul>
 
-      <div className="font-mono text-[0.55rem] text-text-ghost tracking-[1px]">
+      <div className="font-mono text-[0.65rem] text-text-ghost tracking-[1px]">
         &copy; {new Date().getFullYear()} AGENTIC CONSCIOUSNESS. ALL RIGHTS RESERVED.
       </div>
     </footer>

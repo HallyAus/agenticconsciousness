@@ -28,7 +28,7 @@ function confidencePill(level: 'High' | 'Medium' | 'Low') {
     Low: 'border-border-subtle text-text-dim',
   };
   return (
-    <span className={`font-mono text-[0.55rem] tracking-[1px] uppercase border px-2 py-1 ${styles[level]}`}>
+    <span className={`font-mono text-[0.65rem] tracking-[1px] uppercase border px-2 py-1 ${styles[level]}`}>
       {level} confidence
     </span>
   );
@@ -107,7 +107,7 @@ export default function CompetitorIntel() {
     <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
-          <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
             TOOL 03 / COMPETITOR INTEL
           </div>
           <h2 className="text-[clamp(1.5rem,3vw,2rem)] font-black tracking-tight leading-none mb-4">
@@ -122,7 +122,7 @@ export default function CompetitorIntel() {
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Competitor Name
               </label>
               <input
@@ -136,7 +136,7 @@ export default function CompetitorIntel() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Context (optional)
               </label>
               <textarea
@@ -145,13 +145,13 @@ export default function CompetitorIntel() {
                 placeholder="Industry, market segment, why you're analysing them..."
                 className={`${inputClass} min-h-[100px] resize-y`}
               />
-              <div className="font-mono text-[0.55rem] tracking-[1px] text-text-dim text-right">
+              <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-right">
                 {context.length} / 1,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Your Company (optional)
               </label>
               <input
@@ -176,10 +176,10 @@ export default function CompetitorIntel() {
           <div className="flex flex-col gap-5">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-text-ghost">
+                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-ghost">
                   Intelligence report will appear here
                 </div>
-                <p className="text-[0.85rem] text-text-dead leading-[1.7] font-light">
+                <p className="text-[0.85rem] text-text-ghost leading-[1.7] font-light">
                   Enter a competitor name and Claude will analyse their positioning, pricing strategy, strengths, weaknesses, and where you have the best opportunity to differentiate.
                 </p>
                 <div className="mt-4 border-t border-border-subtle pt-6 flex flex-col gap-3">
@@ -197,7 +197,7 @@ export default function CompetitorIntel() {
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
                 <AiLoading text="Analysing competitor..." />
-                <p className="text-[0.75rem] text-text-dead font-mono tracking-[1px]">
+                <p className="text-[0.75rem] text-text-ghost font-mono tracking-[1px]">
                   Gathering positioning data, identifying weaknesses, mapping opportunities...
                 </p>
               </div>
@@ -209,7 +209,7 @@ export default function CompetitorIntel() {
                 <div className="bg-ac-card border-t-[3px] border-ac-red p-5">
                   <div className="flex justify-between items-start gap-4 flex-wrap">
                     <div>
-                      <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-ac-red mb-1">
+                      <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-1">
                         Competitor
                       </div>
                       <h3 className="text-[1.2rem] font-black text-white">{result.companyName}</h3>
@@ -220,7 +220,7 @@ export default function CompetitorIntel() {
 
                 {/* Positioning */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Positioning
                   </div>
                   <p className="text-[0.82rem] text-text-dim font-light leading-[1.7]">
@@ -231,7 +231,7 @@ export default function CompetitorIntel() {
                 {/* Strengths & Weaknesses side by side */}
                 <div className="grid grid-cols-2 gap-4 max-[600px]:grid-cols-1">
                   <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                    <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                       Strengths
                     </div>
                     <ol className="flex flex-col gap-2">
@@ -245,7 +245,7 @@ export default function CompetitorIntel() {
                   </div>
 
                   <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                    <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                       Weaknesses
                     </div>
                     <ol className="flex flex-col gap-2">
@@ -261,7 +261,7 @@ export default function CompetitorIntel() {
 
                 {/* Pricing strategy */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Pricing Strategy
                   </div>
                   <p className="text-[0.82rem] text-text-dim font-light leading-[1.7]">
@@ -271,7 +271,7 @@ export default function CompetitorIntel() {
 
                 {/* Differentiation opportunities */}
                 <div className="bg-ac-card border-t-[3px] border-ac-red p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-ac-red mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-3">
                     Differentiation Opportunities
                   </div>
                   <ol className="flex flex-col gap-2">
@@ -286,7 +286,7 @@ export default function CompetitorIntel() {
 
                 {/* AI advantage */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     AI Advantage
                   </div>
                   <p className="text-[0.82rem] text-text-dim font-light leading-[1.7]">

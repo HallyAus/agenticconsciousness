@@ -8,7 +8,7 @@ export default function Services() {
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
             <div>
-              <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+              <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
                 001 / SERVICES
               </div>
               <div className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
@@ -44,7 +44,7 @@ export default function Services() {
                   {service.pills.map((pill) => (
                     <span
                       key={pill}
-                      className="font-mono text-[0.55rem] tracking-[1px] uppercase text-ac-red border border-border-red py-1 px-[0.6rem]"
+                      className="font-mono text-[0.65rem] tracking-[1px] uppercase text-ac-red border border-border-red py-1 px-[0.6rem]"
                     >
                       {pill}
                     </span>

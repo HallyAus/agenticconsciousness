@@ -148,7 +148,7 @@ export default function QuoteGenerator() {
     <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
-          <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
             TOOL 02 / QUOTE GENERATOR
           </div>
           <h2 className="text-[clamp(1.5rem,3vw,2rem)] font-black tracking-tight leading-none mb-4">
@@ -163,7 +163,7 @@ export default function QuoteGenerator() {
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Your Business Name
               </label>
               <input
@@ -177,7 +177,7 @@ export default function QuoteGenerator() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Client Name
               </label>
               <input
@@ -191,7 +191,7 @@ export default function QuoteGenerator() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Industry (optional)
               </label>
               <div className="relative">
@@ -214,7 +214,7 @@ export default function QuoteGenerator() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Job Description
               </label>
               <textarea
@@ -224,13 +224,13 @@ export default function QuoteGenerator() {
                 className={`${inputClass} min-h-[200px] resize-y`}
                 required
               />
-              <div className={`font-mono text-[0.55rem] tracking-[1px] text-right ${descLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
+              <div className={`font-mono text-[0.65rem] tracking-[1px] text-right ${descLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
                 {descLen.toLocaleString()} / 3,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Estimated Value (optional)
               </label>
               <input
@@ -243,7 +243,7 @@ export default function QuoteGenerator() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Quote Type
               </label>
               <ToggleGroup
@@ -266,10 +266,10 @@ export default function QuoteGenerator() {
           <div className="flex flex-col gap-5">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-text-ghost">
+                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-ghost">
                   Your quote will appear here
                 </div>
-                <p className="text-[0.85rem] text-text-dead leading-[1.7] font-light">
+                <p className="text-[0.85rem] text-text-ghost leading-[1.7] font-light">
                   Fill in the details and Claude will generate a professional quote document with itemised pricing, GST, payment terms, and next steps.
                 </p>
                 <div className="mt-4 border-t border-border-subtle pt-6 flex flex-col gap-3">
@@ -287,7 +287,7 @@ export default function QuoteGenerator() {
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
                 <AiLoading text="Generating quote..." />
-                <p className="text-[0.75rem] text-text-dead font-mono tracking-[1px]">
+                <p className="text-[0.75rem] text-text-ghost font-mono tracking-[1px]">
                   Building line items, calculating GST, drafting terms...
                 </p>
               </div>
@@ -299,7 +299,7 @@ export default function QuoteGenerator() {
                 <div className="bg-ac-card border-t-[3px] border-ac-red p-5">
                   <div className="flex justify-between items-start gap-4 flex-wrap">
                     <div>
-                      <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-ac-red mb-1">Quote Reference</div>
+                      <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-1">Quote Reference</div>
                       <div className="text-[1.1rem] font-black text-white">{result.reference}</div>
                     </div>
                     <div className="text-right">
@@ -323,7 +323,7 @@ export default function QuoteGenerator() {
 
                 {/* Scope */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Scope of Work
                   </div>
                   <p className="text-[0.82rem] text-text-dim font-light leading-[1.7] whitespace-pre-line">
@@ -333,7 +333,7 @@ export default function QuoteGenerator() {
 
                 {/* Line items */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Line Items
                   </div>
                   <div className="overflow-x-auto">
@@ -380,7 +380,7 @@ export default function QuoteGenerator() {
 
                 {/* Terms */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Terms
                   </div>
                   <ol className="flex flex-col gap-1">
@@ -395,7 +395,7 @@ export default function QuoteGenerator() {
 
                 {/* Next steps */}
                 <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.55rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Next Steps
                   </div>
                   <ol className="flex flex-col gap-1">
