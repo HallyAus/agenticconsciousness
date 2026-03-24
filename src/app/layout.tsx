@@ -4,6 +4,7 @@ import './globals.css';
 import StructuredData from '@/components/StructuredData';
 import ThemeProvider from '@/components/ThemeProvider';
 import ScrollProgress from '@/components/ScrollProgress';
+import ExitIntent from '@/components/ExitIntent';
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['latin'],
@@ -82,6 +83,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <ScrollProgress />
+          <ExitIntent />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:fixed focus:top-0 focus:left-0 focus:z-[10000] focus:bg-ac-red focus:text-white focus:p-4 focus:text-sm focus:font-bold"
