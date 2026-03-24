@@ -18,13 +18,14 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { text, image } = body as {
+    const { text, image, pdf } = body as {
       text?: string;
-      image?: { data: string; mediaType: 'image/jpeg' | 'image/png' };
+      image?: { data: string; mediaType: 'image/jpeg' | 'image/png' | 'image/webp' };
+      pdf?: { data: string };
     };
 
-    if (!text && !image) {
-      return NextResponse.json({ error: 'Either text or image is required.' }, { status: 400 });
+    if (!text && !image && !pdf) {
+      return NextResponse.json({ error: 'Provide invoice text, image, or PDF.' }, { status: 400 });
     }
 
     if (text && text.length > 15000) {
@@ -82,7 +83,22 @@ Rules:
 
     let userContent: Anthropic.MessageParam['content'];
 
-    if (image) {
+    if (pdf) {
+      userContent = [
+        {
+          type: 'document',
+          source: {
+            type: 'base64',
+            media_type: 'application/pdf',
+            data: pdf.data,
+          },
+        },
+        {
+          type: 'text',
+          text: 'Extract all invoice data from this PDF and return as JSON.',
+        },
+      ];
+    } else if (image) {
       userContent = [
         {
           type: 'image',

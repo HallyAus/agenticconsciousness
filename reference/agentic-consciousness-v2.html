@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentic Consciousness — AI Consulting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --red: #ff3d00;
+  --red-dim: rgba(255, 61, 0, 0.6);
+  --red-faint: rgba(255, 61, 0, 0.1);
+  --red-glow: rgba(255, 61, 0, 0.08);
+  --black: #0a0a0a;
+  --card: #111111;
+  --card-hover: #161616;
+  --block: #1a1a1a;
+  --white: #ffffff;
+  --text: rgba(255, 255, 255, 0.88);
+  --text-dim: rgba(255, 255, 255, 0.4);
+  --text-ghost: rgba(255, 255, 255, 0.15);
+  --text-dead: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-red: rgba(255, 61, 0, 0.25);
+  --font-display: 'Be Vietnam Pro', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--black);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--white);
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb { background: var(--red); }
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0 2.5rem;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--red);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -0.5px;
+  text-decoration: none;
+}
+
+.nav-logo span { color: var(--red); }
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  list-style: none;
+  align-items: center;
+}
+
+.nav-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--white); }
+
+.nav-cta {
+  display: inline-block;
+  background: var(--red);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0.55rem 1.2rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-cta:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--red);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 8rem 2.5rem 4rem;
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 40%;
+  height: 70%;
+  background: linear-gradient(180deg, var(--red-glow) 0%, transparent 80%);
+  pointer-events: none;
+}
+
+.hero-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.tag {
+  font-size: 0.6rem;
+  font-weight: 900;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 0.35rem 0.9rem;
+}
+
+.tag--primary { background: var(--red); color: var(--white); }
+
+.tag--ghost {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-dim);
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -3px;
+  margin-bottom: 2rem;
+}
+
+.hero h1 .line1 {
+  display: block;
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  color: var(--white);
+  animation: fadeInUp 0.6s ease-out 0.05s both;
+}
+
+.hero h1 .line2 {
+  display: block;
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  color: var(--red);
+  animation: fadeInUp 0.6s ease-out 0.1s both;
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  color: var(--text-dim);
+  max-width: 460px;
+  line-height: 1.7;
+  font-weight: 300;
+  border-left: 3px solid var(--red);
+  padding-left: 1.25rem;
+  margin-bottom: 2.5rem;
+  animation: fadeInUp 0.6s ease-out 0.15s both;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
+}
+
+.btn-brutal {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 0.9rem 2rem;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-brutal--fill {
+  background: var(--red);
+  color: var(--white);
+}
+
+.btn-brutal--fill:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+.btn-brutal--outline {
+  background: transparent;
+  border: 2px solid var(--red);
+  color: var(--red);
+}
+
+.btn-brutal--outline:hover {
+  background: var(--red);
+  color: var(--white);
+}
+
+.hero-counter {
+  display: flex;
+  gap: 4rem;
+  margin-top: 5rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--border);
+  animation: fadeInUp 0.6s ease-out 0.25s both;
+}
+
+.counter-item {}
+
+.counter-val {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--red);
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.counter-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 0.4rem;
+}
+
+/* ── SECTIONS ── */
+section { padding: 7rem 2.5rem; }
+
+.section-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 3.5rem;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 0.75rem;
+}
+
+.section-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.section-desc {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  max-width: 400px;
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+.container { max-width: 1200px; margin: 0 auto; }
+
+/* ── SERVICES ── */
+.services-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--border);
+}
+
+.service-block {
+  background: var(--card);
+  padding: 2.5rem 2rem;
+  position: relative;
+  border-top: 3px solid var(--red);
+  transition: background 0.3s;
+}
+
+.service-block:nth-child(2) { border-top-color: var(--red-dim); }
+.service-block:nth-child(3) { border-top-color: rgba(255, 61, 0, 0.35); }
+
+.service-block:hover { background: var(--card-hover); }
+
+.service-num {
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--text-dead);
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+
+.service-block h3 {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.service-block p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.service-list {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.service-pill {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--red);
+  border: 1px solid var(--border-red);
+  padding: 0.25rem 0.6rem;
+}
+
+/* ── PROCESS ── */
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  background: var(--border);
+}
+
+.process-card {
+  background: var(--card);
+  padding: 2rem 1.5rem;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.process-card:hover { background: var(--card-hover); }
+
+.process-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s;
+}
+
+.process-card:hover::before { transform: scaleX(1); }
+
+.process-num {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--red);
+  letter-spacing: 3px;
+  margin-bottom: 1rem;
+}
+
+.process-card h3 {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.3px;
+}
+
+.process-card p {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+/* ── CASE STUDIES ── */
+.cases-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.case-row {
+  display: grid;
+  grid-template-columns: 200px 1fr auto;
+  background: var(--card);
+  transition: background 0.3s;
+  align-items: stretch;
+}
+
+.case-row:hover { background: var(--card-hover); }
+
+.case-industry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.5rem;
+  border-right: 2px solid var(--red);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--red);
+  text-align: center;
+}
+
+.case-content {
+  padding: 2rem 2rem;
+}
+
+.case-content h3 {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -0.3px;
+  margin-bottom: 0.5rem;
+}
+
+.case-content p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  font-weight: 300;
+  line-height: 1.6;
+  max-width: 500px;
+}
+
+.case-metrics {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem 2.5rem;
+  border-left: 1px solid var(--border);
+}
+
+.case-metric {}
+
+.case-metric-val {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -1px;
+  line-height: 1;
+}
+
+.case-metric-label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── CTA ── */
+.cta-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-inner {
+  background: var(--card);
+  border: 2px solid var(--red);
+  padding: 5rem 3rem;
+  text-align: center;
+  position: relative;
+}
+
+.cta-inner::before {
+  content: 'AC';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20rem;
+  font-weight: 900;
+  color: var(--text-dead);
+  pointer-events: none;
+  letter-spacing: -10px;
+}
+
+.cta-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  letter-spacing: -2px;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.cta-title span { color: var(--red); }
+
+.cta-desc {
+  font-size: 1rem;
+  color: var(--text-dim);
+  max-width: 480px;
+  margin: 0 auto 2.5rem;
+  font-weight: 300;
+  line-height: 1.7;
+  position: relative;
+}
+
+.cta-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  position: relative;
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 2.5rem 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 2px solid var(--red);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-brand {
+  font-weight: 900;
+  font-size: 0.9rem;
+  color: var(--white);
+  letter-spacing: -0.5px;
+}
+
+.footer-brand span { color: var(--red); }
+
+.footer-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.footer-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--white); }
+
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--text-ghost);
+  letter-spacing: 1px;
+}
+
+/* ── CHATBOT ── */
+.chat-toggle {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  width: 56px;
+  height: 56px;
+  background: var(--red);
+  border: none;
+  color: var(--white);
+  font-size: 1.2rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chat-toggle:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+.chat-toggle.active {
+  background: var(--white);
+  color: var(--black);
+}
+
+.chat-window {
+  position: fixed;
+  bottom: 5.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  width: 400px;
+  max-width: calc(100vw - 1.5rem);
+  height: 500px;
+  max-height: calc(100vh - 8rem);
+  background: var(--black);
+  border: 2px solid var(--red);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-window.open {
+  display: flex;
+  animation: chatIn 0.2s ease-out;
+}
+
+.chat-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--red);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--card);
+}
+
+.chat-status {
+  width: 7px;
+  height: 7px;
+  background: #39ff14;
+  animation: blink 2s infinite;
+}
+
+.chat-header-info {}
+
+.chat-header-title {
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--white);
+}
+
+.chat-header-sub {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  color: var(--text-dim);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.chat-messages::-webkit-scrollbar { width: 2px; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--red); }
+
+.msg {
+  max-width: 85%;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  animation: msgIn 0.2s ease-out;
+}
+
+.msg.bot {
+  align-self: flex-start;
+  background: var(--block);
+  border-left: 2px solid var(--red);
+  color: var(--text);
+}
+
+.msg.user {
+  align-self: flex-end;
+  background: var(--red);
+  color: var(--white);
+}
+
+.msg.typing .dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.msg.typing .dots span {
+  width: 5px;
+  height: 5px;
+  background: var(--red);
+  animation: dotPulse 1.4s infinite ease-in-out;
+}
+
+.msg.typing .dots span:nth-child(2) { animation-delay: 0.15s; }
+.msg.typing .dots span:nth-child(3) { animation-delay: 0.3s; }
+
+.chat-input-area {
+  padding: 0.6rem;
+  border-top: 2px solid var(--red);
+  display: flex;
+  gap: 0;
+  background: var(--card);
+}
+
+.chat-input {
+  flex: 1;
+  background: var(--black);
+  border: 1px solid var(--border);
+  padding: 0.6rem 0.8rem;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.chat-input::placeholder { color: var(--text-ghost); }
+.chat-input:focus { border-color: var(--red); }
+
+.chat-send {
+  background: var(--red);
+  border: none;
+  color: var(--white);
+  padding: 0 1.2rem;
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.chat-send:hover {
+  background: var(--white);
+  color: var(--black);
+}
+
+.chat-send:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* ── WHO SECTION (CREDIBILITY) ── */
+.who-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border);
+}
+
+.who-block {
+  background: var(--card);
+  padding: 2.5rem 2rem;
+}
+
+.who-block h3 {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+
+.who-block p {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.who-highlight {
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--red);
+  letter-spacing: -1px;
+  margin-bottom: 0.3rem;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes chatIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% { transform: scale(0.5); opacity: 0.3; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes redLine {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 2px;
+  background: var(--red);
+  transform-origin: left;
+  animation: redLine 1s ease-out;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .services-strip { grid-template-columns: 1fr; }
+  .process-grid { grid-template-columns: 1fr 1fr; }
+  .case-row { grid-template-columns: 1fr; }
+  .case-industry { border-right: none; border-bottom: 2px solid var(--red); padding: 1rem; }
+  .case-metrics { flex-direction: row; border-left: none; border-top: 1px solid var(--border); }
+  .who-grid { grid-template-columns: 1fr; }
+  .hero-counter { gap: 2rem; flex-wrap: wrap; }
+}
+
+@media (max-width: 640px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: block; }
+  section { padding: 5rem 1.25rem; }
+  .hero { padding: 7rem 1.25rem 3rem; }
+  .hero-actions { flex-direction: column; }
+  .process-grid { grid-template-columns: 1fr; }
+  .cta-inner { padding: 3rem 1.5rem; }
+  footer { flex-direction: column; text-align: center; }
+  .chat-window { right: 0; bottom: 4.5rem; width: 100%; max-width: 100%; height: calc(100vh - 6rem); border-left: none; border-right: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">AC<span>_</span></a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Method</a></li>
+    <li><a href="#cases">Work</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Talk to us</a>
+  <button class="nav-hamburger" onclick="this.parentElement.querySelector('.nav-links').classList.toggle('show');this.parentElement.querySelector('.nav-links').style.display=this.parentElement.querySelector('.nav-links').style.display==='flex'?'none':'flex'" aria-label="Menu">&#9776;</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-tags">
+    <span class="tag tag--primary">AI</span>
+    <span class="tag tag--ghost">Consulting</span>
+    <span class="tag tag--ghost">Automation</span>
+    <span class="tag tag--ghost">Strategy</span>
+  </div>
+  <h1>
+    <span class="line1">AGENTIC</span>
+    <span class="line2">CONSCIOUSNESS</span>
+  </h1>
+  <p class="hero-desc">We don't just advise — we build and deploy AI systems that run your business better than you thought possible.</p>
+  <div class="hero-actions">
+    <a href="#contact" class="btn-brutal btn-brutal--fill">Free consultation →</a>
+    <a href="#cases" class="btn-brutal btn-brutal--outline">See results</a>
+  </div>
+  <div class="hero-counter">
+    <div class="counter-item">
+      <div class="counter-val">21+</div>
+      <div class="counter-label">Years experience</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-val">3</div>
+      <div class="counter-label">Service pillars</div>
+    </div>
+    <div class="counter-item">
+      <div class="counter-val">100%</div>
+      <div class="counter-label">AI-powered</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container reveal">
+    <div class="section-top">
+      <div>
+        <div class="section-label">001 / SERVICES</div>
+        <div class="section-title">What we build.</div>
+      </div>
+      <div class="section-desc">Three pillars. One mission. Get your business running on intelligence, not guesswork.</div>
+    </div>
+    <div class="services-strip">
+      <div class="service-block">
+        <div class="service-num">01</div>
+        <h3>Strategy & Workshops</h3>
+        <p>No-fluff sessions that demystify AI for your team. We map your operations, find the quick wins, and build a practical roadmap you can actually execute on.</p>
+        <div class="service-list">
+          <span class="service-pill">Roadmaps</span>
+          <span class="service-pill">Workshops</span>
+          <span class="service-pill">Audits</span>
+          <span class="service-pill">Team training</span>
+        </div>
+      </div>
+      <div class="service-block">
+        <div class="service-num">02</div>
+        <h3>Tool Implementation</h3>
+        <p>ChatGPT. Claude. Copilot. Custom models. We deploy AI tools into your existing stack, configure them properly, and train your team to use them from day one.</p>
+        <div class="service-list">
+          <span class="service-pill">ChatGPT</span>
+          <span class="service-pill">Claude</span>
+          <span class="service-pill">Copilot</span>
+          <span class="service-pill">Custom</span>
+        </div>
+      </div>
+      <div class="service-block">
+        <div class="service-num">03</div>
+        <h3>Automation & Agents</h3>
+        <p>End-to-end autonomous pipelines that eliminate busywork. Document processing, customer service, scheduling, reporting — systems that run themselves.</p>
+        <div class="service-list">
+          <span class="service-pill">Pipelines</span>
+          <span class="service-pill">Agents</span>
+          <span class="service-pill">Workflows</span>
+          <span class="service-pill">Integrations</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="container reveal">
+    <div class="section-top">
+      <div>
+        <div class="section-label">002 / METHOD</div>
+        <div class="section-title">How we work.</div>
+      </div>
+      <div class="section-desc">A proven framework. Zero to autonomous in four phases.</div>
+    </div>
+    <div class="process-grid">
+      <div class="process-card">
+        <div class="process-num">PHASE 01</div>
+        <h3>Discovery</h3>
+        <p>Free, no-obligation conversation. We learn your pain points, workflows, and goals. You learn what AI can actually do for you.</p>
+      </div>
+      <div class="process-card">
+        <div class="process-num">PHASE 02</div>
+        <h3>Audit</h3>
+        <p>We assess your tools, data maturity, and team capabilities. You get a clear report — what's possible, what to prioritise, what to skip.</p>
+      </div>
+      <div class="process-card">
+        <div class="process-num">PHASE 03</div>
+        <h3>Deploy</h3>
+        <p>Rapid implementation sprint. We set up, integrate, and test AI solutions in your environment. Your team gets trained hands-on.</p>
+      </div>
+      <div class="process-card">
+        <div class="process-num">PHASE 04</div>
+        <h3>Scale</h3>
+        <p>Ongoing refinement from real usage data. We expand what works, cut what doesn't, and keep your AI capabilities evolving.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CASE STUDIES -->
+<section id="cases">
+  <div class="container reveal">
+    <div class="section-top">
+      <div>
+        <div class="section-label">003 / RESULTS</div>
+        <div class="section-title">Proof of work.</div>
+      </div>
+      <div class="section-desc">Real outcomes. Names changed to protect the competitive advantage we gave them.</div>
+    </div>
+    <div class="cases-stack">
+      <div class="case-row">
+        <div class="case-industry">Manufacturing</div>
+        <div class="case-content">
+          <h3>Automated Quality Inspection Pipeline</h3>
+          <p>Replaced manual visual inspection with AI-powered defect detection. Cut QA processing time by 62% while pushing defect catch rate to 99.2%.</p>
+        </div>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <div class="case-metric-val">-62%</div>
+            <div class="case-metric-label">Processing time</div>
+          </div>
+          <div class="case-metric">
+            <div class="case-metric-val">$340K</div>
+            <div class="case-metric-label">Annual savings</div>
+          </div>
+        </div>
+      </div>
+      <div class="case-row">
+        <div class="case-industry">Professional<br>Services</div>
+        <div class="case-content">
+          <h3>AI-Augmented Proposal Generation</h3>
+          <p>Deployed an AI writing and research pipeline that tripled proposal output. Win rate increased 18% with higher-quality, personalised submissions.</p>
+        </div>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <div class="case-metric-val">3.5x</div>
+            <div class="case-metric-label">Output increase</div>
+          </div>
+          <div class="case-metric">
+            <div class="case-metric-val">+18%</div>
+            <div class="case-metric-label">Win rate</div>
+          </div>
+        </div>
+      </div>
+      <div class="case-row">
+        <div class="case-industry">Trades &<br>Services</div>
+        <div class="case-content">
+          <h3>Smart Scheduling & Customer Comms</h3>
+          <p>Built an AI assistant handling bookings, rescheduling, and follow-ups automatically. Owner reclaimed 8+ hours per week of admin time.</p>
+        </div>
+        <div class="case-metrics">
+          <div class="case-metric">
+            <div class="case-metric-val">-8hrs</div>
+            <div class="case-metric-label">Per week admin</div>
+          </div>
+          <div class="case-metric">
+            <div class="case-metric-val">96%</div>
+            <div class="case-metric-label">Satisfaction</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container reveal">
+    <div class="section-top">
+      <div>
+        <div class="section-label">004 / ABOUT</div>
+        <div class="section-title">Who we are.</div>
+      </div>
+    </div>
+    <div class="who-grid">
+      <div class="who-block">
+        <div class="who-highlight">21+</div>
+        <h3>Years in the field</h3>
+        <p>Founded by Daniel Hall — two decades of hands-on industry experience across enterprise systems, automation, and technology implementation. This isn't theory. It's applied intelligence.</p>
+      </div>
+      <div class="who-block">
+        <h3>We build what we sell</h3>
+        <p>This entire website is AI-powered — including the chatbot in the corner. We practice what we preach. Every tool, every workflow, every recommendation comes from real-world deployment experience.</p>
+      </div>
+      <div class="who-block">
+        <h3>Australian-based</h3>
+        <p>We work across all industries and business sizes — SMBs, enterprise, tradies, startups. If you have operations, we can make them smarter. Based in Australia, available nationally.</p>
+      </div>
+      <div class="who-block">
+        <h3>AI-native approach</h3>
+        <p>We don't just bolt AI onto your existing processes. We rethink workflows from the ground up with intelligence at the centre. The result: systems that don't just assist — they operate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+<section id="contact" class="cta-section">
+  <div class="container reveal">
+    <div class="cta-inner">
+      <div class="section-label">READY?</div>
+      <div class="cta-title">Let's build something <span>intelligent.</span></div>
+      <div class="cta-desc">Book a free AI introduction session. No sales pitch — just a direct conversation about what AI can do for your business right now.</div>
+      <div class="cta-actions">
+        <a href="mailto:hello@agenticconsciousness.com" class="btn-brutal btn-brutal--fill">Book your free intro →</a>
+        <button class="btn-brutal btn-brutal--outline" onclick="toggleChat()">Ask our AI</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">AC<span>_</span></div>
+  <ul class="footer-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Method</a></li>
+    <li><a href="#cases">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="footer-copy">&copy; 2026 AGENTIC CONSCIOUSNESS. ALL RIGHTS RESERVED.</div>
+</footer>
+
+<!-- CHATBOT -->
+<button class="chat-toggle" id="chatToggle" onclick="toggleChat()" aria-label="Open AI Chat">AC</button>
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header">
+    <div class="chat-status"></div>
+    <div class="chat-header-info">
+      <div class="chat-header-title">AC Neural Agent</div>
+      <div class="chat-header-sub">Powered by Claude — ask anything</div>
+    </div>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg bot">I'm the Agentic Consciousness AI. Ask me about our services, AI strategy, or how we can upgrade your business. I'm not a chatbot template — I'm Claude, running live.</div>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" class="chat-input" id="chatInput" placeholder="Ask about AI consulting..." onkeydown="if(event.key==='Enter')sendMessage()">
+    <button class="chat-send" id="chatSend" onclick="sendMessage()">SEND</button>
+  </div>
+</div>
+
+<script>
+// ── SCROLL REVEAL ──
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ── CHAT TOGGLE ──
+function toggleChat() {
+  const w = document.getElementById('chatWindow');
+  const b = document.getElementById('chatToggle');
+  const open = w.classList.toggle('open');
+  b.classList.toggle('active', open);
+  b.textContent = open ? '✕' : 'AC';
+  if (open) document.getElementById('chatInput').focus();
+}
+
+// ── CHAT LOGIC (CLAUDE API) ──
+const SYS = `You are the AI assistant for Agentic Consciousness, an AI consulting company founded by Daniel Hall — a professional with 21+ years of industry experience.
+
+Your role: Answer questions about the company's services, approach, and AI in general. Be helpful, knowledgeable, and direct. No fluff. Guide interested visitors toward booking a free AI introduction session.
+
+Company services:
+1. AI Strategy & Workshops — Custom introduction sessions, opportunity mapping, practical roadmaps
+2. AI Tool Implementation — ChatGPT, Claude, Copilot, custom models deployed into client workflows
+3. Automation & Workflows — End-to-end autonomous pipelines, document processing, AI customer service agents
+
+Process: Discovery Call → AI Readiness Audit → Implementation Sprint → Optimise & Scale
+
+Key facts:
+- Free initial consultation, no obligation
+- We work with all business sizes: SMBs, enterprise, tradies, any industry
+- Australian-based consulting, available nationally
+- We don't just advise — we build and deploy
+- This chatbot itself is proof of what we do
+- Contact: hello@agenticconsciousness.com
+
+Tone: Direct. Confident. No corporate waffle. Keep responses concise (2-4 sentences unless detail is asked for). Use Australian English spelling.`;
+
+let history = [];
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  addMsg(text, 'user');
+  history.push({ role: 'user', content: text });
+
+  const btn = document.getElementById('chatSend');
+  btn.disabled = true;
+
+  const typing = document.createElement('div');
+  typing.className = 'msg bot typing';
+  typing.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+  document.getElementById('chatMessages').appendChild(typing);
+  scroll();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYS,
+        messages: history
+      })
+    });
+
+    const data = await res.json();
+    typing.remove();
+
+    if (data.content && data.content.length > 0) {
+      const reply = data.content.map(b => b.text || '').join('');
+      history.push({ role: 'assistant', content: reply });
+      addMsg(reply, 'bot');
+    } else {
+      addMsg("Something went wrong. Email us direct: hello@agenticconsciousness.com", 'bot');
+    }
+  } catch (e) {
+    typing.remove();
+    addMsg("Connection error. Try again or reach us at hello@agenticconsciousness.com", 'bot');
+  }
+
+  btn.disabled = false;
+}
+
+function addMsg(text, type) {
+  const el = document.createElement('div');
+  el.className = `msg ${type}`;
+  el.textContent = text;
+  document.getElementById('chatMessages').appendChild(el);
+  scroll();
+}
+
+function scroll() {
+  const m = document.getElementById('chatMessages');
+  m.scrollTop = m.scrollHeight;
+}
+</script>
+</body>
+</html>
