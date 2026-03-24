@@ -12,10 +12,19 @@ export async function POST(req: NextRequest) {
   try {
     const { timeOfDay, dayOfWeek, hour, returning } = await req.json();
 
-    // Cloudflare provides geo headers via the tunnel
-    const city = req.headers.get('cf-ipcity') || req.headers.get('x-vercel-ip-city') || null;
-    const region = req.headers.get('cf-ipregion') || req.headers.get('x-vercel-ip-country-region') || null;
-    const country = req.headers.get('cf-ipcountry') || req.headers.get('x-vercel-ip-country') || null;
+    // Cloudflare geo headers (CDN proxy adds these, tunnel forwards them)
+    const city = req.headers.get('cf-ipcity') || req.headers.get('x-forwarded-city') || null;
+    const region = req.headers.get('cf-region') || req.headers.get('cf-ipregion') || null;
+    const country = req.headers.get('cf-ipcountry') || null;
+
+    // Log headers for debugging (remove once geo is confirmed working)
+    console.log(JSON.stringify({
+      event: 'greeting_geo_debug',
+      city, region, country,
+      allCfHeaders: Object.fromEntries(
+        [...req.headers.entries()].filter(([k]) => k.startsWith('cf-') || k.startsWith('x-forwarded'))
+      ),
+    }));
 
     // Cache key includes location for geo-aware greetings
     const locationKey = city || region || 'unknown';

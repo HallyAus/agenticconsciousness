@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import AiLoading from '@/components/AiLoading';
 import CopyButton from '@/components/CopyButton';
+import SendToEmail from '@/components/SendToEmail';
 import ToggleGroup from '@/components/ToggleGroup';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 
@@ -438,9 +439,10 @@ export default function QuoteGenerator() {
                   </ol>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-3 flex-wrap items-center">
                   <CopyButton text={buildQuoteText(result)} label="COPY QUOTE" />
                   <CopyButton text={JSON.stringify(result, null, 2)} label="COPY JSON" />
+                  <SendToEmail resultText={buildQuoteText(result)} toolName="Quote Generator" />
                 </div>
               </div>
             )}

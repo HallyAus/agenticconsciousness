@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import AiLoading from '@/components/AiLoading';
 import CopyButton from '@/components/CopyButton';
+import SendToEmail from '@/components/SendToEmail';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 
 interface LineItem {
@@ -461,10 +462,11 @@ export default function InvoiceScanner() {
                   )}
                 </div>
 
-                {/* Copy buttons */}
-                <div className="flex gap-3 flex-wrap">
+                {/* Copy + Email buttons */}
+                <div className="flex gap-3 flex-wrap items-center">
                   <CopyButton text={buildCsv(result)} label="COPY CSV" />
                   <CopyButton text={JSON.stringify(result, null, 2)} label="COPY JSON" />
+                  <SendToEmail resultText={JSON.stringify(result, null, 2)} toolName="Invoice Scanner" />
                 </div>
               </div>
             )}
