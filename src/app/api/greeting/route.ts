@@ -22,36 +22,26 @@ export async function POST(req: NextRequest) {
   try {
     const { timeOfDay, dayOfWeek, hour, returning } = await req.json();
 
-    // Cloudflare geo headers (CDN proxy adds these, tunnel forwards them)
-    const city = req.headers.get('cf-ipcity') || req.headers.get('x-forwarded-city') || null;
-    const region = req.headers.get('cf-region') || req.headers.get('cf-ipregion') || null;
+    // Cloudflare Tunnel provides cf-ipcountry only (no city/region on free plan)
     const country = req.headers.get('cf-ipcountry') || null;
 
-    // Log headers for debugging (remove once geo is confirmed working)
-    console.log(JSON.stringify({
-      event: 'greeting_geo_debug',
-      city, region, country,
-      allCfHeaders: Object.fromEntries(
-        [...req.headers.entries()].filter(([k]) => k.startsWith('cf-') || k.startsWith('x-forwarded'))
-      ),
-    }));
-
-    // Cache key includes location for geo-aware greetings
-    const locationKey = city || region || 'unknown';
-    const cacheKey = `${timeOfDay}-${hour}-${locationKey}-${returning ? 'ret' : 'new'}`;
+    const cacheKey = `${timeOfDay}-${hour}-${country || 'unknown'}-${returning ? 'ret' : 'new'}`;
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
       return NextResponse.json({ greeting: cached.greeting });
     }
 
     // Build context string
+    const countryNames: Record<string, string> = {
+      AU: 'Australia', US: 'the United States', GB: 'the UK', NZ: 'New Zealand',
+      CA: 'Canada', DE: 'Germany', FR: 'France', JP: 'Japan', SG: 'Singapore',
+      IN: 'India', IE: 'Ireland', HK: 'Hong Kong',
+    };
+    const countryName = country ? (countryNames[country] || country) : null;
+
     let context = `a ${dayOfWeek} ${timeOfDay} (${hour}:00)`;
-    if (city && region) {
-      context += `, visiting from ${city}, ${region}`;
-    } else if (region) {
-      context += `, visiting from ${region}`;
-    } else if (country) {
-      context += `, visiting from ${country}`;
+    if (countryName) {
+      context += `, visitor from ${countryName}`;
     }
     if (returning) {
       context += `. This is a returning visitor.`;
