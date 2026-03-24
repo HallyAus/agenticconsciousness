@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import AiLoading from '@/components/AiLoading';
+import StagedLoading from '@/components/StagedLoading';
 import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import ToggleGroup from '@/components/ToggleGroup';
@@ -46,6 +46,16 @@ interface QuoteResult {
   nextSteps: string[];
 }
 
+const EXAMPLE = {
+  businessName: 'Coastal Plumbing Solutions',
+  clientName: 'Sarah Chen — BluePeak Properties',
+  industry: 'Construction & Trades',
+  jobDescription:
+    'Full bathroom renovation including removal of existing fixtures, supply and install of new vanity unit, toilet, shower screen, mixer taps, and associated pipework. Includes waterproofing to AS 3740, tiling preparation, and all plumbing connections. Property is a 3-bedroom unit in Surfers Paradise, second floor, lift access available.',
+  estimatedValue: '$12,000',
+  quoteType: 'Detailed Proposal',
+};
+
 const inputClass =
   'w-full bg-ac-black border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim';
 
@@ -55,6 +65,14 @@ const btnClass =
 const selectClass =
   'w-full bg-ac-black border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red appearance-none cursor-pointer';
 
+const STAGED_STEPS = [
+  'Analysing scope...',
+  'Calculating line items...',
+  'Drafting terms...',
+  'Formatting document...',
+  'Complete.',
+];
+
 export default function QuoteGenerator() {
   const [businessName, setBusinessName] = useState('');
   const [clientName, setClientName] = useState('');
@@ -63,6 +81,7 @@ export default function QuoteGenerator() {
   const [estimatedValue, setEstimatedValue] = useState('');
   const [quoteType, setQuoteType] = useState('Simple Quote');
   const [loading, setLoading] = useState(false);
+  const [loadingComplete, setLoadingComplete] = useState(false);
   const [result, setResult] = useState<QuoteResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [remainingUses, setRemainingUses] = useState<number>(() => getUsesRemaining());
@@ -76,6 +95,29 @@ export default function QuoteGenerator() {
     descLen >= 10 &&
     descLen <= 3000;
 
+  function fillExample() {
+    setBusinessName(EXAMPLE.businessName);
+    setClientName(EXAMPLE.clientName);
+    setIndustry(EXAMPLE.industry);
+    setJobDescription(EXAMPLE.jobDescription);
+    setEstimatedValue(EXAMPLE.estimatedValue);
+    setQuoteType(EXAMPLE.quoteType);
+    setResult(null);
+    setError(null);
+  }
+
+  function clearAll() {
+    setBusinessName('');
+    setClientName('');
+    setIndustry('');
+    setJobDescription('');
+    setEstimatedValue('');
+    setQuoteType('Simple Quote');
+    setResult(null);
+    setError(null);
+    setLoadingComplete(false);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
@@ -87,6 +129,7 @@ export default function QuoteGenerator() {
     }
 
     setLoading(true);
+    setLoadingComplete(false);
     setError(null);
     setResult(null);
 
@@ -110,7 +153,8 @@ export default function QuoteGenerator() {
       } else {
         const next = incrementRateLimit();
         setRemainingUses(Math.max(0, MAX_TOOL_USES - next.count));
-        setResult(data);
+        setLoadingComplete(true);
+        setTimeout(() => setResult(data), 400);
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
@@ -174,6 +218,24 @@ export default function QuoteGenerator() {
         <div className="grid grid-cols-2 gap-8 max-[900px]:grid-cols-1">
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {/* TRY AN EXAMPLE */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={fillExample}
+                className="font-mono text-[0.65rem] tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                style={{
+                  border: '1px solid var(--red-pill-border)',
+                  color: 'var(--red-text)',
+                  background: 'transparent',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--red-faint)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+              >
+                TRY AN EXAMPLE
+              </button>
+            </div>
+
             <div className="flex flex-col gap-2">
               <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Your Business Name
@@ -317,21 +379,36 @@ export default function QuoteGenerator() {
 
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
-                <AiLoading text="Generating quote..." />
-                <p className="text-[0.75rem] text-text-dim font-mono tracking-[1px]">
-                  Building line items, calculating GST, drafting terms...
-                </p>
+                <StagedLoading steps={STAGED_STEPS} isComplete={loadingComplete} />
               </div>
             )}
 
             {result && (
               <div className="flex flex-col gap-5">
-                {/* Header */}
-                <div className="bg-ac-card border-t-[3px] border-ac-red p-5">
-                  <div className="flex justify-between items-start gap-4 flex-wrap">
+
+                {/* Document Header */}
+                <div
+                  className="bg-ac-card p-6"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '0ms',
+                  }}
+                >
+                  <div className="flex justify-between items-start gap-4 flex-wrap mb-4">
                     <div>
-                      <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-1">Quote Reference</div>
-                      <div className="text-[1.1rem] font-black text-text-primary">{result.reference}</div>
+                      <div className="text-[1.4rem] font-black text-text-primary leading-none">{result.businessName}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red font-black">QUOTE</div>
+                      <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim mt-1">{result.reference}</div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <div className="font-mono text-[0.5rem] tracking-[1px] uppercase text-text-ghost mb-1">Prepared for</div>
+                      <div className="text-[0.82rem] text-text-primary">{result.clientName}</div>
                     </div>
                     <div className="text-right">
                       <div className="font-mono text-[0.5rem] tracking-[1px] uppercase text-text-ghost mb-1">Date</div>
@@ -340,21 +417,20 @@ export default function QuoteGenerator() {
                       <div className="text-[0.82rem] text-text-primary">{result.validUntil}</div>
                     </div>
                   </div>
-                  <div className="mt-4 pt-4 border-t border-border-subtle grid grid-cols-2 gap-4">
-                    <div>
-                      <div className="font-mono text-[0.5rem] tracking-[1px] uppercase text-text-ghost mb-1">From</div>
-                      <div className="text-[0.82rem] text-text-primary">{result.businessName}</div>
-                    </div>
-                    <div>
-                      <div className="font-mono text-[0.5rem] tracking-[1px] uppercase text-text-ghost mb-1">To</div>
-                      <div className="text-[0.82rem] text-text-primary">{result.clientName}</div>
-                    </div>
-                  </div>
+                  <div className="h-[2px]" style={{ background: 'var(--red)' }} />
                 </div>
 
-                {/* Scope */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
+                {/* Scope of Work */}
+                <div
+                  className="bg-ac-card p-5"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '80ms',
+                  }}
+                >
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                     Scope of Work
                   </div>
                   <p className="text-[0.82rem] text-text-dim font-light leading-[1.7] whitespace-pre-line">
@@ -362,17 +438,22 @@ export default function QuoteGenerator() {
                   </p>
                 </div>
 
-                {/* Line items */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
-                    Line Items
-                  </div>
+                {/* Pricing Table */}
+                <div
+                  className="bg-ac-card overflow-hidden"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '160ms',
+                  }}
+                >
                   <div className="overflow-x-auto">
                     <table className="w-full text-[0.78rem]">
                       <thead>
-                        <tr className="border-b border-border-subtle">
+                        <tr style={{ background: 'var(--red)' }}>
                           {['Description', 'Qty', 'Unit', 'Rate', 'Amount'].map((h) => (
-                            <th key={h} className="font-mono text-[0.5rem] tracking-[1px] uppercase text-text-ghost pb-2 text-left pr-3 last:pr-0 last:text-right">
+                            <th key={h} className="font-mono text-[0.5rem] tracking-[1px] uppercase text-white py-2 px-3 text-left last:text-right">
                               {h}
                             </th>
                           ))}
@@ -380,20 +461,21 @@ export default function QuoteGenerator() {
                       </thead>
                       <tbody>
                         {result.lineItems.map((item, i) => (
-                          <tr key={i} className="border-b border-border-subtle last:border-0">
-                            <td className="py-2 pr-3 text-text-primary font-light">{item.description}</td>
-                            <td className="py-2 pr-3 text-text-dim">{item.qty}</td>
-                            <td className="py-2 pr-3 text-text-dim">{item.unit}</td>
-                            <td className="py-2 pr-3 text-text-dim">{formatAud(item.unitPrice)}</td>
-                            <td className="py-2 text-text-primary text-right">{formatAud(item.amount)}</td>
+                          <tr
+                            key={i}
+                            style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-card-hover)' }}
+                          >
+                            <td className="py-2 px-3 text-text-primary font-light">{item.description}</td>
+                            <td className="py-2 px-3 text-text-dim">{item.qty}</td>
+                            <td className="py-2 px-3 text-text-dim">{item.unit}</td>
+                            <td className="py-2 px-3 text-text-dim">{formatAud(item.unitPrice)}</td>
+                            <td className="py-2 px-3 text-text-primary text-right">{formatAud(item.amount)}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-
-                  {/* Totals */}
-                  <div className="mt-4 pt-4 border-t border-border-subtle flex flex-col gap-1 items-end">
+                  <div className="p-5 border-t border-border-subtle flex flex-col gap-1 items-end">
                     <div className="flex gap-8 text-[0.82rem]">
                       <span className="text-text-dim">Subtotal</span>
                       <span className="text-text-primary w-24 text-right">{formatAud(result.subtotal)}</span>
@@ -403,52 +485,93 @@ export default function QuoteGenerator() {
                       <span className="text-text-primary w-24 text-right">{formatAud(result.gst)}</span>
                     </div>
                     <div className="flex gap-8 text-[0.9rem] font-black border-t border-border-subtle pt-2 mt-1">
-                      <span className="text-text-primary">Total AUD</span>
-                      <span className="text-ac-red w-24 text-right">{formatAud(result.total)}</span>
+                      <span className="text-text-primary">TOTAL AUD</span>
+                      <span className="w-24 text-right" style={{ color: 'var(--red)' }}>{formatAud(result.total)}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Terms */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
+                <div
+                  className="bg-ac-card p-5"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '240ms',
+                  }}
+                >
                   <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
-                    Terms
+                    Terms &amp; Conditions
                   </div>
-                  <ol className="flex flex-col gap-1">
+                  <ul className="flex flex-col gap-1 list-none">
                     {result.terms.map((term, i) => (
                       <li key={i} className="text-[0.82rem] text-text-dim font-light leading-[1.6] flex gap-3">
-                        <span className="font-mono text-[0.6rem] text-text-ghost mt-1 flex-shrink-0">{i + 1}.</span>
+                        <span className="flex-shrink-0 mt-[0.25em]" style={{ color: 'var(--red)', fontSize: '0.5rem' }}>■</span>
                         <span>{term}</span>
                       </li>
                     ))}
-                  </ol>
+                  </ul>
                 </div>
 
-                {/* Next steps */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
+                {/* Next Steps */}
+                <div
+                  className="bg-ac-card p-5"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '320ms',
+                  }}
+                >
                   <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Next Steps
                   </div>
                   <ol className="flex flex-col gap-1">
                     {result.nextSteps.map((step, i) => (
                       <li key={i} className="text-[0.82rem] text-text-dim font-light leading-[1.6] flex gap-3">
-                        <span className="font-mono text-[0.6rem] text-ac-red mt-1 flex-shrink-0">{i + 1}.</span>
+                        <span className="font-mono text-[0.6rem] mt-1 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
                         <span>{step}</span>
                       </li>
                     ))}
                   </ol>
                 </div>
 
-                <div className="flex gap-3 flex-wrap items-center">
+                {/* Actions */}
+                <div
+                  className="flex gap-3 flex-wrap items-center"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '400ms',
+                  }}
+                >
                   <CopyButton text={buildQuoteText(result)} label="COPY QUOTE" />
                   <CopyButton text={JSON.stringify(result, null, 2)} label="COPY JSON" />
                   <SendToEmail resultText={buildQuoteText(result)} toolName="Quote Generator" />
+                  <button
+                    type="button"
+                    onClick={clearAll}
+                    className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:bg-white hover:text-ac-black"
+                    style={{ background: 'var(--red)', color: '#fff' }}
+                  >
+                    GENERATE ANOTHER
+                  </button>
                 </div>
+
               </div>
             )}
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </section>
   );
 }

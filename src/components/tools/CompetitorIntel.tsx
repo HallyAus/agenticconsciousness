@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import AiLoading from '@/components/AiLoading';
+import StagedLoading from '@/components/StagedLoading';
 import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
@@ -17,21 +17,40 @@ interface CompetitorResult {
   confidenceLevel: 'High' | 'Medium' | 'Low';
 }
 
+const EXAMPLE = {
+  companyName: 'Deloitte Digital',
+  context:
+    'Management consulting firm offering AI and digital transformation services to enterprise clients in Australia. They have a large team and established brand.',
+  yourCompany: 'Agentic Consciousness',
+};
+
 const inputClass =
   'w-full bg-ac-black border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim';
 
 const btnClass =
   'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
 
-function confidencePill(level: 'High' | 'Medium' | 'Low') {
-  const styles: Record<string, string> = {
-    High: 'border-[var(--status-green)] text-[var(--status-green)]',
-    Medium: 'border-[var(--red-dim)] text-[var(--red-dim)]',
-    Low: 'border-border-subtle text-text-dim',
+const STAGED_STEPS = [
+  'Researching company...',
+  'Analysing positioning...',
+  'Identifying weaknesses...',
+  'Finding opportunities...',
+  'Complete.',
+];
+
+function ConfidencePill({ level }: { level: 'High' | 'Medium' | 'Low' }) {
+  const styles: Record<string, React.CSSProperties> = {
+    High: { border: '1px solid var(--status-green)', color: 'var(--status-green)' },
+    Medium: { border: '1px solid var(--border-subtle)', color: 'var(--text-dim)' },
+    Low: { border: '1px solid var(--border-subtle)', color: 'var(--text-ghost)' },
   };
   return (
-    <span className={`font-mono text-[0.65rem] tracking-[1px] uppercase border px-2 py-1 ${styles[level]}`}>
+    <span
+      className="font-mono text-[0.65rem] tracking-[1px] uppercase px-2 py-1"
+      style={styles[level]}
+    >
       {level} confidence
+      {level === 'Low' && ' — limited public data'}
     </span>
   );
 }
@@ -41,11 +60,29 @@ export default function CompetitorIntel() {
   const [context, setContext] = useState('');
   const [yourCompany, setYourCompany] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingComplete, setLoadingComplete] = useState(false);
   const [result, setResult] = useState<CompetitorResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [remainingUses, setRemainingUses] = useState<number>(() => getUsesRemaining());
 
   const canSubmit = !loading && remainingUses > 0 && companyName.trim().length >= 2;
+
+  function fillExample() {
+    setCompanyName(EXAMPLE.companyName);
+    setContext(EXAMPLE.context);
+    setYourCompany(EXAMPLE.yourCompany);
+    setResult(null);
+    setError(null);
+  }
+
+  function clearAll() {
+    setCompanyName('');
+    setContext('');
+    setYourCompany('');
+    setResult(null);
+    setError(null);
+    setLoadingComplete(false);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -58,6 +95,7 @@ export default function CompetitorIntel() {
     }
 
     setLoading(true);
+    setLoadingComplete(false);
     setError(null);
     setResult(null);
 
@@ -78,7 +116,8 @@ export default function CompetitorIntel() {
       } else {
         const next = incrementRateLimit();
         setRemainingUses(Math.max(0, MAX_TOOL_USES - next.count));
-        setResult(data);
+        setLoadingComplete(true);
+        setTimeout(() => setResult(data), 400);
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
@@ -132,6 +171,24 @@ export default function CompetitorIntel() {
         <div className="grid grid-cols-2 gap-8 max-[900px]:grid-cols-1">
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {/* TRY AN EXAMPLE */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={fillExample}
+                className="font-mono text-[0.65rem] tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                style={{
+                  border: '1px solid var(--red-pill-border)',
+                  color: 'var(--red-text)',
+                  background: 'transparent',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--red-faint)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+              >
+                TRY AN EXAMPLE
+              </button>
+            </div>
+
             <div className="flex flex-col gap-2">
               <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Competitor Name
@@ -226,114 +283,222 @@ export default function CompetitorIntel() {
 
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
-                <AiLoading text="Analysing competitor..." />
-                <p className="text-[0.75rem] text-text-dim font-mono tracking-[1px]">
-                  Gathering positioning data, identifying weaknesses, mapping opportunities...
-                </p>
+                <StagedLoading steps={STAGED_STEPS} isComplete={loadingComplete} />
               </div>
             )}
 
             {result && (
               <div className="flex flex-col gap-5">
+
                 {/* Header */}
-                <div className="bg-ac-card border-t-[3px] border-ac-red p-5">
+                <div
+                  className="bg-ac-card p-5"
+                  style={{
+                    borderTop: '3px solid var(--red)',
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '0ms',
+                  }}
+                >
                   <div className="flex justify-between items-start gap-4 flex-wrap">
                     <div>
-                      <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-1">
+                      <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
                         Competitor
                       </div>
-                      <h3 className="text-[1.2rem] font-black text-text-primary">{result.companyName}</h3>
+                      <h3 className="text-[1.4rem] font-black text-text-primary leading-none">{result.companyName}</h3>
                     </div>
-                    {confidencePill(result.confidenceLevel)}
+                    <ConfidencePill level={result.confidenceLevel} />
                   </div>
                 </div>
 
                 {/* Positioning */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
+                <div
+                  className="bg-ac-card p-5"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '80ms',
+                  }}
+                >
                   <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Positioning
                   </div>
-                  <p className="text-[0.82rem] text-text-dim font-light leading-[1.7]">
+                  <p
+                    className="text-[0.82rem] font-light leading-[1.7] pl-4"
+                    style={{
+                      color: 'var(--text-dim)',
+                      borderLeft: '3px solid var(--red)',
+                    }}
+                  >
                     {result.positioning}
                   </p>
                 </div>
 
-                {/* Strengths & Weaknesses side by side */}
-                <div className="grid grid-cols-2 gap-4 max-[600px]:grid-cols-1">
+                {/* Strengths & Weaknesses */}
+                <div
+                  className="grid grid-cols-2 gap-4 max-[600px]:grid-cols-1"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '160ms',
+                  }}
+                >
                   <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
-                      Strengths
+                      STRENGTHS
                     </div>
-                    <ol className="flex flex-col gap-2">
+                    <ul className="flex flex-col gap-2 list-none">
                       {result.strengths.map((s, i) => (
                         <li key={i} className="text-[0.8rem] text-text-dim font-light leading-[1.6] flex gap-2">
-                          <span className="font-mono text-[0.6rem] text-[var(--status-green)] mt-0.5 flex-shrink-0">+</span>
+                          <span className="flex-shrink-0 mt-[0.25em]" style={{ color: 'var(--red)', fontSize: '0.55rem' }}>●</span>
                           <span>{s}</span>
                         </li>
                       ))}
-                    </ol>
+                    </ul>
                   </div>
 
                   <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
-                      Weaknesses
+                      WEAKNESSES
                     </div>
-                    <ol className="flex flex-col gap-2">
+                    <ul className="flex flex-col gap-2 list-none">
                       {result.weaknesses.map((w, i) => (
                         <li key={i} className="text-[0.8rem] text-text-dim font-light leading-[1.6] flex gap-2">
-                          <span className="font-mono text-[0.6rem] text-ac-red mt-0.5 flex-shrink-0">−</span>
+                          <span className="flex-shrink-0 mt-[0.25em]" style={{ color: 'var(--text-dim)', fontSize: '0.55rem' }}>●</span>
                           <span>{w}</span>
                         </li>
                       ))}
-                    </ol>
+                    </ul>
                   </div>
                 </div>
 
-                {/* Pricing strategy */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
+                {/* Pricing Strategy */}
+                <div
+                  className="bg-ac-card border-t-[3px] border-border-subtle p-5"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '240ms',
+                  }}
+                >
                   <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
                     Pricing Strategy
                   </div>
-                  <p className="text-[0.82rem] text-text-dim font-light leading-[1.7]">
+                  <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-dim)' }}>
                     {result.pricingStrategy}
                   </p>
                 </div>
 
-                {/* Differentiation opportunities */}
-                <div className="bg-ac-card border-t-[3px] border-ac-red p-5">
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red mb-3">
+                {/* Differentiation Opportunities */}
+                <div
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '320ms',
+                  }}
+                >
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                     Differentiation Opportunities
                   </div>
-                  <ol className="flex flex-col gap-2">
-                    {result.differentiationOpportunities.map((opp, i) => (
-                      <li key={i} className="text-[0.82rem] text-text-dim font-light leading-[1.6] flex gap-3">
-                        <span className="font-mono text-[0.6rem] text-ac-red mt-0.5 flex-shrink-0">{i + 1}.</span>
-                        <span>{opp}</span>
-                      </li>
+                  <div className="grid grid-cols-2 gap-3 max-[600px]:grid-cols-1">
+                    {result.differentiationOpportunities.slice(0, 4).map((opp, i) => (
+                      <div
+                        key={i}
+                        className="p-4"
+                        style={{ background: 'var(--bg-card)' }}
+                      >
+                        <div className="font-mono text-[1.2rem] font-black mb-2 leading-none" style={{ color: 'var(--red)' }}>
+                          {String(i + 1).padStart(2, '0')}
+                        </div>
+                        <p className="text-[0.8rem] font-light leading-[1.6]" style={{ color: 'var(--text-dim)' }}>
+                          {opp}
+                        </p>
+                      </div>
                     ))}
-                  </ol>
+                  </div>
+                  {result.differentiationOpportunities.length > 4 && (
+                    <div className="mt-3 flex flex-col gap-2">
+                      {result.differentiationOpportunities.slice(4).map((opp, i) => (
+                        <div key={i} className="flex gap-3 p-3" style={{ background: 'var(--bg-card)' }}>
+                          <span className="font-mono text-[0.65rem] font-black flex-shrink-0 mt-0.5" style={{ color: 'var(--red)' }}>
+                            {String(i + 5).padStart(2, '0')}
+                          </span>
+                          <p className="text-[0.8rem] font-light leading-[1.6]" style={{ color: 'var(--text-dim)' }}>{opp}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* AI advantage */}
-                <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
+                {/* AI Advantage callout */}
+                <div
+                  className="p-5"
+                  style={{
+                    borderTop: '3px solid var(--red)',
+                    background: 'var(--red-faint)',
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '400ms',
+                  }}
+                >
+                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                     AI Advantage
                   </div>
-                  <p className="text-[0.82rem] text-text-dim font-light leading-[1.7]">
+                  <p className="text-[0.82rem] font-light leading-[1.7] mb-4" style={{ color: 'var(--text-primary)' }}>
                     {result.aiAdvantage}
                   </p>
+                  <a
+                    href="mailto:ai@agenticconsciousness.com.au"
+                    className="font-display text-[0.7rem] font-black tracking-[2px] uppercase no-underline transition-colors duration-200"
+                    style={{ color: 'var(--red)' }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.7')}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+                  >
+                    BOOK CONSULTATION →
+                  </a>
                 </div>
 
-                <div className="flex gap-3 flex-wrap items-center">
+                {/* Actions */}
+                <div
+                  className="flex gap-3 flex-wrap items-center"
+                  style={{
+                    opacity: 0,
+                    transform: 'translateY(12px)',
+                    animation: 'fadeSlideUp 0.4s ease forwards',
+                    animationDelay: '480ms',
+                  }}
+                >
                   <CopyButton text={buildReportText(result)} label="COPY REPORT" />
                   <CopyButton text={JSON.stringify(result, null, 2)} label="COPY JSON" />
                   <SendToEmail resultText={buildReportText(result)} toolName="Competitor Intel" />
+                  <button
+                    type="button"
+                    onClick={clearAll}
+                    className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:bg-white hover:text-ac-black"
+                    style={{ background: 'var(--red)', color: '#fff' }}
+                  >
+                    ANALYSE ANOTHER
+                  </button>
                 </div>
+
               </div>
             )}
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeSlideUp {
+          from { opacity: 0; transform: translateY(12px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </section>
   );
 }
