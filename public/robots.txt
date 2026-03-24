@@ -1,0 +1,13 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /api/
+
+# Host
+Host: https://agenticconsciousness.com.au
+
+# Sitemaps
+Sitemap: https://agenticconsciousness.com.au/sitemap.xml
