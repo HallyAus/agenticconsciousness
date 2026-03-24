@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 interface AnimatedCounterProps {
   value: string;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 function parseValue(val: string): { prefix: string; number: number; suffix: string; decimals: number } {
@@ -20,7 +21,7 @@ function parseValue(val: string): { prefix: string; number: number; suffix: stri
   return { prefix, number, suffix, decimals };
 }
 
-export default function AnimatedCounter({ value, className = '' }: AnimatedCounterProps) {
+export default function AnimatedCounter({ value, className = '', style }: AnimatedCounterProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [displayValue, setDisplayValue] = useState(value);
   const animated = useRef(false);
@@ -63,7 +64,7 @@ export default function AnimatedCounter({ value, className = '' }: AnimatedCount
   }, [value]);
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={className} style={style}>
       {displayValue}
     </div>
   );

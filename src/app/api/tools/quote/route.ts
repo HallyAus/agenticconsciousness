@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { incrementToolStat } from '@/lib/toolStats';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -114,6 +115,7 @@ Quote Type: ${isDetailed ? 'Detailed Proposal' : 'Simple Quote'}`;
     let result;
     try {
       result = JSON.parse(rawText);
+      incrementToolStat('quotes');
     } catch {
       console.error('Failed to parse AI response');
       return NextResponse.json({ error: 'Invalid response format. Please try again.' }, { status: 500 });
