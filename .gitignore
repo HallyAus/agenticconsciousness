@@ -1,0 +1,40 @@
+# Environment
+.env
+.env.local
+.env.production
+secrets/
+
+# Private memory (sensitive info — never commit)
+.claude/rules/memory-private.md
+
+# Beads database (synced via JSONL, not the db)
+.beads/beads.db
+.beads/dolt/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Dependencies (uncomment relevant)
+node_modules/
+# __pycache__/
+# *.pyc
+# venv/
+# .venv/
+
+# Build (uncomment relevant)
+# dist/
+# build/
+# *.egg-info/
+
+# Next.js
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
