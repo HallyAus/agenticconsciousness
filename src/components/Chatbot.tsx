@@ -1,21 +1,37 @@
 'use client';
 
 import { useState, useRef, useEffect, FormEvent } from 'react';
-import { INITIAL_BOT_MESSAGE, CONTACT_EMAIL } from '@/lib/constants';
+import { CONTACT_EMAIL } from '@/lib/constants';
 
 interface Message {
   role: 'user' | 'assistant';
   content: string;
 }
 
+function getInitialMessage(storedName: string | null): string {
+  if (storedName) {
+    return `Welcome back, ${storedName}. What can I help you with today?`;
+  }
+  return "I'm the Agentic Consciousness AI. What's your name? (Or just ask me anything about AI consulting.)";
+}
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: INITIAL_BOT_MESSAGE },
-  ]);
+  const [visitorName, setVisitorName] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>(() => {
+    const storedName = typeof window !== 'undefined' ? localStorage.getItem('ac-visitor-name') : null;
+    return [{ role: 'assistant', content: getInitialMessage(storedName) }];
+  });
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const storedName = localStorage.getItem('ac-visitor-name');
+    if (storedName) {
+      setVisitorName(storedName);
+    }
+  }, []);
 
   useEffect(() => {
     const handler = () => setIsOpen(true);
@@ -38,13 +54,20 @@ export default function Chatbot() {
     setInput('');
     setIsLoading(true);
 
+    // Build API messages, prepending visitor name context if we have it
+    const currentName = visitorName || localStorage.getItem('ac-visitor-name');
+    const apiMessages = newMessages.map((m, i) => {
+      if (i === 1 && m.role === 'user' && currentName) {
+        return { role: m.role, content: `[Visitor name: ${currentName}] ${m.content}` };
+      }
+      return { role: m.role, content: m.content };
+    });
+
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: newMessages.map((m) => ({ role: m.role, content: m.content })),
-        }),
+        body: JSON.stringify({ messages: apiMessages }),
       });
 
       if (res.status === 429) {
@@ -58,7 +81,26 @@ export default function Chatbot() {
       if (!res.ok) throw new Error('API error');
 
       const data = await res.json();
-      setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
+      const botReply: Message = { role: 'assistant', content: data.reply };
+      setMessages((prev) => {
+        const updated = [...prev, botReply];
+
+        // After first exchange, try to extract name if we don't have one
+        if (!currentName && updated.length === 3) {
+          const firstUserMsg = updated[1].content.trim();
+          if (firstUserMsg.length < 30 && !firstUserMsg.includes('?')) {
+            const name = firstUserMsg
+              .replace(/^(i'm|my name is|it's|call me|hey i'm|hi i'm)\s*/i, '')
+              .trim();
+            if (name.length > 0 && name.length < 20) {
+              setVisitorName(name);
+              localStorage.setItem('ac-visitor-name', name);
+            }
+          }
+        }
+
+        return updated;
+      });
     } catch {
       setMessages((prev) => [
         ...prev,

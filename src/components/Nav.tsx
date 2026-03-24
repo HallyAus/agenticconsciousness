@@ -46,7 +46,8 @@ export default function Nav() {
       {/* Mobile menu */}
       {menuOpen && (
         <div className="fixed top-[60px] left-0 right-0 flex-col bg-[rgba(10,10,10,0.98)] border-b-2 border-ac-red p-6 gap-4 z-[999] hidden max-md:flex">
-          {NAV_LINKS.map((link) => (
+          {/* Primary — homepage sections */}
+          {NAV_LINKS.filter(l => l.href.startsWith('/#')).map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -56,6 +57,22 @@ export default function Nav() {
               {link.label}
             </a>
           ))}
+
+          {/* Divider */}
+          <div className="h-[1px] bg-border-subtle my-2" />
+
+          {/* Secondary — standalone pages */}
+          {NAV_LINKS.filter(l => !l.href.startsWith('/#')).map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-white"
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </a>
+          ))}
+
           <a
             href="#contact"
             className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black text-center"
