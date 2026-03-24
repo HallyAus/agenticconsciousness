@@ -32,9 +32,9 @@ export default function About() {
             <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
               004 / ABOUT
             </div>
-            <div className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
+            <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
               Who we are.
-            </div>
+            </h2>
           </div>
 
           <div className="grid grid-cols-2 gap-[2px] bg-border-subtle max-[900px]:grid-cols-1">

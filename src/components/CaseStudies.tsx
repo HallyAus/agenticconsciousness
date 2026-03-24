@@ -11,9 +11,9 @@ export default function CaseStudies() {
               <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
                 003 / RESULTS
               </div>
-              <div className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
+              <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none">
                 Proof of work.
-              </div>
+              </h2>
             </div>
             <div className="text-[0.95rem] text-text-dim max-w-[400px] font-light leading-[1.7]">
               Real outcomes. Names changed to protect the competitive advantage we gave them.

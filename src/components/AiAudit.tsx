@@ -110,9 +110,9 @@ export default function AiAudit() {
           <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
             005 / AI AUDIT
           </div>
-          <div className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-5">
+          <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-5">
             Free AI opportunity snapshot.
-          </div>
+          </h2>
           <p className="text-[0.9rem] text-text-dim leading-[1.7] font-light max-w-[540px]">
             Tell us about your business. In seconds, our AI analyst will identify your three
             highest-impact automation opportunities — specific, realistic, and ranked by speed to

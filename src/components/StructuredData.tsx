@@ -55,43 +55,6 @@ export default function StructuredData() {
     },
   ];
 
-  const faq = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: 'What is AI consulting?',
-        acceptedAnswer: { '@type': 'Answer', text: 'We help businesses understand, implement, and scale AI. Strategy. Tools. Automation.' },
-      },
-      {
-        '@type': 'Question',
-        name: 'How much does AI consulting cost?',
-        acceptedAnswer: { '@type': 'Answer', text: 'The intro session is free. Projects are scoped and priced after we understand your needs.' },
-      },
-      {
-        '@type': 'Question',
-        name: 'Do I need technical knowledge to use AI in my business?',
-        acceptedAnswer: { '@type': 'Answer', text: "No. That's exactly who this is for. We start from zero and build up." },
-      },
-      {
-        '@type': 'Question',
-        name: 'What AI tools do you implement?',
-        acceptedAnswer: { '@type': 'Answer', text: 'ChatGPT, Claude, Microsoft Copilot, custom models. Whatever fits your workflow.' },
-      },
-      {
-        '@type': 'Question',
-        name: 'How long does an AI implementation take?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Typically 1-4 weeks depending on complexity. We move fast.' },
-      },
-      {
-        '@type': 'Question',
-        name: 'Do you work with small businesses?',
-        acceptedAnswer: { '@type': 'Answer', text: 'Yes. SMBs, enterprise, tradies, startups. If you have operations, we can help.' },
-      },
-    ],
-  };
-
   return (
     <>
       <script
@@ -109,10 +72,6 @@ export default function StructuredData() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(service) }}
         />
       ))}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
-      />
     </>
   );
 }

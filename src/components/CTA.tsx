@@ -95,9 +95,9 @@ export default function CTA() {
                   <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-6">
                     READY?
                   </div>
-                  <div className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight mb-4">
+                  <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight mb-4">
                     Let&apos;s build something <span className="text-ac-red">intelligent.</span>
-                  </div>
+                  </h2>
                   <p className="text-[1rem] text-text-dim mb-10 font-light leading-[1.7]">
                     Tell us your challenge. Our AI will recommend exactly how we can help.
                   </p>

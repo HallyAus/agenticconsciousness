@@ -56,13 +56,11 @@ export const metadata: Metadata = {
     siteName: 'Agentic Consciousness',
     title: 'Agentic Consciousness — AI Consulting Australia',
     description: "We don't just advise — we build and deploy AI systems that run your business better than you thought possible.",
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Agentic Consciousness — AI Consulting' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Agentic Consciousness — AI Consulting',
     description: 'AI strategy, implementation, and automation for Australian businesses.',
-    images: ['/og-image.png'],
   },
   alternates: {
     canonical: 'https://agenticconsciousness.com.au',

@@ -4,7 +4,7 @@ import QuoteGenerator from '@/components/tools/QuoteGenerator';
 import CompetitorIntel from '@/components/tools/CompetitorIntel';
 
 export const metadata: Metadata = {
-  title: 'Free AI Tools — Invoice Scanner, Quote Generator, Competitor Intel',
+  title: 'Free AI Tools — Invoice, Quote & Competitor Analysis',
   description:
     'Three free AI-powered business tools. Scan invoices, generate professional quotes, and analyse competitors. No signup required.',
 };
