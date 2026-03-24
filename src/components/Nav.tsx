@@ -1,0 +1,70 @@
+'use client';
+
+import { useState } from 'react';
+import { NAV_LINKS } from '@/lib/constants';
+
+export default function Nav() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-[1000] px-10 h-[60px] flex justify-between items-center bg-[rgba(10,10,10,0.92)] backdrop-blur-[12px] border-b-2 border-ac-red max-md:px-5">
+      <a href="#" className="font-display text-[1.1rem] font-black text-white tracking-snug no-underline">
+        AC<span className="text-ac-red">_</span>
+      </a>
+
+      {/* Desktop links */}
+      <ul className="flex gap-10 list-none items-center max-md:hidden">
+        {NAV_LINKS.map((link) => (
+          <li key={link.href}>
+            <a
+              href={link.href}
+              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-white"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      {/* Desktop CTA */}
+      <a
+        href="#contact"
+        className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black max-md:hidden"
+      >
+        Talk to us
+      </a>
+
+      {/* Mobile hamburger */}
+      <button
+        className="hidden max-md:block bg-transparent border-none text-ac-red text-2xl cursor-pointer"
+        onClick={() => setMenuOpen(!menuOpen)}
+        aria-label="Menu"
+      >
+        {menuOpen ? '✕' : '☰'}
+      </button>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="fixed top-[60px] left-0 right-0 flex-col bg-[rgba(10,10,10,0.98)] border-b-2 border-ac-red p-6 gap-4 z-[999] hidden max-md:flex">
+          {NAV_LINKS.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-white"
+              onClick={() => setMenuOpen(false)}
+            >
+              {link.label}
+            </a>
+          ))}
+          <a
+            href="#contact"
+            className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black text-center"
+            onClick={() => setMenuOpen(false)}
+          >
+            Talk to us
+          </a>
+        </div>
+      )}
+    </nav>
+  );
+}
