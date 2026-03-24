@@ -1,16 +1,36 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
+const VALID_INDUSTRIES = ['Manufacturing', 'Professional Services', 'Construction & Trades', 'Healthcare', 'Retail & E-commerce', 'Finance & Insurance', 'Education', 'Hospitality & Tourism', 'Technology', 'Government', 'Transport & Logistics', 'Agriculture', 'Other'];
+const VALID_SIZES = ['Solo / Freelancer', '2-10 employees', '11-50 employees', '51-200 employees', '200+ employees'];
+
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const { allowed, retryAfter } = checkRateLimit(ip);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: `Rate limit exceeded. Try again in ${retryAfter}s.` },
+      { status: 429 }
+    );
+  }
+
   try {
     const { industry, businessSize, painPoint } = await req.json();
 
     if (!industry || !businessSize || !painPoint) {
       return NextResponse.json({ error: 'All fields required' }, { status: 400 });
+    }
+
+    if (!VALID_INDUSTRIES.includes(industry)) {
+      return NextResponse.json({ error: 'Invalid industry' }, { status: 400 });
+    }
+    if (!VALID_SIZES.includes(businessSize)) {
+      return NextResponse.json({ error: 'Invalid business size' }, { status: 400 });
     }
 
     if (painPoint.length > 500) {

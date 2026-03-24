@@ -2,12 +2,22 @@ import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const { allowed, retryAfter } = checkRateLimit(ip);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: `Rate limit exceeded. Try again in ${retryAfter}s.` },
+      { status: 429 }
+    );
+  }
+
   const authKey = req.headers.get('Authorization');
   if (authKey !== `Bearer ${process.env.BLOG_ADMIN_KEY}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -56,6 +66,10 @@ Respond in valid JSON only, no markdown wrapping:
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
+
+    if (!slug || slug.includes('..') || !/^[a-z0-9-]+$/.test(slug)) {
+      return NextResponse.json({ error: 'Invalid generated slug' }, { status: 400 });
+    }
 
     const post = {
       slug,
