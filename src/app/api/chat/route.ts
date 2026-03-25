@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { SYSTEM_PROMPT } from '@/lib/constants';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { STANDARD_MODEL } from '@/lib/models';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
     const trimmedMessages = messages.slice(-20);
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: STANDARD_MODEL,
       max_tokens: 1024,
       system: SYSTEM_PROMPT,
       messages: trimmedMessages,
@@ -113,7 +114,7 @@ export async function POST(req: NextRequest) {
         ip,
         input_tokens: response.usage.input_tokens,
         output_tokens: response.usage.output_tokens,
-        model: 'claude-sonnet-4-20250514',
+        model: STANDARD_MODEL,
         timestamp: new Date().toISOString(),
       })
     );

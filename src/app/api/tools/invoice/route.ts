@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { incrementToolStat } from '@/lib/toolStats';
 import { parseAiJson } from '@/lib/parseAiJson';
+import { FAST_MODEL } from '@/lib/models';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -120,7 +121,7 @@ Rules:
     }
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: FAST_MODEL,
       max_tokens: 1500,
       system: systemPrompt,
       messages: [{ role: 'user', content: userContent }],

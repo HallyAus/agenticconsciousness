@@ -4,6 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import fs from 'fs';
 import path from 'path';
 import { sendEmail, notifyAdmin, emailTemplate } from '@/lib/email';
+import { FAST_MODEL } from '@/lib/models';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     // Generate AI opportunity snapshot
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: FAST_MODEL,
       max_tokens: 400,
       system: `Generate 3 quick AI opportunities for a business in the ${industry} sector. Format as a brief, compelling list. Include one specific tool recommendation. Sign off as Agentic Consciousness. Australian English. Keep it under 200 words total.`,
       messages: [

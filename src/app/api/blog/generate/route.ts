@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { parseAiJson } from '@/lib/parseAiJson';
+import { STANDARD_MODEL } from '@/lib/models';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
     }
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: STANDARD_MODEL,
       max_tokens: 3000,
       system: `You are the content writer for Agentic Consciousness, an Australian AI consulting company.
 
@@ -87,7 +88,7 @@ Respond in valid JSON only, no markdown wrapping:
       author: 'Agentic Consciousness AI',
       publishedAt: new Date().toISOString(),
       tags: parsed.tags,
-      generatedBy: 'claude-sonnet-4-20250514',
+      generatedBy: STANDARD_MODEL,
     };
 
     const blogDir = path.join(process.cwd(), 'content', 'blog');

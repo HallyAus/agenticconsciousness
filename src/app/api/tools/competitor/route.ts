@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { incrementToolStat } from '@/lib/toolStats';
 import { parseAiJson } from '@/lib/parseAiJson';
+import { STANDARD_MODEL } from '@/lib/models';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -86,7 +87,7 @@ ${context ? `Additional context: ${context}` : ''}
 ${yourCompany ? `My company (for tailored insights): ${yourCompany}` : ''}`;
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: STANDARD_MODEL,
       max_tokens: 1000,
       system: systemPrompt,
       messages: [{ role: 'user', content: userContent }],

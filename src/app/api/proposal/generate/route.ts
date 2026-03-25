@@ -4,6 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { saveProposal } from '@/lib/proposals';
 import { randomUUID } from 'crypto';
 import { parseAiJson } from '@/lib/parseAiJson';
+import { STANDARD_MODEL } from '@/lib/models';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     const response = await client.messages.create({
-      model: 'claude-sonnet-4-20250514',
+      model: STANDARD_MODEL,
       max_tokens: 2000,
       system: `You are the proposal writer for Agentic Consciousness, an Australian AI consulting company.
 
