@@ -145,7 +145,7 @@ Rules:
       result = parseAiJson(rawText);
       incrementToolStat('invoices');
     } catch {
-      console.error('Failed to parse AI response');
+      console.error('Failed to parse AI response:', rawText.slice(0, 500));
       return NextResponse.json({ error: 'Invalid response format. Please try again.' }, { status: 500 });
     }
     return NextResponse.json(result);

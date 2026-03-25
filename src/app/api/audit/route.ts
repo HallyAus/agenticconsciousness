@@ -84,7 +84,7 @@ Rules:
     try {
       result = parseAiJson(text);
     } catch {
-      console.error('Failed to parse AI response');
+      console.error('Failed to parse AI response:', text.slice(0, 500));
       return NextResponse.json({ error: 'Invalid response format. Please try again.' }, { status: 500 });
     }
     return NextResponse.json(result);
