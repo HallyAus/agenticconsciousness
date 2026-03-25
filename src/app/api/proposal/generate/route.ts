@@ -66,7 +66,9 @@ Rules:
 
     let parsed;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    try { parsed = parseAiJson<any>(text); } catch {
+    try { parsed = parseAiJson<any>(text); } catch (parseErr) {
+      console.error('Failed to parse proposal generation response:', parseErr instanceof Error ? parseErr.message : parseErr);
+      console.error('Raw AI text:', text);
       return NextResponse.json({ error: 'Failed to generate proposal' }, { status: 500 });
     }
 

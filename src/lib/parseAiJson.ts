@@ -1,79 +1,54 @@
 /**
  * Parse JSON from AI response, handling all common wrapper formats.
- * Claude (especially Haiku) may wrap JSON in:
- * - ```json ... ```
- * - ``` ... ```
- * - Text before/after the JSON object
- * - Extra whitespace
  */
 export function parseAiJson<T = unknown>(text: string): T {
+  if (!text || text.trim().length === 0) {
+    throw new SyntaxError('Empty AI response');
+  }
+
   let cleaned = text.trim();
 
-  // Remove ```json ... ``` or ``` ... ``` wrappers
-  cleaned = cleaned.replace(/^```(?:json|JSON)?\s*\n?/, '').replace(/\n?```\s*$/, '');
-  cleaned = cleaned.trim();
-
-  // Try direct parse first
+  // Attempt 1: Direct parse
   try {
     return JSON.parse(cleaned);
-  } catch {
-    // If direct parse fails, try to extract JSON object or array
+  } catch { /* continue */ }
+
+  // Attempt 2: Strip markdown code block wrappers
+  cleaned = cleaned
+    .replace(/^```(?:json|JSON)?\s*\n?/gm, '')
+    .replace(/\n?```\s*$/gm, '')
+    .trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch { /* continue */ }
+
+  // Attempt 3: Extract JSON by finding balanced braces
+  const jsonMatch = cleaned.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
+  if (jsonMatch) {
+    try {
+      return JSON.parse(jsonMatch[1]);
+    } catch { /* continue */ }
   }
 
-  // Find the first { or [ and last } or ]
+  // Attempt 4: Find first { and last } (greedy)
   const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    try {
+      return JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+    } catch { /* continue */ }
+  }
+
+  // Attempt 5: Find first [ and last ]
   const firstBracket = cleaned.indexOf('[');
-  const start = firstBrace >= 0 && (firstBracket < 0 || firstBrace < firstBracket)
-    ? firstBrace
-    : firstBracket;
-
-  if (start < 0) {
-    throw new SyntaxError(`No JSON found in response: ${cleaned.slice(0, 100)}...`);
+  const lastBracket = cleaned.lastIndexOf(']');
+  if (firstBracket >= 0 && lastBracket > firstBracket) {
+    try {
+      return JSON.parse(cleaned.slice(firstBracket, lastBracket + 1));
+    } catch { /* continue */ }
   }
 
-  const isObject = cleaned[start] === '{';
-  const closeChar = isObject ? '}' : ']';
-
-  // Find the matching closing brace/bracket by counting nesting
-  let depth = 0;
-  let end = -1;
-  let inString = false;
-  let escape = false;
-
-  for (let i = start; i < cleaned.length; i++) {
-    const ch = cleaned[i];
-
-    if (escape) {
-      escape = false;
-      continue;
-    }
-
-    if (ch === '\\' && inString) {
-      escape = true;
-      continue;
-    }
-
-    if (ch === '"') {
-      inString = !inString;
-      continue;
-    }
-
-    if (inString) continue;
-
-    if (ch === '{' || ch === '[') depth++;
-    if (ch === '}' || ch === ']') {
-      depth--;
-      if (depth === 0) {
-        end = i;
-        break;
-      }
-    }
-  }
-
-  if (end < 0) {
-    throw new SyntaxError(`Unclosed JSON in response: ${cleaned.slice(0, 100)}...`);
-  }
-
-  const jsonStr = cleaned.slice(start, end + 1);
-  return JSON.parse(jsonStr);
+  // All attempts failed
+  throw new SyntaxError(`Cannot parse JSON from AI response. Raw text (first 300 chars): ${text.slice(0, 300)}`);
 }

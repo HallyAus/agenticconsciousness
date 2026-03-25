@@ -67,8 +67,9 @@ Respond in valid JSON only, no markdown wrapping:
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       parsed = parseAiJson<any>(text);
-    } catch {
-      console.error('Failed to parse blog generation response');
+    } catch (parseErr) {
+      console.error('Failed to parse blog generation response:', parseErr instanceof Error ? parseErr.message : parseErr);
+      console.error('Raw AI text:', text);
       return NextResponse.json({ error: 'Generation failed — invalid response' }, { status: 500 });
     }
     const slug = parsed.title

@@ -110,8 +110,9 @@ ${yourCompany ? `My company (for tailored insights): ${yourCompany}` : ''}`;
     try {
       result = parseAiJson(rawText);
       incrementToolStat('competitors');
-    } catch {
-      console.error('Failed to parse AI response:', rawText.slice(0, 500));
+    } catch (parseErr) {
+      console.error('Failed to parse AI response:', parseErr instanceof Error ? parseErr.message : parseErr);
+      console.error('Raw AI text:', rawText);
       return NextResponse.json({ error: 'Invalid response format. Please try again.' }, { status: 500 });
     }
     return NextResponse.json(result);
