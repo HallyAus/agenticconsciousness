@@ -111,15 +111,15 @@ export default function ToolsPageClient() {
       </div>
 
       {/* Bottom CTA */}
-      <section className="py-16 px-10 max-md:px-5 border-t" style={{ borderColor: 'var(--red)' }}>
+      <section className="py-24 px-10 max-md:px-5 border-t" style={{ borderColor: 'var(--red)' }}>
         <div className="max-w-[600px] mx-auto text-center">
-          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase mb-3" style={{ color: 'var(--red-text)' }}>
+          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase mb-4" style={{ color: 'var(--red-text)' }}>
             WHAT&apos;S NEXT
           </div>
-          <h2 className="text-[1.3rem] font-black tracking-tight text-text-primary mb-3">
+          <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-6">
             These tools took us 2 hours to build.
           </h2>
-          <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[460px] mx-auto mb-8">
+          <p className="text-text-dim text-[0.95rem] font-light leading-[1.7] max-w-[460px] mx-auto mb-10">
             Imagine what we can build for your specific workflows in 2 weeks. Custom AI tools, tailored to your data, integrated into your systems, running 24/7.
           </p>
           <div className="flex gap-4 justify-center flex-wrap mb-10">
