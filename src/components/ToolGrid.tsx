@@ -44,7 +44,7 @@ export default function ToolGrid({ onSelectTool, selectedTool, activeCategory }:
           <div
             key={tool.id}
             onClick={() => handleClick(tool.id)}
-            className="relative min-h-[160px] p-5 cursor-pointer transition-all duration-200"
+            className="relative min-h-[180px] p-6 cursor-pointer transition-all duration-200"
             style={{
               background: isSelected ? 'var(--bg-card)' : 'var(--bg-page)',
               borderTop: `3px solid ${isSelected ? 'var(--red)' : 'transparent'}`,
@@ -64,26 +64,26 @@ export default function ToolGrid({ onSelectTool, selectedTool, activeCategory }:
           >
             {/* Ghost number */}
             <div
-              className="font-black text-[2.5rem] leading-none mb-2 select-none"
+              className="font-black text-[2.5rem] leading-none mb-3 select-none"
               style={{ color: 'var(--ghost-number)' }}
             >
               {tool.num}
             </div>
 
             {/* Title */}
-            <div className="font-black text-[0.85rem] tracking-tight text-text-primary mb-1 leading-snug">
+            <h3 className="font-black text-[1.1rem] tracking-snug text-text-primary mb-2 leading-tight">
               {tool.title}
-            </div>
+            </h3>
 
             {/* Description */}
-            <div className="text-text-dim text-[0.75rem] font-light leading-[1.5] mb-3">
+            <p className="text-text-dim text-[0.85rem] font-light leading-[1.6] mb-4">
               {tool.desc}
-            </div>
+            </p>
 
             {/* Category pill */}
             <div
-              className="inline-block font-mono text-[0.5rem] tracking-[2px] uppercase px-2 py-[3px] border"
-              style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-dim)' }}
+              className="inline-block font-mono text-[0.6rem] tracking-[2px] uppercase px-2 py-[3px] border"
+              style={{ borderColor: 'var(--red-pill-border)', color: 'var(--red-text)' }}
             >
               {tool.category}
             </div>
@@ -91,7 +91,7 @@ export default function ToolGrid({ onSelectTool, selectedTool, activeCategory }:
             {/* Badge */}
             {tool.badge && (
               <div
-                className="absolute top-2 right-2 font-mono text-[0.5rem] font-black tracking-[2px] uppercase px-2 py-[3px]"
+                className="absolute top-3 right-3 font-mono text-[0.55rem] font-black tracking-[1px] uppercase px-2 py-1"
                 style={
                   tool.badge === 'POPULAR'
                     ? { background: 'var(--red)', color: '#fff' }
