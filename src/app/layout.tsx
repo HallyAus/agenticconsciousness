@@ -5,6 +5,7 @@ import StructuredData from '@/components/StructuredData';
 import ThemeProvider from '@/components/ThemeProvider';
 import ScrollProgress from '@/components/ScrollProgress';
 import ExitIntent from '@/components/ExitIntent';
+import TrackingPixels from '@/components/TrackingPixels';
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['latin'],
@@ -82,6 +83,7 @@ export default function RootLayout({
     <html lang="en" className={`${beVietnamPro.variable} ${spaceMono.variable}`} data-theme="dark">
       <body>
         <ThemeProvider>
+          <TrackingPixels />
           <ScrollProgress />
           <ExitIntent />
           <a

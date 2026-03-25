@@ -6,6 +6,7 @@ import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import ToggleGroup from '@/components/ToggleGroup';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
+import { trackEvent } from '@/lib/tracking';
 
 const INDUSTRIES = [
   'Manufacturing',
@@ -154,7 +155,10 @@ export default function QuoteGenerator() {
         const next = incrementRateLimit();
         setRemainingUses(Math.max(0, MAX_TOOL_USES - next.count));
         setLoadingComplete(true);
-        setTimeout(() => setResult(data), 400);
+        setTimeout(() => {
+          setResult(data);
+          trackEvent('ViewContent', { content_name: 'Quote Generator' });
+        }, 400);
       }
     } catch {
       setError('Network error. Please check your connection and try again.');

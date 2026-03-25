@@ -5,6 +5,7 @@ import StagedLoading from '@/components/StagedLoading';
 import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
+import { trackEvent } from '@/lib/tracking';
 
 interface CompetitorResult {
   companyName: string;
@@ -117,7 +118,10 @@ export default function CompetitorIntel() {
         const next = incrementRateLimit();
         setRemainingUses(Math.max(0, MAX_TOOL_USES - next.count));
         setLoadingComplete(true);
-        setTimeout(() => setResult(data), 400);
+        setTimeout(() => {
+          setResult(data);
+          trackEvent('ViewContent', { content_name: 'Competitor Intel' });
+        }, 400);
       }
     } catch {
       setError('Network error. Please check your connection and try again.');

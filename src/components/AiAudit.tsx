@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import AiLoading from '@/components/AiLoading';
+import { trackEvent } from '@/lib/tracking';
 
 const INDUSTRIES = [
   'Manufacturing',
@@ -77,6 +78,7 @@ export default function AiAudit() {
         setError(data.error || 'Analysis failed. Please try again.');
       } else {
         setResult(data);
+        trackEvent('Lead', { content_name: 'AI Audit' });
         startCooldown();
       }
     } catch {

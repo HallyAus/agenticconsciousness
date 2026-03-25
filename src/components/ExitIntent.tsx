@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { trackEvent } from '@/lib/tracking';
 
 const INDUSTRIES = [
   'Manufacturing',
@@ -143,6 +144,7 @@ export default function ExitIntent() {
         setError(data.error || 'Something went wrong. Please try again.');
       } else {
         sessionStorage.setItem(SESSION_SUBMITTED, 'true');
+        trackEvent('Lead', { content_name: 'Exit Intent' });
         setStep(2);
       }
     } catch {

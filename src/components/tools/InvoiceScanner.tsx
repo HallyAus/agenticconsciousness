@@ -5,6 +5,7 @@ import StagedLoading from '@/components/StagedLoading';
 import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
+import { trackEvent } from '@/lib/tracking';
 
 interface LineItem {
   description: string;
@@ -210,6 +211,7 @@ export default function InvoiceScanner() {
         setTimeout(() => {
           setResult(data);
           setLoading(false);
+          trackEvent('ViewContent', { content_name: 'Invoice Scanner' });
         }, 600);
         return;
       }

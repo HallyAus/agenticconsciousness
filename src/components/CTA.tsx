@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ScrollReveal from '@/components/ScrollReveal';
 import AiLoading from '@/components/AiLoading';
+import { trackEvent } from '@/lib/tracking';
 
 interface AiResult {
   recommendedService: string;
@@ -70,6 +71,7 @@ export default function CTA() {
         }),
       });
       if (!res.ok) throw new Error('Submission failed');
+      trackEvent('Lead', { content_name: 'Smart Contact' });
       setStep('done');
     } catch {
       setSubmitError('Submission failed — please try again or email us directly.');
