@@ -29,6 +29,10 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# Create writable directories for runtime data
+RUN mkdir -p /app/data /app/content/blog /app/content/proposals /app/content/drip \
+    && chown -R nextjs:nodejs /app/data /app/content
+
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
