@@ -67,6 +67,15 @@ export const metadata: Metadata = {
     title: 'Agentic Consciousness — AI Consulting',
     description: 'AI strategy, implementation, and automation for Australian businesses.',
   },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/icon', type: 'image/png', sizes: '32x32' },
+    ],
+    apple: [
+      { url: '/apple-icon', type: 'image/png', sizes: '180x180' },
+    ],
+  },
   alternates: {
     canonical: 'https://agenticconsciousness.com.au',
     types: {

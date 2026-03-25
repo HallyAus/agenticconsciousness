@@ -6,6 +6,18 @@ Allow: /
 User-agent: *
 Disallow: /api/
 
+# *
+User-agent: *
+Disallow: /payment/
+
+# *
+User-agent: *
+Disallow: /unsubscribe/
+
+# *
+User-agent: *
+Disallow: /proposal/
+
 # Host
 Host: https://agenticconsciousness.com.au
 
