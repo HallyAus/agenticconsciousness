@@ -68,7 +68,7 @@ export default function ToolsPageClient() {
           ].map((s) => (
             <div key={s.label}>
               <AnimatedCounter value={s.value} className="text-[1.2rem] font-black tracking-[-1px]" style={{ color: 'var(--red-text)' }} />
-              <div className="font-mono text-[0.5rem] text-text-dim tracking-[2px] uppercase mt-1">{s.label}</div>
+              <div className="font-mono text-[0.6rem] text-text-dim tracking-[2px] uppercase mt-2">{s.label}</div>
             </div>
           ))}
         </div>
@@ -130,15 +130,15 @@ export default function ToolsPageClient() {
               Take AI audit →
             </Link>
           </div>
-          <div className="flex gap-12 justify-center max-sm:gap-6 max-sm:flex-wrap">
+          <div className="flex gap-16 justify-center max-sm:gap-8 max-sm:flex-wrap">
             {[
               { value: '2 hours', label: 'To build these tools' },
               { value: '2 weeks', label: 'Typical implementation' },
               { value: '$0', label: 'Initial consultation' },
             ].map((s) => (
               <div key={s.label} className="text-center">
-                <div className="text-[1.2rem] font-black tracking-tight" style={{ color: 'var(--red-text)' }}>{s.value}</div>
-                <div className="font-mono text-[0.5rem] text-text-dim tracking-[2px] uppercase mt-1">{s.label}</div>
+                <div className="text-[1.8rem] font-black tracking-tight" style={{ color: 'var(--red-text)' }}>{s.value}</div>
+                <div className="font-mono text-[0.6rem] text-text-dim tracking-[2px] uppercase mt-2">{s.label}</div>
               </div>
             ))}
           </div>
