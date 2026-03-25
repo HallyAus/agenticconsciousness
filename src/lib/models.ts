@@ -4,8 +4,8 @@
  * Sonnet: balanced — good for complex analysis, creative writing
  */
 
-// Fast model — using Sonnet until Haiku JSON reliability improves
-export const FAST_MODEL = 'claude-sonnet-4-20250514';
+// Fast model for simple, structured tasks
+export const FAST_MODEL = 'claude-haiku-4-5-20251001';
 
 // Standard model for complex analysis and creative tasks
 export const STANDARD_MODEL = 'claude-sonnet-4-20250514';
