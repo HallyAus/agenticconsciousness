@@ -43,41 +43,6 @@ interface InvoiceResult {
   };
 }
 
-const EXAMPLE_INVOICE = `TAX INVOICE
-
-Officeworks Pty Ltd
-ABN: 36 004 763 526
-123 Innovation Drive, Richmond VIC 3121
-Phone: 1300 633 423
-
-Invoice Number: INV-2026-08842
-Invoice Date: 20 March 2026
-Due Date: 19 April 2026
-Payment Terms: Net 30
-
-Bill To:
-Agentic Consciousness Pty Ltd
-
-Description                          Qty    Unit Price    Amount
-------------------------------------------------------------------
-HP LaserJet Pro MFP M428fdw          1      $549.00      $549.00
-A4 Copy Paper 80gsm (5 reams)        10     $6.50        $65.00
-Logitech MX Master 3S Mouse          2      $149.00      $298.00
-USB-C Hub 7-in-1 Adapter             3      $89.95       $269.85
-Brother TN-2450 Toner Cartridge      4      $65.00       $260.00
-
-                                     Subtotal:  $1,441.85
-                                     GST (10%): $144.19
-                                     TOTAL:     $1,586.04
-
-Payment: Bank Transfer
-BSB: 013-140
-Account: 2876 5501
-Reference: INV-2026-08842`;
-
-const inputClass =
-  'w-full bg-ac-black border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim';
-
 const btnClass =
   'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
 
@@ -90,8 +55,6 @@ const STAGED_STEPS = [
 ];
 
 export default function InvoiceScanner() {
-  const [mode, setMode] = useState<'text' | 'file'>('text');
-  const [text, setText] = useState('');
   const [imageData, setImageData] = useState<{ data: string; mediaType: 'image/jpeg' | 'image/png' | 'image/webp' } | null>(null);
   const [pdfData, setPdfData] = useState<{ data: string } | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -148,16 +111,9 @@ export default function InvoiceScanner() {
     handleFileChange(fakeEvent);
   }
 
-  function handleTryExample() {
-    setMode('text');
-    setText(EXAMPLE_INVOICE);
-    setError(null);
-  }
-
   function handleScanAnother() {
     setResult(null);
     setApiDone(false);
-    setText('');
     setImageData(null);
     setPdfData(null);
     setFilePreview(null);
@@ -169,7 +125,7 @@ export default function InvoiceScanner() {
   const canSubmit =
     !loading &&
     remainingUses > 0 &&
-    ((mode === 'text' && text.trim().length >= 10) || (mode === 'file' && (imageData !== null || pdfData !== null)));
+    (imageData !== null || pdfData !== null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -188,12 +144,9 @@ export default function InvoiceScanner() {
     setResult(null);
 
     try {
-      const body =
-        mode === 'text'
-          ? { text }
-          : pdfData
-            ? { pdf: pdfData }
-            : { image: imageData };
+      const body = pdfData
+        ? { pdf: pdfData }
+        : { image: imageData };
 
       const res = await fetch('/api/tools/invoice', {
         method: 'POST',
@@ -426,65 +379,13 @@ export default function InvoiceScanner() {
             Scan any invoice instantly.
           </h2>
           <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[480px]">
-            Paste invoice text or upload a file (PDF, JPG, PNG). Claude extracts every field and classifies it for your records.
+            Upload an invoice (PDF, JPG, PNG). Claude extracts every field and classifies it for your records.
           </p>
         </div>
 
         <div className="grid grid-cols-2 gap-8 max-[900px]:grid-cols-1">
           {/* LEFT: Input */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            {/* Mode toggle */}
-            <div className="flex gap-0">
-              {(['text', 'file'] as const).map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  onClick={() => { setMode(m); setError(null); }}
-                  className={`font-display text-[0.65rem] font-bold tracking-[1px] uppercase py-2 px-4 transition-all duration-200 cursor-pointer border border-border-subtle ${
-                    mode === m
-                      ? 'bg-ac-red text-white border-ac-red'
-                      : 'bg-transparent text-text-dim hover:text-text-primary'
-                  }`}
-                >
-                  {m === 'text' ? 'Paste Text' : 'Upload File'}
-                </button>
-              ))}
-            </div>
-
-            {/* Try an example button */}
-            <div>
-              <button
-                type="button"
-                onClick={handleTryExample}
-                className="font-display text-[0.7rem] font-bold tracking-[2px] uppercase py-[6px] px-[14px] transition-colors duration-200 cursor-pointer bg-transparent"
-                style={{
-                  border: '1px solid var(--red-pill-border)',
-                  color: 'var(--red-text)',
-                  borderRadius: 0,
-                }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--red-faint)'; }}
-                onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
-              >
-                TRY AN EXAMPLE
-              </button>
-            </div>
-
-            {mode === 'text' ? (
-              <div className="flex flex-col gap-2">
-                <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
-                  Invoice Text
-                </label>
-                <textarea
-                  value={text}
-                  onChange={(e) => setText(e.target.value.slice(0, 15000))}
-                  placeholder="Paste your invoice text here..."
-                  className={`${inputClass} min-h-[280px] resize-y`}
-                />
-                <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-right">
-                  {text.length.toLocaleString()} / 15,000
-                </div>
-              </div>
-            ) : (
               <div className="flex flex-col gap-2">
                 <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                   Invoice File (PDF, JPG, PNG — max 10MB)
@@ -536,7 +437,6 @@ export default function InvoiceScanner() {
                   </button>
                 )}
               </div>
-            )}
 
             {remainingUses <= 0 ? (
               <div className="bg-ac-card border-2 border-ac-red p-6 text-center">
