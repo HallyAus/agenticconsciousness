@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { NAV_LINKS } from '@/lib/constants';
 import ThemeToggle from '@/components/ThemeToggle';
 
@@ -17,9 +18,9 @@ export default function Nav() {
 
   return (
     <nav aria-label="Main navigation" className="fixed top-0 left-0 right-0 z-[1000] px-10 h-[60px] flex justify-between items-center bg-[var(--bg-nav)] backdrop-blur-[12px] border-b-2 border-ac-red max-md:px-5">
-      <a href="#" className="font-display text-[1.1rem] font-black text-text-primary tracking-snug no-underline">
+      <Link href="/" className="font-display text-[1.1rem] font-black text-text-primary tracking-snug no-underline">
         AC<span className="text-ac-red">_</span>
-      </a>
+      </Link>
 
       {/* Desktop links */}
       <ul className="flex gap-10 list-none items-center max-md:hidden">

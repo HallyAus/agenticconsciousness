@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
+import Link from 'next/link';
 import { trackEvent } from '@/lib/tracking';
 
 interface Props {
@@ -58,21 +59,13 @@ export default function ProposalAcceptance({ proposalId, clientEmail, total }: P
         <p className="text-text-dim text-[0.85rem] font-light mb-4">
           A confirmation has been sent to {clientEmail}. We&apos;ll be in touch within 24 hours.
         </p>
-        <a
-          href={`/api/stripe/checkout`}
-          onClick={async (e) => {
-            e.preventDefault();
-            const deposit = Math.round(total * 0.5);
-            trackEvent('InitiateCheckout', { value: String(deposit), currency: 'AUD' });
-            // We'd need to create a custom checkout for the exact deposit amount
-            // For now, redirect to pricing
-            window.location.href = '/pricing';
-          }}
+        <Link
+          href="/pricing"
           className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 no-underline text-white"
           style={{ background: 'var(--red)' }}
         >
           Pay deposit →
-        </a>
+        </Link>
       </div>
     );
   }
