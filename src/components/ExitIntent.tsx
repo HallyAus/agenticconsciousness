@@ -145,6 +145,12 @@ export default function ExitIntent() {
       } else {
         sessionStorage.setItem(SESSION_SUBMITTED, 'true');
         trackEvent('Lead', { content_name: 'Exit Intent' });
+        // Also subscribe to drip
+        fetch('/api/drip/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, industry, source: 'exit-intent' }),
+        }).catch(() => {});
         setStep(2);
       }
     } catch {
