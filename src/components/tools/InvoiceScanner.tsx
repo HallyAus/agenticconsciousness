@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Link from 'next/link';
 import StagedLoading from '@/components/StagedLoading';
 import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
@@ -543,9 +544,9 @@ export default function InvoiceScanner() {
                 <p className="text-text-dim text-[0.8rem] font-light mb-4">
                   Imagine these tools running 24/7, customised for your business — that&apos;s what we build.
                 </p>
-                <a href="/#contact" className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 bg-ac-red text-white no-underline transition-all duration-200 hover:bg-white hover:text-ac-black">
+                <Link href="/#contact" className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 bg-ac-red text-white no-underline transition-all duration-200 hover:bg-white hover:text-ac-black">
                   Book free consultation →
-                </a>
+                </Link>
               </div>
             ) : (
               <>

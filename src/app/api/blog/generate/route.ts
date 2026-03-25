@@ -61,7 +61,13 @@ Respond in valid JSON only, no markdown wrapping:
       .map((block) => block.text)
       .join('');
 
-    const parsed = JSON.parse(text);
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      console.error('Failed to parse blog generation response');
+      return NextResponse.json({ error: 'Generation failed — invalid response' }, { status: 500 });
+    }
     const slug = parsed.title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')

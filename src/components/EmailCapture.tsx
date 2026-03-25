@@ -29,9 +29,9 @@ export default function EmailCapture() {
   if (submitted) {
     return (
       <div className="bg-ac-card border-2 border-ac-red p-8 text-center">
-        <div className="text-[1rem] font-black text-text-primary mb-2">You're in.</div>
+        <div className="text-[1rem] font-black text-text-primary mb-2">You&apos;re in.</div>
         <p className="text-text-dim text-[0.85rem] font-light">
-          We'll send you AI insights worth reading. No spam.
+          We&apos;ll send you AI insights worth reading. No spam.
         </p>
       </div>
     );

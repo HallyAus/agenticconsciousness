@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import InvoiceScanner from '@/components/tools/InvoiceScanner';
 import QuoteGenerator from '@/components/tools/QuoteGenerator';
 import CompetitorIntel from '@/components/tools/CompetitorIntel';
@@ -49,13 +50,13 @@ export default function ToolsPage() {
             >
               Book free consultation →
             </a>
-            <a
+            <Link
               href="/#ai-audit"
               className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 border-2"
               style={{ borderColor: 'var(--red)', color: 'var(--red-text)' }}
             >
               Take the AI audit →
-            </a>
+            </Link>
           </div>
           <div className="flex gap-16 justify-center max-sm:gap-8 max-sm:flex-wrap">
             {[

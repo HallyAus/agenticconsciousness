@@ -35,7 +35,6 @@ export default function Hero() {
     }));
   }, []);
 
-  const isPersonalised = content !== DEFAULT;
   const hasTagline = Boolean(content.tagline);
 
   const counters = content.showLocation
