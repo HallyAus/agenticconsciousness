@@ -16,12 +16,12 @@ interface ActionItem {
 }
 
 interface MeetingResult {
-  summary: string;
+  meetingSummary: string;
   actionItems: ActionItem[];
   decisions: string[];
   followUps: string[];
   attendees: string[];
-  nextMeeting: string;
+  nextMeeting: string | null;
 }
 
 const EXAMPLE = {
@@ -123,32 +123,34 @@ export default function MeetingTool() {
         setApiDone(true);
         setTimeout(() => {
           setResult(data);
+          setLoading(false);
           trackEvent('ViewContent', { content_name: 'Meeting Actions' });
         }, 600);
+        return;
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
-      setLoading(false);
+      if (!apiDone) setLoading(false);
     }
   }
 
   function buildActionsText(r: MeetingResult): string {
     const lines = [
       'MEETING ACTION ITEMS',
-      r.summary,
+      r.meetingSummary,
       '',
       'ACTION ITEMS',
       ['Action', 'Owner', 'Deadline', 'Priority'].join('\t'),
-      ...r.actionItems.map((a) => [a.action, a.owner, a.deadline, a.priority].join('\t')),
+      ...(r.actionItems ?? []).map((a) => [a.action, a.owner, a.deadline, a.priority].join('\t')),
     ];
-    if (r.decisions.length) {
+    if (r.decisions?.length) {
       lines.push('', 'DECISIONS', ...r.decisions.map((d) => `• ${d}`));
     }
-    if (r.followUps.length) {
+    if (r.followUps?.length) {
       lines.push('', 'FOLLOW-UPS', ...r.followUps.map((f) => `• ${f}`));
     }
-    if (r.attendees.length) {
+    if (r.attendees?.length) {
       lines.push('', `Attendees: ${r.attendees.join(', ')}`);
     }
     if (r.nextMeeting) {
@@ -160,7 +162,7 @@ export default function MeetingTool() {
   function buildCsvText(r: MeetingResult): string {
     const rows = [
       ['Action', 'Owner', 'Deadline', 'Priority'],
-      ...r.actionItems.map((a) => [a.action, a.owner, a.deadline, a.priority]),
+      ...(r.actionItems ?? []).map((a) => [a.action, a.owner, a.deadline, a.priority]),
     ];
     return rows.map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(',')).join('\n');
   }
@@ -305,12 +307,12 @@ export default function MeetingTool() {
                     Meeting Summary
                   </div>
                   <p className="text-[0.84rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>
-                    {result.summary}
+                    {result?.meetingSummary}
                   </p>
                 </div>
 
                 {/* Action Items Table */}
-                {result.actionItems.length > 0 && (
+                {result?.actionItems && result.actionItems.length > 0 && (
                   <div
                     className="overflow-hidden"
                     style={{
@@ -333,7 +335,7 @@ export default function MeetingTool() {
                           </tr>
                         </thead>
                         <tbody>
-                          {result.actionItems.map((item, i) => (
+                          {result?.actionItems?.map((item, i) => (
                             <tr
                               key={i}
                               style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-card-hover)' }}
@@ -351,7 +353,7 @@ export default function MeetingTool() {
                 )}
 
                 {/* Decisions */}
-                {result.decisions.length > 0 && (
+                {result?.decisions && result.decisions.length > 0 && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -365,7 +367,7 @@ export default function MeetingTool() {
                       Decisions Made
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
-                      {result.decisions.map((d, i) => (
+                      {result?.decisions?.map((d, i) => (
                         <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
                           <span className="flex-shrink-0 mt-[0.3em]" style={{ color: 'var(--red)', fontSize: '0.5rem' }}>■</span>
                           <span>{d}</span>
@@ -376,7 +378,7 @@ export default function MeetingTool() {
                 )}
 
                 {/* Follow-ups */}
-                {result.followUps.length > 0 && (
+                {result?.followUps && result.followUps.length > 0 && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -390,7 +392,7 @@ export default function MeetingTool() {
                       Follow-ups
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
-                      {result.followUps.map((f, i) => (
+                      {result?.followUps?.map((f, i) => (
                         <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3 text-text-ghost">
                           <span className="flex-shrink-0 mt-[0.3em]" style={{ fontSize: '0.5rem' }}>●</span>
                           <span>{f}</span>
@@ -401,7 +403,7 @@ export default function MeetingTool() {
                 )}
 
                 {/* Footer */}
-                {(result.attendees.length > 0 || result.nextMeeting) && (
+                {((result?.attendees && result.attendees.length > 0) || result?.nextMeeting) && (
                   <div
                     className="flex gap-6 flex-wrap"
                     style={{
@@ -411,10 +413,10 @@ export default function MeetingTool() {
                       animationDelay: '320ms',
                     }}
                   >
-                    {result.attendees.length > 0 && (
+                    {result?.attendees && result.attendees.length > 0 && (
                       <div>
                         <span className="font-mono text-[0.55rem] tracking-[1px] uppercase text-text-ghost">Attendees: </span>
-                        <span className="font-mono text-[0.65rem] text-text-dim">{result.attendees.join(', ')}</span>
+                        <span className="font-mono text-[0.65rem] text-text-dim">{result?.attendees?.join(', ')}</span>
                       </div>
                     )}
                     {result.nextMeeting && (

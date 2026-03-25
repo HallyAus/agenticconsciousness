@@ -263,7 +263,7 @@ export default function EmailTool() {
                   <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
                     Subject Line
                   </div>
-                  <p className="text-[0.95rem] font-black text-text-primary">{result.subject}</p>
+                  <p className="text-[0.95rem] font-black text-text-primary">{result?.subject}</p>
                 </div>
 
                 {/* Email Body */}
@@ -280,7 +280,7 @@ export default function EmailTool() {
                     Email Body
                   </div>
                   <div className="text-[0.84rem] font-light leading-[1.8] whitespace-pre-wrap" style={{ color: 'var(--text-body)' }}>
-                    {result.body}
+                    {result?.body}
                   </div>
                 </div>
 
@@ -295,11 +295,11 @@ export default function EmailTool() {
                   }}
                 >
                   <span className="font-mono text-[0.65rem] tracking-[1px] text-text-dim">
-                    {result.wordCount} words · {tone} tone
+                    {result?.wordCount} words · {tone} tone
                   </span>
-                  {result.toneNotes && (
+                  {result?.toneNotes && (
                     <span className="font-mono text-[0.65rem] tracking-[1px] text-text-ghost">
-                      — {result.toneNotes}
+                      — {result?.toneNotes}
                     </span>
                   )}
                 </div>
@@ -314,9 +314,9 @@ export default function EmailTool() {
                     animationDelay: '240ms',
                   }}
                 >
-                  <CopyButton text={`Subject: ${result.subject}\n\n${result.body}`} label="COPY EMAIL" />
-                  <CopyButton text={result.subject} label="COPY SUBJECT" />
-                  <SendToEmail resultText={`Subject: ${result.subject}\n\n${result.body}`} toolName="Email Drafter" />
+                  <CopyButton text={`Subject: ${result?.subject ?? ''}\n\n${result?.body ?? ''}`} label="COPY EMAIL" />
+                  <CopyButton text={result?.subject ?? ''} label="COPY SUBJECT" />
+                  <SendToEmail resultText={`Subject: ${result?.subject ?? ''}\n\n${result?.body ?? ''}`} toolName="Email Drafter" />
                   <button
                     type="button"
                     onClick={clearAll}

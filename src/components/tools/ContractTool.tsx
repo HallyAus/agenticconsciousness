@@ -14,22 +14,19 @@ type Assessment = 'Fair' | 'Somewhat one-sided' | 'One-sided' | 'Heavily one-sid
 type Severity = 'High' | 'Medium' | 'Low';
 
 interface Risk {
-  description: string;
+  risk: string;
   severity: Severity;
-}
-
-interface NegotiationPoint {
-  point: string;
-  suggestion: string;
+  explanation: string;
 }
 
 interface ContractResult {
   plainEnglish: string;
-  assessment: Assessment;
+  overallAssessment: Assessment;
   risks: Risk[];
   redFlags: string[];
   missingProtections: string[];
-  negotiationPoints: NegotiationPoint[];
+  negotiationPoints: string[];
+  disclaimer?: string;
 }
 
 const EXAMPLE_CLAUSE = `12. LIMITATION OF LIABILITY
@@ -170,35 +167,37 @@ export default function ContractTool() {
         setApiDone(true);
         setTimeout(() => {
           setResult(data);
+          setLoading(false);
           trackEvent('ViewContent', { content_name: 'Contract Reviewer' });
         }, 600);
+        return;
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
-      setLoading(false);
+      if (!apiDone) setLoading(false);
     }
   }
 
   function buildAnalysisText(r: ContractResult): string {
     const lines = [
       'CONTRACT CLAUSE ANALYSIS',
-      `Assessment: ${r.assessment}`,
+      `Assessment: ${r.overallAssessment}`,
       '',
       'PLAIN ENGLISH',
       r.plainEnglish,
     ];
-    if (r.risks.length) {
-      lines.push('', 'RISKS', ...r.risks.map((risk) => `[${risk.severity}] ${risk.description}`));
+    if (r.risks?.length) {
+      lines.push('', 'RISKS', ...(r.risks ?? []).map((risk) => `[${risk.severity}] ${risk.risk}: ${risk.explanation}`));
     }
-    if (r.redFlags.length) {
-      lines.push('', 'RED FLAGS', ...r.redFlags.map((f) => `• ${f}`));
+    if (r.redFlags?.length) {
+      lines.push('', 'RED FLAGS', ...(r.redFlags ?? []).map((f) => `• ${f}`));
     }
-    if (r.missingProtections.length) {
-      lines.push('', 'MISSING PROTECTIONS', ...r.missingProtections.map((p) => `• ${p}`));
+    if (r.missingProtections?.length) {
+      lines.push('', 'MISSING PROTECTIONS', ...(r.missingProtections ?? []).map((p) => `• ${p}`));
     }
-    if (r.negotiationPoints.length) {
-      lines.push('', 'NEGOTIATION POINTS', ...r.negotiationPoints.map((n, i) => `${i + 1}. ${n.point}\n   → ${n.suggestion}`));
+    if (r.negotiationPoints?.length) {
+      lines.push('', 'NEGOTIATION POINTS', ...(r.negotiationPoints ?? []).map((n, i) => `${i + 1}. ${n}`));
     }
     return lines.join('\n');
   }
@@ -389,11 +388,11 @@ export default function ContractTool() {
                   }}
                 >
                   <span className="font-mono text-[0.6rem] tracking-[1px] uppercase text-text-dim">Overall assessment:</span>
-                  <AssessmentPill assessment={result.assessment} />
+                  <AssessmentPill assessment={result?.overallAssessment} />
                 </div>
 
                 {/* Risks */}
-                {result.risks.length > 0 && (
+                {result?.risks && result.risks.length > 0 && (
                   <div
                     className="flex flex-col gap-2"
                     style={{
@@ -406,23 +405,28 @@ export default function ContractTool() {
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
                       Risks
                     </div>
-                    {result.risks.map((risk, i) => (
+                    {result?.risks?.map((risk, i) => (
                       <div
                         key={i}
                         className="p-4 flex gap-3 items-start"
                         style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}
                       >
                         <SeverityPill severity={risk.severity} />
-                        <p className="text-[0.82rem] font-light leading-[1.6]" style={{ color: 'var(--text-body)' }}>
-                          {risk.description}
-                        </p>
+                        <div>
+                          <p className="text-[0.82rem] font-semibold leading-[1.6]" style={{ color: 'var(--text-body)' }}>
+                            {risk.risk}
+                          </p>
+                          <p className="text-[0.78rem] font-light leading-[1.6]" style={{ color: 'var(--text-dim)' }}>
+                            {risk.explanation}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
                 )}
 
                 {/* Red Flags */}
-                {result.redFlags.length > 0 && (
+                {result?.redFlags && result.redFlags.length > 0 && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -436,7 +440,7 @@ export default function ContractTool() {
                       Red Flags
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
-                      {result.redFlags.map((flag, i) => (
+                      {result?.redFlags?.map((flag, i) => (
                         <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
                           <span className="flex-shrink-0 mt-[0.3em]" style={{ color: 'var(--red)', fontSize: '0.5rem' }}>■</span>
                           <span>{flag}</span>
@@ -447,7 +451,7 @@ export default function ContractTool() {
                 )}
 
                 {/* Missing Protections */}
-                {result.missingProtections.length > 0 && (
+                {result?.missingProtections && result.missingProtections.length > 0 && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -461,7 +465,7 @@ export default function ContractTool() {
                       Missing Protections
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
-                      {result.missingProtections.map((p, i) => (
+                      {result?.missingProtections?.map((p, i) => (
                         <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3 text-text-ghost">
                           <span className="flex-shrink-0 mt-[0.3em]" style={{ fontSize: '0.5rem' }}>●</span>
                           <span>{p}</span>
@@ -472,7 +476,7 @@ export default function ContractTool() {
                 )}
 
                 {/* Negotiation Points */}
-                {result.negotiationPoints.length > 0 && (
+                {result?.negotiationPoints && result.negotiationPoints.length > 0 && (
                   <div
                     style={{
                       opacity: 0,
@@ -485,16 +489,13 @@ export default function ContractTool() {
                       Negotiation Points
                     </div>
                     <div className="grid grid-cols-2 gap-3 max-[600px]:grid-cols-1">
-                      {result.negotiationPoints.slice(0, 4).map((np, i) => (
+                      {result?.negotiationPoints?.slice(0, 4).map((np, i) => (
                         <div key={i} className="p-4" style={{ background: 'var(--bg-card)' }}>
                           <div className="font-mono text-[1rem] font-black mb-2 leading-none" style={{ color: 'var(--red)' }}>
                             {String(i + 1).padStart(2, '0')}
                           </div>
-                          <p className="text-[0.82rem] font-light leading-[1.6] mb-1" style={{ color: 'var(--text-body)' }}>
-                            {np.point}
-                          </p>
-                          <p className="text-[0.75rem] font-light leading-[1.5]" style={{ color: 'var(--text-dim)' }}>
-                            → {np.suggestion}
+                          <p className="text-[0.82rem] font-light leading-[1.6]" style={{ color: 'var(--text-body)' }}>
+                            {np}
                           </p>
                         </div>
                       ))}

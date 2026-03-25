@@ -179,7 +179,7 @@ export default function InvoiceScanner() {
   function buildCsv(r: InvoiceResult): string {
     const rows = [
       ['Description', 'Qty', 'Unit Price', 'Amount'],
-      ...r.lineItems.map((li) => [
+      ...(r.lineItems ?? []).map((li) => [
         li.description,
         li.qty ?? '',
         li.unitPrice ?? '',
@@ -285,7 +285,7 @@ export default function InvoiceScanner() {
                 </tr>
               </thead>
               <tbody>
-                {result.lineItems.map((item, i) => (
+                {result?.lineItems?.map((item, i) => (
                   <tr
                     key={i}
                     style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-card-hover)' }}

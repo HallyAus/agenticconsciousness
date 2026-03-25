@@ -121,13 +121,15 @@ export default function CompetitorIntel() {
         setLoadingComplete(true);
         setTimeout(() => {
           setResult(data);
+          setLoading(false);
           trackEvent('ViewContent', { content_name: 'Competitor Intel' });
         }, 400);
+        return;
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
-      setLoading(false);
+      if (!loadingComplete) setLoading(false);
     }
   }
 
@@ -141,16 +143,16 @@ export default function CompetitorIntel() {
       r.positioning,
       ``,
       `STRENGTHS`,
-      ...r.strengths.map((s, i) => `${i + 1}. ${s}`),
+      ...(r.strengths ?? []).map((s, i) => `${i + 1}. ${s}`),
       ``,
       `WEAKNESSES`,
-      ...r.weaknesses.map((w, i) => `${i + 1}. ${w}`),
+      ...(r.weaknesses ?? []).map((w, i) => `${i + 1}. ${w}`),
       ``,
       `PRICING STRATEGY`,
       r.pricingStrategy,
       ``,
       `DIFFERENTIATION OPPORTUNITIES`,
-      ...r.differentiationOpportunities.map((d, i) => `${i + 1}. ${d}`),
+      ...(r.differentiationOpportunities ?? []).map((d, i) => `${i + 1}. ${d}`),
       ``,
       `AI ADVANTAGE`,
       r.aiAdvantage,
@@ -356,7 +358,7 @@ export default function CompetitorIntel() {
                       STRENGTHS
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
-                      {result.strengths.map((s, i) => (
+                      {result?.strengths?.map((s, i) => (
                         <li key={i} className="text-[0.8rem] text-text-dim font-light leading-[1.6] flex gap-2">
                           <span className="flex-shrink-0 mt-[0.25em]" style={{ color: 'var(--red)', fontSize: '0.55rem' }}>●</span>
                           <span>{s}</span>
@@ -370,7 +372,7 @@ export default function CompetitorIntel() {
                       WEAKNESSES
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
-                      {result.weaknesses.map((w, i) => (
+                      {result?.weaknesses?.map((w, i) => (
                         <li key={i} className="text-[0.8rem] text-text-dim font-light leading-[1.6] flex gap-2">
                           <span className="flex-shrink-0 mt-[0.25em]" style={{ color: 'var(--text-dim)', fontSize: '0.55rem' }}>●</span>
                           <span>{w}</span>
@@ -411,7 +413,7 @@ export default function CompetitorIntel() {
                     Differentiation Opportunities
                   </div>
                   <div className="grid grid-cols-2 gap-3 max-[600px]:grid-cols-1">
-                    {result.differentiationOpportunities.slice(0, 4).map((opp, i) => (
+                    {result?.differentiationOpportunities?.slice(0, 4).map((opp, i) => (
                       <div
                         key={i}
                         className="p-4"
@@ -426,9 +428,9 @@ export default function CompetitorIntel() {
                       </div>
                     ))}
                   </div>
-                  {result.differentiationOpportunities.length > 4 && (
+                  {result?.differentiationOpportunities && result.differentiationOpportunities.length > 4 && (
                     <div className="mt-3 flex flex-col gap-2">
-                      {result.differentiationOpportunities.slice(4).map((opp, i) => (
+                      {result?.differentiationOpportunities?.slice(4).map((opp, i) => (
                         <div key={i} className="flex gap-3 p-3" style={{ background: 'var(--bg-card)' }}>
                           <span className="font-mono text-[0.65rem] font-black flex-shrink-0 mt-0.5" style={{ color: 'var(--red)' }}>
                             {String(i + 5).padStart(2, '0')}

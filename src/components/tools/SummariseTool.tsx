@@ -10,11 +10,10 @@ import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } 
 import { trackEvent } from '@/lib/tracking';
 
 interface SummaryResult {
-  originalWords: number;
-  summaryWords: number;
-  compressionRatio: string;
-  executiveSummary: string;
+  executiveSummary: string | null;
   keyPoints: string[];
+  wordCount: { original: number; summary: number };
+  compressionRatio: string;
 }
 
 const EXAMPLE_TEXT = `Q1 2024 Business Performance Review — Acme Solutions Pty Ltd
@@ -115,26 +114,28 @@ export default function SummariseTool() {
         setApiDone(true);
         setTimeout(() => {
           setResult(data);
+          setLoading(false);
           trackEvent('ViewContent', { content_name: 'Summarise Tool' });
         }, 600);
+        return;
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
-      setLoading(false);
+      if (!apiDone) setLoading(false);
     }
   }
 
   function buildSummaryText(r: SummaryResult): string {
     const lines = [
       `SUMMARY`,
-      `Original: ${r.originalWords} words → Summary: ${r.summaryWords} words (${r.compressionRatio} compression)`,
+      `Original: ${r.wordCount?.original ?? 0} words → Summary: ${r.wordCount?.summary ?? 0} words (${r.compressionRatio} compression)`,
       ``,
     ];
     if (r.executiveSummary) {
       lines.push('EXECUTIVE SUMMARY', r.executiveSummary, '');
     }
-    if (r.keyPoints.length) {
+    if (r.keyPoints?.length) {
       lines.push('KEY POINTS', ...r.keyPoints.map((p, i) => `${i + 1}. ${p}`));
     }
     return lines.join('\n');
@@ -272,9 +273,9 @@ export default function SummariseTool() {
                   }}
                 >
                   {[
-                    { label: 'Original', value: `${result.originalWords} words` },
-                    { label: 'Summary', value: `${result.summaryWords} words` },
-                    { label: 'Compression', value: result.compressionRatio },
+                    { label: 'Original', value: `${result?.wordCount?.original ?? 0} words` },
+                    { label: 'Summary', value: `${result?.wordCount?.summary ?? 0} words` },
+                    { label: 'Compression', value: result?.compressionRatio },
                   ].map((stat) => (
                     <div key={stat.label} className="flex-1 min-w-[100px] p-4" style={{ background: 'var(--bg-card)' }}>
                       <div className="font-mono text-[0.55rem] tracking-[1px] uppercase mb-1" style={{ color: 'var(--text-dim)' }}>
@@ -286,7 +287,7 @@ export default function SummariseTool() {
                 </div>
 
                 {/* Executive Summary */}
-                {result.executiveSummary && length !== 'Brief' && (
+                {result?.executiveSummary && length !== 'Brief' && (
                   <div
                     className="p-5"
                     style={{
@@ -302,7 +303,7 @@ export default function SummariseTool() {
                       Executive Summary
                     </div>
                     <p className="text-[0.84rem] font-light leading-[1.8]" style={{ color: 'var(--text-body)' }}>
-                      {result.executiveSummary}
+                      {result?.executiveSummary}
                     </p>
                   </div>
                 )}
@@ -321,7 +322,7 @@ export default function SummariseTool() {
                     Key Points
                   </div>
                   <ul className="flex flex-col gap-2 list-none">
-                    {result.keyPoints.map((point, i) => (
+                    {result?.keyPoints?.map((point, i) => (
                       <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
                         <span className="flex-shrink-0 mt-[0.3em]" style={{ color: 'var(--red)', fontSize: '0.5rem' }}>■</span>
                         <span>{point}</span>

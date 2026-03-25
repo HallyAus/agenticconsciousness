@@ -158,13 +158,15 @@ export default function QuoteGenerator() {
         setLoadingComplete(true);
         setTimeout(() => {
           setResult(data);
+          setLoading(false);
           trackEvent('ViewContent', { content_name: 'Quote Generator' });
         }, 400);
+        return;
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
-      setLoading(false);
+      if (!loadingComplete) setLoading(false);
     }
   }
 
@@ -465,7 +467,7 @@ export default function QuoteGenerator() {
                         </tr>
                       </thead>
                       <tbody>
-                        {result.lineItems.map((item, i) => (
+                        {result?.lineItems?.map((item, i) => (
                           <tr
                             key={i}
                             style={{ background: i % 2 === 0 ? 'var(--bg-card)' : 'var(--bg-card-hover)' }}
@@ -510,7 +512,7 @@ export default function QuoteGenerator() {
                     Terms &amp; Conditions
                   </div>
                   <ul className="flex flex-col gap-1 list-none">
-                    {result.terms.map((term, i) => (
+                    {result?.terms?.map((term, i) => (
                       <li key={i} className="text-[0.82rem] text-text-dim font-light leading-[1.6] flex gap-3">
                         <span className="flex-shrink-0 mt-[0.25em]" style={{ color: 'var(--red)', fontSize: '0.5rem' }}>■</span>
                         <span>{term}</span>
@@ -533,7 +535,7 @@ export default function QuoteGenerator() {
                     Next Steps
                   </div>
                   <ol className="flex flex-col gap-1">
-                    {result.nextSteps.map((step, i) => (
+                    {result?.nextSteps?.map((step, i) => (
                       <li key={i} className="text-[0.82rem] text-text-dim font-light leading-[1.6] flex gap-3">
                         <span className="font-mono text-[0.6rem] mt-1 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
                         <span>{step}</span>

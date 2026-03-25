@@ -13,16 +13,18 @@ interface JobAdResult {
   title: string;
   company: string;
   location: string;
-  employmentType: string;
-  salaryRange: string;
-  aboutCompany: string;
-  roleOverview: string;
+  type: string;
+  salary: string | null;
+  about: string;
+  overview: string;
   responsibilities: string[];
-  essentialRequirements: string[];
-  desirableRequirements: string[];
+  requirements: {
+    essential: string[];
+    desirable: string[];
+  };
   benefits: string[];
   howToApply: string;
-  biasCheck: string[];
+  biasCheck: string;
 }
 
 const INDUSTRIES = [
@@ -149,38 +151,40 @@ export default function JobAdTool() {
         setApiDone(true);
         setTimeout(() => {
           setResult(data);
+          setLoading(false);
           trackEvent('ViewContent', { content_name: 'Job Ad Writer' });
         }, 600);
+        return;
       }
     } catch {
       setError('Network error. Please check your connection and try again.');
     } finally {
-      setLoading(false);
+      if (!apiDone) setLoading(false);
     }
   }
 
   function buildJobAdText(r: JobAdResult): string {
     const lines = [
       r.title,
-      `${r.company} · ${r.location} · ${r.employmentType}${r.salaryRange ? ` · ${r.salaryRange}` : ''}`,
+      `${r.company} · ${r.location} · ${r.type}${r.salary ? ` · ${r.salary}` : ''}`,
       '',
       'ABOUT US',
-      r.aboutCompany,
+      r.about,
       '',
       'THE ROLE',
-      r.roleOverview,
+      r.overview,
       '',
       'RESPONSIBILITIES',
-      ...r.responsibilities.map((item, i) => `${i + 1}. ${item}`),
+      ...(r.responsibilities ?? []).map((item, i) => `${i + 1}. ${item}`),
       '',
       'REQUIREMENTS',
       'Essential:',
-      ...r.essentialRequirements.map((req) => `• ${req}`),
+      ...(r.requirements?.essential ?? []).map((req) => `• ${req}`),
     ];
-    if (r.desirableRequirements.length) {
-      lines.push('Desirable:', ...r.desirableRequirements.map((req) => `• ${req}`));
+    if (r.requirements?.desirable?.length) {
+      lines.push('Desirable:', ...r.requirements.desirable.map((req) => `• ${req}`));
     }
-    if (r.benefits.length) {
+    if (r.benefits?.length) {
       lines.push('', 'WHAT WE OFFER', ...r.benefits.map((b) => `• ${b}`));
     }
     lines.push('', 'HOW TO APPLY', r.howToApply);
@@ -373,7 +377,7 @@ export default function JobAdTool() {
                 >
                   <h3 className="text-[1.5rem] font-black text-text-primary leading-none mb-3">{result.title}</h3>
                   <div className="flex gap-2 flex-wrap">
-                    {[result.company, result.location, result.employmentType, result.salaryRange].filter(Boolean).map((meta) => (
+                    {[result?.company, result?.location, result?.type, result?.salary].filter(Boolean).map((meta) => (
                       <span
                         key={meta}
                         className="font-mono text-[0.6rem] tracking-[1px] uppercase px-2 py-1"
@@ -386,7 +390,7 @@ export default function JobAdTool() {
                 </div>
 
                 {/* About */}
-                {result.aboutCompany && (
+                {result?.about && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -397,12 +401,12 @@ export default function JobAdTool() {
                     }}
                   >
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-2 text-text-dim">About Us</div>
-                    <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>{result.aboutCompany}</p>
+                    <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>{result?.about}</p>
                   </div>
                 )}
 
                 {/* Overview */}
-                {result.roleOverview && (
+                {result?.overview && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -413,12 +417,12 @@ export default function JobAdTool() {
                     }}
                   >
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-2 text-text-dim">The Role</div>
-                    <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>{result.roleOverview}</p>
+                    <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>{result?.overview}</p>
                   </div>
                 )}
 
                 {/* Responsibilities */}
-                {result.responsibilities.length > 0 && (
+                {result?.responsibilities && result.responsibilities.length > 0 && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -430,7 +434,7 @@ export default function JobAdTool() {
                   >
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>Responsibilities</div>
                     <ol className="flex flex-col gap-1.5 list-none">
-                      {result.responsibilities.map((item, i) => (
+                      {result?.responsibilities?.map((item, i) => (
                         <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
                           <span className="font-mono text-[0.6rem] mt-0.5 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
                           <span>{item}</span>
@@ -441,7 +445,7 @@ export default function JobAdTool() {
                 )}
 
                 {/* Requirements */}
-                {(result.essentialRequirements.length > 0 || result.desirableRequirements.length > 0) && (
+                {((result?.requirements?.essential && result.requirements.essential.length > 0) || (result?.requirements?.desirable && result.requirements.desirable.length > 0)) && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -452,11 +456,11 @@ export default function JobAdTool() {
                     }}
                   >
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>Requirements</div>
-                    {result.essentialRequirements.length > 0 && (
+                    {result?.requirements?.essential && result.requirements.essential.length > 0 && (
                       <>
                         <div className="font-mono text-[0.55rem] tracking-[1px] uppercase mb-2 text-text-dim">Essential</div>
                         <ul className="flex flex-col gap-1.5 list-none mb-3">
-                          {result.essentialRequirements.map((req, i) => (
+                          {result?.requirements?.essential?.map((req, i) => (
                             <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
                               <span className="flex-shrink-0 mt-[0.3em]" style={{ color: 'var(--red)', fontSize: '0.5rem' }}>■</span>
                               <span>{req}</span>
@@ -465,11 +469,11 @@ export default function JobAdTool() {
                         </ul>
                       </>
                     )}
-                    {result.desirableRequirements.length > 0 && (
+                    {result?.requirements?.desirable && result.requirements.desirable.length > 0 && (
                       <>
                         <div className="font-mono text-[0.55rem] tracking-[1px] uppercase mb-2 text-text-dim">Desirable</div>
                         <ul className="flex flex-col gap-1.5 list-none">
-                          {result.desirableRequirements.map((req, i) => (
+                          {result?.requirements?.desirable?.map((req, i) => (
                             <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3 text-text-dim">
                               <span className="flex-shrink-0 mt-[0.3em]" style={{ fontSize: '0.5rem' }}>●</span>
                               <span>{req}</span>
@@ -482,7 +486,7 @@ export default function JobAdTool() {
                 )}
 
                 {/* Benefits */}
-                {result.benefits.length > 0 && (
+                {result?.benefits && result.benefits.length > 0 && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -494,7 +498,7 @@ export default function JobAdTool() {
                   >
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3 text-text-dim">What We Offer</div>
                     <ul className="flex flex-col gap-1.5 list-none">
-                      {result.benefits.map((b, i) => (
+                      {result?.benefits?.map((b, i) => (
                         <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
                           <span className="flex-shrink-0 mt-[0.3em]" style={{ color: 'var(--status-green)', fontSize: '0.5rem' }}>■</span>
                           <span>{b}</span>
@@ -505,7 +509,7 @@ export default function JobAdTool() {
                 )}
 
                 {/* How to Apply */}
-                {result.howToApply && (
+                {result?.howToApply && (
                   <div
                     className="bg-ac-card p-5"
                     style={{
@@ -516,12 +520,12 @@ export default function JobAdTool() {
                     }}
                   >
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-2 text-text-dim">How to Apply</div>
-                    <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>{result.howToApply}</p>
+                    <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>{result?.howToApply}</p>
                   </div>
                 )}
 
                 {/* Bias Check */}
-                {result.biasCheck.length > 0 && (
+                {result?.biasCheck && (
                   <div
                     className="p-5"
                     style={{
@@ -534,11 +538,7 @@ export default function JobAdTool() {
                     }}
                   >
                     <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-2 text-text-dim">Bias Check</div>
-                    <ul className="flex flex-col gap-1.5 list-none">
-                      {result.biasCheck.map((note, i) => (
-                        <li key={i} className="text-[0.78rem] font-light leading-[1.6] text-text-ghost">{note}</li>
-                      ))}
-                    </ul>
+                    <p className="text-[0.78rem] font-light leading-[1.6] text-text-ghost">{result.biasCheck}</p>
                   </div>
                 )}
 
