@@ -84,14 +84,14 @@ export default function RootLayout({
     <html lang="en" className={`${beVietnamPro.variable} ${spaceMono.variable}`} data-theme="dark">
       <body>
         <ThemeProvider>
-          {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
-            <Script
-              defer
-              data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
-              src="https://plausible.io/js/script.js"
-              strategy="afterInteractive"
-            />
-          )}
+          <Script
+            async
+            src="https://plausible.io/js/pa-rigUYWvL1M6xYCckO5Lvm.js"
+            strategy="afterInteractive"
+          />
+          <Script id="plausible-init" strategy="afterInteractive">
+            {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`}
+          </Script>
           <TrackingPixels />
           <ScrollProgress />
           <ExitIntent />
