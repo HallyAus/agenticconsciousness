@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     };
 
     const validLengths = ['brief', 'standard', 'detailed'];
+    const normalizedLength = (length || '').toLowerCase();
 
     if (!text || text.length < 10 || text.length > 10000) {
       return NextResponse.json(
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!length || !validLengths.includes(length)) {
+    if (!normalizedLength || !validLengths.includes(normalizedLength)) {
       return NextResponse.json(
         { error: 'Length must be one of: brief, standard, detailed.' },
         { status: 400 }
@@ -69,11 +70,11 @@ Rules:
 - Key points should be complete, meaningful sentences
 - Australian English spelling throughout`;
 
-    const userMessage = `Length: ${length}\n\nText to summarise:\n${text}`;
+    const userMessage = `Length: ${normalizedLength}\n\nText to summarise:\n${text}`;
 
     const response = await client.messages.create({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: maxTokensMap[length],
+      max_tokens: maxTokensMap[normalizedLength],
       system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }],
     });

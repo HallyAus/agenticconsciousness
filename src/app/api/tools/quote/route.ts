@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
       industry?: string;
       jobDescription?: string;
       estimatedValue?: string;
-      type?: 'simple' | 'detailed';
+      type?: string;
     };
 
     if (!businessName || !clientName || !jobDescription) {
@@ -43,7 +43,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isDetailed = type === 'detailed';
+    // Normalise type — ToggleGroup may send "Simple Quote" or "Detailed Proposal"
+    const normalizedType = (type || '').toLowerCase();
+    const isDetailed = normalizedType === 'detailed' || normalizedType === 'detailed proposal';
 
     const systemPrompt = `You are a professional quote generator for Australian businesses. Generate a realistic, professional quote based on the job description provided.
 

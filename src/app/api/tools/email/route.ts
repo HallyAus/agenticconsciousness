@@ -27,6 +27,7 @@ export async function POST(req: NextRequest) {
     };
 
     const validTones = ['professional', 'friendly', 'direct', 'formal'];
+    const normalizedTone = (tone || '').toLowerCase();
 
     if (!text || text.length < 10 || text.length > 3000) {
       return NextResponse.json(
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!tone || !validTones.includes(tone)) {
+    if (!normalizedTone || !validTones.includes(normalizedTone)) {
       return NextResponse.json(
         { error: 'Tone must be one of: professional, friendly, direct, formal.' },
         { status: 400 }
@@ -61,7 +62,7 @@ Rules:
 - Professional sign-off appropriate to the tone
 - Do not invent details not in the input`;
 
-    const userMessage = `Tone: ${tone}${recipient ? `\nRecipient: ${recipient}` : ''}\n\nRough input:\n${text}`;
+    const userMessage = `Tone: ${normalizedTone}${recipient ? `\nRecipient: ${recipient}` : ''}\n\nRough input:\n${text}`;
 
     const response = await client.messages.create({
       model: 'claude-sonnet-4-20250514',
