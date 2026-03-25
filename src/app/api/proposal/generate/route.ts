@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { saveProposal } from '@/lib/proposals';
 import { randomUUID } from 'crypto';
+import { parseAiJson } from '@/lib/parseAiJson';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -63,7 +64,8 @@ Rules:
       .join('');
 
     let parsed;
-    try { parsed = JSON.parse(text); } catch {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    try { parsed = parseAiJson<any>(text); } catch {
       return NextResponse.json({ error: 'Failed to generate proposal' }, { status: 500 });
     }
 

@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { incrementToolStat } from '@/lib/toolStats';
+import { parseAiJson } from '@/lib/parseAiJson';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -99,7 +100,7 @@ ${description}`;
 
     let result;
     try {
-      result = JSON.parse(rawText);
+      result = parseAiJson(rawText);
       incrementToolStat('jobads');
     } catch {
       console.error('Failed to parse AI response');

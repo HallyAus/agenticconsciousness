@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { parseAiJson } from '@/lib/parseAiJson';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -63,7 +64,8 @@ Respond in valid JSON only, no markdown wrapping:
 
     let parsed;
     try {
-      parsed = JSON.parse(text);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      parsed = parseAiJson<any>(text);
     } catch {
       console.error('Failed to parse blog generation response');
       return NextResponse.json({ error: 'Generation failed — invalid response' }, { status: 500 });
