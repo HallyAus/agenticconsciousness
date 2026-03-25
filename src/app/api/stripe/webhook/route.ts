@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { notifyAdmin } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   try {
@@ -50,6 +51,11 @@ export async function POST(req: NextRequest) {
       fs.appendFileSync(
         path.join(dataDir, 'payments.jsonl'),
         JSON.stringify(payment) + '\n'
+      );
+
+      await notifyAdmin(
+        `Payment Received: ${session.metadata?.packageId} — $${((session.amount_total || 0) / 100).toLocaleString()}`,
+        `Email: ${session.customer_details?.email}\nPackage: ${session.metadata?.packageId}\nAmount: $${((session.amount_total || 0) / 100).toLocaleString()} ${session.currency?.toUpperCase()}\nSession: ${session.id}`
       );
     }
 

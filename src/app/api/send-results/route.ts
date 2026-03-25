@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { sendEmail, emailTemplate } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
@@ -39,6 +40,17 @@ export async function POST(req: NextRequest) {
       path.join(dataDir, 'leads.jsonl'),
       JSON.stringify({ ...submission, source: 'tool-email', results }) + '\n'
     );
+
+    await sendEmail({
+      to: email,
+      subject: `Your ${toolName} Results — Agentic Consciousness`,
+      html: emailTemplate(`
+        <h2 style="color:#fff;font-size:20px;margin:0 0 16px">Your ${toolName} results</h2>
+        <pre style="background:#111;padding:16px;border-left:3px solid #ff3d00;color:#ccc;font-size:12px;overflow-x:auto;white-space:pre-wrap">${typeof results === 'string' ? results : JSON.stringify(results, null, 2)}</pre>
+        <p style="color:#e0e0e0;margin-top:20px">Try our other free AI tools:</p>
+        <a href="https://agenticconsciousness.com.au/tools" style="color:#ff3d00;text-decoration:none;font-weight:bold">agenticconsciousness.com.au/tools →</a>
+      `),
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getProposal, saveProposal } from '@/lib/proposals';
 import fs from 'fs';
 import path from 'path';
+import { sendEmail, notifyAdmin, emailTemplate } from '@/lib/email';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -35,6 +36,25 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const dataDir = path.join(process.cwd(), 'data');
     if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
     fs.appendFileSync(path.join(dataDir, 'leads.jsonl'), JSON.stringify({ event: 'proposal_accepted', id, email: proposal.clientEmail, company: proposal.clientCompany, total: proposal.total, timestamp: new Date().toISOString() }) + '\n');
+
+    // Client confirmation
+    await sendEmail({
+      to: proposal.clientEmail,
+      subject: `Proposal Accepted — ${proposal.title}`,
+      html: emailTemplate(`
+        <h2 style="color:#fff;font-size:20px;margin:0 0 16px">Proposal accepted</h2>
+        <p style="color:#e0e0e0"><strong style="color:#fff">${proposal.title}</strong> has been accepted.</p>
+        <p style="color:#e0e0e0">Total: <strong style="color:#ff3d00">$${proposal.total.toLocaleString()}</strong> AUD (inc. GST)</p>
+        <p style="color:#e0e0e0">We'll be in touch within 24 hours to schedule your kickoff.</p>
+        <a href="mailto:ai@agenticconsciousness.com.au" style="display:inline-block;background:#ff3d00;color:#fff;padding:10px 24px;text-decoration:none;font-weight:bold;font-size:13px;letter-spacing:1px;margin-top:12px">CONTACT US →</a>
+      `),
+    });
+
+    // Admin notification
+    await notifyAdmin(
+      `Proposal Accepted: ${proposal.clientCompany} — $${proposal.total.toLocaleString()}`,
+      `Client: ${proposal.clientName}\nCompany: ${proposal.clientCompany}\nEmail: ${proposal.clientEmail}\nTitle: ${proposal.title}\nTotal: $${proposal.total}\nSigned by: ${signatureName}`
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {

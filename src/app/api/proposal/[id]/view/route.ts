@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getProposal, saveProposal } from '@/lib/proposals';
+import { notifyAdmin } from '@/lib/email';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -13,6 +14,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       saveProposal(proposal);
 
       console.log(JSON.stringify({ event: 'proposal_viewed', id, client: proposal.clientCompany, timestamp: new Date().toISOString() }));
+
+      await notifyAdmin(
+        `Proposal Viewed: ${proposal.clientCompany}`,
+        `${proposal.clientName} just opened "${proposal.title}"\nTotal: $${proposal.total}`
+      );
     }
 
     return NextResponse.json({ success: true });

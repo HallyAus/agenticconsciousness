@@ -6,6 +6,7 @@ import ThemeProvider from '@/components/ThemeProvider';
 import ScrollProgress from '@/components/ScrollProgress';
 import ExitIntent from '@/components/ExitIntent';
 import TrackingPixels from '@/components/TrackingPixels';
+import Script from 'next/script';
 
 const beVietnamPro = Be_Vietnam_Pro({
   subsets: ['latin'],
@@ -83,6 +84,14 @@ export default function RootLayout({
     <html lang="en" className={`${beVietnamPro.variable} ${spaceMono.variable}`} data-theme="dark">
       <body>
         <ThemeProvider>
+          {process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN && (
+            <Script
+              defer
+              data-domain={process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN}
+              src="https://plausible.io/js/script.js"
+              strategy="afterInteractive"
+            />
+          )}
           <TrackingPixels />
           <ScrollProgress />
           <ExitIntent />

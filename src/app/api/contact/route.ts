@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { notifyAdmin } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
@@ -42,6 +43,11 @@ export async function POST(req: NextRequest) {
 
     const leadsFile = path.join(leadsDir, 'leads.jsonl');
     fs.appendFileSync(leadsFile, JSON.stringify(submission) + '\n');
+
+    await notifyAdmin(
+      `New Lead: ${name} — ${email}`,
+      `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'N/A'}\nService: ${recommendedService || 'N/A'}\nMessage: ${message || 'N/A'}`
+    );
 
     return NextResponse.json({ success: true });
   } catch (error) {

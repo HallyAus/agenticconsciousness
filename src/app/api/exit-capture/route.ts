@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import fs from 'fs';
 import path from 'path';
+import { sendEmail, notifyAdmin, emailTemplate } from '@/lib/email';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -79,6 +80,24 @@ export async function POST(req: NextRequest) {
     fs.appendFileSync(
       path.join(dataDir, 'leads.jsonl'),
       JSON.stringify({ ...lead, snapshot }) + '\n'
+    );
+
+    // Send snapshot to visitor
+    await sendEmail({
+      to: email,
+      subject: 'Your AI Opportunity Snapshot — Agentic Consciousness',
+      html: emailTemplate(`
+        <p style="color:#e0e0e0">Here's your personalised AI opportunity snapshot for <strong style="color:#fff">${industry}</strong>:</p>
+        <div style="border-left:3px solid #ff3d00;padding-left:16px;margin:20px 0;color:#ccc">${snapshot.replace(/\n/g, '<br>')}</div>
+        <p style="color:#e0e0e0">Want to go deeper? Book a free consultation:</p>
+        <a href="mailto:ai@agenticconsciousness.com.au" style="display:inline-block;background:#ff3d00;color:#fff;padding:10px 24px;text-decoration:none;font-weight:bold;font-size:13px;letter-spacing:1px;margin-top:8px">BOOK FREE CONSULTATION →</a>
+      `),
+    });
+
+    // Notify admin
+    await notifyAdmin(
+      `Exit Intent Lead: ${email} — ${industry}`,
+      `Email: ${email}\nIndustry: ${industry}\nSnapshot preview: ${snapshot.slice(0, 200)}`
     );
 
     return NextResponse.json({ success: true, snapshot });
