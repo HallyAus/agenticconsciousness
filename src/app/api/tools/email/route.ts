@@ -67,7 +67,7 @@ Rules:
 
     const response = await client.messages.create({
       model: FAST_MODEL,
-      max_tokens: 600,
+      max_tokens: 800,
       system: systemPrompt,
       messages: [{ role: 'user', content: userMessage }],
     });
@@ -81,6 +81,7 @@ Rules:
       JSON.stringify({
         tool: 'email',
         usage: response.usage,
+        stop_reason: response.stop_reason,
         timestamp: new Date().toISOString(),
       })
     );

@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     // Generate AI opportunity snapshot
     const response = await client.messages.create({
       model: FAST_MODEL,
-      max_tokens: 400,
+      max_tokens: 600,
       system: `Generate 3 quick AI opportunities for a business in the ${industry} sector. Format as a brief, compelling list. Include one specific tool recommendation. Sign off as Agentic Consciousness. Australian English. Keep it under 200 words total.`,
       messages: [
         { role: 'user', content: `Generate an AI opportunity snapshot for a ${industry} business.` },
@@ -61,6 +61,15 @@ export async function POST(req: NextRequest) {
       .filter((block): block is Anthropic.TextBlock => block.type === 'text')
       .map((block) => block.text)
       .join('');
+
+    console.log(
+      JSON.stringify({
+        tool: 'exit-capture',
+        usage: response.usage,
+        stop_reason: response.stop_reason,
+        timestamp: new Date().toISOString(),
+      })
+    );
 
     // Log the lead
     const lead = {

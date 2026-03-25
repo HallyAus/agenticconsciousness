@@ -122,7 +122,7 @@ Rules:
 
     const response = await client.messages.create({
       model: FAST_MODEL,
-      max_tokens: 1500,
+      max_tokens: 2000,
       system: systemPrompt,
       messages: [{ role: 'user', content: userContent }],
     });
@@ -136,6 +136,7 @@ Rules:
       JSON.stringify({
         tool: 'invoice',
         usage: response.usage,
+        stop_reason: response.stop_reason,
         timestamp: new Date().toISOString(),
       })
     );

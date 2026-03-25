@@ -44,9 +44,9 @@ export async function POST(req: NextRequest) {
     }
 
     const maxTokensMap: Record<string, number> = {
-      brief: 200,
-      standard: 400,
-      detailed: 600,
+      brief: 300,
+      standard: 600,
+      detailed: 800,
     };
 
     const systemPrompt = `You are a precise summarisation AI. Summarise the provided text according to the requested length. Use Australian English spelling.
@@ -89,6 +89,7 @@ Rules:
       JSON.stringify({
         tool: 'summarise',
         usage: response.usage,
+        stop_reason: response.stop_reason,
         timestamp: new Date().toISOString(),
       })
     );

@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
     const response = await client.messages.create({
       model: FAST_MODEL,
-      max_tokens: 300,
+      max_tokens: 500,
       system: `You are the intake AI for Agentic Consciousness, an Australian AI consulting company.
 
 A potential client has described their biggest business challenge. Analyse it and recommend which of the company's three services would help most.
@@ -59,6 +59,15 @@ Rules:
       .filter((block): block is Anthropic.TextBlock => block.type === 'text')
       .map((block) => block.text)
       .join('');
+
+    console.log(
+      JSON.stringify({
+        tool: 'smart-contact',
+        usage: response.usage,
+        stop_reason: response.stop_reason,
+        timestamp: new Date().toISOString(),
+      })
+    );
 
     let result;
     try {

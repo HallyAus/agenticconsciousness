@@ -103,6 +103,15 @@ Rules:
       .join('')
       .replace(/^["']|["']$/g, '');
 
+    console.log(
+      JSON.stringify({
+        tool: 'greeting',
+        usage: response.usage,
+        stop_reason: response.stop_reason,
+        timestamp: new Date().toISOString(),
+      })
+    );
+
     cache.set(cacheKey, { greeting, timestamp: Date.now() });
 
     return NextResponse.json({ greeting });
