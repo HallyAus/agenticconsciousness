@@ -33,6 +33,7 @@ services:
       - ac-data:/app/data
       - ac-blog:/app/content/blog
       - ac-drip:/app/content/drip
+      - ac-proposals:/app/content/proposals
 
   tunnel:
     image: cloudflare/cloudflared:latest
@@ -54,3 +55,4 @@ volumes:
   ac-data:
   ac-blog:
   ac-drip:
+  ac-proposals:
