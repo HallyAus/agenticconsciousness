@@ -1,77 +1,62 @@
 # Session Handoff
 
 > Bridge between Claude Code sessions. Updated at the end of every session.
-> The SessionStart hook auto-injects this into context.
 
 ## Last Updated
 
-- **Date:** 2026-03-24 20:45
+- **Date:** 2026-03-25 17:00
 - **Branch:** master
-- **Focus:** Phase 1 site build — complete
+- **Focus:** Full site build + tools page overhaul + revenue stack
 
 ## Accomplished
 
-- Read all 4 reference docs, brainstormed architecture decisions
-- Wrote design spec and implementation plan
-- Built complete Next.js site with all components:
-  - Nav, Hero, Services, Process, CaseStudies, About, CTA, Footer
-  - Chatbot with Claude API integration
-  - Chat API route with rate limiting and validation
-  - ScrollReveal and Divider animation components
-- 11 clean commits, build passes with zero errors
-- Remote set to https://github.com/HallyAus/agenticconsciousness.git
+- Built entire site from scratch to production (53 pages, 20 API routes)
+- 8 AI-powered tools on /tools page (grid layout with expandable panels)
+- Dark/light theme with CSS custom properties
+- Stripe payments + pricing page
+- Proposal builder with acceptance flow
+- Email drip system (5 emails over 14 days)
+- Dynamic hero personalisation (UTM, landing pages, referrer, geo)
+- Exit intent popup with AI opportunity snapshot
+- 8 blog posts (3 seed + 5 new)
+- Plausible analytics integrated
+- Resend email utility (needs domain verification)
+- Multiple security + SEO audits completed
+- All tools use Haiku (fast) or Sonnet (complex) via centralised config
 
 ## In Progress
 
-- Nothing — Phase 1 is complete and ready for push
+- Nothing actively in progress
 
 ## Blocked
 
-- Nothing
+- Resend: needs domain DNS verification before emails actually send
+- Stripe: needs live API keys
+- Meta Pixel / Google Ads: needs account IDs
 
 ## Next Steps
 
-1. Push to GitHub: `git push -u origin master`
-2. Phase 2: Production hardening (SEO, structured data, security headers, performance) — see `reference/AGENTIC-CONSCIOUSNESS-PRODUCTION-MEGA-PROMPT.md`
-3. Phase 3: Proxmox deployment (Docker, Cloudflare Tunnel) — see `reference/AGENTIC-CONSCIOUSNESS-PROXMOX-DEPLOY.md`
-4. Add real Anthropic API key to `.env.local` for live chatbot testing
+1. Verify all 8 tools work on live site after latest deploy
+2. Set up Resend domain verification (DNS records)
+3. Add Stripe live keys + test checkout flow
+4. Mobile testing on physical devices
+5. Set up drip email cron job on server
+6. Generate more blog content for SEO
 
 ## Context
 
-> Decisions, gotchas, or context that would take time to re-derive.
-
-- Next.js 16.2.1 was installed (not 15) — newer version, security fix
-- `next lint` doesn't work in Next.js 16 — lint script updated to use eslint directly
-- ChatbotWrapper.tsx was needed because Next.js 16 App Router disallows `ssr: false` in dynamic imports inside Server Components
-- Contact email is `ai@agenticconsciousness.com.au` (not what reference docs had)
-- All design tokens in Tailwind config match the HTML prototype exactly
-- Chatbot is lazy-loaded (dynamic import, ssr: false) to keep initial bundle small
+- Server: /opt/agenticconsciousness/ (flat structure, no nesting)
+- Docker volumes: ac-data, ac-blog, ac-proposals, ac-drip
+- Haiku for 7 fast routes, Sonnet for 8 complex routes
+- parseAiJson handles markdown-wrapped JSON from Claude
+- Docker nextjs user needs chown on /app/data and /app/content
+- Cloudflare Tunnel: cf-ipcountry only (no city), using ip-api.com for geolocation
 
 ## Files Modified
 
 ```
-package.json
-next.config.ts
-tailwind.config.ts
-src/app/globals.css
-src/app/layout.tsx
-src/app/page.tsx
-src/app/api/chat/route.ts
-src/components/Nav.tsx
-src/components/Hero.tsx
-src/components/Services.tsx
-src/components/Process.tsx
-src/components/CaseStudies.tsx
-src/components/About.tsx
-src/components/CTA.tsx
-src/components/Footer.tsx
-src/components/Divider.tsx
-src/components/Chatbot.tsx
-src/components/ChatbotWrapper.tsx
-src/components/ScrollReveal.tsx
-src/lib/constants.ts
-src/lib/rate-limit.ts
-.env.example
-.env.local
-.gitignore
+Too many to list — see git log for full history (40+ commits)
+Key: src/lib/parseAiJson.ts, src/lib/models.ts, src/lib/email.ts,
+     all components in src/components/tools/,
+     all routes in src/app/api/tools/
 ```
