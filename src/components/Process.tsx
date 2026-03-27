@@ -36,7 +36,7 @@ export default function Process() {
               {PROCESS_STEPS.map((step, i) => (
                 <div key={step.phase} className="flex flex-col items-center text-center relative">
                   {/* Node */}
-                  <div className="w-[54px] h-[54px] border-2 border-ac-red bg-ac-bg flex items-center justify-center relative z-10 mb-5">
+                  <div className="w-[54px] h-[54px] border-2 border-ac-red bg-[#0a0a0a] flex items-center justify-center relative z-10 mb-5">
                     <span className="font-mono text-[0.75rem] text-ac-red font-bold tracking-wider">
                       {String(i + 1).padStart(2, '0')}
                     </span>
