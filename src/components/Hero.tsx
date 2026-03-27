@@ -61,25 +61,25 @@ export default function Hero() {
         >
           Free consultation →
         </a>
-        <div className="font-mono text-[0.55rem] text-text-dim tracking-[2px] uppercase mb-8">
+        <div className="font-mono text-[0.7rem] text-text-dim tracking-[2px] uppercase mb-10">
           No obligation · 30 minute call · Australia-wide
         </div>
       </ScrollReveal>
 
       <ScrollReveal delay={0.2}>
-        <div className="flex gap-[2px] w-full max-w-[500px]">
+        <div className="flex gap-[2px] w-full max-w-[640px]">
           {counters.map((c, i) => (
             <div
               key={c.label}
-              className={`flex-1 bg-white/[0.02] border border-white/[0.06] py-3 px-2 text-center ${
+              className={`flex-1 bg-white/[0.02] border border-white/[0.06] py-5 px-4 text-center ${
                 i === counters.length - 1 ? 'border-t-2 border-t-ac-red' : ''
               }`}
             >
               <AnimatedCounter
                 value={c.value}
-                className="text-[1.1rem] font-black text-ac-red tracking-tight leading-none"
+                className="text-[1.8rem] font-black text-ac-red tracking-tight leading-none"
               />
-              <div className="font-mono text-[0.55rem] text-text-dim tracking-[2px] uppercase mt-1">
+              <div className="font-mono text-[0.65rem] text-text-dim tracking-[2px] uppercase mt-2">
                 {c.label}
               </div>
             </div>
