@@ -10,7 +10,7 @@ const client = new Anthropic({
 });
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? 'unknown';
+  const ip = (req.headers.get('x-forwarded-for')?.split(',')[0] ?? req.headers.get('x-real-ip'))?.trim() || 'unknown';
   const rateLimit = checkRateLimit(ip);
   if (!rateLimit.allowed) {
     return NextResponse.json(
@@ -29,6 +29,13 @@ export async function POST(req: NextRequest) {
 
     if (!text && !image && !pdf) {
       return NextResponse.json({ error: 'Provide invoice text, image, or PDF.' }, { status: 400 });
+    }
+
+    if (image && image.data && image.data.length > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: 'Image too large. Maximum 4MB.' }, { status: 400 });
+    }
+    if (pdf && pdf.data && pdf.data.length > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: 'PDF too large. Maximum 8MB.' }, { status: 400 });
     }
 
     if (text && text.length > 15000) {
@@ -152,7 +159,7 @@ Rules:
     }
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Invoice API error:', error);
+    console.error('Invoice API error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Invoice scanning failed. Please try again.' }, { status: 500 });
   }
 }

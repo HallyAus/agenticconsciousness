@@ -51,7 +51,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ processed: subscribers.length, emailsSent });
   } catch (error) {
-    console.error('Drip process error:', error);
+    console.error('Drip process error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Failed' }, { status: 500 });
   }
 }

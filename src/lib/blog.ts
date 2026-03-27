@@ -36,7 +36,9 @@ export function getAllPosts(): BlogPost[] {
 }
 
 export function getPostBySlug(slug: string): BlogPost | null {
+  if (!/^[a-z0-9-]+$/.test(slug)) return null;
   const filePath = path.join(BLOG_DIR, `${slug}.json`);
+  if (!filePath.startsWith(BLOG_DIR)) return null;
   if (!fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, 'utf-8');
   return JSON.parse(raw) as BlogPost;

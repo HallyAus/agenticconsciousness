@@ -61,6 +61,7 @@ export const metadata: Metadata = {
     siteName: 'Agentic Consciousness',
     title: 'Agentic Consciousness — AI Consulting Australia',
     description: "We don't just advise — we build and deploy AI systems that run your business better than you thought possible.",
+    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'Agentic Consciousness — AI Consulting Australia' }],
   },
   twitter: {
     card: 'summary_large_image',

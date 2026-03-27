@@ -100,7 +100,7 @@ Rules:
 
     return NextResponse.json({ id, url: `/proposal/${id}` });
   } catch (error) {
-    console.error('Proposal generation error:', error);
+    console.error('Proposal generation error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Generation failed' }, { status: 500 });
   }
 }

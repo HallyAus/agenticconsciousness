@@ -90,7 +90,7 @@ Rules:
     }
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Audit API error:', error);
+    console.error('Audit API error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
   }
 }

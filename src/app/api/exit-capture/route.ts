@@ -97,8 +97,8 @@ export async function POST(req: NextRequest) {
       to: email,
       subject: 'Your AI Opportunity Snapshot — Agentic Consciousness',
       html: emailTemplate(`
-        <p style="color:#e0e0e0">Here's your personalised AI opportunity snapshot for <strong style="color:#fff">${industry}</strong>:</p>
-        <div style="border-left:3px solid #ff3d00;padding-left:16px;margin:20px 0;color:#ccc">${snapshot.replace(/\n/g, '<br>')}</div>
+        <p style="color:#e0e0e0">Here's your personalised AI opportunity snapshot for <strong style="color:#fff">${industry.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')}</strong>:</p>
+        <div style="border-left:3px solid #ff3d00;padding-left:16px;margin:20px 0;color:#ccc">${snapshot.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/\n/g, '<br>')}</div>
         <p style="color:#e0e0e0">Want to go deeper? Book a free consultation:</p>
         <a href="mailto:ai@agenticconsciousness.com.au" style="display:inline-block;background:#ff3d00;color:#fff;padding:10px 24px;text-decoration:none;font-weight:bold;font-size:13px;letter-spacing:1px;margin-top:8px">BOOK FREE CONSULTATION →</a>
       `),
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, snapshot });
   } catch (error) {
-    console.error('Exit capture error:', error);
+    console.error('Exit capture error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Failed to process' }, { status: 500 });
   }
 }

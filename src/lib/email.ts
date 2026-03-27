@@ -38,16 +38,20 @@ export async function sendEmail({ to, subject, html, replyTo }: SendEmailOptions
     });
     return true;
   } catch (error) {
-    console.error('Email send failed:', error);
+    console.error('Email send failed:', error instanceof Error ? error.message : 'Unknown error');
     return false;
   }
+}
+
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 export async function notifyAdmin(subject: string, body: string): Promise<void> {
   await sendEmail({
     to: 'ai@agenticconsciousness.com.au',
     subject,
-    html: `<pre style="font-family:monospace;font-size:14px;line-height:1.6">${body}</pre>`,
+    html: `<pre style="font-family:monospace;font-size:14px;line-height:1.6">${escapeHtml(body)}</pre>`,
   });
 }
 

@@ -3,7 +3,7 @@ FROM node:20-alpine AS base
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
-RUN npm ci || npm install
+RUN npm ci
 
 FROM base AS builder
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 # Provide dummy env vars for build (real ones injected at runtime)
-ENV ANTHROPIC_API_KEY=build-placeholder
+ARG ANTHROPIC_API_KEY=build-placeholder
 ENV NEXT_PUBLIC_CONTACT_EMAIL=ai@agenticconsciousness.com.au
 ENV SITE_URL=https://agenticconsciousness.com.au
 RUN npm run build

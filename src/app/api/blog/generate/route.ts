@@ -101,7 +101,7 @@ Respond in valid JSON only, no markdown wrapping:
 
     return NextResponse.json(post);
   } catch (error) {
-    console.error('Blog generation error:', error);
+    console.error('Blog generation error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Generation failed' }, { status: 500 });
   }
 }

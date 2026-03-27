@@ -2,24 +2,84 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/blog';
 import EmailCapture from '@/components/EmailCapture';
+import Nav from '@/components/Nav';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Insights',
-  description: 'AI insights, strategies, and implementation guides from Agentic Consciousness.',
+  title: 'AI Insights & Implementation Guides',
+  description: 'Practical AI insights, automation strategies, and step-by-step implementation guides for Australian businesses. Written by AI, reviewed by experts.',
+  alternates: { canonical: 'https://agenticconsciousness.com.au/blog' },
+  openGraph: {
+    title: 'AI Insights & Guides',
+    description: 'Practical AI insights, automation strategies, and step-by-step implementation guides for Australian businesses. Written by AI, reviewed by experts.',
+    url: 'https://agenticconsciousness.com.au/blog',
+    type: 'website',
+  },
 };
 
 export default function BlogPage() {
   const posts = getAllPosts();
 
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://agenticconsciousness.com.au',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Insights',
+        item: 'https://agenticconsciousness.com.au/blog',
+      },
+    ],
+  };
+
+  const collectionSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'AI Insights & Guides',
+    description: 'AI insights, strategies, and implementation guides from Agentic Consciousness.',
+    url: 'https://agenticconsciousness.com.au/blog',
+    publisher: {
+      '@type': 'Organization',
+      '@id': 'https://agenticconsciousness.com.au/#organization',
+      name: 'Agentic Consciousness',
+    },
+    mainEntity: {
+      '@type': 'ItemList',
+      itemListElement: posts.map((post, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `https://agenticconsciousness.com.au/blog/${post.slug}`,
+        name: post.title,
+      })),
+    },
+  };
+
   return (
-    <main className="pt-[60px] min-h-screen">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
+      <Nav />
+      <main className="pt-[60px] min-h-screen">
       <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
         <div className="max-w-[1000px] mx-auto">
           <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
             AI-GENERATED CONTENT
           </div>
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-4">
-            Insights.
+            AI Insights.
           </h1>
           <p className="text-text-dim text-[0.95rem] font-light leading-[1.7] mb-14 max-w-[500px]">
             Articles written by our AI, reviewed by our team. Because we practice what we preach.
@@ -80,5 +140,7 @@ export default function BlogPage() {
         </div>
       </section>
     </main>
+    <Footer />
+    </>
   );
 }

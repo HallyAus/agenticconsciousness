@@ -28,7 +28,8 @@ export async function POST(req: NextRequest) {
     // IP geolocation for city (free API, cached per IP)
     let city: string | null = null;
     let region: string | null = null;
-    if (ip && ip !== 'unknown') {
+    const IP_REGEX = /^(\d{1,3}\.){3}\d{1,3}$/;
+    if (ip && ip !== 'unknown' && IP_REGEX.test(ip)) {
       try {
         const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=city,regionName,country`, {
           signal: AbortSignal.timeout(2000), // 2s timeout, don't slow down the greeting
@@ -116,7 +117,7 @@ Rules:
 
     return NextResponse.json({ greeting });
   } catch (error) {
-    console.error('Greeting API error:', error);
+    console.error('Greeting API error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json(
       { error: 'Failed to generate greeting' },
       { status: 500 }

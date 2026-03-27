@@ -4,12 +4,13 @@
 
 ## Last Updated
 
-- **Date:** 2026-03-25 17:00
+- **Date:** 2026-03-27
 - **Branch:** master
-- **Focus:** Full site build + tools page overhaul + revenue stack
+- **Focus:** Landing page unique content (critical SEO fix)
 
 ## Accomplished
 
+- Fixed 12 landing pages to have UNIQUE server-rendered content per page (was duplicating homepage)
 - Built entire site from scratch to production (53 pages, 20 API routes)
 - 8 AI-powered tools on /tools page (grid layout with expandable panels)
 - Dark/light theme with CSS custom properties

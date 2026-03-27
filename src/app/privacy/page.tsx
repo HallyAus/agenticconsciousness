@@ -1,12 +1,23 @@
 import type { Metadata } from 'next';
+import Nav from '@/components/Nav';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Privacy policy for Agentic Consciousness — how we handle your data.',
+  description: 'Privacy policy for Agentic Consciousness. How we collect, use, and protect your data when using our AI consulting services and free AI-powered business tools.',
+  alternates: { canonical: 'https://agenticconsciousness.com.au/privacy' },
+  openGraph: {
+    title: 'Privacy Policy — Agentic Consciousness',
+    description: 'Privacy policy for Agentic Consciousness. How we collect, use, and protect your data when using our AI consulting services and free AI-powered business tools.',
+    url: 'https://agenticconsciousness.com.au/privacy',
+    type: 'website',
+  },
 };
 
 export default function PrivacyPage() {
   return (
+    <>
+    <Nav />
     <main className="pt-[60px] min-h-screen">
       <article className="py-28 px-10 max-md:px-5 max-sm:py-20">
         <div className="max-w-[720px] mx-auto">
@@ -46,5 +57,7 @@ export default function PrivacyPage() {
         </div>
       </article>
     </main>
+    <Footer />
+    </>
   );
 }

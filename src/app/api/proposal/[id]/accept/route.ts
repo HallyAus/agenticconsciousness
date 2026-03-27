@@ -3,8 +3,18 @@ import { getProposal, saveProposal } from '@/lib/proposals';
 import fs from 'fs';
 import path from 'path';
 import { sendEmail, notifyAdmin, emailTemplate } from '@/lib/email';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const ip = (req.headers.get('x-forwarded-for')?.split(',')[0] ?? req.headers.get('x-real-ip'))?.trim() || 'unknown';
+  const { allowed, retryAfter } = checkRateLimit(ip);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: `Rate limit exceeded. Try again in ${retryAfter}s.` },
+      { status: 429 }
+    );
+  }
+
   try {
     const { id } = await params;
     const { signatureName } = await req.json();
@@ -58,7 +68,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Proposal accept error:', error);
+    console.error('Proposal accept error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Failed to accept' }, { status: 500 });
   }
 }

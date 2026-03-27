@@ -1,22 +1,58 @@
 # *
 User-agent: *
 Allow: /
-
-# *
-User-agent: *
 Disallow: /api/
-
-# *
-User-agent: *
 Disallow: /payment/
-
-# *
-User-agent: *
 Disallow: /unsubscribe/
-
-# *
-User-agent: *
 Disallow: /proposal/
+
+# GPTBot
+User-agent: GPTBot
+Allow: /
+
+# OAI-SearchBot
+User-agent: OAI-SearchBot
+Allow: /
+
+# ChatGPT-User
+User-agent: ChatGPT-User
+Allow: /
+
+# ClaudeBot
+User-agent: ClaudeBot
+Allow: /
+
+# PerplexityBot
+User-agent: PerplexityBot
+Allow: /
+
+# Amazonbot
+User-agent: Amazonbot
+Allow: /
+
+# Google-Extended
+User-agent: Google-Extended
+Allow: /
+
+# Applebot-Extended
+User-agent: Applebot-Extended
+Allow: /
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+
+# FacebookBot
+User-agent: FacebookBot
+Allow: /
+
+# Cohere-ai
+User-agent: Cohere-ai
+Allow: /
+
+# CCBot
+User-agent: CCBot
+Allow: /
 
 # Host
 Host: https://agenticconsciousness.com.au

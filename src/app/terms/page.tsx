@@ -1,12 +1,23 @@
 import type { Metadata } from 'next';
+import Nav from '@/components/Nav';
+import Footer from '@/components/Footer';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'Terms of service for Agentic Consciousness website and AI tools.',
+  description: 'Terms of service for the Agentic Consciousness website, AI consulting services, and free AI-powered business tools. Payments, liability, and usage policies.',
+  alternates: { canonical: 'https://agenticconsciousness.com.au/terms' },
+  openGraph: {
+    title: 'Terms of Service — Agentic Consciousness',
+    description: 'Terms of service for the Agentic Consciousness website, AI consulting services, and free AI-powered business tools. Payments, liability, and usage policies.',
+    url: 'https://agenticconsciousness.com.au/terms',
+    type: 'website',
+  },
 };
 
 export default function TermsPage() {
   return (
+    <>
+    <Nav />
     <main className="pt-[60px] min-h-screen">
       <article className="py-28 px-10 max-md:px-5 max-sm:py-20">
         <div className="max-w-[720px] mx-auto">
@@ -52,5 +63,7 @@ export default function TermsPage() {
         </div>
       </article>
     </main>
+    <Footer />
+    </>
   );
 }

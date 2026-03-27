@@ -49,7 +49,7 @@ export const LOCATIONS: Record<string, PersonalisedContent> = {
     description: "Adelaide's defence, manufacturing, and professional services sectors are transforming with AI. We help you lead that change.",
     showLocation: 'Adelaide',
   },
-  goldcoast: {
+  'gold-coast': {
     tagline: 'AI FOR / GOLD COAST',
     headline1: 'AGENTIC',
     headline2: 'CONSCIOUSNESS',
@@ -71,7 +71,7 @@ export const INDUSTRIES: Record<string, PersonalisedContent> = {
     headline2: 'TRADIES',
     description: 'Quoting, scheduling, and customer comms — on autopilot. AI built specifically for trades and service businesses.',
   },
-  professional: {
+  'professional-services': {
     tagline: 'BILLABLE / INTELLIGENCE',
     headline1: 'BILLABLE',
     headline2: 'INTELLIGENCE',
@@ -89,11 +89,11 @@ export const INDUSTRIES: Record<string, PersonalisedContent> = {
     headline2: 'SMARTER',
     description: 'AI inventory forecasting, customer service, and marketing automation. Built for retail and e-commerce.',
   },
-  construction: {
-    tagline: 'BUILD / SMARTER',
-    headline1: 'BUILD',
-    headline2: 'SMARTER',
-    description: 'AI project scheduling, safety compliance, and cost estimation. Built for construction companies.',
+  finance: {
+    tagline: 'SMARTER / FINANCE',
+    headline1: 'SMARTER',
+    headline2: 'FINANCE',
+    description: 'AI document processing, compliance automation, and financial analysis. Faster closes, fewer errors.',
   },
 };
 

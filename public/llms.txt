@@ -1,16 +1,41 @@
 # Agentic Consciousness
 
-> AI consulting for Australian businesses. Strategy, implementation, automation.
+> AI consulting for Australian businesses. Strategy, implementation, automation. Founded by Daniel Hall with 21+ years of industry experience.
 
 ## About
 
-Agentic Consciousness is an AI consulting company founded by Daniel Hall with 21+ years of industry experience. We help businesses understand, implement, and scale AI — from strategy workshops to full automation pipelines.
+Agentic Consciousness is an AI consulting company that helps businesses understand, implement, and scale AI — from strategy workshops to full automation pipelines. Based in Australia, available nationally.
 
 ## Services
 
-- AI Strategy & Workshops: Custom sessions, opportunity mapping, practical roadmaps
-- AI Tool Implementation: Deploy ChatGPT, Claude, Copilot, custom models into workflows
-- Automation & Agents: End-to-end autonomous pipelines for document processing, customer service, scheduling
+- [AI Strategy & Workshops](https://agenticconsciousness.com.au/#services): Custom sessions, opportunity mapping, practical roadmaps. From $3,000 AUD.
+- [AI Tool Implementation](https://agenticconsciousness.com.au/#services): Deploy ChatGPT, Claude, Copilot, custom models into workflows. From $5,000 AUD.
+- [Automation & Agents](https://agenticconsciousness.com.au/#services): End-to-end autonomous pipelines for document processing, customer service, scheduling. From $10,000 AUD.
+
+## Pricing
+
+- [Pricing](https://agenticconsciousness.com.au/pricing): Transparent pricing — three packages, no hidden fees, every engagement starts with a free consultation.
+
+## Free Tools
+
+- [AI Business Audit](https://agenticconsciousness.com.au/#ai-audit): Free AI readiness assessment for your business.
+- [AI Tools Suite](https://agenticconsciousness.com.au/tools): Eight free AI-powered business tools — invoice scanner, quote generator, competitor analysis, email drafter, document summariser, meeting actions, job ads, contract review.
+
+## FAQ
+
+- [FAQ](https://agenticconsciousness.com.au/faq): Answers to common questions about AI consulting, services, pricing, and how we work.
+
+## Blog
+
+- [AI Automation for Small Business Australia 2026](https://agenticconsciousness.com.au/blog/ai-automation-small-business-australia-2026): Practical guide to AI tools Australian SMBs are using right now.
+- [5 AI Automations for Trades Businesses](https://agenticconsciousness.com.au/blog/ai-automations-australian-trades-business-2026): Quoting, scheduling, invoicing, reviews, and inventory automation for tradies.
+- [ChatGPT vs Claude vs Copilot](https://agenticconsciousness.com.au/blog/chatgpt-vs-claude-vs-copilot-business): Honest comparison of the three major AI assistants for business.
+- [AI Customer Service Guide](https://agenticconsciousness.com.au/blog/ai-customer-service-without-losing-human-touch): How to use AI chatbots and email triage without alienating customers.
+- [AI Document Processing for Finance](https://agenticconsciousness.com.au/blog/ai-document-processing-guide-australian-finance-teams): Invoice extraction, receipt scanning, compliance checks for Australian finance teams.
+- [AI Readiness Audit Guide](https://agenticconsciousness.com.au/blog/ai-readiness-audit-guide): What an AI readiness audit covers and why it matters.
+- [Building Your First AI Workflow](https://agenticconsciousness.com.au/blog/building-your-first-ai-workflow-step-by-step-guide): Step-by-step guide from choosing a process to measuring results.
+- [The Real Cost of NOT Using AI](https://agenticconsciousness.com.au/blog/real-cost-of-not-using-ai-in-your-business): Calculating the opportunity cost of manual processes.
+- [RSS Feed](https://agenticconsciousness.com.au/feed.xml): Subscribe to new posts.
 
 ## Contact
 
@@ -18,21 +43,26 @@ Agentic Consciousness is an AI consulting company founded by Daniel Hall with 21
 - Email: ai@agenticconsciousness.com.au
 - Location: Australia (nationally available)
 
-## Free Tools
-
-- AI Business Audit: https://agenticconsciousness.com.au/#ai-audit
-- Invoice Scanner: https://agenticconsciousness.com.au/tools
-- Quote Generator: https://agenticconsciousness.com.au/tools
-- Competitor Intel: https://agenticconsciousness.com.au/tools
-
-## Blog
-
-- https://agenticconsciousness.com.au/blog
-- RSS: https://agenticconsciousness.com.au/feed.xml
-
 ## Process
 
-1. Free discovery call
-2. AI readiness audit
-3. Implementation sprint
-4. Optimise and scale
+1. Free discovery call — 30 minutes, no obligation
+2. AI readiness audit — assess your systems, data, and team
+3. Implementation sprint — build and deploy in weeks, not months
+4. Optimise and scale — iterate based on real results
+
+## Optional
+
+- [AI Consulting Sydney](https://agenticconsciousness.com.au/for/sydney): AI consulting for Sydney businesses — financial services, professional services, retail, tech.
+- [AI Consulting Melbourne](https://agenticconsciousness.com.au/for/melbourne): AI consulting for Melbourne businesses — manufacturing, creative, education, property.
+- [AI Consulting Brisbane](https://agenticconsciousness.com.au/for/brisbane): AI consulting for Brisbane businesses — mining, tourism, trades, government.
+- [AI Consulting Perth](https://agenticconsciousness.com.au/for/perth): AI consulting for Perth businesses — mining, energy, professional services, agriculture.
+- [AI Consulting Adelaide](https://agenticconsciousness.com.au/for/adelaide): AI consulting for Adelaide businesses — defence, wine, healthcare, manufacturing.
+- [AI Consulting Gold Coast](https://agenticconsciousness.com.au/for/gold-coast): AI consulting for Gold Coast businesses — tourism, property, health, trades.
+- [AI for Manufacturing](https://agenticconsciousness.com.au/for/manufacturing): AI quality inspection, predictive maintenance, production scheduling, supply chain.
+- [AI for Professional Services](https://agenticconsciousness.com.au/for/professional-services): AI proposals, document review, client communications, knowledge management.
+- [AI for Trades](https://agenticconsciousness.com.au/for/trades): AI quoting, scheduling, customer follow-ups, invoicing for tradies.
+- [AI for Healthcare](https://agenticconsciousness.com.au/for/healthcare): AI clinical documentation, scheduling, patient communications, billing.
+- [AI for Retail](https://agenticconsciousness.com.au/for/retail): AI demand forecasting, customer service, personalised marketing, pricing.
+- [AI for Finance](https://agenticconsciousness.com.au/for/finance): AI document processing, compliance, financial reporting, fraud detection.
+- [Privacy Policy](https://agenticconsciousness.com.au/privacy)
+- [Terms of Service](https://agenticconsciousness.com.au/terms)

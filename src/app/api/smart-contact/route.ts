@@ -79,7 +79,7 @@ Rules:
     }
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Smart contact error:', error);
+    console.error('Smart contact error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
   }
 }

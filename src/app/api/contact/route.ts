@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Contact error:', error);
+    console.error('Contact error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Submission failed' }, { status: 500 });
   }
 }

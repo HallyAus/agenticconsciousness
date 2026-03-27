@@ -1,6 +1,6 @@
 # Agentic Consciousness
 
-> AI consulting for Australian businesses. Strategy, implementation, automation.
+> AI consulting for Australian businesses. Strategy, implementation, automation. Founded by Daniel Hall with 21+ years of industry experience.
 
 ## About
 
@@ -8,39 +8,146 @@ Agentic Consciousness is an AI consulting company founded by Daniel Hall with 21
 
 Daniel Hall brings deep technical expertise across software development, systems integration, and modern AI tooling. The company works nationally across Australia, with clients in a range of industries from professional services to trade and manufacturing.
 
+Key differentiators:
+- 21+ years of industry experience
+- We build what we sell — the Agentic Consciousness website and chatbot are AI-powered
+- Nationally available across Australia
+- Transparent pricing, no lock-in contracts
+- Focused on practical outcomes, not theoretical possibilities
+
 ## Services
 
-### AI Strategy & Workshops
+### AI Strategy & Workshops — From $3,000 AUD + GST
 
 Custom sessions tailored to your business. We map your current operations, identify high-value AI opportunities, and produce a practical roadmap you can act on immediately. No jargon, no vendor lock-in — just honest guidance on where AI will actually move the needle for you.
 
-### AI Tool Implementation
+Includes:
+- AI opportunity assessment
+- Half-day workshop with your team
+- Written roadmap and action plan
+- 30-day email support
+- Tool recommendations report
+
+Timeline: 1-2 weeks.
+
+### AI Tool Implementation — From $5,000 AUD + GST
 
 Deploy ChatGPT, Claude, Microsoft Copilot, custom fine-tuned models, or retrieval-augmented generation (RAG) systems into your existing workflows. We handle the integration, staff training, and ongoing optimisation so your team actually uses the tools.
 
-### Automation & Agents
+Includes:
+- Everything in Strategy
+- AI tool deployment (ChatGPT, Claude, Copilot, or custom)
+- System integration with your existing stack
+- Team training (up to 10 people)
+- 60-day support and optimisation
+
+Timeline: 2-4 weeks.
+
+### Automation & Agents — From $10,000 AUD + GST
 
 End-to-end autonomous pipelines for document processing, customer service, lead qualification, scheduling, reporting, and more. We build agentic systems that operate with minimal human oversight — freeing your team to focus on work that matters.
+
+Includes:
+- Everything in Implementation
+- Custom AI pipeline development
+- Autonomous workflow design
+- API integrations
+- 90-day support, monitoring, and iteration
+
+Timeline: 4-8 weeks.
+
+## Case Studies
+
+### Manufacturing — Automated Quality Inspection Pipeline
+Replaced manual visual inspection with AI-powered defect detection. Cut QA processing time by 62% while pushing defect catch rate to 99.2%. Annual savings: $340K.
+
+### Professional Services — AI-Augmented Proposal Generation
+Deployed an AI writing and research pipeline that tripled proposal output. Win rate increased 18% with higher-quality, personalised submissions.
+
+### Trades & Services — Smart Scheduling & Customer Comms
+Built an AI assistant handling bookings, rescheduling, and follow-ups automatically. Owner reclaimed 8+ hours per week of admin time. 96% customer satisfaction.
+
+## Free Tools
+
+Eight free AI-powered business tools, no signup required:
+- AI Business Audit: https://agenticconsciousness.com.au/#ai-audit
+- Invoice Scanner: https://agenticconsciousness.com.au/tools
+- Quote Generator: https://agenticconsciousness.com.au/tools
+- Competitor Intel: https://agenticconsciousness.com.au/tools
+- Email Drafter: https://agenticconsciousness.com.au/tools
+- Document Summariser: https://agenticconsciousness.com.au/tools
+- Meeting Action Items: https://agenticconsciousness.com.au/tools
+- Job Ad Writer: https://agenticconsciousness.com.au/tools
+- Contract Reviewer: https://agenticconsciousness.com.au/tools
+
+## FAQ
+
+Q: What is AI consulting?
+A: We help businesses understand, implement, and scale AI. Strategy. Tools. Automation. Not theory — applied intelligence that changes how you operate.
+
+Q: I know nothing about AI. Is this for me?
+A: That's exactly who this is for. We start from zero and build up. No jargon, no assumptions about what you know.
+
+Q: What AI tools do you work with?
+A: ChatGPT, Claude, Microsoft Copilot, custom models. Whatever fits your workflow. We are tool-agnostic — we deploy what works.
+
+Q: How much does it cost?
+A: Strategy from $3,000 AUD, Implementation from $5,000, Automation from $10,000. All plus GST. The intro session is free.
+
+Q: How long does implementation take?
+A: Typically 1-4 weeks depending on complexity. Discovery to deployment in weeks, not months.
+
+Q: Do you work with small businesses?
+A: Yes. SMBs, enterprise, tradies, startups. If you have operations, we can make them smarter.
+
+Q: Where are you based?
+A: Australia. We work nationally — remote and on-site.
+
+Q: What makes you different from other AI consultants?
+A: We build what we sell. This website, this chatbot — all AI-powered. We deploy, not just advise.
+
+## Blog
+
+### AI Automation for Small Business in Australia — What Actually Works in 2026
+AI tools that Australian SMBs are using right now to save time and money. Covers customer communication automation, document processing, content generation, cost reality, and getting started steps.
+URL: https://agenticconsciousness.com.au/blog/ai-automation-small-business-australia-2026
+
+### 5 AI Automations Every Australian Trades Business Should Have in 2026
+Automated job scheduling, AI-generated quoting, automated invoicing and payment follow-up, customer review requests, and automated parts ordering. Specific tool recommendations and setup instructions for each.
+URL: https://agenticconsciousness.com.au/blog/ai-automations-australian-trades-business-2026
+
+### ChatGPT vs Claude vs Copilot — Which AI Tool Fits Your Business?
+Honest comparison covering strengths, weaknesses, and pricing for each. ChatGPT best for creative content, Claude best for analysis and long documents, Copilot best for Microsoft 365 users.
+URL: https://agenticconsciousness.com.au/blog/chatgpt-vs-claude-vs-copilot-business
+
+### How to Use AI for Customer Service Without Losing the Human Touch
+AI chatbots and email triage handling 70% of queries. Covers what AI handles well vs poorly, escalation rules, tool recommendations (Intercom, Tidio, Zendesk), and measurement.
+URL: https://agenticconsciousness.com.au/blog/ai-customer-service-without-losing-human-touch
+
+### AI-Powered Document Processing — A Guide for Australian Finance Teams
+Invoice extraction, receipt scanning, compliance checks, and reconciliation. Shows 60%+ time reduction. Covers Xero, MYOB, Dext, and custom pipeline approaches.
+URL: https://agenticconsciousness.com.au/blog/ai-document-processing-guide-australian-finance-teams
+
+### What Is an AI Readiness Audit and Does Your Business Need One?
+Structured assessment covering operations mapping, data maturity, technology stack, and team readiness. Delivers prioritised report with quick wins, medium-term projects, and strategic initiatives.
+URL: https://agenticconsciousness.com.au/blog/ai-readiness-audit-guide
+
+### Building Your First AI Workflow — A Step-by-Step Guide
+Five-step process: choose a process, pick the right tool, build the workflow, test before relying on it, measure results and iterate. Includes prompt-writing template and common mistakes.
+URL: https://agenticconsciousness.com.au/blog/building-your-first-ai-workflow-step-by-step-guide
+
+### The Real Cost of NOT Using AI in Your Business
+Opportunity cost analysis: $15K-$35K recoverable value per employee per year. Covers competitor advantage, staff burnout, error rates, slow decisions, and actual adoption costs ($3K-$5K for a 5-person team).
+URL: https://agenticconsciousness.com.au/blog/real-cost-of-not-using-ai-in-your-business
+
+RSS Feed: https://agenticconsciousness.com.au/feed.xml
 
 ## Contact
 
 - Website: https://agenticconsciousness.com.au
 - Email: ai@agenticconsciousness.com.au
 - Location: Australia (nationally available)
-
-## Free Tools
-
-- AI Business Audit: https://agenticconsciousness.com.au/#ai-audit
-- Invoice Scanner: https://agenticconsciousness.com.au/tools
-- Quote Generator: https://agenticconsciousness.com.au/tools
-- Competitor Intel: https://agenticconsciousness.com.au/tools
-
-## Blog
-
-AI insights written by our AI, reviewed by our team — because we practise what we preach.
-
-- https://agenticconsciousness.com.au/blog
-- RSS: https://agenticconsciousness.com.au/feed.xml
+- Free consultation: No obligation, no pressure
 
 ## Process
 
@@ -48,11 +155,3 @@ AI insights written by our AI, reviewed by our team — because we practise what
 2. AI readiness audit — assess your systems, data, and team
 3. Implementation sprint — build and deploy in weeks, not months
 4. Optimise and scale — iterate based on real results
-
-## Why Agentic Consciousness
-
-- 21+ years of industry experience
-- Nationally available across Australia
-- We build with the same tools we recommend
-- Transparent pricing, no lock-in contracts
-- Focused on practical outcomes, not theoretical possibilities

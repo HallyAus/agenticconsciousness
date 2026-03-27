@@ -10,7 +10,7 @@ const client = new Anthropic({
 });
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? 'unknown';
+  const ip = (req.headers.get('x-forwarded-for')?.split(',')[0] ?? req.headers.get('x-real-ip'))?.trim() || 'unknown';
   const rateLimit = checkRateLimit(ip);
   if (!rateLimit.allowed) {
     return NextResponse.json(
@@ -127,7 +127,7 @@ Quote Type: ${isDetailed ? 'Detailed Proposal' : 'Simple Quote'}`;
     }
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Quote API error:', error);
+    console.error('Quote API error:', error instanceof Error ? error.message : 'Unknown error');
     return NextResponse.json({ error: 'Quote generation failed. Please try again.' }, { status: 500 });
   }
 }

@@ -1,14 +1,15 @@
 /**
  * Model configuration for different task types.
- * Haiku: fast, cheap — great for structured extraction, simple generation
- * Sonnet: balanced — good for complex analysis, creative writing
+ * Set via .env to swap models without code changes:
+ *   AI_FAST_MODEL    — structured extraction, simple generation (default: Haiku)
+ *   AI_STANDARD_MODEL — complex analysis, creative writing (default: Sonnet)
  */
 
 // Fast model for simple, structured tasks
-export const FAST_MODEL = 'claude-haiku-4-5-20251001';
+export const FAST_MODEL = process.env.AI_FAST_MODEL || 'claude-haiku-4-5-20251001';
 
 // Standard model for complex analysis and creative tasks
-export const STANDARD_MODEL = 'claude-sonnet-4-20250514';
+export const STANDARD_MODEL = process.env.AI_STANDARD_MODEL || 'claude-sonnet-4-20250514';
 
 /**
  * Route model assignments:

@@ -41,3 +41,24 @@ next-env.d.ts
 
 # Contact form leads (persist in Docker volume, not git)
 data/leads.jsonl
+
+# Project planning & deployment docs (internal only)
+reference/
+docs/
+strategy/
+specs/
+memory/
+.claude/
+
+# Docker deployment
+docker-compose*.yml
+!docker-compose.yml
+*.log
+
+# Certificates & keys
+*.pem
+*.key
+*.p12
+*.pfx
+*.cert
+*.crt
