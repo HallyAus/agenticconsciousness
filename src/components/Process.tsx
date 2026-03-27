@@ -26,7 +26,7 @@ export default function Process() {
           {/* Desktop timeline (>= 768px) */}
           <div className="hidden md:block relative">
             {/* Connector line */}
-            <div className="absolute top-[27px] left-[calc(12.5%)] right-[calc(12.5%)] h-[2px]"
+            <div className="absolute top-[27px] left-[calc(12.5%)] right-[calc(12.5%)] h-[2px] z-0"
               style={{
                 background: 'linear-gradient(90deg, #ff3d00 0%, #ff3d00 60%, rgba(255, 61, 0, 0.15) 100%)',
               }}

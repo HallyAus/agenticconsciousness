@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero — What Should It Look Like?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: rgba(255,255,255,0.85); font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; }
+
+  .page-title { text-align: center; padding: 40px 20px 10px; font-size: 14px; font-family: 'Space Mono', monospace; color: #ff3d00; text-transform: uppercase; letter-spacing: 2px; }
+  .page-subtitle { text-align: center; padding: 0 20px 40px; font-size: 13px; color: rgba(255,255,255,0.4); }
+
+  .approaches { display: flex; flex-direction: column; gap: 40px; max-width: 960px; margin: 0 auto; padding: 0 20px 60px; }
+  .approach { border: 2px solid rgba(255,255,255,0.08); padding: 24px; cursor: pointer; transition: border-color 0.2s; }
+  .approach:hover { border-color: rgba(255,61,0,0.5) !important; }
+  .approach.selected { border-color: #ff3d00 !important; box-shadow: 0 0 0 1px #ff3d00; }
+  .approach-label { font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #ff3d00; margin-bottom: 8px; }
+  .approach-name { font-weight: 900; font-size: 20px; margin-bottom: 16px; }
+
+  .mockup-frame { background: #111; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
+  .mockup-bar { background: #1a1a1a; padding: 8px 12px; display: flex; gap: 6px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .mockup-dot { width: 8px; height: 8px; background: rgba(255,255,255,0.15); }
+  .mockup-url { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); margin-left: 12px; }
+
+  .m-nav { display: flex; justify-content: space-between; padding: 10px 16px; border-bottom: 2px solid #ff3d00; font-size: 9px; backdrop-filter: blur(12px); }
+  .m-logo { font-weight: 900; font-size: 11px; }
+  .m-links { color: rgba(255,255,255,0.3); font-family: 'Space Mono', monospace; display: flex; gap: 12px; }
+  .m-pill { display: inline-block; font-family: 'Space Mono', monospace; font-size: 8px; padding: 3px 8px; text-transform: uppercase; letter-spacing: 1.5px; }
+  .m-pill-red { background: #ff3d00; color: white; }
+  .m-pill-ghost { background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4); }
+  .m-stat-val { font-weight: 900; color: #ff3d00; }
+  .m-stat-label { font-family: 'Space Mono', monospace; font-size: 7px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+  .m-btn-red { display: inline-block; background: #ff3d00; color: white; padding: 10px 20px; font-family: 'Space Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; }
+  .m-btn-outline { display: inline-block; border: 2px solid #ff3d00; color: #ff3d00; padding: 8px 16px; font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+
+  .vote-hint { text-align: center; padding: 20px; font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); }
+</style>
+<script>
+function toggleSelect(el) {
+  document.querySelectorAll('.approach').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  const choice = el.dataset.choice;
+  fetch('/.events', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({type:'click',choice,text:el.querySelector('.approach-name')?.textContent||choice,timestamp:Date.now()}) });
+}
+</script>
+</head>
+<body>
+
+<div class="page-title">Hero Section — Pick Your Preferred Version</div>
+<div class="page-subtitle">All centred, with larger CTA. Click the one you want.</div>
+
+<div class="approaches">
+
+  <!-- === A: Current (centred, bigger CTA) === -->
+  <div class="approach" data-choice="current" onclick="toggleSelect(this)">
+    <div class="approach-label">Option A</div>
+    <div class="approach-name">Current — Centred, Bigger CTA, Updated Stats</div>
+
+    <div class="mockup-frame">
+      <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div><span class="mockup-url">agenticconsciousness.com.au</span></div>
+      <div class="m-nav">
+        <div class="m-logo">AC<span style="color:#ff3d00">_</span></div>
+        <div class="m-links"><span>Services</span><span>Tools</span><span>Pricing</span><span>Blog</span><span style="background:#ff3d00;color:white;padding:4px 10px">Talk to us</span></div>
+      </div>
+      <div style="text-align:center;padding:60px 30px 40px;background:radial-gradient(ellipse at 80% 20%, rgba(255,61,0,0.12), transparent 60%);min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="display:flex;gap:6px;margin-bottom:16px;justify-content:center">
+          <span class="m-pill m-pill-red">AI</span>
+          <span class="m-pill m-pill-ghost">Consulting</span>
+          <span class="m-pill m-pill-ghost">Automation</span>
+          <span class="m-pill m-pill-ghost">Strategy</span>
+        </div>
+        <div style="font-weight:900;font-size:42px;line-height:0.92;letter-spacing:-2px;margin-bottom:12px">
+          AGENTIC<br><span style="color:#ff3d00">CONSCIOUSNESS</span>
+        </div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:20px">Good evening. Welcome to AI that works.</div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:30px">
+          <div class="m-btn-red" style="font-size:11px;padding:12px 24px">Free consultation →</div>
+          <div class="m-btn-outline">See results</div>
+        </div>
+        <div style="display:flex;gap:24px;justify-content:center;padding-top:16px;border-top:1px solid rgba(255,255,255,0.06)">
+          <div><div class="m-stat-val" style="font-size:18px">21+</div><div class="m-stat-label">Years exp</div></div>
+          <div><div class="m-stat-val" style="font-size:18px">8</div><div class="m-stat-label">Free AI tools</div></div>
+          <div><div class="m-stat-val" style="font-size:18px">100%</div><div class="m-stat-label">AI-powered</div></div>
+          <div><div class="m-stat-val" style="font-size:18px">AU</div><div class="m-stat-label">Australia-wide</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === B: Bold Impact === -->
+  <div class="approach" data-choice="bold" onclick="toggleSelect(this)">
+    <div class="approach-label">Option B</div>
+    <div class="approach-name">Bold Impact — Headline Dominates, Stats Tucked Tight</div>
+
+    <div class="mockup-frame">
+      <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div><span class="mockup-url">agenticconsciousness.com.au</span></div>
+      <div class="m-nav">
+        <div class="m-logo">AC<span style="color:#ff3d00">_</span></div>
+        <div class="m-links"><span>Services</span><span>Tools</span><span>Pricing</span><span>Blog</span><span style="background:#ff3d00;color:white;padding:4px 10px">Talk to us</span></div>
+      </div>
+      <div style="text-align:center;padding:50px 30px 30px;background:radial-gradient(ellipse at 50% 30%, rgba(255,61,0,0.08), transparent 50%);min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:#ff3d00;text-transform:uppercase;letter-spacing:3px;margin-bottom:20px">AI Consulting Australia</div>
+        <div style="font-weight:900;font-size:52px;line-height:0.88;letter-spacing:-3px;margin-bottom:8px">
+          AGENTIC
+        </div>
+        <div style="font-weight:900;font-size:52px;line-height:0.88;letter-spacing:-3px;color:#ff3d00;margin-bottom:16px">
+          CONSCIOUSNESS
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:24px;max-width:420px;line-height:1.6">We build and deploy AI systems that run your business better than you thought possible.</div>
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:24px">
+          <div class="m-btn-red" style="font-size:11px;padding:12px 24px">Free consultation →</div>
+          <div class="m-btn-outline">Try our free tools</div>
+        </div>
+        <!-- Stats inline with dividers -->
+        <div style="display:flex;gap:0;justify-content:center;align-items:center">
+          <div style="padding:0 16px;text-align:center"><div class="m-stat-val" style="font-size:15px">21+</div><div class="m-stat-label">Years</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.08)"></div>
+          <div style="padding:0 16px;text-align:center"><div class="m-stat-val" style="font-size:15px">8</div><div class="m-stat-label">Free tools</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.08)"></div>
+          <div style="padding:0 16px;text-align:center"><div class="m-stat-val" style="font-size:15px">AU</div><div class="m-stat-label">Nationwide</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- === C: Subheadline + Compact === -->
+  <div class="approach" data-choice="compact" onclick="toggleSelect(this)">
+    <div class="approach-label">Option C</div>
+    <div class="approach-name">Compact — Subheadline Below Brand, Tight Layout</div>
+
+    <div class="mockup-frame">
+      <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div><span class="mockup-url">agenticconsciousness.com.au</span></div>
+      <div class="m-nav">
+        <div class="m-logo">AC<span style="color:#ff3d00">_</span></div>
+        <div class="m-links"><span>Services</span><span>Tools</span><span>Pricing</span><span>Blog</span><span style="background:#ff3d00;color:white;padding:4px 10px">Talk to us</span></div>
+      </div>
+      <div style="text-align:center;padding:50px 30px 30px;min-height:340px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-weight:900;font-size:48px;line-height:0.9;letter-spacing:-2px;margin-bottom:4px">AGENTIC</div>
+        <div style="font-weight:900;font-size:48px;line-height:0.9;letter-spacing:-2px;color:#ff3d00;margin-bottom:14px">CONSCIOUSNESS</div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:3px;margin-bottom:10px">AI Strategy · Implementation · Automation</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:20px">Good evening. Welcome to AI that works.</div>
+        <div class="m-btn-red" style="font-size:12px;padding:14px 32px;margin-bottom:8px">Free consultation →</div>
+        <div style="font-family:'Space Mono',monospace;font-size:8px;color:rgba(255,255,255,0.25);margin-bottom:24px">No obligation · 30 minute call · Australia-wide</div>
+        <!-- Horizontal stat bar -->
+        <div style="display:flex;gap:2px;width:100%;max-width:500px">
+          <div style="flex:1;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:10px;text-align:center">
+            <div class="m-stat-val" style="font-size:16px">21+</div>
+            <div class="m-stat-label">Years</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:10px;text-align:center">
+            <div class="m-stat-val" style="font-size:16px">8</div>
+            <div class="m-stat-label">Free tools</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:10px;text-align:center">
+            <div class="m-stat-val" style="font-size:16px">100%</div>
+            <div class="m-stat-label">AI-powered</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);padding:10px;text-align:center;border-top:2px solid #ff3d00">
+            <div class="m-stat-val" style="font-size:16px">AU</div>
+            <div class="m-stat-label">Nationwide</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="vote-hint">Click the hero you want</div>
+
+</body>
+</html>

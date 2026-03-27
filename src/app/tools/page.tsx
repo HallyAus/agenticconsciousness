@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import ToolsShowcase from '@/components/tools/ToolsShowcase';
-import Nav from '@/components/Nav';
-import Footer from '@/components/Footer';
+
 
 export const metadata: Metadata = {
   title: 'Free AI Tools — 8 Business Tools Powered by Claude',
@@ -76,8 +75,6 @@ export default function ToolsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareSchema) }}
       />
-      <Nav />
-
       {/* Server-rendered SEO content — hidden visually but available to crawlers */}
       <div className="sr-only">
         <h1>Free AI Business Tools — Powered by Claude</h1>
@@ -91,7 +88,6 @@ export default function ToolsPage() {
       </div>
 
       <ToolsShowcase />
-      <Footer />
     </>
   );
 }
