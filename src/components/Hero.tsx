@@ -10,7 +10,7 @@ const BASE_COUNTERS = [
   { value: '21+', label: 'Years' },
   { value: '8', label: 'Free tools' },
   { value: '100%', label: 'AI-powered' },
-  { value: 'AU', label: 'Nationwide' },
+  { value: '∞', label: 'Scalable' },
 ];
 
 export default function Hero() {
