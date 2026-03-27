@@ -5,12 +5,7 @@ export default function StructuredData() {
     '@id': 'https://agenticconsciousness.com.au/#organization',
     name: 'Agentic Consciousness',
     url: 'https://agenticconsciousness.com.au',
-    logo: {
-      '@type': 'ImageObject',
-      url: 'https://agenticconsciousness.com.au/og-image.png',
-      width: 1200,
-      height: 630,
-    },
+    logo: 'https://agenticconsciousness.com.au/og-image.png',
     image: 'https://agenticconsciousness.com.au/og-image.png',
     description:
       'AI consulting firm helping Australian businesses implement AI strategy, deploy tools like ChatGPT and Claude, and build autonomous automation pipelines.',

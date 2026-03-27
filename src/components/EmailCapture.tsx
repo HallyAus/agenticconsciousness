@@ -49,6 +49,7 @@ export default function EmailCapture() {
           value={email}
           onChange={(e) => { setEmail(e.target.value); setError(''); }}
           placeholder="you@business.com.au"
+          aria-label="Email address"
           className="flex-1 bg-ac-black border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim"
         />
         <button

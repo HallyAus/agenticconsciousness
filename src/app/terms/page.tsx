@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import EmailLink from '@/components/EmailLink';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
     description: 'Terms of service for the Agentic Consciousness website, AI consulting services, and free AI-powered business tools. Payments, liability, and usage policies.',
     url: 'https://agenticconsciousness.com.au/terms',
     type: 'website',
+    images: [{ url: 'https://agenticconsciousness.com.au/opengraph-image', width: 1200, height: 630 }],
   },
 };
 
@@ -58,7 +60,7 @@ export default function TermsPage() {
             <p>These terms are governed by the laws of Australia. Any disputes will be resolved in Australian courts.</p>
 
             <h2 className="text-[1.1rem] font-black text-text-primary mt-4">Contact</h2>
-            <p>Agentic Consciousness Pty Ltd<br />Email: <a href="mailto:ai@agenticconsciousness.com.au" className="no-underline hover:underline" style={{ color: 'var(--red-text)' }}>ai@agenticconsciousness.com.au</a><br />Australia</p>
+            <p>Agentic Consciousness Pty Ltd<br />Email: <EmailLink className="no-underline hover:underline" style={{ color: 'var(--red-text)' }} /><br />Australia</p>
           </div>
         </div>
       </article>

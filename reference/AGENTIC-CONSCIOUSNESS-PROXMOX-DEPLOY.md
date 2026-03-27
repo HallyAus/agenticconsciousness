@@ -68,8 +68,8 @@ git clone https://<YOUR_GITHUB_PAT>@github.com/HallyAus/agentic-consciousness.gi
 ### 2.2 — Environment File
 
 ```bash
-cp .env.example .env.local
-nano .env.local
+cp .env.example .env
+nano .env
 ```
 
 Set these values:

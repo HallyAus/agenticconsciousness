@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import EmailLink from '@/components/EmailLink';
 
 export const metadata: Metadata = {
-  title: 'AI Consulting FAQ — Common Questions Answered',
+  title: 'AI Consulting FAQ',
   description:
-    'Answers to common questions about AI consulting, implementation timelines, pricing, data security, and how Agentic Consciousness helps Australian businesses adopt AI.',
+    'Answers to common questions about AI consulting — implementation timelines, pricing, data security, and how we help Australian businesses.',
   alternates: { canonical: 'https://agenticconsciousness.com.au/faq' },
   openGraph: {
     title: 'AI Consulting FAQ',
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
       'Everything you need to know about AI consulting — services, pricing, timelines, data security, and more.',
     url: 'https://agenticconsciousness.com.au/faq',
     type: 'website',
+    images: [{ url: 'https://agenticconsciousness.com.au/opengraph-image', width: 1200, height: 630 }],
   },
 };
 
@@ -266,12 +268,9 @@ const faqs: { q: string; a: React.ReactNode; plainText: string }[] = [
         not a sales pitch. We discuss your business, understand your pain points, and explore whether AI is
         the right fit. If it is, we outline what an engagement would look like. If it&apos;s not, we tell
         you honestly. No pressure, no follow-up spam. You can book directly by emailing{' '}
-        <a
-          href="mailto:ai@agenticconsciousness.com.au"
+        <EmailLink
           className="text-ac-red no-underline hover:underline"
-        >
-          ai@agenticconsciousness.com.au
-        </a>{' '}
+        />{' '}
         or using the chatbot on this site.
       </>
     ),
@@ -405,12 +404,9 @@ const faqs: { q: string; a: React.ReactNode; plainText: string }[] = [
     a: (
       <>
         Simple — book a free consultation. Email us at{' '}
-        <a
-          href="mailto:ai@agenticconsciousness.com.au"
+        <EmailLink
           className="text-ac-red no-underline hover:underline"
-        >
-          ai@agenticconsciousness.com.au
-        </a>{' '}
+        />{' '}
         or use the chatbot on this site to start a conversation. We&apos;ll schedule a Discovery call
         where we learn about your business, discuss your goals, and explore what AI can do for you. No
         cost, no obligation, no sales pressure. From there, if it&apos;s a fit, we scope an engagement
@@ -478,12 +474,11 @@ export default function FAQPage() {
             <p className="text-text-dim text-[0.95rem] font-light leading-[1.7] max-w-[600px] mb-14">
               Everything you need to know about AI consulting, our services, pricing, and how we work.
               Can&apos;t find your answer? Ask our chatbot or{' '}
-              <a
-                href="mailto:ai@agenticconsciousness.com.au"
+              <EmailLink
                 className="text-ac-red no-underline hover:underline"
               >
                 get in touch
-              </a>
+              </EmailLink>
               .
             </p>
 
@@ -504,12 +499,11 @@ export default function FAQPage() {
                 <p className="text-text-dim text-[0.85rem] font-light mb-6">
                   Book a free consultation — no obligation, no sales pitch.
                 </p>
-                <a
-                  href="mailto:ai@agenticconsciousness.com.au"
+                <EmailLink
                   className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-ac-black"
                 >
                   Get in touch →
-                </a>
+                </EmailLink>
               </div>
             </div>
           </div>

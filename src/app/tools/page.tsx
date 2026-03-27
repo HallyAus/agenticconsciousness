@@ -3,14 +3,15 @@ import ToolsShowcase from '@/components/tools/ToolsShowcase';
 
 
 export const metadata: Metadata = {
-  title: 'Free AI Tools — 8 Business Tools Powered by Claude',
-  description: 'Eight free AI-powered business tools. Invoice scanner, quote generator, competitor analysis, email drafter, document summariser, meeting actions, job ads, contract review. No signup.',
+  title: 'Free AI Tools — 8 Business Tools',
+  description: 'Eight free AI-powered business tools: invoice scanner, quote generator, competitor analysis, email drafter, summariser, and more. No signup.',
   alternates: { canonical: 'https://agenticconsciousness.com.au/tools' },
   openGraph: {
     title: 'Free AI Business Tools',
-    description: 'Eight free AI-powered business tools. Invoice scanner, quote generator, competitor analysis, email drafter, document summariser, meeting actions, job ads, contract review. No signup.',
+    description: 'Eight free AI-powered business tools: invoice scanner, quote generator, competitor analysis, email drafter, summariser, and more. No signup.',
     url: 'https://agenticconsciousness.com.au/tools',
     type: 'website',
+    images: [{ url: 'https://agenticconsciousness.com.au/opengraph-image', width: 1200, height: 630 }],
   },
 };
 

@@ -130,11 +130,12 @@ export default function AiAudit() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Industry */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label htmlFor="audit-industry" className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Industry
               </label>
               <div className="relative">
                 <select
+                  id="audit-industry"
                   value={industry}
                   onChange={(e) => setIndustry(e.target.value)}
                   className={selectClass}
@@ -166,11 +167,12 @@ export default function AiAudit() {
 
             {/* Business size */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label htmlFor="audit-business-size" className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
                 Business Size
               </label>
               <div className="relative">
                 <select
+                  id="audit-business-size"
                   value={businessSize}
                   onChange={(e) => setBusinessSize(e.target.value)}
                   className={selectClass}

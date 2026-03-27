@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     default: 'Agentic Consciousness — AI Consulting Australia',
     template: '%s | Agentic Consciousness',
   },
-  description: 'AI strategy, tool implementation, and automation consulting for Australian businesses. We build and deploy AI systems — ChatGPT, Claude, Copilot, custom models. Free consultation.',
+  description: 'AI strategy, implementation, and automation consulting for Australian businesses. We build and deploy AI systems that deliver measurable ROI.',
   keywords: [
     'AI consulting Australia',
     'AI strategy workshops',
@@ -102,6 +102,12 @@ export default function RootLayout({
           <Script id="plausible-init" strategy="afterInteractive">
             {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`}
           </Script>
+          <Script
+            async
+            src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
+            strategy="afterInteractive"
+          />
           <TrackingPixels />
           <ScrollProgress />
           <ExitIntent />

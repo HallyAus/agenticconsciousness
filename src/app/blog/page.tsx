@@ -14,6 +14,7 @@ export const metadata: Metadata = {
     description: 'Practical AI insights, automation strategies, and step-by-step implementation guides for Australian businesses. Written by AI, reviewed by experts.',
     url: 'https://agenticconsciousness.com.au/blog',
     type: 'website',
+    images: [{ url: 'https://agenticconsciousness.com.au/opengraph-image', width: 1200, height: 630 }],
   },
 };
 
@@ -112,6 +113,9 @@ export default function BlogPage() {
                         Read article →
                       </span>
                       <span className="font-mono text-[0.6rem] text-text-dim tracking-[1px] uppercase">
+                        By Daniel
+                      </span>
+                      <span className="font-mono text-[0.6rem] text-text-dim tracking-[1px] uppercase">
                         {readingTime} min read
                       </span>
                       <span className="font-mono text-[0.6rem] text-text-dim tracking-[1px] uppercase">
@@ -147,6 +151,7 @@ export default function BlogPage() {
                             month: 'short',
                             year: 'numeric',
                           })}
+                          {' · '}By Daniel
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {post.tags.slice(0, 3).map((tag) => (

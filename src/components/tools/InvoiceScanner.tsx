@@ -427,6 +427,7 @@ export default function InvoiceScanner() {
                   type="file"
                   accept="application/pdf,image/jpeg,image/png,image/webp"
                   onChange={handleFileChange}
+                  aria-label="Upload invoice file"
                   className="hidden"
                 />
                 {(filePreview || pdfData) && (

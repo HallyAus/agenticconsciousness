@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import StagedLoading from '@/components/StagedLoading';
+import EmailLink from '@/components/EmailLink';
 import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
@@ -462,15 +463,12 @@ export default function CompetitorIntel() {
                   <p className="text-[0.82rem] font-light leading-[1.7] mb-4" style={{ color: 'var(--text-primary)' }}>
                     {result.aiAdvantage}
                   </p>
-                  <a
-                    href="mailto:ai@agenticconsciousness.com.au"
+                  <EmailLink
                     className="font-display text-[0.7rem] font-black tracking-[2px] uppercase no-underline transition-colors duration-200"
                     style={{ color: 'var(--red)' }}
-                    onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.7')}
-                    onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
                   >
                     BOOK CONSULTATION →
-                  </a>
+                  </EmailLink>
                 </div>
 
                 {/* Actions */}

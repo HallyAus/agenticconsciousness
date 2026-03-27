@@ -3,11 +3,20 @@ import Link from 'next/link';
 import DOMPurify from 'isomorphic-dompurify';
 import { getPostBySlug, getAllPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
+import EmailLink from '@/components/EmailLink';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+/** Cap the page title so the rendered `title | Agentic Consciousness` stays under 60 chars. */
+function capTitle(title: string, maxTotal = 60): string {
+  const suffix = ' | Agentic Consciousness'; // 25 chars
+  const maxField = maxTotal - suffix.length; // 35 chars
+  if (title.length <= maxField) return title;
+  return title.slice(0, maxField - 1).trimEnd() + '\u2026';
 }
 
 export async function generateStaticParams() {
@@ -20,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = getPostBySlug(slug);
   if (!post) return { title: 'Post Not Found' };
   return {
-    title: post.title,
+    title: capTitle(post.title),
     description: post.description,
     alternates: {
       canonical: `https://agenticconsciousness.com.au/blog/${slug}`,
@@ -31,6 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       publishedTime: post.publishedAt,
       authors: [post.author],
+      images: [{ url: 'https://agenticconsciousness.com.au/opengraph-image', width: 1200, height: 630 }],
     },
   };
 }
@@ -82,10 +92,7 @@ export default async function BlogPost({ params }: Props) {
       '@id': 'https://agenticconsciousness.com.au/#organization',
       name: 'Agentic Consciousness',
       url: 'https://agenticconsciousness.com.au',
-      logo: {
-        '@type': 'ImageObject',
-        url: 'https://agenticconsciousness.com.au/og-image.png',
-      },
+      logo: 'https://agenticconsciousness.com.au/og-image.png',
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
@@ -231,12 +238,11 @@ export default async function BlogPost({ params }: Props) {
               <p className="text-text-dim text-[0.9rem] font-light mb-6">
                 We turn these insights into real business systems.
               </p>
-              <a
-                href="mailto:ai@agenticconsciousness.com.au"
+              <EmailLink
                 className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-ac-black"
               >
                 Book free consultation →
-              </a>
+              </EmailLink>
             </div>
           </div>
         </article>
@@ -256,10 +262,12 @@ function renderMarkdown(md: string): string {
       const safeHref = /^(https?:|\/|#|mailto:)/.test(href) ? href.replace(/"/g, '&quot;') : '#';
       return `<a href="${safeHref}" class="text-ac-red no-underline hover:underline" rel="noopener noreferrer">${text}</a>`;
     })
-    .replace(/^- (.+)$/gm, '<li class="text-text-dim font-light leading-[1.7] ml-4 mb-1">$1</li>')
-    .replace(/^(\d+)\. (.+)$/gm, '<li class="text-text-dim font-light leading-[1.7] ml-4 mb-1" value="$1">$2</li>')
-    .replace(/(<li[^>]*value="[^"]*"[^>]*>.*<\/li>\n?)+/g, '<ol class="mb-6 list-decimal pl-6">$&</ol>')
-    .replace(/(<li(?![^>]*value=)[^>]*>.*<\/li>\n?)+/g, '<ul class="mb-6 list-none">$&</ul>')
+    .replace(/^- (.+)$/gm, '<li class="text-text-dim font-light leading-[1.7] ml-4 mb-1" data-ul>$1</li>')
+    .replace(/^(\d+)\. (.+)$/gm, '<li class="text-text-dim font-light leading-[1.7] ml-4 mb-1" data-ol value="$1">$2</li>')
+    .replace(/((<li[^>]*data-ol[^>]*>.*<\/li>\s*)+)/g, (match) => `<ol class="mb-6 list-decimal pl-6">${match}</ol>`)
+    .replace(/((<li[^>]*data-ul[^>]*>.*<\/li>\s*)+)/g, (match) => `<ul class="mb-6 list-none">${match}</ul>`)
+    .replace(/ data-ul/g, '')
+    .replace(/ data-ol/g, '')
     .replace(/^(?!<[hula])((?!^$).+)$/gm, '<p class="text-text-dim font-light leading-[1.7] mb-4 max-w-[680px]">$1</p>')
     .replace(/\n\n/g, '');
 }

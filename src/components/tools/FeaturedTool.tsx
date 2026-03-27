@@ -292,6 +292,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
                     type="file"
                     accept="application/pdf,image/jpeg,image/png,image/webp"
                     onChange={handleFileChange}
+                    aria-label="Upload a file"
                     className="hidden"
                   />
                 </div>

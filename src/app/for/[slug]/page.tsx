@@ -214,6 +214,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description: page.description,
       type: 'website',
       locale: 'en_AU',
+      images: [{ url: 'https://agenticconsciousness.com.au/opengraph-image', width: 1200, height: 630 }],
     },
   };
 }

@@ -1,19 +1,21 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import EmailLink from '@/components/EmailLink';
 
 export const metadata: Metadata = {
-  title: 'About Agentic Consciousness — AI Consulting Australia',
+  title: 'About Us — AI Consulting',
   description:
-    'Founded by Daniel with 21+ years industry experience. Agentic Consciousness helps Australian businesses adopt AI practically — strategy, implementation, and automation.',
+    'Founded by Daniel with 21+ years industry experience. We help Australian businesses adopt AI practically — strategy, implementation, and automation.',
   alternates: {
     canonical: 'https://agenticconsciousness.com.au/about',
   },
   openGraph: {
-    title: 'About Agentic Consciousness — AI Consulting Australia',
+    title: 'About Us — AI Consulting',
     description:
       'Founded by Daniel with 21+ years industry experience. We help Australian businesses adopt AI practically — not theory, applied intelligence.',
     url: 'https://agenticconsciousness.com.au/about',
     type: 'website',
+    images: [{ url: 'https://agenticconsciousness.com.au/opengraph-image', width: 1200, height: 630 }],
   },
 };
 
@@ -237,12 +239,11 @@ export default function AboutPage() {
                 Every engagement starts with a free consultation. No pitch, no obligation — just a
                 conversation about what AI can do for your business.
               </p>
-              <a
-                href="mailto:ai@agenticconsciousness.com.au"
+              <EmailLink
                 className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-ac-black"
               >
                 Book free consultation →
-              </a>
+              </EmailLink>
               <p className="text-text-ghost text-[0.75rem] font-mono mt-5 tracking-[1px]">
                 ai@agenticconsciousness.com.au
               </p>

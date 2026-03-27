@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import EmailLink from '@/components/EmailLink';
 
 const siteLinks = [
   { label: 'Home', href: '/' },
@@ -21,6 +22,24 @@ const legalLinks = [
   { label: 'Terms', href: '/terms' },
 ];
 
+const locationLinks = [
+  { label: 'Sydney', href: '/for/sydney' },
+  { label: 'Melbourne', href: '/for/melbourne' },
+  { label: 'Brisbane', href: '/for/brisbane' },
+  { label: 'Perth', href: '/for/perth' },
+  { label: 'Adelaide', href: '/for/adelaide' },
+  { label: 'Gold Coast', href: '/for/gold-coast' },
+];
+
+const industryLinks = [
+  { label: 'Manufacturing', href: '/for/manufacturing' },
+  { label: 'Professional Services', href: '/for/professional-services' },
+  { label: 'Trades', href: '/for/trades' },
+  { label: 'Healthcare', href: '/for/healthcare' },
+  { label: 'Retail', href: '/for/retail' },
+  { label: 'Finance', href: '/for/finance' },
+];
+
 export default function Footer() {
   return (
     <footer>
@@ -30,21 +49,17 @@ export default function Footer() {
           <Link href="/" className="font-display font-black text-[1.1rem] text-text-primary tracking-snug no-underline">
             AC<span style={{ color: 'var(--red-text)' }}>_</span>
           </Link>
-          <a
-            href="mailto:ai@agenticconsciousness.com.au"
+          <EmailLink
             className="font-mono text-[0.75rem] no-underline hover:text-text-primary transition-colors"
             style={{ color: 'var(--red-text)' }}
-          >
-            ai@agenticconsciousness.com.au
-          </a>
+          />
         </div>
-        <a
-          href="mailto:ai@agenticconsciousness.com.au"
+        <EmailLink
           className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 text-white"
           style={{ background: 'var(--red)' }}
         >
           Book free intro →
-        </a>
+        </EmailLink>
       </div>
 
       {/* Tier 1.5 — Brand name */}
@@ -68,6 +83,8 @@ export default function Footer() {
         {[
           { title: 'SITE', links: siteLinks },
           { title: 'AI', links: aiLinks },
+          { title: 'LOCATIONS', links: locationLinks },
+          { title: 'INDUSTRIES', links: industryLinks },
           { title: 'LEGAL', links: legalLinks },
         ].map((group, i, arr) => (
           <div

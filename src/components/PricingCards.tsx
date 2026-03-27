@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { trackEvent } from '@/lib/tracking';
+import EmailLink from '@/components/EmailLink';
 
 const tiers = [
   {
@@ -106,9 +107,9 @@ export default function PricingCards() {
             {tier.num}
           </div>
 
-          <h3 className="text-[1.1rem] font-black text-text-primary tracking-snug mb-3">
+          <h2 className="text-[1.1rem] font-black text-text-primary tracking-snug mb-3">
             {tier.title}
-          </h3>
+          </h2>
 
           <div className="text-[1.8rem] font-black mb-1" style={{ color: 'var(--red-text)' }}>
             {tier.price}
@@ -129,8 +130,7 @@ export default function PricingCards() {
           </div>
 
           <div className="flex flex-col gap-2">
-            <a
-              href="mailto:ai@agenticconsciousness.com.au"
+            <EmailLink
               className="block text-center font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 no-underline transition-all duration-200"
               style={{
                 border: '2px solid var(--red)',
@@ -139,7 +139,7 @@ export default function PricingCards() {
               }}
             >
               Book consultation &rarr;
-            </a>
+            </EmailLink>
             <button
               onClick={() => handleCheckout(tier.packageId)}
               disabled={loading === tier.packageId}

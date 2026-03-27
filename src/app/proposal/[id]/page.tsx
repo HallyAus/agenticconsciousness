@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getProposal } from '@/lib/proposals';
 import { notFound } from 'next/navigation';
 import ProposalAcceptance from '@/components/ProposalAcceptance';
+import EmailLink from '@/components/EmailLink';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -65,9 +66,9 @@ export default async function ProposalPage({ params }: Props) {
           <div className="p-6 mb-10 border-2 text-center" style={{ borderColor: 'var(--red)', background: 'var(--red-faint)' }}>
             <div className="font-black text-[1.1rem] text-text-primary mb-2">This proposal has expired.</div>
             <p className="text-text-dim text-[0.85rem] font-light">Contact us for an updated proposal.</p>
-            <a href="mailto:ai@agenticconsciousness.com.au" className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-2 px-6 mt-4 no-underline text-white" style={{ background: 'var(--red)' }}>
+            <EmailLink className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-2 px-6 mt-4 no-underline text-white" style={{ background: 'var(--red)' }}>
               Request new proposal →
-            </a>
+            </EmailLink>
           </div>
         )}
 

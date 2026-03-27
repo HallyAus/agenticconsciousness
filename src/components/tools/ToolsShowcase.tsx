@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import FeaturedTool from '@/components/tools/FeaturedTool';
 import ToolNavStrip from '@/components/tools/ToolNavStrip';
+import EmailLink from '@/components/EmailLink';
 import ToolHeroSection from '@/components/tools/ToolHeroSection';
 import ToolExpander from '@/components/tools/ToolExpander';
 import Link from 'next/link';
@@ -204,12 +205,11 @@ export default function ToolsShowcase() {
             Imagine what we could build for your business in a week.
           </p>
           <div className="flex gap-4 justify-center flex-wrap mb-10">
-            <a
-              href="mailto:ai@agenticconsciousness.com.au"
+            <EmailLink
               className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 no-underline text-white bg-ac-red transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
             >
               Book free consultation &rarr;
-            </a>
+            </EmailLink>
             <Link
               href="/#ai-audit"
               className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 no-underline border-2 border-ac-red text-ac-red transition-all duration-200 hover:bg-ac-red hover:text-white"

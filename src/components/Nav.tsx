@@ -51,10 +51,10 @@ export default function Nav() {
       <button
         className="hidden max-md:block bg-transparent border-none text-ac-red text-2xl cursor-pointer"
         onClick={() => setMenuOpen(!menuOpen)}
-        aria-label="Menu"
+        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
         aria-expanded={menuOpen}
       >
-        {menuOpen ? '✕' : '☰'}
+        <span aria-hidden="true">{menuOpen ? '✕' : '☰'}</span>
       </button>
 
       {/* Mobile menu */}

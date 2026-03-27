@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { trackEvent } from '@/lib/tracking';
 import { useCsrf } from '@/lib/useCsrf';
+import EmailLink from '@/components/EmailLink';
 
 const INDUSTRIES = [
   'Manufacturing',
@@ -274,13 +275,12 @@ export default function ExitIntent() {
               <p className="mb-2" style={{ fontSize: '0.85rem', color: 'var(--text-dim)' }}>
                 Or book a free consultation directly:
               </p>
-              <a
-                href="mailto:ai@agenticconsciousness.com.au"
+              <EmailLink
                 className="font-black transition-colors duration-200"
                 style={{ fontSize: '0.85rem', color: 'var(--red)', textDecoration: 'none', letterSpacing: '1px' }}
               >
                 BOOK NOW →
-              </a>
+              </EmailLink>
             </div>
 
             <p className="font-mono mt-4" style={{ fontSize: '0.55rem', color: 'var(--text-ghost)' }}>
