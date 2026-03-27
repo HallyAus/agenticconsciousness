@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { validateCsrf } from '@/lib/csrf';
 import { incrementToolStat } from '@/lib/toolStats';
 import { parseAiJson } from '@/lib/parseAiJson';
 import { FAST_MODEL } from '@/lib/models';
@@ -17,6 +18,11 @@ export async function POST(req: NextRequest) {
       { error: `Rate limit exceeded. Try again in ${rateLimit.retryAfter}s.` },
       { status: 429 }
     );
+  }
+
+  const csrfValid = await validateCsrf(req);
+  if (!csrfValid) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 403 });
   }
 
   try {

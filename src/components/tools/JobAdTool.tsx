@@ -8,6 +8,7 @@ import SendToEmail from '@/components/SendToEmail';
 import ToggleGroup from '@/components/ToggleGroup';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 interface JobAdResult {
   title: string;
@@ -79,6 +80,7 @@ const STAGED_STEPS = [
 ];
 
 export default function JobAdTool() {
+  const csrfToken = useCsrf();
   const [jobTitle, setJobTitle] = useState('');
   const [company, setCompany] = useState('');
   const [industry, setIndustry] = useState('');
@@ -138,7 +140,7 @@ export default function JobAdTool() {
     try {
       const res = await fetch('/api/tools/jobad', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({ jobTitle, company, industry: industry || undefined, description, employmentType }),
       });
 

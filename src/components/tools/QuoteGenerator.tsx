@@ -8,6 +8,7 @@ import SendToEmail from '@/components/SendToEmail';
 import ToggleGroup from '@/components/ToggleGroup';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 const INDUSTRIES = [
   'Manufacturing',
@@ -76,6 +77,7 @@ const STAGED_STEPS = [
 ];
 
 export default function QuoteGenerator() {
+  const csrfToken = useCsrf();
   const [businessName, setBusinessName] = useState('');
   const [clientName, setClientName] = useState('');
   const [industry, setIndustry] = useState('');
@@ -138,7 +140,7 @@ export default function QuoteGenerator() {
     try {
       const res = await fetch('/api/tools/quote', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({
           businessName,
           clientName,

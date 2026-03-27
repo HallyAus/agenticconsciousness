@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     const IP_REGEX = /^(\d{1,3}\.){3}\d{1,3}$/;
     if (ip && ip !== 'unknown' && IP_REGEX.test(ip)) {
       try {
-        const geoRes = await fetch(`http://ip-api.com/json/${ip}?fields=city,regionName,country`, {
+        const geoRes = await fetch(`https://ip-api.com/json/${ip}?fields=city,regionName,country`, {
           signal: AbortSignal.timeout(2000), // 2s timeout, don't slow down the greeting
         });
         if (geoRes.ok) {

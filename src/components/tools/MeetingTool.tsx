@@ -7,6 +7,7 @@ import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 interface ActionItem {
   action: string;
@@ -66,6 +67,7 @@ function PriorityPill({ priority }: { priority: 'High' | 'Medium' | 'Low' }) {
 }
 
 export default function MeetingTool() {
+  const csrfToken = useCsrf();
   const [text, setText] = useState('');
   const [context, setContext] = useState('');
   const [loading, setLoading] = useState(false);
@@ -110,7 +112,7 @@ export default function MeetingTool() {
     try {
       const res = await fetch('/api/tools/meeting', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({ text, context: context || undefined }),
       });
 

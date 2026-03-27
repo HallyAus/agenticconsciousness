@@ -1,6 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { validateCsrf } from '@/lib/csrf';
 import fs from 'fs';
 import path from 'path';
 import { sendEmail, notifyAdmin, emailTemplate } from '@/lib/email';
@@ -34,6 +35,11 @@ export async function POST(req: NextRequest) {
       { error: `Too many requests. Try again in ${retryAfter}s.` },
       { status: 429 }
     );
+  }
+
+  const csrfValid = await validateCsrf(req);
+  if (!csrfValid) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 403 });
   }
 
   try {

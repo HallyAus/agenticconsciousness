@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import AnimatedCounter from '@/components/AnimatedCounter';
 
 export default function ToolsHero() {
-  const [stats, setStats] = useState({ invoices: 1247, quotes: 892, competitors: 634 });
+  const [stats, setStats] = useState({ invoices: 0, quotes: 0, competitors: 0 });
 
   useEffect(() => {
     fetch('/api/tools/stats')

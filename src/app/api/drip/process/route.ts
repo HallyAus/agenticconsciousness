@@ -5,7 +5,7 @@ import path from 'path';
 
 export async function GET(req: NextRequest) {
   const authKey = req.headers.get('Authorization');
-  if (authKey !== `Bearer ${process.env.BLOG_ADMIN_KEY}`) {
+  if (authKey !== `Bearer ${process.env.DRIP_ADMIN_KEY || process.env.BLOG_ADMIN_KEY}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

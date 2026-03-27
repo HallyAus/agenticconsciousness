@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { checkRateLimit } from '@/lib/rate-limit';
+import { validateCsrf } from '@/lib/csrf';
 import { notifyAdmin } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
@@ -9,6 +10,11 @@ export async function POST(req: NextRequest) {
   const { allowed, retryAfter } = checkRateLimit(ip);
   if (!allowed) {
     return NextResponse.json({ error: `Rate limit exceeded. Try again in ${retryAfter}s.` }, { status: 429 });
+  }
+
+  const csrfValid = await validateCsrf(req);
+  if (!csrfValid) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 403 });
   }
 
   try {

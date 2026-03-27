@@ -8,6 +8,7 @@ import SendToEmail from '@/components/SendToEmail';
 import ToggleGroup from '@/components/ToggleGroup';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 type RoleOption = "I'm the business" | "I'm the customer" | "I'm the employee";
 type Assessment = 'Fair' | 'Somewhat one-sided' | 'One-sided' | 'Heavily one-sided';
@@ -97,6 +98,7 @@ function SeverityPill({ severity }: { severity: Severity }) {
 }
 
 export default function ContractTool() {
+  const csrfToken = useCsrf();
   const [text, setText] = useState('');
   const [context, setContext] = useState('');
   const [role, setRole] = useState<RoleOption>("I'm the business");
@@ -150,7 +152,7 @@ export default function ContractTool() {
     try {
       const res = await fetch('/api/tools/contract', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({
           text,
           context: context || undefined,

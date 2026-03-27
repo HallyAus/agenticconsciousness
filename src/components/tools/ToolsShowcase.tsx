@@ -126,8 +126,8 @@ export default function ToolsShowcase() {
   const [expandedTool, setExpandedTool] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState('invoice');
   const [stats, setStats] = useState<Stats>({
-    invoices: 1247, quotes: 892, competitors: 634, emails: 456,
-    summaries: 312, meetings: 278, jobads: 189, contracts: 234,
+    invoices: 0, quotes: 0, competitors: 0, emails: 0,
+    summaries: 0, meetings: 0, jobads: 0, contracts: 0,
   });
 
   useEffect(() => {

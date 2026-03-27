@@ -8,6 +8,7 @@ import SendToEmail from '@/components/SendToEmail';
 import ToggleGroup from '@/components/ToggleGroup';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 interface EmailResult {
   subject: string;
@@ -43,6 +44,7 @@ const STAGED_STEPS = [
 ];
 
 export default function EmailTool() {
+  const csrfToken = useCsrf();
   const [text, setText] = useState('');
   const [recipient, setRecipient] = useState('');
   const [tone, setTone] = useState('Professional');
@@ -90,7 +92,7 @@ export default function EmailTool() {
     try {
       const res = await fetch('/api/tools/email', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({ text, recipient: recipient || undefined, tone }),
       });
 

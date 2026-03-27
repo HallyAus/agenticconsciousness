@@ -3,14 +3,14 @@ import path from 'path';
 
 const STATS_FILE = path.join(process.cwd(), 'data', 'tool-stats.json');
 const DEFAULT_STATS = {
-  invoices: 1247,
-  quotes: 892,
-  competitors: 634,
-  emails: 456,
-  summaries: 312,
-  meetings: 278,
-  jobads: 189,
-  contracts: 234,
+  invoices: 0,
+  quotes: 0,
+  competitors: 0,
+  emails: 0,
+  summaries: 0,
+  meetings: 0,
+  jobads: 0,
+  contracts: 0,
 };
 
 export function getToolStats(): Record<string, number> {

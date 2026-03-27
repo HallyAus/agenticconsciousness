@@ -8,6 +8,7 @@ import SendToEmail from '@/components/SendToEmail';
 import ToggleGroup from '@/components/ToggleGroup';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 interface SummaryResult {
   executiveSummary: string | null;
@@ -57,6 +58,7 @@ const STAGED_STEPS = [
 ];
 
 export default function SummariseTool() {
+  const csrfToken = useCsrf();
   const [text, setText] = useState('');
   const [length, setLength] = useState('Standard');
   const [loading, setLoading] = useState(false);
@@ -101,7 +103,7 @@ export default function SummariseTool() {
     try {
       const res = await fetch('/api/tools/summarise', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({ text, length }),
       });
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 const INDUSTRIES = [
   'Manufacturing',
@@ -37,6 +38,7 @@ const inputFocusStyle: React.CSSProperties = {
 };
 
 export default function ExitIntent() {
+  const csrfToken = useCsrf();
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState('');
@@ -136,7 +138,7 @@ export default function ExitIntent() {
     try {
       const res = await fetch('/api/exit-capture', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({ email, industry }),
       });
       const data = await res.json();

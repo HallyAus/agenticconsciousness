@@ -7,6 +7,7 @@ import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 interface LineItem {
   description: string;
@@ -55,6 +56,7 @@ const STAGED_STEPS = [
 ];
 
 export default function InvoiceScanner() {
+  const csrfToken = useCsrf();
   const [imageData, setImageData] = useState<{ data: string; mediaType: 'image/jpeg' | 'image/png' | 'image/webp' } | null>(null);
   const [pdfData, setPdfData] = useState<{ data: string } | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -150,7 +152,7 @@ export default function InvoiceScanner() {
 
       const res = await fetch('/api/tools/invoice', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify(body),
       });
 

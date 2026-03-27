@@ -4,6 +4,7 @@ import { useState } from 'react';
 import ScrollReveal from '@/components/ScrollReveal';
 import AiLoading from '@/components/AiLoading';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 interface AiResult {
   recommendedService: string;
@@ -18,6 +19,7 @@ const INPUT_CLASS =
   'w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary py-3 px-4 font-display text-[0.85rem] placeholder:text-text-dim transition-colors duration-150';
 
 export default function CTA() {
+  const csrfToken = useCsrf();
   const [step, setStep] = useState<Step>('challenge');
   const [challenge, setChallenge] = useState('');
   const [analysing, setAnalysing] = useState(false);
@@ -38,7 +40,7 @@ export default function CTA() {
     try {
       const res = await fetch('/api/smart-contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({ challenge: challenge.trim() }),
       });
       if (!res.ok) throw new Error('Analysis failed');
@@ -61,7 +63,7 @@ export default function CTA() {
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({
           name: name.trim(),
           email: email.trim(),

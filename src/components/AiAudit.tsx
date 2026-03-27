@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import AiLoading from '@/components/AiLoading';
 import { trackEvent } from '@/lib/tracking';
+import { useCsrf } from '@/lib/useCsrf';
 
 const INDUSTRIES = [
   'Manufacturing',
@@ -44,6 +45,7 @@ interface AuditResult {
 const COOLDOWN_SECONDS = 30;
 
 export default function AiAudit() {
+  const csrfToken = useCsrf();
   const [industry, setIndustry] = useState('');
   const [businessSize, setBusinessSize] = useState('');
   const [painPoint, setPainPoint] = useState('');
@@ -68,7 +70,7 @@ export default function AiAudit() {
     try {
       const res = await fetch('/api/audit', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'x-csrf-token': csrfToken },
         body: JSON.stringify({ industry, businessSize, painPoint }),
       });
 

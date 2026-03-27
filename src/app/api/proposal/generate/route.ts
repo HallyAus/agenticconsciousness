@@ -10,7 +10,7 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(req: NextRequest) {
   const authKey = req.headers.get('Authorization');
-  if (authKey !== `Bearer ${process.env.BLOG_ADMIN_KEY}`) {
+  if (authKey !== `Bearer ${process.env.PROPOSAL_ADMIN_KEY || process.env.BLOG_ADMIN_KEY}`) {
     // Also allow from internal API calls (no auth for proposal generation from audit)
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
     const { allowed, retryAfter } = checkRateLimit(ip);
