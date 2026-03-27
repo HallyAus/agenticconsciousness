@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Site Audit — Improvement Ideas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: rgba(255,255,255,0.85); font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; }
+
+  .page-header { text-align: center; padding: 40px 20px 10px; }
+  .page-header h1 { font-weight: 900; font-size: 28px; color: #ff3d00; margin-bottom: 6px; }
+  .page-header p { color: rgba(255,255,255,0.4); font-size: 13px; margin-bottom: 30px; }
+
+  .section { max-width: 960px; margin: 0 auto 50px; padding: 0 20px; }
+  .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .section-num { font-family: 'Space Mono', monospace; font-size: 10px; color: #ff3d00; text-transform: uppercase; letter-spacing: 2px; }
+  .section-name { font-weight: 900; font-size: 20px; }
+  .section-verdict { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 16px; }
+  .current-label { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+
+  .mockup-frame { background: #111; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; margin-bottom: 12px; }
+  .mockup-bar { background: #1a1a1a; padding: 6px 10px; display: flex; gap: 4px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .mockup-dot { width: 6px; height: 6px; background: rgba(255,255,255,0.15); }
+
+  /* Split mockup */
+  .split-mockup { display: flex; gap: 16px; }
+  .split-mockup > div { flex: 1; }
+  .split-label { font-family: 'Space Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; padding: 4px 8px; display: inline-block; }
+  .label-current { color: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.1); }
+  .label-improved { color: #ff3d00; border: 1px solid rgba(255,61,0,0.3); }
+
+  /* Shared mockup elements */
+  .m-nav { display: flex; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 8px; }
+  .m-logo { font-weight: 900; font-size: 9px; }
+  .m-links { color: rgba(255,255,255,0.3); font-family: 'Space Mono', monospace; }
+  .m-num { font-family: 'Space Mono', monospace; font-size: 8px; color: #ff3d00; }
+  .m-title { font-weight: 900; font-size: 13px; margin: 3px 0; }
+  .m-desc { font-size: 9px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+  .m-btn { display: inline-block; background: #ff3d00; color: white; padding: 5px 10px; font-family: 'Space Mono', monospace; font-size: 8px; text-transform: uppercase; margin-top: 6px; }
+  .m-btn-outline { display: inline-block; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.4); padding: 5px 10px; font-family: 'Space Mono', monospace; font-size: 8px; }
+  .m-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 12px; margin-bottom: 2px; }
+  .m-ghost { font-size: 24px; font-weight: 900; color: rgba(255,255,255,0.04); }
+  .m-pill { display: inline-block; font-family: 'Space Mono', monospace; font-size: 7px; border: 1px solid rgba(255,61,0,0.3); color: #ff3d00; padding: 2px 5px; margin-right: 3px; text-transform: uppercase; }
+  .m-red-border { border-top: 3px solid #ff3d00; }
+  .m-stat-val { font-weight: 900; font-size: 14px; color: #ff3d00; }
+  .m-stat-label { font-family: 'Space Mono', monospace; font-size: 7px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+  .m-divider { height: 2px; background: rgba(255,61,0,0.15); margin: 8px 0; }
+
+  /* Improvement tag */
+  .improvements { margin-top: 12px; }
+  .improvement { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .improvement-icon { font-family: 'Space Mono', monospace; font-size: 9px; color: #ff3d00; min-width: 20px; }
+  .improvement-text { font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+
+  /* Selectable options */
+  .option-row { display: flex; gap: 2px; margin-top: 12px; }
+  .option-card { flex: 1; border: 2px solid rgba(255,255,255,0.08); padding: 14px; cursor: pointer; transition: border-color 0.2s; }
+  .option-card:hover { border-color: rgba(255,61,0,0.5); }
+  .option-card.selected { border-color: #ff3d00; }
+  .option-letter { font-family: 'Space Mono', monospace; font-size: 10px; color: #ff3d00; margin-bottom: 4px; }
+  .option-title { font-weight: 900; font-size: 12px; margin-bottom: 4px; }
+  .option-desc { font-size: 10px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+</style>
+<script>
+function selectOption(sectionId, choice, el) {
+  el.closest('.option-row').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  fetch('/.events', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({type:'click',choice:sectionId+':'+choice,text:el.querySelector('.option-title')?.textContent||choice,timestamp:Date.now()}) });
+}
+</script>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Full Site Audit</h1>
+  <p>Current vs. improved — click the options you want for each section</p>
+</div>
+
+<!-- ===================== 1. HERO ===================== -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">01 / Hero</span>
+    <span class="section-name">First Impression</span>
+  </div>
+  <div class="section-verdict">Currently strong. Two improvements worth considering.</div>
+
+  <div class="split-mockup">
+    <div>
+      <div class="split-label label-current">Current</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:20px;text-align:center;min-height:180px;background:radial-gradient(ellipse at 80% 20%, rgba(255,61,0,0.15), transparent 60%)">
+          <div style="display:flex;gap:6px;justify-content:center;margin-bottom:10px">
+            <span class="m-pill" style="background:rgba(255,61,0,0.1)">AI CONSULTING</span>
+            <span class="m-pill" style="opacity:0.4">AUTOMATION</span>
+            <span class="m-pill" style="opacity:0.4">STRATEGY</span>
+          </div>
+          <div style="font-weight:900;font-size:22px;line-height:1.1;margin-bottom:8px">AGENTIC<br><span style="color:#ff3d00">CONSCIOUSNESS</span></div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:12px">Good evening. Welcome to AI that works.</div>
+          <div style="display:flex;gap:6px;justify-content:center">
+            <div class="m-btn">Free consultation</div>
+            <div class="m-btn-outline">See our work</div>
+          </div>
+          <div style="display:flex;gap:16px;justify-content:center;margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)">
+            <div><div class="m-stat-val" style="font-size:12px">21+</div><div class="m-stat-label">Years</div></div>
+            <div><div class="m-stat-val" style="font-size:12px">8</div><div class="m-stat-label">Free tools</div></div>
+            <div><div class="m-stat-val" style="font-size:12px">AU</div><div class="m-stat-label">Based</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="split-label label-improved">Improved</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:20px;min-height:180px;background:radial-gradient(ellipse at 80% 20%, rgba(255,61,0,0.1), transparent 60%)">
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            <span class="m-pill" style="background:rgba(255,61,0,0.1)">AI CONSULTING</span>
+            <span class="m-pill" style="opacity:0.4">AUTOMATION</span>
+            <span class="m-pill" style="opacity:0.4">STRATEGY</span>
+          </div>
+          <div style="font-weight:900;font-size:22px;line-height:1.1;margin-bottom:4px">AGENTIC<br><span style="color:#ff3d00">CONSCIOUSNESS</span></div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:10px">Good evening. Welcome to AI that works.</div>
+          <!-- NEW: Social proof strip -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:6px 10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)">
+            <div style="width:6px;height:6px;background:#22c55e;animation:pulse 1.5s infinite"></div>
+            <span style="font-family:'Space Mono',monospace;font-size:8px;color:rgba(255,255,255,0.4)">47 businesses audited this month · 8 free AI tools live</span>
+          </div>
+          <div style="display:flex;gap:6px">
+            <!-- NEW: Larger, more prominent CTA -->
+            <div class="m-btn" style="padding:8px 16px;font-size:9px">Free consultation →</div>
+            <div class="m-btn-outline">Try our free tools</div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)">
+            <div><div class="m-stat-val" style="font-size:12px">21+</div><div class="m-stat-label">Years exp</div></div>
+            <div><div class="m-stat-val" style="font-size:12px">6,344</div><div class="m-stat-label">Tools used</div></div>
+            <div><div class="m-stat-val" style="font-size:12px">~8s</div><div class="m-stat-label">Avg response</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="improvements">
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Social proof strip</strong> — live activity indicator ("47 businesses audited this month") adds urgency and credibility</span></div>
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Larger CTA button</strong> — primary action is more prominent with arrow indicator</span></div>
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Real stats</strong> — replace "AU-wide" with actual tool usage numbers</span></div>
+  </div>
+
+  <div class="option-row">
+    <div class="option-card" onclick="selectOption('hero','keep',this)">
+      <div class="option-letter">A</div>
+      <div class="option-title">Keep Current</div>
+      <div class="option-desc">Hero is already strong — don't fix what isn't broken</div>
+    </div>
+    <div class="option-card" onclick="selectOption('hero','improve',this)">
+      <div class="option-letter">B</div>
+      <div class="option-title">Add Social Proof Strip</div>
+      <div class="option-desc">Add the live activity bar + larger CTA + real stats</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2. SERVICES ===================== -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">02 / Services</span>
+    <span class="section-name">What We Build</span>
+  </div>
+  <div class="section-verdict">Good structure but cards could work harder for conversion.</div>
+
+  <div class="split-mockup">
+    <div>
+      <div class="split-label label-current">Current</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:14px">
+          <div class="m-num">001 / SERVICES</div>
+          <div class="m-title" style="font-size:16px;margin-bottom:10px">What we build.</div>
+          <div style="display:flex;gap:2px">
+            <div class="m-card m-red-border">
+              <div class="m-ghost">01</div>
+              <div style="font-weight:900;font-size:11px;margin:4px 0">Strategy & Workshops</div>
+              <div class="m-desc" style="font-size:8px">No-fluff sessions that demystify AI for your team.</div>
+              <div style="margin-top:6px"><span class="m-pill">Roadmaps</span><span class="m-pill">Workshops</span></div>
+            </div>
+            <div class="m-card" style="border-top:3px solid rgba(255,61,0,0.6)">
+              <div class="m-ghost">02</div>
+              <div style="font-weight:900;font-size:11px;margin:4px 0">Tool Implementation</div>
+              <div class="m-desc" style="font-size:8px">ChatGPT. Claude. Copilot. Deployed into your stack.</div>
+              <div style="margin-top:6px"><span class="m-pill">ChatGPT</span><span class="m-pill">Claude</span></div>
+            </div>
+            <div class="m-card" style="border-top:3px solid rgba(255,61,0,0.35)">
+              <div class="m-ghost">03</div>
+              <div style="font-weight:900;font-size:11px;margin:4px 0">Automation & Agents</div>
+              <div class="m-desc" style="font-size:8px">End-to-end autonomous pipelines.</div>
+              <div style="margin-top:6px"><span class="m-pill">Pipelines</span><span class="m-pill">Agents</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="split-label label-improved">Improved</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:14px">
+          <div class="m-num">001 / SERVICES</div>
+          <div class="m-title" style="font-size:16px;margin-bottom:10px">What we build.</div>
+          <div style="display:flex;gap:2px">
+            <div class="m-card m-red-border">
+              <div class="m-ghost">01</div>
+              <div style="font-weight:900;font-size:11px;margin:4px 0">Strategy & Workshops</div>
+              <div class="m-desc" style="font-size:8px">No-fluff sessions that demystify AI for your team.</div>
+              <div style="margin-top:6px"><span class="m-pill">Roadmaps</span><span class="m-pill">Workshops</span></div>
+              <!-- NEW: Outcome + CTA -->
+              <div style="margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.04)">
+                <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00">→ From $3,000</div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.3);margin-top:2px">"We saved 12hrs/week" — Manufacturing client</div>
+              </div>
+            </div>
+            <div class="m-card" style="border-top:3px solid rgba(255,61,0,0.6)">
+              <div class="m-ghost">02</div>
+              <div style="font-weight:900;font-size:11px;margin:4px 0">Tool Implementation</div>
+              <div class="m-desc" style="font-size:8px">ChatGPT. Claude. Copilot. Deployed into your stack.</div>
+              <div style="margin-top:6px"><span class="m-pill">ChatGPT</span><span class="m-pill">Claude</span></div>
+              <div style="margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.04)">
+                <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00">→ From $5,000</div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.3);margin-top:2px">"3.5x proposal output" — Services firm</div>
+              </div>
+            </div>
+            <div class="m-card" style="border-top:3px solid rgba(255,61,0,0.35)">
+              <div class="m-ghost">03</div>
+              <div style="font-weight:900;font-size:11px;margin:4px 0">Automation & Agents</div>
+              <div class="m-desc" style="font-size:8px">End-to-end autonomous pipelines.</div>
+              <div style="margin-top:6px"><span class="m-pill">Pipelines</span><span class="m-pill">Agents</span></div>
+              <div style="margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.04)">
+                <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00">→ From $10,000</div>
+                <div style="font-size:8px;color:rgba(255,255,255,0.3);margin-top:2px">"8hrs/week reclaimed" — Trades business</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="improvements">
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Starting price</strong> — anchors expectations and qualifies leads before they enquire</span></div>
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Client quote snippet</strong> — one-line social proof per service card (from case studies)</span></div>
+  </div>
+
+  <div class="option-row">
+    <div class="option-card" onclick="selectOption('services','keep',this)">
+      <div class="option-letter">A</div>
+      <div class="option-title">Keep Current</div>
+      <div class="option-desc">Clean cards, no prices on homepage</div>
+    </div>
+    <div class="option-card" onclick="selectOption('services','improve',this)">
+      <div class="option-letter">B</div>
+      <div class="option-title">Add Pricing + Quotes</div>
+      <div class="option-desc">Starting price + one-line client testimonial per card</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 3. PROCESS ===================== -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">03 / Process</span>
+    <span class="section-name">How We Work</span>
+  </div>
+  <div class="section-verdict">Phases feel disconnected. Timeline would help.</div>
+
+  <div class="split-mockup">
+    <div>
+      <div class="split-label label-current">Current</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:14px">
+          <div style="display:flex;gap:2px">
+            <div class="m-card" style="flex:1;padding:10px">
+              <div class="m-num">PHASE 01</div>
+              <div style="font-weight:900;font-size:10px;margin:3px 0">Discovery</div>
+              <div class="m-desc" style="font-size:8px">Free, no-obligation conversation.</div>
+            </div>
+            <div class="m-card" style="flex:1;padding:10px">
+              <div class="m-num">PHASE 02</div>
+              <div style="font-weight:900;font-size:10px;margin:3px 0">Audit</div>
+              <div class="m-desc" style="font-size:8px">Assess tools, data, capabilities.</div>
+            </div>
+            <div class="m-card" style="flex:1;padding:10px">
+              <div class="m-num">PHASE 03</div>
+              <div style="font-weight:900;font-size:10px;margin:3px 0">Deploy</div>
+              <div class="m-desc" style="font-size:8px">Rapid implementation sprint.</div>
+            </div>
+            <div class="m-card" style="flex:1;padding:10px">
+              <div class="m-num">PHASE 04</div>
+              <div style="font-weight:900;font-size:10px;margin:3px 0">Scale</div>
+              <div class="m-desc" style="font-size:8px">Ongoing refinement.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="split-label label-improved">Improved</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:14px">
+          <!-- NEW: Connected timeline -->
+          <div style="display:flex;gap:0;position:relative">
+            <!-- Timeline connector line -->
+            <div style="position:absolute;top:18px;left:10%;right:10%;height:2px;background:linear-gradient(to right, #ff3d00, rgba(255,61,0,0.3));z-index:0"></div>
+            <div style="flex:1;text-align:center;position:relative;z-index:1">
+              <div style="width:20px;height:20px;border:2px solid #ff3d00;background:#0a0a0a;margin:8px auto 6px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00">1</div>
+              <div style="font-weight:900;font-size:10px">Discovery</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.4);margin-top:2px">Free call</div>
+              <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;margin-top:4px">30 min</div>
+            </div>
+            <div style="flex:1;text-align:center;position:relative;z-index:1">
+              <div style="width:20px;height:20px;border:2px solid #ff3d00;background:#0a0a0a;margin:8px auto 6px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00">2</div>
+              <div style="font-weight:900;font-size:10px">Audit</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.4);margin-top:2px">AI readiness</div>
+              <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;margin-top:4px">1 week</div>
+            </div>
+            <div style="flex:1;text-align:center;position:relative;z-index:1">
+              <div style="width:20px;height:20px;border:2px solid #ff3d00;background:#0a0a0a;margin:8px auto 6px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00">3</div>
+              <div style="font-weight:900;font-size:10px">Deploy</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.4);margin-top:2px">Build & train</div>
+              <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;margin-top:4px">2-4 weeks</div>
+            </div>
+            <div style="flex:1;text-align:center;position:relative;z-index:1">
+              <div style="width:20px;height:20px;border:2px solid #ff3d00;background:#0a0a0a;margin:8px auto 6px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00">4</div>
+              <div style="font-weight:900;font-size:10px">Scale</div>
+              <div style="font-size:8px;color:rgba(255,255,255,0.4);margin-top:2px">Optimise & expand</div>
+              <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;margin-top:4px">Ongoing</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="improvements">
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Connected timeline</strong> — red line connects phases to show progression, not just four separate boxes</span></div>
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Time estimates</strong> — "30 min", "1 week", "2-4 weeks" sets expectations and reduces anxiety</span></div>
+  </div>
+
+  <div class="option-row">
+    <div class="option-card" onclick="selectOption('process','keep',this)">
+      <div class="option-letter">A</div>
+      <div class="option-title">Keep Current Grid</div>
+      <div class="option-desc">Four cards with hover animations</div>
+    </div>
+    <div class="option-card" onclick="selectOption('process','timeline',this)">
+      <div class="option-letter">B</div>
+      <div class="option-title">Connected Timeline</div>
+      <div class="option-desc">Red line connecting phases + time estimates</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 4. CASE STUDIES ===================== -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">04 / Case Studies</span>
+    <span class="section-name">Proof of Work</span>
+  </div>
+  <div class="section-verdict">Metrics are strong but cases feel fabricated. Before/after would help.</div>
+
+  <div class="split-mockup">
+    <div>
+      <div class="split-label label-current">Current</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:14px">
+          <div class="m-card" style="display:flex;gap:0">
+            <div style="width:80px;border-right:2px solid #ff3d00;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;text-align:center;padding:8px">Manu-<br>facturing</div>
+            <div style="flex:1;padding:10px">
+              <div style="font-weight:900;font-size:10px">Automated Quality Inspection</div>
+              <div class="m-desc" style="font-size:8px">Replaced manual inspection with AI-powered defect detection.</div>
+            </div>
+            <div style="border-left:2px solid #ff3d00;padding:10px;display:flex;gap:14px;align-items:center">
+              <div><div class="m-stat-val" style="font-size:12px">-62%</div><div class="m-stat-label">Time</div></div>
+              <div><div class="m-stat-val" style="font-size:12px">$340K</div><div class="m-stat-label">Saved</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="split-label label-improved">Improved</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:14px">
+          <div class="m-card" style="display:flex;gap:0">
+            <div style="width:80px;border-right:2px solid #ff3d00;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;text-align:center;padding:8px">
+              Manu-<br>facturing
+              <!-- NEW: Timeline -->
+              <div style="margin-top:6px;font-size:7px;color:rgba(255,255,255,0.3)">3 WEEKS</div>
+            </div>
+            <div style="flex:1;padding:10px">
+              <div style="font-weight:900;font-size:10px">Automated Quality Inspection</div>
+              <!-- NEW: Before/After -->
+              <div style="display:flex;gap:8px;margin-top:6px">
+                <div style="flex:1;padding:4px 6px;border:1px solid rgba(255,255,255,0.06);font-size:8px">
+                  <div style="font-family:'Space Mono',monospace;font-size:7px;color:rgba(255,255,255,0.3)">BEFORE</div>
+                  <div style="color:rgba(255,255,255,0.5)">Manual visual checks, 1% miss rate</div>
+                </div>
+                <div style="flex:1;padding:4px 6px;border:1px solid rgba(255,61,0,0.15);background:rgba(255,61,0,0.03);font-size:8px">
+                  <div style="font-family:'Space Mono',monospace;font-size:7px;color:#ff3d00">AFTER</div>
+                  <div style="color:rgba(255,255,255,0.7)">AI catches 99.2% of defects</div>
+                </div>
+              </div>
+            </div>
+            <div style="border-left:2px solid #ff3d00;padding:10px;display:flex;gap:14px;align-items:center">
+              <div><div class="m-stat-val" style="font-size:12px">-62%</div><div class="m-stat-label">Time</div></div>
+              <div><div class="m-stat-val" style="font-size:12px">$340K</div><div class="m-stat-label">Saved/yr</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="improvements">
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Before/After comparison</strong> — makes the transformation tangible and believable</span></div>
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Project timeline</strong> — "3 weeks" shows fast delivery and sets expectations</span></div>
+  </div>
+
+  <div class="option-row">
+    <div class="option-card" onclick="selectOption('cases','keep',this)">
+      <div class="option-letter">A</div>
+      <div class="option-title">Keep Current</div>
+      <div class="option-desc">Industry + description + metrics</div>
+    </div>
+    <div class="option-card" onclick="selectOption('cases','improve',this)">
+      <div class="option-letter">B</div>
+      <div class="option-title">Add Before/After + Timeline</div>
+      <div class="option-desc">Before/after cards + project duration</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 5. BLOG ===================== -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">05 / Blog</span>
+    <span class="section-name">Blog Listing Page</span>
+  </div>
+  <div class="section-verdict">Functional but no featured post. Could convert better.</div>
+
+  <div class="split-mockup">
+    <div>
+      <div class="split-label label-current">Current</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:14px">
+          <div style="font-weight:900;font-size:16px;margin-bottom:10px">AI Insights.</div>
+          <div class="m-card" style="display:flex;gap:10px;padding:10px">
+            <div style="width:60px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3)">Mar 22<br><span class="m-pill" style="margin-top:4px">Trades</span></div>
+            <div style="flex:1">
+              <div style="font-weight:900;font-size:10px">5 AI Automations Every Trades Business Should Have</div>
+              <div class="m-desc" style="font-size:8px;margin-top:2px">From scheduling to invoicing — the five AI tools...</div>
+            </div>
+            <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;align-self:center">READ →</div>
+          </div>
+          <div class="m-card" style="display:flex;gap:10px;padding:10px">
+            <div style="width:60px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3)">Mar 20</div>
+            <div style="flex:1">
+              <div style="font-weight:900;font-size:10px">ChatGPT vs Claude vs Copilot</div>
+              <div class="m-desc" style="font-size:8px;margin-top:2px">Which AI tool fits your business?</div>
+            </div>
+            <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;align-self:center">READ →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="split-label label-improved">Improved</div>
+      <div class="mockup-frame">
+        <div class="mockup-bar"><div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div></div>
+        <div style="padding:14px">
+          <div style="font-weight:900;font-size:16px;margin-bottom:10px">AI Insights.</div>
+          <!-- NEW: Featured post -->
+          <div class="m-card m-red-border" style="padding:14px;margin-bottom:4px">
+            <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;margin-bottom:4px">LATEST</div>
+            <div style="font-weight:900;font-size:13px;margin-bottom:4px">5 AI Automations Every Trades Business Should Have</div>
+            <div class="m-desc" style="font-size:9px;margin-bottom:8px">From scheduling to invoicing — the five AI tools that save Australian tradies 8+ hours every week.</div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="m-btn" style="font-size:7px">Read article →</div>
+              <span style="font-family:'Space Mono',monospace;font-size:7px;color:rgba(255,255,255,0.3)">7 min read</span>
+            </div>
+          </div>
+          <div class="m-card" style="display:flex;gap:10px;padding:10px">
+            <div style="width:60px;font-family:'Space Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3)">Mar 20</div>
+            <div style="flex:1">
+              <div style="font-weight:900;font-size:10px">ChatGPT vs Claude vs Copilot</div>
+              <div class="m-desc" style="font-size:8px">Which AI tool fits your business?</div>
+            </div>
+            <div style="font-family:'Space Mono',monospace;font-size:8px;color:#ff3d00;align-self:center">READ →</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="improvements">
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Featured/latest post</strong> — larger card with red top border, red "LATEST" badge, and reading time</span></div>
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>CTA button on featured</strong> — stronger call to action than just "READ →"</span></div>
+  </div>
+
+  <div class="option-row">
+    <div class="option-card" onclick="selectOption('blog','keep',this)">
+      <div class="option-letter">A</div>
+      <div class="option-title">Keep Current</div>
+      <div class="option-desc">All posts treated equally in the list</div>
+    </div>
+    <div class="option-card" onclick="selectOption('blog','improve',this)">
+      <div class="option-letter">B</div>
+      <div class="option-title">Add Featured Post</div>
+      <div class="option-desc">Latest post gets a hero card treatment</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 6. FAQ ===================== -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">06 / FAQ</span>
+    <span class="section-name">Questions & Answers</span>
+  </div>
+  <div class="section-verdict">20 questions is a lot. Accordion would help scanability.</div>
+
+  <div class="option-row">
+    <div class="option-card" onclick="selectOption('faq','keep',this)">
+      <div class="option-letter">A</div>
+      <div class="option-title">Keep All Visible</div>
+      <div class="option-desc">All 20 Q&As expanded — good for SEO, long to scroll</div>
+    </div>
+    <div class="option-card" onclick="selectOption('faq','accordion',this)">
+      <div class="option-letter">B</div>
+      <div class="option-title">Accordion Collapse</div>
+      <div class="option-desc">Questions visible, click to expand answer. Cleaner, more scannable.</div>
+    </div>
+    <div class="option-card" onclick="selectOption('faq','categories',this)">
+      <div class="option-letter">C</div>
+      <div class="option-title">Category Groups</div>
+      <div class="option-desc">Group by topic (Getting Started, Services, Technical, Pricing) with accordion within each</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 7. FOOTER ===================== -->
+<div class="section">
+  <div class="section-header">
+    <span class="section-num">07 / Footer</span>
+    <span class="section-name">Site Footer</span>
+  </div>
+  <div class="section-verdict">Comprehensive but heavy. Could add ABN for trust.</div>
+
+  <div class="improvements">
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Add ABN</strong> — Australian trust signal. Add to the status bar tier.</span></div>
+    <div class="improvement"><span class="improvement-icon">+</span><span class="improvement-text"><strong>Add "Based in Australia"</strong> — with city if comfortable sharing</span></div>
+  </div>
+
+  <div class="option-row">
+    <div class="option-card" onclick="selectOption('footer','keep',this)">
+      <div class="option-letter">A</div>
+      <div class="option-title">Keep Current</div>
+      <div class="option-desc">Current 4-tier footer with status bar</div>
+    </div>
+    <div class="option-card" onclick="selectOption('footer','improve',this)">
+      <div class="option-letter">B</div>
+      <div class="option-title">Add ABN + Location</div>
+      <div class="option-desc">Add ABN number and location to status bar</div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:40px 20px;font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,0.3)">
+  Click your preferences for each section above, then respond in the terminal
+</div>
+
+</body>
+</html>

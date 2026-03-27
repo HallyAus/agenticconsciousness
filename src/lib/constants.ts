@@ -65,21 +65,29 @@ export const PROCESS_STEPS = [
     phase: 'PHASE 01',
     title: 'Discovery',
     desc: 'Free, no-obligation conversation. We learn your pain points, workflows, and goals. You learn what AI can actually do for you.',
+    time: '30 min',
+    subtitle: 'Free call',
   },
   {
     phase: 'PHASE 02',
     title: 'Audit',
     desc: "We assess your tools, data maturity, and team capabilities. You get a clear report — what's possible, what to prioritise, what to skip.",
+    time: '1 week',
+    subtitle: 'AI readiness',
   },
   {
     phase: 'PHASE 03',
     title: 'Deploy',
     desc: 'Rapid implementation sprint. We set up, integrate, and test AI solutions in your environment. Your team gets trained hands-on.',
+    time: '2-4 weeks',
+    subtitle: 'Build & train',
   },
   {
     phase: 'PHASE 04',
     title: 'Scale',
     desc: "Ongoing refinement from real usage data. We expand what works, cut what doesn't, and keep your AI capabilities evolving.",
+    time: 'Ongoing',
+    subtitle: 'Optimise & expand',
   },
 ] as const;
 
@@ -88,6 +96,9 @@ export const CASE_STUDIES = [
     industry: 'Manufacturing',
     title: 'Automated Quality Inspection Pipeline',
     desc: 'Replaced manual visual inspection with AI-powered defect detection. Cut QA processing time by 62% while pushing defect catch rate to 99.2%.',
+    before: 'Manual visual checks, 1% defect miss rate',
+    after: 'AI catches 99.2% of defects automatically',
+    timeline: '3 weeks',
     metrics: [
       { value: '-62%', label: 'Processing time' },
       { value: '$340K', label: 'Annual savings' },
@@ -97,6 +108,9 @@ export const CASE_STUDIES = [
     industry: 'Professional Services',
     title: 'AI-Augmented Proposal Generation',
     desc: 'Deployed an AI writing and research pipeline that tripled proposal output. Win rate increased 18% with higher-quality, personalised submissions.',
+    before: '4 proposals per week, generic templates',
+    after: '14 proposals per week, personalised submissions',
+    timeline: '2 weeks',
     metrics: [
       { value: '3.5x', label: 'Output increase' },
       { value: '+18%', label: 'Win rate' },
@@ -106,6 +120,9 @@ export const CASE_STUDIES = [
     industry: 'Trades & Services',
     title: 'Smart Scheduling & Customer Comms',
     desc: 'Built an AI assistant handling bookings, rescheduling, and follow-ups automatically. Owner reclaimed 8+ hours per week of admin time.',
+    before: 'Owner handling all bookings manually, 8hrs/week admin',
+    after: 'AI handles scheduling, follow-ups, and rescheduling',
+    timeline: '1 week',
     metrics: [
       { value: '-8hrs', label: 'Per week admin' },
       { value: '96%', label: 'Satisfaction' },

@@ -1,15 +1,17 @@
 import Link from 'next/link';
 
 const siteLinks = [
+  { label: 'Home', href: '/' },
   { label: 'Services', href: '/#services' },
   { label: 'Method', href: '/#process' },
   { label: 'Work', href: '/#cases' },
-  { label: 'About', href: '/#about' },
+  { label: 'About', href: '/about' },
 ];
 
 const aiLinks = [
   { label: 'Tools', href: '/tools' },
   { label: 'Insights', href: '/blog' },
+  { label: 'Pricing', href: '/pricing' },
   { label: 'Audit', href: '/#ai-audit' },
   { label: 'FAQ', href: '/faq' },
 ];

@@ -88,50 +88,97 @@ export default function BlogPage() {
           {posts.length === 0 ? (
             <p className="text-text-ghost">No posts yet.</p>
           ) : (
-            <div className="flex flex-col gap-[2px]">
-              {posts.map((post) => (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="grid grid-cols-[160px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-center no-underline max-[900px]:grid-cols-1"
-                >
-                  <div className="p-6 max-[900px]:pb-2">
-                    <div className="font-mono text-[0.55rem] text-text-dim tracking-[1px] uppercase mb-2">
-                      {new Date(post.publishedAt).toLocaleDateString('en-AU', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {post.tags.slice(0, 3).map((tag) => (
-                        <span
-                          key={tag}
-                          className="font-mono text-[0.5rem] tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    <h2 className="text-[1rem] font-black text-text-primary tracking-[-0.3px] mb-1">
-                      {post.title}
-                    </h2>
-                    <p className="text-[0.8rem] text-text-dim font-light leading-[1.5]">
-                      {post.description}
-                    </p>
-                  </div>
-
-                  <div className="p-6 max-[900px]:pt-0">
-                    <span className="font-display text-[0.7rem] font-bold tracking-[2px] uppercase text-ac-red">
-                      READ →
+            <>
+              {/* Featured / Latest Post */}
+              {(() => {
+                const featured = posts[0];
+                const readingTime = Math.max(1, Math.ceil(featured.content.split(/\s+/).length / 200));
+                return (
+                  <Link
+                    href={`/blog/${featured.slug}`}
+                    className="block bg-ac-card border-t-[3px] border-ac-red p-8 transition-colors duration-300 hover:bg-ac-card-hover no-underline"
+                  >
+                    <span className="font-mono text-xs text-ac-red uppercase tracking-widest">
+                      LATEST
                     </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
+                    <h2 className="text-2xl font-black text-text-primary tracking-[-0.5px] mt-3 mb-3">
+                      {featured.title}
+                    </h2>
+                    <p className="text-[0.9rem] text-text-dim font-light leading-[1.7] mb-5">
+                      {featured.description}
+                    </p>
+                    <div className="flex items-center gap-6 flex-wrap">
+                      <span className="font-display text-[0.75rem] font-bold tracking-[2px] uppercase text-ac-red">
+                        Read article →
+                      </span>
+                      <span className="font-mono text-[0.6rem] text-text-dim tracking-[1px] uppercase">
+                        {readingTime} min read
+                      </span>
+                      <span className="font-mono text-[0.6rem] text-text-dim tracking-[1px] uppercase">
+                        {new Date(featured.publishedAt).toLocaleDateString('en-AU', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })()}
+
+              {/* Separator */}
+              {posts.length > 1 && (
+                <div className="my-8 border-t border-white/[0.06]" />
+              )}
+
+              {/* Remaining Posts */}
+              {posts.length > 1 && (
+                <div className="flex flex-col gap-[2px]">
+                  {posts.slice(1).map((post) => (
+                    <Link
+                      key={post.slug}
+                      href={`/blog/${post.slug}`}
+                      className="grid grid-cols-[160px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-center no-underline max-[900px]:grid-cols-1"
+                    >
+                      <div className="p-6 max-[900px]:pb-2">
+                        <div className="font-mono text-[0.55rem] text-text-dim tracking-[1px] uppercase mb-2">
+                          {new Date(post.publishedAt).toLocaleDateString('en-AU', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {post.tags.slice(0, 3).map((tag) => (
+                            <span
+                              key={tag}
+                              className="font-mono text-[0.5rem] tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="p-6">
+                        <h2 className="text-[1rem] font-black text-text-primary tracking-[-0.3px] mb-1">
+                          {post.title}
+                        </h2>
+                        <p className="text-[0.8rem] text-text-dim font-light leading-[1.5]">
+                          {post.description}
+                        </p>
+                      </div>
+
+                      <div className="p-6 max-[900px]:pt-0">
+                        <span className="font-display text-[0.7rem] font-bold tracking-[2px] uppercase text-ac-red">
+                          READ →
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </>
           )}
 
           <div className="mt-14">

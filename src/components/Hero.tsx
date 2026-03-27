@@ -42,11 +42,11 @@ export default function Hero() {
     : BASE_COUNTERS;
 
   return (
-    <section className="min-h-screen flex flex-col justify-center pt-32 pb-16 px-10 relative max-md:px-5 max-md:pt-28 max-md:pb-12">
+    <section className="min-h-screen flex flex-col justify-center items-center pt-32 pb-16 px-10 relative max-md:px-5 max-md:pt-28 max-md:pb-12 text-center">
       <div className="absolute top-[60px] right-0 w-[40%] h-[70%] bg-gradient-to-b from-ac-red-glow to-transparent pointer-events-none" />
 
       <ScrollReveal>
-        <div className="flex gap-2 mb-8 flex-wrap">
+        <div className="flex gap-2 mb-8 flex-wrap justify-center">
           {hasTagline ? (
             <span className="text-[0.7rem] font-black tracking-[2.5px] uppercase py-[0.35rem] px-[0.9rem] bg-ac-red text-white">
               {content.tagline}
@@ -82,10 +82,10 @@ export default function Hero() {
       </ScrollReveal>
 
       <ScrollReveal delay={0.15}>
-        <div className="flex gap-4 max-sm:flex-col">
+        <div className="flex gap-4 max-sm:flex-col justify-center">
           <a
             href="#contact"
-            className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-ac-black"
+            className="inline-block font-display text-[0.9rem] font-black tracking-[2px] uppercase py-[1.1rem] px-10 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-ac-black"
           >
             Free consultation →
           </a>
@@ -99,7 +99,7 @@ export default function Hero() {
       </ScrollReveal>
 
       <ScrollReveal delay={0.2}>
-        <div className="flex gap-16 mt-20 pt-12 border-t border-border-subtle max-md:gap-8 max-md:flex-wrap">
+        <div className="flex gap-16 mt-20 pt-12 border-t border-border-subtle max-md:gap-8 max-md:flex-wrap justify-center">
           {counters.map((c) => (
             <div key={c.label}>
               <AnimatedCounter

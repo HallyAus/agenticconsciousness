@@ -23,24 +23,88 @@ export default function Process() {
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-[2px] bg-border-subtle max-[900px]:grid-cols-2 max-sm:grid-cols-1">
-            {PROCESS_STEPS.map((step) => (
-              <div
-                key={step.phase}
-                className="group bg-ac-card py-8 px-6 relative transition-colors duration-300 hover:bg-ac-card-hover"
-              >
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-ac-red scale-x-0 origin-left transition-transform duration-[400ms] group-hover:scale-x-100" />
-                <div className="font-mono text-[0.7rem] text-ac-red tracking-[3px] mb-4">
-                  {step.phase}
+          {/* Desktop timeline (>= 768px) */}
+          <div className="hidden md:block relative">
+            {/* Connector line */}
+            <div className="absolute top-[27px] left-[calc(12.5%)] right-[calc(12.5%)] h-[2px]"
+              style={{
+                background: 'linear-gradient(90deg, #ff3d00 0%, #ff3d00 60%, rgba(255, 61, 0, 0.15) 100%)',
+              }}
+            />
+
+            <div className="grid grid-cols-4 gap-[2px]">
+              {PROCESS_STEPS.map((step, i) => (
+                <div key={step.phase} className="flex flex-col items-center text-center relative">
+                  {/* Node */}
+                  <div className="w-[54px] h-[54px] border-2 border-ac-red bg-ac-bg flex items-center justify-center relative z-10 mb-5">
+                    <span className="font-mono text-[0.75rem] text-ac-red font-bold tracking-wider">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+
+                  {/* Time estimate */}
+                  <div className="font-mono text-[0.8rem] text-ac-red tracking-wide mb-1">
+                    {step.time}
+                  </div>
+                  <div className="font-mono text-[0.65rem] text-text-dim tracking-[2px] uppercase mb-4">
+                    {step.subtitle}
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-[1.1rem] font-black text-text-primary tracking-[-0.3px] mb-2">
+                    {step.title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-[0.8rem] text-text-dim leading-[1.6] font-light max-w-[220px]">
+                    {step.desc}
+                  </p>
                 </div>
-                <h3 className="text-[1rem] font-black text-text-primary tracking-[-0.3px] mb-[0.6rem]">
-                  {step.title}
-                </h3>
-                <p className="text-[0.8rem] text-text-dim leading-[1.6] font-light">
-                  {step.desc}
-                </p>
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile timeline (< 768px) */}
+          <div className="block md:hidden relative pl-10">
+            {/* Vertical connector line */}
+            <div className="absolute left-[15px] top-0 bottom-0 w-[2px]"
+              style={{
+                background: 'linear-gradient(180deg, #ff3d00 0%, #ff3d00 60%, rgba(255, 61, 0, 0.15) 100%)',
+              }}
+            />
+
+            <div className="flex flex-col gap-10">
+              {PROCESS_STEPS.map((step, i) => (
+                <div key={step.phase} className="relative">
+                  {/* Node */}
+                  <div className="absolute -left-10 top-0 w-[32px] h-[32px] border-2 border-ac-red bg-ac-bg flex items-center justify-center z-10"
+                    style={{ transform: 'translateX(-50%)' }}
+                  >
+                    <span className="font-mono text-[0.65rem] text-ac-red font-bold">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                  </div>
+
+                  {/* Content */}
+                  <div>
+                    <div className="flex items-baseline gap-3 mb-1">
+                      <h3 className="text-[1rem] font-black text-text-primary tracking-[-0.3px]">
+                        {step.title}
+                      </h3>
+                      <span className="font-mono text-[0.75rem] text-ac-red">
+                        {step.time}
+                      </span>
+                    </div>
+                    <div className="font-mono text-[0.6rem] text-text-dim tracking-[2px] uppercase mb-2">
+                      {step.subtitle}
+                    </div>
+                    <p className="text-[0.8rem] text-text-dim leading-[1.6] font-light">
+                      {step.desc}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </ScrollReveal>

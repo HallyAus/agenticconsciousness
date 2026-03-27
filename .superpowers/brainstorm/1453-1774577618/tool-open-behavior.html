@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Should Tools Open?</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: rgba(255,255,255,0.85); font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; }
+
+  .page-title { text-align: center; padding: 40px 20px 10px; font-size: 14px; font-family: 'Space Mono', monospace; color: #ff3d00; text-transform: uppercase; letter-spacing: 2px; }
+  .page-subtitle { text-align: center; padding: 0 20px 40px; font-size: 13px; color: rgba(255,255,255,0.4); }
+
+  .approaches { display: flex; flex-direction: column; gap: 40px; max-width: 900px; margin: 0 auto; padding: 0 20px 60px; }
+  .approach { border: 2px solid rgba(255,255,255,0.08); padding: 24px; cursor: pointer; transition: border-color 0.2s; }
+  .approach:hover { border-color: rgba(255,61,0,0.5) !important; }
+  .approach.selected { border-color: #ff3d00 !important; box-shadow: 0 0 0 1px #ff3d00; }
+  .approach-label { font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #ff3d00; margin-bottom: 8px; }
+  .approach-name { font-weight: 900; font-size: 20px; margin-bottom: 16px; }
+
+  .mockup-frame { background: #111; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
+  .mockup-bar { background: #1a1a1a; padding: 8px 12px; display: flex; gap: 6px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .mockup-dot { width: 8px; height: 8px; background: rgba(255,255,255,0.15); }
+  .mockup-url { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); margin-left: 12px; }
+
+  /* === Option A: Expand Inline === */
+  .inline-hero { display: flex; gap: 2px; min-height: 100px; margin: 12px; }
+  .inline-left { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 16px; }
+  .inline-right { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 16px; }
+  .inline-expanded { margin: 0 12px 12px; border: 2px solid #ff3d00; background: rgba(255,61,0,0.02); }
+  .inline-expanded-header { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid rgba(255,61,0,0.15); }
+  .inline-expanded-body { display: flex; gap: 2px; padding: 12px; }
+  .inline-form { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 16px; }
+  .inline-results { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 16px; }
+
+  .num { font-family: 'Space Mono', monospace; font-size: 9px; color: #ff3d00; }
+  .tool-title { font-weight: 900; font-size: 14px; margin: 4px 0; }
+  .tool-desc { font-size: 10px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+  .btn-red { display: inline-block; background: #ff3d00; color: white; padding: 6px 14px; font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+  .btn-outline { display: inline-block; border: 2px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.5); padding: 6px 14px; font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+  .close-x { font-family: 'Space Mono', monospace; font-size: 16px; color: rgba(255,255,255,0.4); cursor: pointer; }
+  .form-label { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 4px; }
+  .form-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 8px; color: rgba(255,255,255,0.6); font-size: 10px; margin-bottom: 10px; font-family: 'Be Vietnam Pro', sans-serif; }
+  .form-textarea { width: 100%; height: 60px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 8px; color: rgba(255,255,255,0.6); font-size: 10px; margin-bottom: 10px; resize: none; font-family: 'Be Vietnam Pro', sans-serif; }
+  .result-field { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 10px; }
+  .result-key { color: rgba(255,255,255,0.4); font-family: 'Space Mono', monospace; font-size: 9px; }
+  .result-val { color: rgba(255,255,255,0.8); }
+  .dimmed { opacity: 0.3; }
+  .demo-output { background: rgba(255,61,0,0.05); border: 1px solid rgba(255,61,0,0.15); padding: 10px; font-size: 10px; }
+  .demo-label { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); margin-bottom: 6px; }
+
+  /* === Option B: Full-Screen Overlay === */
+  .overlay-bg { position: relative; min-height: 300px; }
+  .overlay-under { padding: 12px; opacity: 0.15; }
+  .overlay-panel { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(10,10,10,0.95); border: 2px solid #ff3d00; display: flex; flex-direction: column; }
+  .overlay-top { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 2px solid rgba(255,61,0,0.2); }
+  .overlay-body { display: flex; gap: 2px; padding: 16px; flex: 1; }
+  .overlay-form { flex: 1; }
+  .overlay-results { flex: 1; }
+
+  /* === Option C: Slide-In Right Panel === */
+  .slide-container { display: flex; min-height: 280px; }
+  .slide-left { flex: 1; padding: 12px; }
+  .slide-panel { width: 55%; background: #0d0d0d; border-left: 3px solid #ff3d00; padding: 16px; }
+  .slide-hero-mini { display: flex; gap: 2px; margin-bottom: 2px; }
+  .slide-hero-mini > div { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 10px; }
+
+  .vote-hint { text-align: center; padding: 20px; font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); }
+</style>
+<script>
+function toggleSelect(el) {
+  document.querySelectorAll('.approach').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  const choice = el.dataset.choice;
+  fetch('/.events', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({type:'click',choice,text:el.querySelector('.approach-name')?.textContent||choice,timestamp:Date.now()}) });
+}
+</script>
+</head>
+<body>
+
+<div class="page-title">When You Click "Try It Free"</div>
+<div class="page-subtitle">How should the tool interface appear?</div>
+
+<div class="approaches">
+
+  <!-- Option A: Expand Inline -->
+  <div class="approach" data-choice="inline" onclick="toggleSelect(this)">
+    <div class="approach-label">Option A</div>
+    <div class="approach-name">Expand Inline Below the Hero</div>
+    <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px">The tool form slides open directly below its hero section. Other tools dim. You stay on the same page, same scroll position. Close to collapse back.</p>
+
+    <div class="mockup-frame">
+      <div class="mockup-bar">
+        <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+        <span class="mockup-url">agenticconsciousness.com.au/tools</span>
+      </div>
+      <div style="padding-top:8px">
+        <!-- Hero (active) -->
+        <div class="inline-hero">
+          <div class="inline-left">
+            <div class="num">TOOL 01 / INVOICE SCANNER</div>
+            <div class="tool-title">Scan any invoice in seconds</div>
+            <div class="tool-desc">Upload a photo or PDF. AI extracts every field.</div>
+            <div class="btn-outline" style="opacity:0.5">OPEN ▲</div>
+          </div>
+          <div class="inline-right">
+            <div class="demo-label">SAMPLE OUTPUT</div>
+            <div class="demo-output">
+              <div class="result-field"><span class="result-key">Supplier</span><span class="result-val">Bunnings</span></div>
+              <div class="result-field"><span class="result-key">Total</span><span class="result-val">$847.30</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Expanded panel -->
+        <div class="inline-expanded">
+          <div class="inline-expanded-header">
+            <span style="font-family:'Space Mono',monospace;font-size:10px;color:#ff3d00">INVOICE SCANNER — TRY IT</span>
+            <span class="close-x">✕</span>
+          </div>
+          <div class="inline-expanded-body">
+            <div class="inline-form">
+              <div class="form-label">Upload invoice</div>
+              <div style="border:2px dashed rgba(255,255,255,0.1);padding:20px;text-align:center;font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:10px">Drop PDF or image here</div>
+              <div class="form-label">Or paste text</div>
+              <div class="form-textarea" style="display:block"></div>
+              <div class="btn-red">Scan Invoice →</div>
+            </div>
+            <div class="inline-results">
+              <div style="text-align:center;padding:30px;font-size:10px;color:rgba(255,255,255,0.2)">Results will appear here</div>
+            </div>
+          </div>
+        </div>
+        <!-- Next hero (dimmed) -->
+        <div class="inline-hero dimmed" style="margin-bottom:12px">
+          <div class="inline-left">
+            <div class="num">TOOL 02 / QUOTE GENERATOR</div>
+            <div class="tool-title">Professional quotes in 30 seconds</div>
+          </div>
+          <div class="inline-right">
+            <div class="demo-label">SAMPLE OUTPUT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: Full-Screen Overlay -->
+  <div class="approach" data-choice="overlay" onclick="toggleSelect(this)">
+    <div class="approach-label">Option B</div>
+    <div class="approach-name">Full-Screen Overlay</div>
+    <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px">A dark overlay takes over the viewport with the tool interface front and centre. The showcase page stays underneath. Close returns you exactly where you were.</p>
+
+    <div class="mockup-frame">
+      <div class="mockup-bar">
+        <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+        <span class="mockup-url">agenticconsciousness.com.au/tools</span>
+      </div>
+      <div class="overlay-bg">
+        <!-- Dimmed background -->
+        <div class="overlay-under">
+          <div class="inline-hero"><div class="inline-left"><div class="num">TOOL 01</div><div class="tool-title">Invoice Scanner</div></div><div class="inline-right"></div></div>
+          <div class="inline-hero"><div class="inline-left"><div class="num">TOOL 02</div><div class="tool-title">Quote Generator</div></div><div class="inline-right"></div></div>
+        </div>
+        <!-- Overlay -->
+        <div class="overlay-panel">
+          <div class="overlay-top">
+            <div>
+              <div class="num">TOOL 01 / INVOICE SCANNER</div>
+              <div class="tool-title">Scan any invoice in seconds</div>
+            </div>
+            <span class="close-x" style="font-size:20px">✕</span>
+          </div>
+          <div class="overlay-body">
+            <div class="overlay-form">
+              <div class="form-label">Upload invoice</div>
+              <div style="border:2px dashed rgba(255,255,255,0.1);padding:24px;text-align:center;font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:12px">Drop PDF or image here</div>
+              <div class="form-label">Or paste invoice text</div>
+              <div class="form-textarea" style="display:block;height:80px"></div>
+              <div style="display:flex;gap:8px;margin-top:4px">
+                <div class="btn-red">Scan Invoice →</div>
+                <div class="btn-outline">Try Example</div>
+              </div>
+            </div>
+            <div class="overlay-results" style="padding-left:16px">
+              <div class="form-label">Results</div>
+              <div style="border:1px solid rgba(255,255,255,0.06);padding:16px;background:rgba(255,255,255,0.02)">
+                <div class="result-field"><span class="result-key">Supplier</span><span class="result-val">Bunnings Warehouse</span></div>
+                <div class="result-field"><span class="result-key">ABN</span><span class="result-val">26 008 445 485</span></div>
+                <div class="result-field"><span class="result-key">Invoice #</span><span class="result-val">INV-2026-0847</span></div>
+                <div class="result-field"><span class="result-key">Total</span><span class="result-val">$847.30 (incl GST)</span></div>
+                <div class="result-field"><span class="result-key">Tax</span><span class="result-val">Business — Deductible</span></div>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                  <div class="btn-outline" style="font-size:8px">Copy</div>
+                  <div class="btn-outline" style="font-size:8px">CSV</div>
+                  <div class="btn-outline" style="font-size:8px">Email</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option C: Slide-In Panel -->
+  <div class="approach" data-choice="slide" onclick="toggleSelect(this)">
+    <div class="approach-label">Option C</div>
+    <div class="approach-name">Slide-In Right Panel</div>
+    <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:16px">The tool interface slides in from the right, taking up ~55% of the screen. The hero sections compress to the left. You can still see the tool list while using a tool.</p>
+
+    <div class="mockup-frame">
+      <div class="mockup-bar">
+        <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+        <span class="mockup-url">agenticconsciousness.com.au/tools</span>
+      </div>
+      <div class="slide-container">
+        <div class="slide-left">
+          <div class="slide-hero-mini">
+            <div style="border-color:rgba(255,61,0,0.4) !important">
+              <div class="num">01 / INVOICE SCANNER</div>
+              <div style="font-weight:900;font-size:11px;margin-top:2px">Scan invoices</div>
+            </div>
+            <div style="opacity:0.4">
+              <div class="num" style="color:rgba(255,255,255,0.3)">SAMPLE OUTPUT</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.3);margin-top:4px">Bunnings · $847.30</div>
+            </div>
+          </div>
+          <div class="slide-hero-mini" style="opacity:0.4">
+            <div><div class="num">02 / QUOTE GENERATOR</div><div style="font-weight:900;font-size:11px;margin-top:2px">Write quotes</div></div>
+            <div><div class="num" style="color:rgba(255,255,255,0.3)">SAMPLE</div></div>
+          </div>
+          <div class="slide-hero-mini" style="opacity:0.25">
+            <div><div class="num">03 / COMPETITOR INTEL</div><div style="font-weight:900;font-size:11px;margin-top:2px">Research competitors</div></div>
+            <div><div class="num" style="color:rgba(255,255,255,0.3)">SAMPLE</div></div>
+          </div>
+        </div>
+        <div class="slide-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <div>
+              <div class="num">INVOICE SCANNER</div>
+              <div class="tool-title">Scan any invoice</div>
+            </div>
+            <span class="close-x">✕</span>
+          </div>
+          <div class="form-label">Upload invoice</div>
+          <div style="border:2px dashed rgba(255,255,255,0.1);padding:16px;text-align:center;font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:10px">Drop file here</div>
+          <div class="form-label">Or paste text</div>
+          <div class="form-textarea" style="display:block"></div>
+          <div class="btn-red">Scan →</div>
+          <div style="margin-top:14px;border-top:1px solid rgba(255,255,255,0.06);padding-top:12px">
+            <div class="form-label">Results</div>
+            <div class="result-field"><span class="result-key">Supplier</span><span class="result-val">Bunnings</span></div>
+            <div class="result-field"><span class="result-key">ABN</span><span class="result-val">26 008 445 485</span></div>
+            <div class="result-field"><span class="result-key">Total</span><span class="result-val">$847.30</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="vote-hint">Click the interaction style you prefer</div>
+
+</body>
+</html>

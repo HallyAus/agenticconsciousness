@@ -6,13 +6,20 @@
 
 - **Date:** 2026-03-27
 - **Branch:** master
-- **Focus:** Landing page unique content (critical SEO fix)
+- **Focus:** Tools page redesign — full-width showcase layout
 
 ## Accomplished
 
+- Rebuilt /tools page: grid-of-cards replaced with full-width hero sections per tool
+- New components: ToolsShowcase, FeaturedTool (live Invoice Scanner demo), ToolNavStrip (sticky scroll-tracking), ToolHeroSection (per-tool hero with sample output), ToolExpander (inline expansion wrapping existing tool components)
+- Deleted: ToolGrid.tsx, ToolPanel.tsx, ToolsPageClient.tsx
+- Server-rendered SEO content (H1, H2 headings, descriptions) in page.tsx
+- Featured tool hero with live upload + "Try Example" flow
+- Sticky nav strip with IntersectionObserver scroll tracking
+- Tool sections dim to 25% opacity when another tool is expanded
 - Fixed 12 landing pages to have UNIQUE server-rendered content per page (was duplicating homepage)
 - Built entire site from scratch to production (53 pages, 20 API routes)
-- 8 AI-powered tools on /tools page (grid layout with expandable panels)
+- 8 AI-powered tools on /tools page (full-width showcase layout)
 - Dark/light theme with CSS custom properties
 - Stripe payments + pricing page
 - Proposal builder with acceptance flow

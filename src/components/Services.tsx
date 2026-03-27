@@ -27,27 +27,27 @@ export default function Services() {
             {SERVICES.map((service, i) => (
               <div
                 key={service.num}
-                className="bg-ac-card p-10 relative transition-colors duration-300 hover:bg-ac-card-hover"
+                className="bg-ac-card p-8 max-sm:p-6 relative transition-colors duration-300 hover:bg-ac-card-hover flex flex-col text-left"
                 style={{
                   borderTop: `3px solid ${
                     i === 0 ? '#ff3d00' : i === 1 ? 'rgba(255,61,0,0.6)' : 'rgba(255,61,0,0.35)'
                   }`,
                 }}
               >
-                <div className="text-[4rem] font-black text-[var(--ghost-number)] leading-none mb-4">
+                <div className="text-[3.5rem] font-black text-[var(--ghost-number)] leading-none select-none">
                   {service.num}
                 </div>
-                <h3 className="text-[1.15rem] font-black text-text-primary tracking-snug mb-3">
+                <h3 className="text-[1.15rem] font-black text-text-primary tracking-snug mt-4">
                   {service.title}
                 </h3>
-                <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
+                <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light mt-3 flex-1">
                   {service.desc}
                 </p>
-                <div className="mt-6 flex flex-wrap gap-[6px]">
+                <div className="mt-6 flex flex-wrap gap-2">
                   {service.pills.map((pill) => (
                     <span
                       key={pill}
-                      className="font-mono text-[0.65rem] tracking-[1px] uppercase text-ac-red border border-border-red py-1 px-[0.6rem]"
+                      className="font-mono text-[0.65rem] tracking-[1px] uppercase text-ac-red border border-border-red py-1 px-3 whitespace-nowrap"
                     >
                       {pill}
                     </span>

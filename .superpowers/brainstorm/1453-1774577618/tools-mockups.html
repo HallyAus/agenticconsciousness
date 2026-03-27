@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools Page — 3 Layout Mockups</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: rgba(255,255,255,0.85); font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; }
+
+  .page-title { text-align: center; padding: 40px 20px 10px; font-size: 14px; font-family: 'Space Mono', monospace; color: #ff3d00; text-transform: uppercase; letter-spacing: 2px; }
+  .page-subtitle { text-align: center; padding: 0 20px 40px; font-size: 13px; color: rgba(255,255,255,0.4); }
+
+  /* Selection mechanics */
+  .approach { cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
+  .approach:hover { border-color: rgba(255,61,0,0.5) !important; }
+  .approach.selected { border-color: #ff3d00 !important; box-shadow: 0 0 0 1px #ff3d00; }
+
+  .approach-label { font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #ff3d00; margin-bottom: 8px; }
+  .approach-name { font-weight: 900; font-size: 20px; margin-bottom: 16px; }
+
+  /* Shared mockup chrome */
+  .mockup-frame { background: #111; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
+  .mockup-bar { background: #1a1a1a; padding: 8px 12px; display: flex; gap: 6px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .mockup-dot { width: 8px; height: 8px; background: rgba(255,255,255,0.15); }
+  .mockup-url { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); margin-left: 12px; }
+
+  /* ============ APPROACH A: Hero Per Tool ============ */
+  .a-container { padding: 20px; }
+  .a-hero { display: flex; gap: 2px; margin-bottom: 2px; min-height: 140px; }
+  .a-hero-left { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 20px; display: flex; flex-direction: column; justify-content: center; }
+  .a-hero-right { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 16px; }
+  .a-num { font-family: 'Space Mono', monospace; font-size: 10px; color: #ff3d00; margin-bottom: 4px; }
+  .a-title { font-weight: 900; font-size: 16px; margin-bottom: 6px; }
+  .a-desc { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+  .a-demo-label { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); margin-bottom: 8px; }
+  .a-demo-output { background: rgba(255,61,0,0.05); border: 1px solid rgba(255,61,0,0.15); padding: 10px; font-size: 10px; line-height: 1.6; }
+  .a-demo-field { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .a-demo-key { color: rgba(255,255,255,0.4); font-family: 'Space Mono', monospace; font-size: 9px; }
+  .a-demo-val { color: rgba(255,255,255,0.8); font-size: 10px; }
+  .a-scroll-hint { text-align: center; padding: 12px; font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.2); }
+  .a-btn { display: inline-block; background: #ff3d00; color: white; padding: 8px 16px; font-family: 'Space Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-top: 10px; border: none; }
+
+  /* ============ APPROACH B: Cards with Preview ============ */
+  .b-container { padding: 20px; }
+  .b-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .b-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
+  .b-card:hover { border-color: rgba(255,61,0,0.3); }
+  .b-preview { background: #0d0d0d; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.06); min-height: 80px; }
+  .b-preview-line { height: 6px; background: rgba(255,255,255,0.06); margin-bottom: 4px; width: 80%; }
+  .b-preview-line.short { width: 50%; }
+  .b-preview-line.accent { background: rgba(255,61,0,0.15); width: 60%; }
+  .b-preview-badge { display: inline-block; font-family: 'Space Mono', monospace; font-size: 8px; background: rgba(255,61,0,0.1); border: 1px solid rgba(255,61,0,0.3); color: #ff3d00; padding: 2px 6px; margin-bottom: 6px; }
+  .b-preview-table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  .b-preview-table td { padding: 2px 4px; font-size: 8px; border-bottom: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.3); font-family: 'Space Mono', monospace; }
+  .b-preview-table .val { text-align: right; color: rgba(255,255,255,0.5); }
+  .b-info { padding: 14px; }
+  .b-num { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.2); }
+  .b-title { font-weight: 900; font-size: 13px; margin: 4px 0; }
+  .b-desc { font-size: 10px; color: rgba(255,255,255,0.4); line-height: 1.5; margin-bottom: 10px; }
+  .b-try { display: inline-block; border: 2px solid #ff3d00; color: #ff3d00; padding: 6px 14px; font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; }
+  .b-try:hover { background: #ff3d00; color: white; }
+  .b-metric { display: flex; gap: 12px; margin-top: 8px; }
+  .b-metric-item { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); }
+  .b-metric-val { color: #ff3d00; font-size: 11px; }
+
+  /* ============ APPROACH C: Problem-First ============ */
+  .c-container { padding: 20px; }
+  .c-header { text-align: center; margin-bottom: 20px; }
+  .c-header h3 { font-weight: 900; font-size: 20px; margin-bottom: 4px; }
+  .c-header p { font-size: 11px; color: rgba(255,255,255,0.4); }
+  .c-tasks { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .c-task { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 16px; display: flex; gap: 14px; align-items: flex-start; transition: all 0.2s; }
+  .c-task:hover { border-color: rgba(255,61,0,0.4); background: rgba(255,61,0,0.03); }
+  .c-icon { width: 36px; height: 36px; border: 2px solid #ff3d00; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .c-task-title { font-weight: 900; font-size: 13px; margin-bottom: 4px; }
+  .c-task-outcome { font-size: 10px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 6px; }
+  .c-task-meta { font-family: 'Space Mono', monospace; font-size: 9px; color: #ff3d00; }
+  .c-arrow { font-size: 14px; color: rgba(255,255,255,0.2); margin-left: auto; align-self: center; }
+
+  /* Layout */
+  .approaches { display: flex; flex-direction: column; gap: 40px; max-width: 900px; margin: 0 auto; padding: 0 20px 60px; }
+  .approach { border: 2px solid rgba(255,255,255,0.08); padding: 24px; }
+  .vote-hint { text-align: center; padding: 20px; font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); }
+</style>
+<script>
+function toggleSelect(el) {
+  document.querySelectorAll('.approach').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  const choice = el.dataset.choice;
+  fetch('/.events', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({type:'click',choice:choice,text:el.querySelector('.approach-name')?.textContent||choice,timestamp:Date.now()}) });
+}
+</script>
+</head>
+<body>
+
+<div class="page-title">Tools Page Redesign</div>
+<div class="page-subtitle">Click the approach you prefer — each is a real mockup of how the page would look</div>
+
+<div class="approaches">
+
+  <!-- ===== APPROACH A ===== -->
+  <div class="approach" data-choice="a" onclick="toggleSelect(this)">
+    <div class="approach-label">Approach A</div>
+    <div class="approach-name">Interactive Showcase — Full-Width Hero Per Tool</div>
+
+    <div class="mockup-frame">
+      <div class="mockup-bar">
+        <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+        <span class="mockup-url">agenticconsciousness.com.au/tools</span>
+      </div>
+      <div class="a-container">
+        <!-- Tool 1 Hero -->
+        <div class="a-hero">
+          <div class="a-hero-left">
+            <div class="a-num">TOOL 01 / INVOICE SCANNER</div>
+            <div class="a-title">Scan any invoice in seconds</div>
+            <div class="a-desc">Upload a photo or PDF. AI extracts every field — supplier, ABN, line items, GST classification. Export to CSV for your bookkeeper.</div>
+            <button class="a-btn">Try it free →</button>
+          </div>
+          <div class="a-hero-right">
+            <div class="a-demo-label">LIVE DEMO OUTPUT</div>
+            <div class="a-demo-output">
+              <div class="a-demo-field"><span class="a-demo-key">Supplier</span><span class="a-demo-val">Bunnings Warehouse</span></div>
+              <div class="a-demo-field"><span class="a-demo-key">ABN</span><span class="a-demo-val">26 008 445 485</span></div>
+              <div class="a-demo-field"><span class="a-demo-key">Invoice #</span><span class="a-demo-val">INV-2026-0847</span></div>
+              <div class="a-demo-field"><span class="a-demo-key">Total</span><span class="a-demo-val">$847.30 (incl GST)</span></div>
+              <div class="a-demo-field"><span class="a-demo-key">Tax</span><span class="a-demo-val">Business — Deductible</span></div>
+            </div>
+          </div>
+        </div>
+        <!-- Tool 2 Hero -->
+        <div class="a-hero" style="margin-top: 2px;">
+          <div class="a-hero-left">
+            <div class="a-num">TOOL 02 / QUOTE GENERATOR</div>
+            <div class="a-title">Professional quotes in 30 seconds</div>
+            <div class="a-desc">Describe the job. AI writes a complete quote with scope, line items, GST, payment terms. Copy or email directly to your client.</div>
+            <button class="a-btn">Try it free →</button>
+          </div>
+          <div class="a-hero-right">
+            <div class="a-demo-label">SAMPLE OUTPUT</div>
+            <div class="a-demo-output">
+              <div class="a-demo-field"><span class="a-demo-key">Client</span><span class="a-demo-val">Smith & Partners</span></div>
+              <div class="a-demo-field"><span class="a-demo-key">Scope</span><span class="a-demo-val">Website redesign + CMS</span></div>
+              <div class="a-demo-field"><span class="a-demo-key">Total</span><span class="a-demo-val">$12,400.00 + GST</span></div>
+              <div class="a-demo-field"><span class="a-demo-key">Valid</span><span class="a-demo-val">30 days</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="a-scroll-hint">↓ SCROLL FOR 6 MORE TOOLS ↓</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== APPROACH B ===== -->
+  <div class="approach" data-choice="b" onclick="toggleSelect(this)">
+    <div class="approach-label">Approach B</div>
+    <div class="approach-name">Cards with Output Preview + "Try It" Button</div>
+
+    <div class="mockup-frame">
+      <div class="mockup-bar">
+        <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+        <span class="mockup-url">agenticconsciousness.com.au/tools</span>
+      </div>
+      <div class="b-container">
+        <div class="b-grid">
+          <!-- Card 1 -->
+          <div class="b-card">
+            <div class="b-preview">
+              <div class="b-preview-badge">SAMPLE OUTPUT</div>
+              <table class="b-preview-table">
+                <tr><td>Supplier</td><td class="val">Bunnings Warehouse</td></tr>
+                <tr><td>ABN</td><td class="val">26 008 445 485</td></tr>
+                <tr><td>Total</td><td class="val">$847.30 incl GST</td></tr>
+                <tr><td>Classification</td><td class="val">Business — Deductible</td></tr>
+              </table>
+            </div>
+            <div class="b-info">
+              <div class="b-num">01</div>
+              <div class="b-title">Invoice Scanner</div>
+              <div class="b-desc">Upload a photo or PDF — AI extracts every field, classifies GST, exports to CSV.</div>
+              <div class="b-metric">
+                <div class="b-metric-item"><span class="b-metric-val">1,247</span> scanned</div>
+                <div class="b-metric-item"><span class="b-metric-val">~8s</span> avg</div>
+              </div>
+              <div style="margin-top:10px"><span class="b-try">Try it free →</span></div>
+            </div>
+          </div>
+          <!-- Card 2 -->
+          <div class="b-card">
+            <div class="b-preview">
+              <div class="b-preview-badge">SAMPLE OUTPUT</div>
+              <div class="b-preview-line accent"></div>
+              <div class="b-preview-line"></div>
+              <div class="b-preview-line"></div>
+              <div class="b-preview-line short"></div>
+              <table class="b-preview-table" style="margin-top:8px">
+                <tr><td>Scope</td><td class="val">Website redesign</td></tr>
+                <tr><td>Total</td><td class="val">$12,400 + GST</td></tr>
+              </table>
+            </div>
+            <div class="b-info">
+              <div class="b-num">02</div>
+              <div class="b-title">Quote Generator</div>
+              <div class="b-desc">Describe the job — get a professional quote with line items, GST, and payment terms.</div>
+              <div class="b-metric">
+                <div class="b-metric-item"><span class="b-metric-val">892</span> generated</div>
+                <div class="b-metric-item"><span class="b-metric-val">~12s</span> avg</div>
+              </div>
+              <div style="margin-top:10px"><span class="b-try">Try it free →</span></div>
+            </div>
+          </div>
+          <!-- Card 3 -->
+          <div class="b-card">
+            <div class="b-preview">
+              <div class="b-preview-badge">SAMPLE OUTPUT</div>
+              <div class="b-preview-line"></div>
+              <div class="b-preview-line accent" style="width:70%"></div>
+              <div class="b-preview-line short"></div>
+              <div class="b-preview-line" style="width:90%"></div>
+            </div>
+            <div class="b-info">
+              <div class="b-num">03</div>
+              <div class="b-title">Competitor Intel</div>
+              <div class="b-desc">Enter a competitor — get positioning analysis, weaknesses, and differentiation opportunities.</div>
+              <div class="b-metric">
+                <div class="b-metric-item"><span class="b-metric-val">634</span> analysed</div>
+                <div class="b-metric-item"><span class="b-metric-val">~15s</span> avg</div>
+              </div>
+              <div style="margin-top:10px"><span class="b-try">Try it free →</span></div>
+            </div>
+          </div>
+          <!-- Card 4 -->
+          <div class="b-card">
+            <div class="b-preview">
+              <div class="b-preview-badge">SAMPLE OUTPUT</div>
+              <div style="font-size:9px;color:rgba(255,255,255,0.4);line-height:1.6;font-family:'Be Vietnam Pro',sans-serif">
+                <strong style="color:rgba(255,255,255,0.6)">Subject:</strong> Follow-up: Project Kickoff<br>
+                Hi Sarah, Great meeting today...
+              </div>
+            </div>
+            <div class="b-info">
+              <div class="b-num">04</div>
+              <div class="b-title">Email Drafter</div>
+              <div class="b-desc">Dump your thoughts — AI writes a polished email in your chosen tone.</div>
+              <div class="b-metric">
+                <div class="b-metric-item"><span class="b-metric-val">1,891</span> drafted</div>
+                <div class="b-metric-item"><span class="b-metric-val">~5s</span> avg</div>
+              </div>
+              <div style="margin-top:10px"><span class="b-try">Try it free →</span></div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;padding:12px;font-family:'Space Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2)">+ 4 MORE TOOLS BELOW</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== APPROACH C ===== -->
+  <div class="approach" data-choice="c" onclick="toggleSelect(this)">
+    <div class="approach-label">Approach C</div>
+    <div class="approach-name">Problem-First — "What Do You Need to Do?"</div>
+
+    <div class="mockup-frame">
+      <div class="mockup-bar">
+        <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+        <span class="mockup-url">agenticconsciousness.com.au/tools</span>
+      </div>
+      <div class="c-container">
+        <div class="c-header">
+          <h3>What do you need to do?</h3>
+          <p>Eight free AI tools. No signup. Pick a task.</p>
+        </div>
+        <div class="c-tasks">
+          <div class="c-task">
+            <div class="c-icon">📄</div>
+            <div>
+              <div class="c-task-title">Scan an invoice</div>
+              <div class="c-task-outcome">Extract supplier, ABN, line items, GST — export to CSV for your bookkeeper</div>
+              <div class="c-task-meta">~8 seconds · 1,247 scanned</div>
+            </div>
+            <div class="c-arrow">→</div>
+          </div>
+          <div class="c-task">
+            <div class="c-icon">💰</div>
+            <div>
+              <div class="c-task-title">Write a quote</div>
+              <div class="c-task-outcome">Professional quote with scope, line items, GST, payment terms — ready to send</div>
+              <div class="c-task-meta">~12 seconds · 892 generated</div>
+            </div>
+            <div class="c-arrow">→</div>
+          </div>
+          <div class="c-task">
+            <div class="c-icon">🔍</div>
+            <div>
+              <div class="c-task-title">Research a competitor</div>
+              <div class="c-task-outcome">Positioning, strengths, weaknesses, pricing strategy, how to differentiate</div>
+              <div class="c-task-meta">~15 seconds · 634 analysed</div>
+            </div>
+            <div class="c-arrow">→</div>
+          </div>
+          <div class="c-task">
+            <div class="c-icon">✉️</div>
+            <div>
+              <div class="c-task-title">Draft an email</div>
+              <div class="c-task-outcome">Dump your thoughts — get a polished email in professional, friendly, or direct tone</div>
+              <div class="c-task-meta">~5 seconds · 1,891 drafted</div>
+            </div>
+            <div class="c-arrow">→</div>
+          </div>
+          <div class="c-task">
+            <div class="c-icon">📋</div>
+            <div>
+              <div class="c-task-title">Summarise a document</div>
+              <div class="c-task-outcome">Paste any document — get key points, executive summary, compression stats</div>
+              <div class="c-task-meta">~6 seconds · 756 summarised</div>
+            </div>
+            <div class="c-arrow">→</div>
+          </div>
+          <div class="c-task">
+            <div class="c-icon">📝</div>
+            <div>
+              <div class="c-task-title">Extract meeting actions</div>
+              <div class="c-task-outcome">Paste messy notes — get structured actions, owners, deadlines, decisions</div>
+              <div class="c-task-meta">~7 seconds · 523 processed</div>
+            </div>
+            <div class="c-arrow">→</div>
+          </div>
+          <div class="c-task">
+            <div class="c-icon">📢</div>
+            <div>
+              <div class="c-task-title">Write a job ad</div>
+              <div class="c-task-outcome">Complete job listing with requirements, benefits, bias check — ready to post</div>
+              <div class="c-task-meta">~10 seconds · 412 written</div>
+            </div>
+            <div class="c-arrow">→</div>
+          </div>
+          <div class="c-task">
+            <div class="c-icon">⚖️</div>
+            <div>
+              <div class="c-task-title">Review a contract clause</div>
+              <div class="c-task-outcome">Plain English translation, fairness rating, risks ranked by severity, negotiation points</div>
+              <div class="c-task-meta">~12 seconds · 389 reviewed</div>
+            </div>
+            <div class="c-arrow">→</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="vote-hint">Click the approach you prefer</div>
+
+</body>
+</html>

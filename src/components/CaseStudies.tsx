@@ -30,8 +30,11 @@ export default function CaseStudies() {
                 key={cs.title}
                 className="grid grid-cols-[200px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-stretch max-[900px]:grid-cols-1"
               >
-                <div className="flex items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red text-center max-[900px]:border-r-0 max-[900px]:border-b-2 max-[900px]:p-4">
-                  {cs.industry}
+                <div className="flex flex-col items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red text-center max-[900px]:border-r-0 max-[900px]:border-b-2 max-[900px]:p-4">
+                  <span>{cs.industry}</span>
+                  <span className="font-mono text-[0.6rem] tracking-[2px] uppercase text-white/20 mt-1">
+                    {cs.timeline}
+                  </span>
                 </div>
                 <div className="p-8">
                   <h3 className="text-[1.1rem] font-black text-text-primary tracking-[-0.3px] mb-2">
@@ -40,6 +43,24 @@ export default function CaseStudies() {
                   <p className="text-[0.85rem] text-text-dim font-light leading-[1.6] max-w-[500px]">
                     {cs.desc}
                   </p>
+                  <div className="grid grid-cols-2 gap-[2px] mt-4 max-w-[500px]">
+                    <div className="border border-white/10 p-3">
+                      <div className="font-mono text-[0.6rem] tracking-[2px] uppercase text-white/30 mb-1">
+                        BEFORE
+                      </div>
+                      <div className="text-[0.8rem] text-text-dim font-light leading-[1.5]">
+                        {cs.before}
+                      </div>
+                    </div>
+                    <div className="border border-ac-red/30 bg-ac-red/[0.04] p-3">
+                      <div className="font-mono text-[0.6rem] tracking-[2px] uppercase text-ac-red mb-1">
+                        AFTER
+                      </div>
+                      <div className="text-[0.8rem] text-text-primary font-light leading-[1.5]">
+                        {cs.after}
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex flex-col justify-center gap-4 py-8 px-10 border-l border-border-subtle max-[900px]:flex-row max-[900px]:border-l-0 max-[900px]:border-t max-[900px]:border-border-subtle">
                   {cs.metrics.map((m) => (

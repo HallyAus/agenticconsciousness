@@ -1,0 +1,67 @@
+<h2>Tools Page: Which layout approach?</h2>
+<p class="subtitle">The current page uses a grid of cards that expand into a panel below. Here are 3 alternative directions.</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Interactive Showcase (Hero per Tool)</h3>
+      <p>Each tool gets a full-width hero section as you scroll down the page. Live demo embedded inline — no click-to-expand. User sees the tool working immediately with example data. Think "product landing page" where each section sells one tool.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Maximum visual impact — each tool feels important</li>
+          <li>Live demos visible without clicking anything</li>
+          <li>Great for SEO (all content server-rendered)</li>
+          <li>Scroll-based discovery feels natural</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Very long page (8 sections)</li>
+          <li>Hard to compare tools quickly</li>
+          <li>Heavy page weight (all tools loaded)</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Tool Cards with Preview + Instant Try</h3>
+      <p>Larger cards in a 2-column grid. Each card shows: tool name, what it does, a mini visual preview of sample output, and a prominent "Try it free" button. Clicking opens a full-screen modal/overlay with the tool interface. Cards sell the outcome, not the input.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>Users see WHAT they'll get before committing</li>
+          <li>Output previews create desire ("I want that")</li>
+          <li>2-col grid is scannable but not overwhelming</li>
+          <li>Modal keeps context (user doesn't lose their place)</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Preview screenshots need to be compelling</li>
+          <li>Modal can feel jarring on mobile</li>
+          <li>More design work per card</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Problem-First Flow (Task Selector)</h3>
+      <p>Instead of listing tools, ask the user "What do you need to do?" with big clickable task blocks: "Scan an invoice", "Write an email", "Analyse a competitor", etc. Each task block shows the outcome and time saved. Clicking goes straight into the tool. The page sells solutions, not software.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Pros</h4><ul>
+          <li>User-centric — speaks their language</li>
+          <li>Reduces decision fatigue (task → tool mapping)</li>
+          <li>Strongest conversion framing ("solve your problem")</li>
+          <li>Easy to A/B test different task descriptions</li>
+        </ul></div>
+        <div class="cons"><h4>Cons</h4><ul>
+          <li>Some tools serve multiple tasks (harder to categorise)</li>
+          <li>Less "impressive" than showing all 8 tools at once</li>
+          <li>May feel too simple for power users</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</div>

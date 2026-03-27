@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tools Page — Final Design</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: rgba(255,255,255,0.85); font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; }
+
+  .section-label { font-family: 'Space Mono', monospace; font-size: 10px; color: #ff3d00; text-transform: uppercase; letter-spacing: 2px; padding: 30px 20px 6px; max-width: 960px; margin: 0 auto; }
+  .section-desc { font-size: 11px; color: rgba(255,255,255,0.35); padding: 0 20px 12px; max-width: 960px; margin: 0 auto; }
+  .divider { border-top: 1px solid rgba(255,255,255,0.06); margin: 10px 0; }
+
+  .mockup-frame { background: #111; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; max-width: 960px; margin: 0 auto 30px; }
+  .mockup-bar { background: #1a1a1a; padding: 8px 12px; display: flex; gap: 6px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .mockup-dot { width: 8px; height: 8px; background: rgba(255,255,255,0.15); }
+  .mockup-url { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); margin-left: 12px; }
+
+  /* Nav */
+  .nav-mock { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .nav-logo { font-weight: 900; font-size: 11px; letter-spacing: 1px; }
+  .nav-links { display: flex; gap: 16px; font-size: 9px; color: rgba(255,255,255,0.4); font-family: 'Space Mono', monospace; }
+
+  /* Featured Hero */
+  .featured { display: flex; gap: 0; min-height: 260px; }
+  .featured-left { flex: 1; padding: 28px 24px; display: flex; flex-direction: column; justify-content: center; border-right: 2px solid rgba(255,61,0,0.15); }
+  .featured-right { flex: 1.2; padding: 20px; background: rgba(255,61,0,0.02); }
+  .featured-badge { font-family: 'Space Mono', monospace; font-size: 9px; color: #ff3d00; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; border: 1px solid rgba(255,61,0,0.3); display: inline-block; padding: 3px 8px; }
+  .featured h2 { font-weight: 900; font-size: 26px; margin-bottom: 8px; }
+  .featured-desc { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 16px; }
+  .stats-row { display: flex; gap: 24px; }
+  .stat-val { font-weight: 900; font-size: 15px; color: #ff3d00; }
+  .stat-label { font-family: 'Space Mono', monospace; font-size: 8px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+  .live-label { font-family: 'Space Mono', monospace; font-size: 9px; color: #ff3d00; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .live-dot { width: 6px; height: 6px; background: #ff3d00; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .live-form { display: flex; gap: 2px; margin-bottom: 8px; }
+  .live-upload { flex: 1; border: 2px dashed rgba(255,255,255,0.1); padding: 20px; text-align: center; font-size: 10px; color: rgba(255,255,255,0.3); }
+  .live-result { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 12px; }
+  .btn-red { display: inline-block; background: #ff3d00; color: white; padding: 7px 14px; font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; }
+  .btn-outline { display: inline-block; border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.4); padding: 7px 14px; font-family: 'Space Mono', monospace; font-size: 9px; text-transform: uppercase; }
+
+  /* Nav Strip */
+  .nav-strip { display: flex; gap: 2px; padding: 0 0; background: #0a0a0a; }
+  .nav-item { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 8px 6px; text-align: center; transition: all 0.2s; }
+  .nav-item.active { border-top: 3px solid #ff3d00; }
+  .nav-item:hover { border-color: rgba(255,61,0,0.3); }
+  .nav-num { font-family: 'Space Mono', monospace; font-size: 8px; color: rgba(255,255,255,0.2); }
+  .nav-name { font-weight: 900; font-size: 9px; margin-top: 2px; }
+  .sticky-note { text-align: center; padding: 6px; font-family: 'Space Mono', monospace; font-size: 8px; color: rgba(255,255,255,0.15); }
+
+  /* Tool Hero */
+  .tool-hero { display: flex; gap: 2px; min-height: 130px; margin: 2px 0 0; }
+  .tool-left { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 18px; display: flex; flex-direction: column; justify-content: center; }
+  .tool-right { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 16px; }
+  .num { font-family: 'Space Mono', monospace; font-size: 9px; color: #ff3d00; }
+  .tool-title { font-weight: 900; font-size: 15px; margin: 4px 0; }
+  .tool-desc { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+  .tool-stat { font-family: 'Space Mono', monospace; font-size: 8px; color: rgba(255,255,255,0.2); margin-top: 6px; }
+  .demo-label { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.3); margin-bottom: 6px; }
+  .demo-output { background: rgba(255,61,0,0.05); border: 1px solid rgba(255,61,0,0.15); padding: 10px; }
+  .result-field { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .result-key { color: rgba(255,255,255,0.4); font-family: 'Space Mono', monospace; font-size: 9px; }
+  .result-val { color: rgba(255,255,255,0.8); font-size: 10px; }
+
+  /* Expanded State */
+  .expanded-panel { border: 2px solid #ff3d00; background: rgba(255,61,0,0.02); margin: 0; }
+  .expanded-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; border-bottom: 1px solid rgba(255,61,0,0.15); }
+  .expanded-body { display: flex; gap: 2px; padding: 14px; }
+  .expanded-form { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 14px; }
+  .expanded-results { flex: 1; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); padding: 14px; }
+  .form-label { font-family: 'Space Mono', monospace; font-size: 9px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 4px; }
+  .form-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); padding: 8px; color: rgba(255,255,255,0.5); font-size: 10px; margin-bottom: 10px; font-family: 'Be Vietnam Pro', sans-serif; }
+  .close-x { font-family: 'Space Mono', monospace; font-size: 18px; color: rgba(255,255,255,0.4); cursor: pointer; }
+  .dimmed { opacity: 0.25; }
+
+  /* CTA */
+  .cta-section { text-align: center; padding: 40px 20px; border-top: 2px solid rgba(255,61,0,0.15); margin-top: 2px; }
+  .cta-section h3 { font-weight: 900; font-size: 20px; margin-bottom: 6px; }
+  .cta-section p { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 16px; }
+
+  .page-header { text-align: center; padding: 40px 20px 20px; }
+  .page-header h1 { font-weight: 900; font-size: 28px; color: #ff3d00; margin-bottom: 6px; }
+  .page-header p { color: rgba(255,255,255,0.4); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Final Design: Tools Page</h1>
+  <p>Approved layout — Featured hero + full-width tool sections + inline expand</p>
+</div>
+
+<!-- ==================== SECTION 1: FEATURED HERO ==================== -->
+<div class="section-label">Section 1 — Featured Tool Hero</div>
+<div class="section-desc">Most popular tool showcased with a live demo above the fold</div>
+
+<div class="mockup-frame">
+  <div class="mockup-bar">
+    <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+    <span class="mockup-url">agenticconsciousness.com.au/tools</span>
+  </div>
+  <div class="nav-mock">
+    <div class="nav-logo">AGENTIC CONSCIOUSNESS</div>
+    <div class="nav-links"><span>Services</span><span style="color:#ff3d00">Tools</span><span>Pricing</span><span>Blog</span></div>
+  </div>
+  <div class="featured">
+    <div class="featured-left">
+      <div class="featured-badge">Most Popular</div>
+      <h2>Invoice Scanner</h2>
+      <div class="featured-desc">Upload any invoice — photo, screenshot, PDF. AI extracts every field in seconds. Supplier, ABN, line items, GST classification. Export to CSV for your bookkeeper.</div>
+      <div class="stats-row">
+        <div><div class="stat-val">1,247</div><div class="stat-label">scanned</div></div>
+        <div><div class="stat-val">~8s</div><div class="stat-label">avg time</div></div>
+        <div><div class="stat-val">98%</div><div class="stat-label">accuracy</div></div>
+      </div>
+    </div>
+    <div class="featured-right">
+      <div class="live-label"><div class="live-dot"></div> TRY IT NOW</div>
+      <div class="live-form">
+        <div class="live-upload">📄 Drop invoice here<br><span style="font-size:8px;opacity:0.5">PDF, JPG, PNG — max 10MB</span></div>
+        <div class="live-result">
+          <div class="demo-label">RESULT PREVIEW</div>
+          <div class="result-field"><span class="result-key">Supplier</span><span class="result-val">Bunnings Warehouse</span></div>
+          <div class="result-field"><span class="result-key">ABN</span><span class="result-val">26 008 445 485</span></div>
+          <div class="result-field"><span class="result-key">Invoice #</span><span class="result-val">INV-2026-0847</span></div>
+          <div class="result-field"><span class="result-key">Total</span><span class="result-val">$847.30 (incl GST)</span></div>
+          <div class="result-field"><span class="result-key">Tax</span><span class="result-val">Business — Deductible</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <div class="btn-red">Scan Invoice →</div>
+        <div class="btn-outline">Try Example</div>
+      </div>
+    </div>
+  </div>
+  <div class="nav-strip">
+    <div class="nav-item active"><div class="nav-num">01</div><div class="nav-name">Invoice</div></div>
+    <div class="nav-item"><div class="nav-num">02</div><div class="nav-name">Quote</div></div>
+    <div class="nav-item"><div class="nav-num">03</div><div class="nav-name">Competitor</div></div>
+    <div class="nav-item"><div class="nav-num">04</div><div class="nav-name">Email</div></div>
+    <div class="nav-item"><div class="nav-num">05</div><div class="nav-name">Summarise</div></div>
+    <div class="nav-item"><div class="nav-num">06</div><div class="nav-name">Meeting</div></div>
+    <div class="nav-item"><div class="nav-num">07</div><div class="nav-name">Job Ad</div></div>
+    <div class="nav-item"><div class="nav-num">08</div><div class="nav-name">Contract</div></div>
+  </div>
+  <div class="sticky-note">↑ THIS STRIP BECOMES STICKY ON SCROLL ↑</div>
+</div>
+
+<!-- ==================== SECTION 2: TOOL HEROES ==================== -->
+<div class="section-label">Section 2 — Tool Hero Sections (×8)</div>
+<div class="section-desc">Each tool gets a full-width hero with description + sample output. Showing 3 of 8.</div>
+
+<div class="mockup-frame">
+  <div class="mockup-bar">
+    <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+    <span class="mockup-url">agenticconsciousness.com.au/tools (scrolled down)</span>
+  </div>
+
+  <!-- Tool 2 -->
+  <div class="tool-hero">
+    <div class="tool-left">
+      <div class="num">TOOL 02 / QUOTE GENERATOR</div>
+      <div class="tool-title">Professional quotes in 30 seconds</div>
+      <div class="tool-desc">Describe the job. AI writes a complete quote with scope, line items, GST, payment terms. Copy or email directly to your client.</div>
+      <div class="btn-red" style="margin-top:10px">Try it free →</div>
+      <div class="tool-stat">892 generated · ~12s avg</div>
+    </div>
+    <div class="tool-right">
+      <div class="demo-label">SAMPLE OUTPUT</div>
+      <div class="demo-output">
+        <div class="result-field"><span class="result-key">Client</span><span class="result-val">Smith & Partners</span></div>
+        <div class="result-field"><span class="result-key">Scope</span><span class="result-val">Website redesign + CMS</span></div>
+        <div class="result-field"><span class="result-key">Line items</span><span class="result-val">4 items</span></div>
+        <div class="result-field"><span class="result-key">Subtotal</span><span class="result-val">$12,400.00</span></div>
+        <div class="result-field"><span class="result-key">GST</span><span class="result-val">$1,240.00</span></div>
+        <div class="result-field"><span class="result-key">Total</span><span class="result-val">$13,640.00</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool 3 -->
+  <div class="tool-hero">
+    <div class="tool-left">
+      <div class="num">TOOL 03 / COMPETITOR INTEL</div>
+      <div class="tool-title">Know your competition in 15 seconds</div>
+      <div class="tool-desc">Enter a competitor name. AI analyses their positioning, strengths, weaknesses, pricing strategy, and how to differentiate.</div>
+      <div class="btn-red" style="margin-top:10px">Try it free →</div>
+      <div class="tool-stat">634 analysed · ~15s avg</div>
+    </div>
+    <div class="tool-right">
+      <div class="demo-label">SAMPLE OUTPUT</div>
+      <div class="demo-output">
+        <div class="result-field"><span class="result-key">Competitor</span><span class="result-val">Sunburnt AI</span></div>
+        <div class="result-field"><span class="result-key">Positioning</span><span class="result-val">Enterprise AI consulting</span></div>
+        <div class="result-field"><span class="result-key">Weakness</span><span class="result-val">No free tools, opaque pricing</span></div>
+        <div class="result-field"><span class="result-key">Opportunity</span><span class="result-val">Target SMBs they ignore</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool 4 -->
+  <div class="tool-hero">
+    <div class="tool-left">
+      <div class="num">TOOL 04 / EMAIL DRAFTER</div>
+      <div class="tool-title">Dump your thoughts. Get a polished email.</div>
+      <div class="tool-desc">Brain-dump what you need to say. AI writes a clean email in your chosen tone — professional, friendly, direct, or formal.</div>
+      <div class="btn-red" style="margin-top:10px">Try it free →</div>
+      <div class="tool-stat">1,891 drafted · ~5s avg</div>
+    </div>
+    <div class="tool-right">
+      <div class="demo-label">SAMPLE OUTPUT</div>
+      <div class="demo-output">
+        <div class="result-field"><span class="result-key">Subject</span><span class="result-val">Follow-up: Project Kickoff</span></div>
+        <div class="result-field"><span class="result-key">Tone</span><span class="result-val">Professional</span></div>
+        <div class="result-field"><span class="result-key">Words</span><span class="result-val">142</span></div>
+        <div style="margin-top:6px;font-size:9px;color:rgba(255,255,255,0.4);line-height:1.6">Hi Sarah, Thank you for the productive meeting today. I wanted to follow up on the three action items we discussed...</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:10px;font-family:'Space Mono',monospace;font-size:9px;color:rgba(255,255,255,0.15)">+ 4 MORE TOOLS (Summarise, Meeting, Job Ad, Contract)</div>
+</div>
+
+<!-- ==================== SECTION 3: EXPANDED STATE ==================== -->
+<div class="section-label">Section 3 — Inline Expansion (When "Try It Free" Is Clicked)</div>
+<div class="section-desc">Tool form slides open below its hero. Other tools dim to 25% opacity.</div>
+
+<div class="mockup-frame">
+  <div class="mockup-bar">
+    <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+    <span class="mockup-url">agenticconsciousness.com.au/tools (tool 02 expanded)</span>
+  </div>
+
+  <!-- Tool 2 hero (active) -->
+  <div class="tool-hero">
+    <div class="tool-left">
+      <div class="num">TOOL 02 / QUOTE GENERATOR</div>
+      <div class="tool-title">Professional quotes in 30 seconds</div>
+      <div class="tool-desc">Describe the job. AI writes a complete quote.</div>
+      <div style="display:inline-block;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.4);padding:6px 14px;font-family:'Space Mono',monospace;font-size:9px;margin-top:8px">OPEN ▲</div>
+    </div>
+    <div class="tool-right">
+      <div class="demo-label">SAMPLE OUTPUT</div>
+      <div class="demo-output">
+        <div class="result-field"><span class="result-key">Client</span><span class="result-val">Smith & Partners</span></div>
+        <div class="result-field"><span class="result-key">Total</span><span class="result-val">$13,640.00</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Expanded panel -->
+  <div class="expanded-panel">
+    <div class="expanded-header">
+      <span style="font-family:'Space Mono',monospace;font-size:10px;color:#ff3d00">QUOTE GENERATOR — TRY IT</span>
+      <span class="close-x">✕</span>
+    </div>
+    <div class="expanded-body">
+      <div class="expanded-form">
+        <div class="form-label">Your business name</div>
+        <div class="form-input">Agentic Consciousness</div>
+        <div class="form-label">Client name</div>
+        <div class="form-input">Smith & Partners</div>
+        <div class="form-label">Describe the job</div>
+        <div class="form-input" style="height:60px">Full website redesign including new CMS, mobile responsive, 12 pages, SEO optimisation...</div>
+        <div style="display:flex;gap:6px;margin-top:4px">
+          <div class="btn-red">Generate Quote →</div>
+          <div class="btn-outline">Try Example</div>
+        </div>
+      </div>
+      <div class="expanded-results">
+        <div class="form-label">Generated Quote</div>
+        <div style="border:1px solid rgba(255,255,255,0.06);padding:12px;background:rgba(255,255,255,0.02)">
+          <div class="result-field"><span class="result-key">Ref</span><span class="result-val">QT-2026-0312</span></div>
+          <div class="result-field"><span class="result-key">Client</span><span class="result-val">Smith & Partners</span></div>
+          <div class="result-field"><span class="result-key">Scope</span><span class="result-val">Website redesign + CMS</span></div>
+          <div class="result-field"><span class="result-key">Design</span><span class="result-val">$4,200.00</span></div>
+          <div class="result-field"><span class="result-key">Development</span><span class="result-val">$6,400.00</span></div>
+          <div class="result-field"><span class="result-key">SEO</span><span class="result-val">$1,800.00</span></div>
+          <div class="result-field"><span class="result-key">Subtotal</span><span class="result-val">$12,400.00</span></div>
+          <div class="result-field"><span class="result-key">GST (10%)</span><span class="result-val">$1,240.00</span></div>
+          <div class="result-field" style="border-bottom:none"><span class="result-key" style="color:#ff3d00;font-weight:bold">TOTAL</span><span class="result-val" style="color:#ff3d00;font-weight:900">$13,640.00</span></div>
+          <div style="display:flex;gap:6px;margin-top:10px">
+            <div class="btn-outline" style="font-size:8px">Copy</div>
+            <div class="btn-outline" style="font-size:8px">JSON</div>
+            <div class="btn-outline" style="font-size:8px">Email</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tool 3 (dimmed) -->
+  <div class="tool-hero dimmed">
+    <div class="tool-left">
+      <div class="num">TOOL 03 / COMPETITOR INTEL</div>
+      <div class="tool-title">Know your competition in 15 seconds</div>
+    </div>
+    <div class="tool-right"></div>
+  </div>
+
+  <!-- Tool 4 (dimmed) -->
+  <div class="tool-hero dimmed">
+    <div class="tool-left">
+      <div class="num">TOOL 04 / EMAIL DRAFTER</div>
+      <div class="tool-title">Dump your thoughts. Get a polished email.</div>
+    </div>
+    <div class="tool-right"></div>
+  </div>
+</div>
+
+<!-- ==================== SECTION 4: BOTTOM CTA ==================== -->
+<div class="section-label">Section 4 — Bottom CTA</div>
+<div class="section-desc">Conversion section after all 8 tools</div>
+
+<div class="mockup-frame">
+  <div class="mockup-bar">
+    <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+    <span class="mockup-url">agenticconsciousness.com.au/tools (bottom)</span>
+  </div>
+  <div class="cta-section">
+    <h3>These tools took us 2 hours to build.</h3>
+    <p>Imagine what we could build for your business in a week.</p>
+    <div class="btn-red">Book a free consultation →</div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:40px 20px;font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,0.3)">
+  End of design mockup — approve in terminal to proceed to implementation
+</div>
+
+</body>
+</html>
