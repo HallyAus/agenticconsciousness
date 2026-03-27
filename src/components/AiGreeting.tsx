@@ -2,61 +2,78 @@
 
 import { useEffect, useState } from 'react';
 
+const STATUS_ITEMS = [
+  { label: 'AI Online', delay: 300 },
+  { label: '8 Tools Active', delay: 700 },
+  { label: 'Models Loaded', delay: 1100 },
+];
+
+const GREETINGS = [
+  'System initialised. Ready to automate your business.',
+  'All systems operational. What should we build?',
+  'AI ready. Your competitors are already automating.',
+  'Online. Eight tools running, zero downtime.',
+  'Loaded. Let us show you what AI actually does.',
+  'Systems green. Time to eliminate busywork.',
+  'Initialised. We build AI that runs while you sleep.',
+  'Ready. From strategy to deployment — fully autonomous.',
+];
+
 export default function AiGreeting() {
+  const [visibleStatuses, setVisibleStatuses] = useState<number[]>([]);
+  const [scanComplete, setScanComplete] = useState(false);
   const [greeting, setGreeting] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
   const [displayedText, setDisplayedText] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
 
+  // Boot sequence: show status items one by one
   useEffect(() => {
-    const hour = new Date().getHours();
-    let timeOfDay = 'morning';
-    if (hour >= 12 && hour < 17) timeOfDay = 'afternoon';
-    else if (hour >= 17 && hour < 21) timeOfDay = 'evening';
-    else if (hour >= 21 || hour < 5) timeOfDay = 'night';
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const dayOfWeek = new Date().toLocaleDateString('en-AU', {
-      weekday: 'long',
-    });
-
-    // Track returning visitors
-    const returning = localStorage.getItem('ac-visited') === 'true';
-    localStorage.setItem('ac-visited', 'true');
-
-    async function fetchGreeting() {
-      try {
-        const res = await fetch('/api/greeting', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ timeOfDay, dayOfWeek, hour, returning }),
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setGreeting(data.greeting);
-        } else {
-          setGreeting(getFallback(timeOfDay));
-        }
-      } catch {
-        setGreeting(getFallback(timeOfDay));
-      }
+    if (prefersReducedMotion) {
+      setVisibleStatuses([0, 1, 2]);
+      setScanComplete(true);
+      const g = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+      setGreeting(g);
+      setDisplayedText(g);
+      return;
     }
 
-    fetchGreeting();
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    STATUS_ITEMS.forEach((item, i) => {
+      timers.push(setTimeout(() => {
+        setVisibleStatuses(prev => [...prev, i]);
+      }, item.delay));
+    });
+
+    // Scan line after all statuses
+    timers.push(setTimeout(() => {
+      setScanComplete(true);
+    }, 1500));
+
+    // Pick greeting and start typing
+    timers.push(setTimeout(() => {
+      const g = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
+      setGreeting(g);
+    }, 1800));
+
+    return () => timers.forEach(clearTimeout);
   }, []);
 
+  // Typewriter for greeting
   useEffect(() => {
     if (!greeting) return;
-
-    let index = 0;
-    setDisplayedText('');
-    setIsTyping(true);
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) {
       setDisplayedText(greeting);
-      setIsTyping(false);
       return;
     }
+
+    let index = 0;
+    setDisplayedText('');
+    setIsTyping(true);
 
     const interval = setInterval(() => {
       if (index < greeting.length) {
@@ -66,38 +83,53 @@ export default function AiGreeting() {
         setIsTyping(false);
         clearInterval(interval);
       }
-    }, 30);
+    }, 25);
 
     return () => clearInterval(interval);
   }, [greeting]);
 
   return (
-    <div className="min-h-[3.5rem]">
-      <div className="ai-greeting">
-        {displayedText || (
-          <span style={{ opacity: 0.6 }}>Initialising AI...</span>
-        )}
-        {isTyping && displayedText && <span className="ai-cursor" />}
+    <div className="min-h-[4rem]">
+      {/* Status indicators */}
+      <div className="flex gap-3 justify-center mb-3">
+        {STATUS_ITEMS.map((item, i) => (
+          <span
+            key={item.label}
+            className={`font-mono text-[0.6rem] tracking-[2px] uppercase transition-all duration-300 ${
+              visibleStatuses.includes(i)
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-1'
+            }`}
+            style={{ color: 'rgba(255,255,255,0.35)' }}
+          >
+            <span
+              className="inline-block w-[5px] h-[5px] mr-[5px] align-middle"
+              style={{
+                background: visibleStatuses.includes(i) ? '#22c55e' : 'rgba(255,255,255,0.1)',
+                transition: 'background 0.3s',
+              }}
+            />
+            {item.label}
+          </span>
+        ))}
       </div>
-      {!isTyping && displayedText && (
-        <span className="inline-block font-mono text-[0.6rem] tracking-[2px] uppercase text-ac-red border border-ac-red px-2 py-1 mt-3">
-          ● LIVE
-        </span>
+
+      {/* Scan line */}
+      {scanComplete && (
+        <div
+          className="h-[1px] max-w-[300px] mx-auto mb-3"
+          style={{
+            background: 'linear-gradient(90deg, transparent, #ff3d00, transparent)',
+            animation: 'scanPulse 2s ease-in-out',
+          }}
+        />
       )}
+
+      {/* Greeting text */}
+      <div className="font-mono text-[0.75rem] text-text-dim tracking-[1px]">
+        {displayedText}
+        {isTyping && <span className="ai-cursor" />}
+      </div>
     </div>
   );
-}
-
-function getFallback(timeOfDay: string): string {
-  const fallbacks: Record<string, string> = {
-    morning:
-      'Good morning. Ready to explore what AI can do for your business? We build systems that work while you sleep.',
-    afternoon:
-      "Good afternoon. Halfway through the day — imagine if AI was handling the repetitive half. Let's talk.",
-    evening:
-      'Good evening. While most businesses wind down, AI keeps working. Let us show you how.',
-    night:
-      "Working late? So are the AI systems we build for our clients. They never stop. Let's build yours.",
-  };
-  return fallbacks[timeOfDay] || fallbacks.morning;
 }
