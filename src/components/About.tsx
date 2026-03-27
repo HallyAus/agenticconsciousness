@@ -5,7 +5,7 @@ const blocks = [
   {
     highlight: '21+',
     title: 'Years in the field',
-    desc: "Founded by Daniel Hall — two decades of hands-on industry experience across enterprise systems, automation, and technology implementation. This isn't theory. It's applied intelligence.",
+    desc: "Founded by Daniel — two decades of hands-on industry experience across enterprise systems, automation, and technology implementation. This isn't theory. It's applied intelligence.",
   },
   {
     highlight: '</>',

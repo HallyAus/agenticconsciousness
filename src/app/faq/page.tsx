@@ -387,7 +387,7 @@ const faqs: { q: string; a: React.ReactNode; plainText: string }[] = [
       <>
         We build what we sell. This website, this chatbot, the free tools — all AI-powered systems we
         built ourselves. Most AI consultants come from management consulting backgrounds and outsource the
-        technical work. We come from engineering. Daniel Hall has 21+ years of hands-on industry experience
+        technical work. We come from engineering. Daniel has 21+ years of hands-on industry experience
         with enterprise systems, infrastructure, and automation. When we recommend a solution, it&apos;s
         because we&apos;ve deployed it before. We don&apos;t hand you a strategy document and disappear —
         we stay until the system is running and your team is confident.{' '}
@@ -398,7 +398,7 @@ const faqs: { q: string; a: React.ReactNode; plainText: string }[] = [
       </>
     ),
     plainText:
-      "We build what we sell. This website, this chatbot, the free tools — all AI-powered. Most AI consultants come from management consulting backgrounds. We come from engineering. Daniel Hall has 21+ years of hands-on industry experience.",
+      "We build what we sell. This website, this chatbot, the free tools — all AI-powered. Most AI consultants come from management consulting backgrounds. We come from engineering. Daniel has 21+ years of hands-on industry experience.",
   },
   {
     q: 'How do I get started?',

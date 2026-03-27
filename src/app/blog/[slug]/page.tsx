@@ -70,7 +70,7 @@ export default async function BlogPost({ params }: Props) {
     author: {
       '@type': 'Person',
       '@id': 'https://agenticconsciousness.com.au/#founder',
-      name: 'Daniel Hall',
+      name: 'Daniel',
       url: 'https://agenticconsciousness.com.au',
       jobTitle: 'Founder & AI Consultant',
       worksFor: {

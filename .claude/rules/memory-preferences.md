@@ -8,6 +8,7 @@
 - Be direct, skip the preamble
 - Australian English spelling (colour, organise, etc.)
 - Minimal formatting unless explicitly asked for lists/headers
+- NEVER use full name — always "Daniel" only
 
 ## Code
 

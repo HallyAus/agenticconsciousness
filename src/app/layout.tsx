@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     'enterprise AI',
     'SMB AI solutions',
   ],
-  authors: [{ name: 'Daniel Hall', url: 'https://agenticconsciousness.com.au' }],
+  authors: [{ name: 'Daniel', url: 'https://agenticconsciousness.com.au' }],
   creator: 'Agentic Consciousness',
   publisher: 'Agentic Consciousness',
   robots: {

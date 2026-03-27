@@ -1,12 +1,12 @@
 # Agentic Consciousness
 
-> AI consulting for Australian businesses. Strategy, implementation, automation. Founded by Daniel Hall with 21+ years of industry experience.
+> AI consulting for Australian businesses. Strategy, implementation, automation. Founded by Daniel with 21+ years of industry experience.
 
 ## About
 
-Agentic Consciousness is an AI consulting company founded by Daniel Hall with 21+ years of industry experience. We help businesses understand, implement, and scale AI — from strategy workshops to full automation pipelines.
+Agentic Consciousness is an AI consulting company founded by Daniel with 21+ years of industry experience. We help businesses understand, implement, and scale AI — from strategy workshops to full automation pipelines.
 
-Daniel Hall brings deep technical expertise across software development, systems integration, and modern AI tooling. The company works nationally across Australia, with clients in a range of industries from professional services to trade and manufacturing.
+Daniel brings deep technical expertise across software development, systems integration, and modern AI tooling. The company works nationally across Australia, with clients in a range of industries from professional services to trade and manufacturing.
 
 Key differentiators:
 - 21+ years of industry experience

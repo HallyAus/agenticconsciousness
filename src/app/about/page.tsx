@@ -4,14 +4,14 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'About Agentic Consciousness — AI Consulting Australia',
   description:
-    'Founded by Daniel Hall with 21+ years industry experience. Agentic Consciousness helps Australian businesses adopt AI practically — strategy, implementation, and automation.',
+    'Founded by Daniel with 21+ years industry experience. Agentic Consciousness helps Australian businesses adopt AI practically — strategy, implementation, and automation.',
   alternates: {
     canonical: 'https://agenticconsciousness.com.au/about',
   },
   openGraph: {
     title: 'About Agentic Consciousness — AI Consulting Australia',
     description:
-      'Founded by Daniel Hall with 21+ years industry experience. We help Australian businesses adopt AI practically — not theory, applied intelligence.',
+      'Founded by Daniel with 21+ years industry experience. We help Australian businesses adopt AI practically — not theory, applied intelligence.',
     url: 'https://agenticconsciousness.com.au/about',
     type: 'website',
   },
@@ -21,7 +21,7 @@ export default function AboutPage() {
   const personSchema = {
     '@context': 'https://schema.org',
     '@type': 'Person',
-    name: 'Daniel Hall',
+    name: 'Daniel',
     jobTitle: 'Founder & AI Consultant',
     description:
       'AI consultant with 21+ years of industry experience across enterprise systems, automation, and technology implementation.',
@@ -76,7 +76,7 @@ export default function AboutPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <main className="pt-[60px] min-h-screen">
-        {/* Section 1 — Daniel Hall's Story */}
+        {/* Section 1 — Daniel's Story */}
         <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
           <div className="max-w-[1000px] mx-auto">
             <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
@@ -94,7 +94,7 @@ export default function AboutPage() {
                 21+ Years in the Field
               </div>
               <p className="text-text-dim text-[0.9rem] font-light leading-[1.8] mb-5">
-                Agentic Consciousness was founded by Daniel Hall — a technologist with over two decades of
+                Agentic Consciousness was founded by Daniel — a technologist with over two decades of
                 hands-on industry experience across enterprise systems, automation, and technology
                 implementation. This isn&apos;t a pivot from marketing or management consulting. It&apos;s a
                 natural evolution from years spent building, deploying, and maintaining the systems that

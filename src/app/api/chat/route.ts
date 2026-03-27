@@ -27,7 +27,7 @@ const CACHED_RESPONSES: Array<{ patterns: string[]; response: string }> = [
   {
     patterns: ['who', 'founder', 'daniel'],
     response:
-      'Agentic Consciousness was founded by Daniel Hall — 21+ years of hands-on industry experience across enterprise systems, automation, and technology. This isn\'t theory — it\'s applied intelligence.',
+      'Agentic Consciousness was founded by Daniel — 21+ years of hands-on industry experience across enterprise systems, automation, and technology. This isn\'t theory — it\'s applied intelligence.',
   },
 ];
 

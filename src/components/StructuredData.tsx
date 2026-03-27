@@ -18,7 +18,7 @@ export default function StructuredData() {
     founder: {
       '@type': 'Person',
       '@id': 'https://agenticconsciousness.com.au/#founder',
-      name: 'Daniel Hall',
+      name: 'Daniel',
       url: 'https://agenticconsciousness.com.au',
       jobTitle: 'Founder & AI Consultant',
       description:
