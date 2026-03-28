@@ -53,65 +53,8 @@ services:
         max-size: "5m"
         max-file: "2"
 
-  umami:
-    image: ghcr.io/umami-software/umami:postgresql-latest
-    container_name: ac-umami
-    restart: unless-stopped
-    ports:
-      - "3001:3000"
-    environment:
-      - DATABASE_URL=postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
-      - DISABLE_TELEMETRY=1
-      - APP_SECRET=${UMAMI_APP_SECRET}
-    depends_on:
-      umami-db:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: "0.5"
-
-  umami-db:
-    image: postgres:16-alpine
-    container_name: ac-umami-db
-    restart: unless-stopped
-    environment:
-      - POSTGRES_DB=umami
-      - POSTGRES_USER=umami
-      - POSTGRES_PASSWORD=${UMAMI_DB_PASSWORD}
-    volumes:
-      - umami-db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U umami -d umami"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "5m"
-        max-file: "2"
-    deploy:
-      resources:
-        limits:
-          memory: 256M
-          cpus: "0.5"
-
 volumes:
   ac-data:
   ac-blog:
   ac-drip:
   ac-proposals:
-  umami-db-data:
