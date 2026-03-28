@@ -26,7 +26,7 @@ const blocks = [
 
 export default function About() {
   return (
-    <section id="about" aria-label="About us" className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section id="about" aria-label="About us" className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
           <div className="mb-14">
@@ -40,7 +40,7 @@ export default function About() {
             </GlitchTitle>
           </div>
 
-          <div className="grid grid-cols-2 gap-[2px] bg-border-subtle max-[900px]:grid-cols-1">
+          <div className="grid grid-cols-2 gap-[2px] bg-border-subtle max-md:grid-cols-1">
             {blocks.map((block) => (
               <div key={block.title} className="bg-ac-card p-10">
                 <div className="text-[2rem] font-black text-ac-red tracking-[-1px] mb-1">

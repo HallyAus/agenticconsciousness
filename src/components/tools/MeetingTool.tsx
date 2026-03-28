@@ -58,7 +58,7 @@ function PriorityPill({ priority }: { priority: 'High' | 'Medium' | 'Low' }) {
   };
   return (
     <span
-      className="font-mono text-[0.55rem] tracking-[1px] uppercase px-2 py-0.5 whitespace-nowrap"
+      className="font-mono text-[0.6rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-0.5 whitespace-nowrap"
       style={styles[priority]}
     >
       {priority}
@@ -170,7 +170,7 @@ export default function MeetingTool() {
   }
 
   return (
-    <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
           <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
@@ -184,14 +184,14 @@ export default function MeetingTool() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 max-[900px]:grid-cols-1">
+        <div className="grid grid-cols-2 gap-8 max-md:grid-cols-1 max-sm:gap-4">
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="flex justify-end">
               <button
                 type="button"
                 onClick={fillExample}
-                className="font-mono text-[0.65rem] tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
                 style={{
                   border: '1px solid var(--red-pill-border)',
                   color: 'var(--red-text)',
@@ -205,24 +205,24 @@ export default function MeetingTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Meeting Notes
               </label>
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value.slice(0, 5000))}
                 placeholder="Paste your raw notes — voice memos, scribbles, transcript snippets, anything..."
-                className={`${inputClass} min-h-[220px] resize-y`}
+                className={`${inputClass} min-h-[220px] max-sm:min-h-[120px] resize-y`}
                 style={inputStyle}
                 required
               />
-              <div className={`font-mono text-[0.65rem] tracking-[1px] text-right ${textLen > 4700 ? 'text-ac-red' : 'text-text-dim'}`}>
+              <div className={`font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-right ${textLen > 4700 ? 'text-ac-red' : 'text-text-dim'}`}>
                 {textLen.toLocaleString()} / 5,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Context (optional)
               </label>
               <input
@@ -251,7 +251,7 @@ export default function MeetingTool() {
                   {loading ? 'Extracting...' : 'EXTRACT ACTIONS →'}
                 </button>
                 {remainingUses < MAX_TOOL_USES && (
-                  <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-center mt-2">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim text-center mt-2">
                     {remainingUses} of {MAX_TOOL_USES} free uses remaining this minute
                   </div>
                 )}
@@ -259,7 +259,7 @@ export default function MeetingTool() {
             )}
 
             {error && (
-              <p className="font-mono text-[0.65rem] text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -305,7 +305,7 @@ export default function MeetingTool() {
                     animationDelay: '0ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
                     Meeting Summary
                   </div>
                   <p className="text-[0.84rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>
@@ -365,7 +365,7 @@ export default function MeetingTool() {
                       animationDelay: '160ms',
                     }}
                   >
-                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
+                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                       Decisions Made
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
@@ -390,7 +390,7 @@ export default function MeetingTool() {
                       animationDelay: '240ms',
                     }}
                   >
-                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3 text-text-dim">
+                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3 text-text-dim">
                       Follow-ups
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
@@ -417,14 +417,14 @@ export default function MeetingTool() {
                   >
                     {result?.attendees && result.attendees.length > 0 && (
                       <div>
-                        <span className="font-mono text-[0.55rem] tracking-[1px] uppercase text-text-ghost">Attendees: </span>
-                        <span className="font-mono text-[0.65rem] text-text-dim">{result?.attendees?.join(', ')}</span>
+                        <span className="font-mono text-[0.6rem] max-sm:text-xs tracking-[1px] uppercase text-text-ghost">Attendees: </span>
+                        <span className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim">{result?.attendees?.join(', ')}</span>
                       </div>
                     )}
                     {result.nextMeeting && (
                       <div>
-                        <span className="font-mono text-[0.55rem] tracking-[1px] uppercase text-text-ghost">Next meeting: </span>
-                        <span className="font-mono text-[0.65rem] text-text-dim">{result.nextMeeting}</span>
+                        <span className="font-mono text-[0.6rem] max-sm:text-xs tracking-[1px] uppercase text-text-ghost">Next meeting: </span>
+                        <span className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim">{result.nextMeeting}</span>
                       </div>
                     )}
                   </div>

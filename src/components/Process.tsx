@@ -4,7 +4,7 @@ import GlitchTitle from '@/components/GlitchTitle';
 
 export default function Process() {
   return (
-    <section id="process" aria-label="Our methodology" className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section id="process" aria-label="Our methodology" className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
@@ -46,7 +46,7 @@ export default function Process() {
                   <div className="font-mono text-[0.8rem] text-ac-red tracking-wide mb-1">
                     {step.time}
                   </div>
-                  <div className="font-mono text-[0.65rem] text-text-dim tracking-[2px] uppercase mb-4">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-4">
                     {step.subtitle}
                   </div>
 
@@ -73,14 +73,14 @@ export default function Process() {
               }}
             />
 
-            <div className="flex flex-col gap-10">
+            <div className="flex flex-col gap-10 max-sm:gap-6">
               {PROCESS_STEPS.map((step, i) => (
                 <div key={step.phase} className="relative">
                   {/* Node */}
                   <div className="absolute -left-10 top-0 w-[32px] h-[32px] border-2 border-ac-red bg-ac-bg flex items-center justify-center z-10"
                     style={{ transform: 'translateX(-50%)' }}
                   >
-                    <span className="font-mono text-[0.65rem] text-ac-red font-bold">
+                    <span className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red font-bold">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                   </div>
@@ -95,7 +95,7 @@ export default function Process() {
                         {step.time}
                       </span>
                     </div>
-                    <div className="font-mono text-[0.6rem] text-text-dim tracking-[2px] uppercase mb-2">
+                    <div className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-2">
                       {step.subtitle}
                     </div>
                     <p className="text-[0.8rem] text-text-dim leading-[1.6] font-light">

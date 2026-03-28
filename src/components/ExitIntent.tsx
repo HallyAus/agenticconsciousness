@@ -225,6 +225,7 @@ export default function ExitIntent() {
                 onFocus={() => setFocusedField('email')}
                 onBlur={() => setFocusedField(null)}
                 placeholder="you@business.com.au"
+                aria-label="Email address"
                 className="w-full py-3 px-4 font-display outline-none transition-colors duration-200"
                 style={{
                   fontSize: '0.85rem',
@@ -237,6 +238,7 @@ export default function ExitIntent() {
                 onChange={(e) => { setIndustry(e.target.value); setError(''); }}
                 onFocus={() => setFocusedField('industry')}
                 onBlur={() => setFocusedField(null)}
+                aria-label="Select your industry"
                 className="w-full py-3 px-4 font-display outline-none transition-colors duration-200"
                 style={{
                   fontSize: '0.85rem',
@@ -258,7 +260,7 @@ export default function ExitIntent() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 font-black transition-all duration-200 cursor-pointer"
+                className="w-full py-3 max-sm:py-4 px-4 font-black transition-all duration-200 cursor-pointer"
                 style={{
                   fontSize: '0.85rem',
                   background: loading ? 'var(--red-dim)' : 'var(--red)',
@@ -307,7 +309,7 @@ export default function ExitIntent() {
             </p>
             <button
               onClick={close}
-              className="w-full py-3 px-4 font-black transition-all duration-200 cursor-pointer"
+              className="w-full py-3 max-sm:py-4 px-4 font-black transition-all duration-200 cursor-pointer"
               style={{
                 fontSize: '0.85rem',
                 background: 'var(--red)',

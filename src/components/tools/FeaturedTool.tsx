@@ -209,11 +209,11 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
   }
 
   return (
-    <section className="px-10 max-md:px-5 py-16 max-sm:py-10">
+    <section className="px-10 max-md:px-5 max-sm:px-4 py-16 max-sm:py-10">
       <div className="max-w-[1200px] mx-auto">
-        <div className="flex gap-10 max-[900px]:flex-col">
+        <div className="flex gap-10 max-md:flex-col max-sm:gap-6">
           {/* Left side (45%) */}
-          <div className="w-[45%] max-[900px]:w-full flex flex-col justify-center gap-6">
+          <div className="w-[45%] max-md:w-full flex flex-col justify-center gap-6">
             {/* Badge */}
             <div className="inline-flex self-start">
               <span className="font-mono text-[9px] tracking-[2px] uppercase px-3 py-[5px] border-2 border-ac-red text-ac-red font-black">
@@ -245,7 +245,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
           </div>
 
           {/* Right side (55%) */}
-          <div className="w-[55%] max-[900px]:w-full">
+          <div className="w-[55%] max-md:w-full">
             {/* TRY IT NOW label */}
             <div className="flex items-center gap-2 mb-4">
               <span className="w-2 h-2 bg-ac-red animate-blink" />
@@ -270,19 +270,19 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
                     ) : fileName && pdfData ? (
                       <div className="text-center">
                         <div className="text-ac-red text-[1.5rem] mb-1">PDF</div>
-                        <div className="font-mono text-[0.65rem] text-text-primary">{fileName}</div>
+                        <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-primary">{fileName}</div>
                       </div>
                     ) : !result ? (
                       <>
                         <div className="text-text-ghost text-[1.5rem]">&uarr;</div>
-                        <div className="font-mono text-[0.6rem] tracking-[2px] uppercase text-text-dim text-center">
+                        <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim text-center">
                           Drop file here or click to upload
                         </div>
                         <div className="font-mono text-[0.5rem] text-text-ghost">PDF, JPG, PNG, WebP</div>
                       </>
                     ) : null}
                     {result && !filePreview && !pdfData && (
-                      <div className="font-mono text-[0.6rem] text-text-dim tracking-[1px] uppercase">
+                      <div className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                         Example data loaded
                       </div>
                     )}
@@ -354,7 +354,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
                 {remainingUses <= 0 ? (
                   <div className="flex-1 bg-ac-card border-2 border-ac-red p-4 text-center">
                     <p className="text-[0.8rem] font-black text-text-primary mb-1">You&apos;ve hit the limit.</p>
-                    <Link href="/#contact" className="font-mono text-[0.6rem] tracking-[2px] uppercase text-ac-red no-underline hover:underline">
+                    <Link href="/#contact" className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red no-underline hover:underline">
                       Book free consultation &rarr;
                     </Link>
                   </div>
@@ -379,10 +379,10 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
               </div>
 
               {error && (
-                <p className="font-mono text-[0.65rem] text-ac-red tracking-[1px] mt-2">{error}</p>
+                <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px] mt-2">{error}</p>
               )}
               {remainingUses > 0 && remainingUses < MAX_TOOL_USES && (
-                <div className="font-mono text-[0.6rem] tracking-[1px] text-text-dim text-center mt-2">
+                <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[1px] text-text-dim text-center mt-2">
                   {remainingUses} of {MAX_TOOL_USES} free uses remaining this minute
                 </div>
               )}

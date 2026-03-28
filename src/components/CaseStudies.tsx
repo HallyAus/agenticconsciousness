@@ -5,7 +5,7 @@ import GlitchTitle from '@/components/GlitchTitle';
 
 export default function CaseStudies() {
   return (
-    <section id="cases" aria-label="Case studies" className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section id="cases" aria-label="Case studies" className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
@@ -28,11 +28,11 @@ export default function CaseStudies() {
             {CASE_STUDIES.map((cs) => (
               <div
                 key={cs.title}
-                className="grid grid-cols-[200px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-stretch max-[900px]:grid-cols-1"
+                className="grid grid-cols-[200px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-stretch max-md:grid-cols-1"
               >
-                <div className="flex flex-col items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red text-center max-[900px]:border-r-0 max-[900px]:border-b-2 max-[900px]:p-4">
+                <div className="flex flex-col items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red text-center max-md:border-r-0 max-md:border-b-2 max-md:p-4">
                   <span>{cs.industry}</span>
-                  <span className="font-mono text-[0.6rem] tracking-[2px] uppercase text-white/20 mt-1">
+                  <span className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-white/20 mt-1">
                     {cs.timeline}
                   </span>
                 </div>
@@ -45,7 +45,7 @@ export default function CaseStudies() {
                   </p>
                   <div className="grid grid-cols-2 gap-[2px] mt-4 max-w-[500px]">
                     <div className="border border-white/10 p-3">
-                      <div className="font-mono text-[0.6rem] tracking-[2px] uppercase text-white/30 mb-1">
+                      <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-white/30 mb-1">
                         BEFORE
                       </div>
                       <div className="text-[0.8rem] text-text-dim font-light leading-[1.5]">
@@ -53,7 +53,7 @@ export default function CaseStudies() {
                       </div>
                     </div>
                     <div className="border border-ac-red/30 bg-ac-red/[0.04] p-3">
-                      <div className="font-mono text-[0.6rem] tracking-[2px] uppercase text-ac-red mb-1">
+                      <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red mb-1">
                         AFTER
                       </div>
                       <div className="text-[0.8rem] text-text-primary font-light leading-[1.5]">
@@ -62,14 +62,14 @@ export default function CaseStudies() {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col justify-center gap-4 py-8 px-10 border-l border-border-subtle max-[900px]:flex-row max-[900px]:border-l-0 max-[900px]:border-t max-[900px]:border-border-subtle">
+                <div className="flex flex-col justify-center gap-4 py-8 px-10 border-l border-border-subtle max-md:flex-row max-md:border-l-0 max-md:border-t max-md:border-border-subtle">
                   {cs.metrics.map((m) => (
                     <div key={m.label}>
                       <AnimatedCounter
                         value={m.value}
                         className="text-[1.8rem] font-black text-text-primary tracking-[-1px] leading-none"
                       />
-                      <div className="font-mono text-[0.65rem] text-text-dim tracking-[2px] uppercase">
+                      <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase">
                         {m.label}
                       </div>
                     </div>

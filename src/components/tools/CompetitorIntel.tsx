@@ -50,7 +50,7 @@ function ConfidencePill({ level }: { level: 'High' | 'Medium' | 'Low' }) {
   };
   return (
     <span
-      className="font-mono text-[0.65rem] tracking-[1px] uppercase px-2 py-1"
+      className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
       style={styles[level]}
     >
       {level} confidence
@@ -164,7 +164,7 @@ export default function CompetitorIntel() {
   }
 
   return (
-    <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
           <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
@@ -178,7 +178,7 @@ export default function CompetitorIntel() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 max-[900px]:grid-cols-1">
+        <div className="grid grid-cols-2 gap-8 max-md:grid-cols-1 max-sm:gap-4">
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* TRY AN EXAMPLE */}
@@ -186,7 +186,7 @@ export default function CompetitorIntel() {
               <button
                 type="button"
                 onClick={fillExample}
-                className="font-mono text-[0.65rem] tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
                 style={{
                   border: '1px solid var(--red-pill-border)',
                   color: 'var(--red-text)',
@@ -200,7 +200,7 @@ export default function CompetitorIntel() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Competitor Name
               </label>
               <input
@@ -214,7 +214,7 @@ export default function CompetitorIntel() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Context (optional)
               </label>
               <textarea
@@ -223,13 +223,13 @@ export default function CompetitorIntel() {
                 placeholder="Industry, market segment, why you're analysing them..."
                 className={`${inputClass} min-h-[100px] resize-y`}
               />
-              <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-right">
+              <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim text-right">
                 {context.length} / 1,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Your Company (optional)
               </label>
               <input
@@ -257,7 +257,7 @@ export default function CompetitorIntel() {
                   {loading ? 'Analysing...' : 'ANALYSE COMPETITOR →'}
                 </button>
                 {remainingUses < MAX_TOOL_USES && (
-                  <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-center mt-2">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim text-center mt-2">
                     {remainingUses} of {MAX_TOOL_USES} free uses remaining this minute
                   </div>
                 )}
@@ -265,7 +265,7 @@ export default function CompetitorIntel() {
             )}
 
             {error && (
-              <p className="font-mono text-[0.65rem] text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -313,7 +313,7 @@ export default function CompetitorIntel() {
                 >
                   <div className="flex justify-between items-start gap-4 flex-wrap">
                     <div>
-                      <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
+                      <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
                         Competitor
                       </div>
                       <h3 className="text-[1.4rem] font-black text-text-primary leading-none">{result.companyName}</h3>
@@ -332,7 +332,7 @@ export default function CompetitorIntel() {
                     animationDelay: '80ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim mb-3">
                     Positioning
                   </div>
                   <p
@@ -357,7 +357,7 @@ export default function CompetitorIntel() {
                   }}
                 >
                   <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
+                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim mb-3">
                       STRENGTHS
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
@@ -371,7 +371,7 @@ export default function CompetitorIntel() {
                   </div>
 
                   <div className="bg-ac-card border-t-[3px] border-border-subtle p-5">
-                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
+                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim mb-3">
                       WEAKNESSES
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
@@ -395,7 +395,7 @@ export default function CompetitorIntel() {
                     animationDelay: '240ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim mb-3">
                     Pricing Strategy
                   </div>
                   <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-dim)' }}>
@@ -412,7 +412,7 @@ export default function CompetitorIntel() {
                     animationDelay: '320ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                     Differentiation Opportunities
                   </div>
                   <div className="grid grid-cols-2 gap-3 max-[600px]:grid-cols-1">
@@ -435,7 +435,7 @@ export default function CompetitorIntel() {
                     <div className="mt-3 flex flex-col gap-2">
                       {result?.differentiationOpportunities?.slice(4).map((opp, i) => (
                         <div key={i} className="flex gap-3 p-3" style={{ background: 'var(--bg-card)' }}>
-                          <span className="font-mono text-[0.65rem] font-black flex-shrink-0 mt-0.5" style={{ color: 'var(--red)' }}>
+                          <span className="font-mono text-[0.7rem] max-sm:text-xs font-black flex-shrink-0 mt-0.5" style={{ color: 'var(--red)' }}>
                             {String(i + 5).padStart(2, '0')}
                           </span>
                           <p className="text-[0.8rem] font-light leading-[1.6]" style={{ color: 'var(--text-dim)' }}>{opp}</p>
@@ -457,7 +457,7 @@ export default function CompetitorIntel() {
                     animationDelay: '400ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                     AI Advantage
                   </div>
                   <p className="text-[0.82rem] font-light leading-[1.7] mb-4" style={{ color: 'var(--text-primary)' }}>

@@ -79,9 +79,9 @@ export default function AboutPage() {
       />
       <main className="pt-[60px] min-h-screen">
         {/* Section 1 — Daniel's Story */}
-        <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
+        <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
           <div className="max-w-[1000px] mx-auto">
-            <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+            <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
               ABOUT
             </div>
             <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-6 text-text-primary">
@@ -119,9 +119,9 @@ export default function AboutPage() {
         </section>
 
         {/* Section 2 — The Approach */}
-        <section className="py-20 px-10 max-md:px-5 max-sm:py-16">
+        <section className="py-20 px-10 max-md:px-5 max-sm:px-4 max-sm:py-16">
           <div className="max-w-[1000px] mx-auto">
-            <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+            <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
               APPROACH
             </div>
             <h2 className="text-[clamp(1.5rem,4vw,2.5rem)] font-black tracking-tight leading-none mb-10 text-text-primary">
@@ -152,7 +152,7 @@ export default function AboutPage() {
                 },
               ].map((step) => (
                 <div key={step.phase} className="bg-ac-card p-8">
-                  <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-2">
+                  <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-2">
                     {step.phase}
                   </div>
                   <h3 className="text-[1.1rem] font-black text-text-primary mb-2">{step.title}</h3>
@@ -189,9 +189,9 @@ export default function AboutPage() {
         </section>
 
         {/* Section 3 — Why "Agentic" */}
-        <section className="py-20 px-10 max-md:px-5 max-sm:py-16">
+        <section className="py-20 px-10 max-md:px-5 max-sm:px-4 max-sm:py-16">
           <div className="max-w-[1000px] mx-auto">
-            <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+            <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
               PHILOSOPHY
             </div>
             <h2 className="text-[clamp(1.5rem,4vw,2.5rem)] font-black tracking-tight leading-none mb-10 text-text-primary">
@@ -229,7 +229,7 @@ export default function AboutPage() {
         </section>
 
         {/* Section 4 — CTA */}
-        <section className="py-20 px-10 max-md:px-5 max-sm:py-16">
+        <section className="py-20 px-10 max-md:px-5 max-sm:px-4 max-sm:py-16">
           <div className="max-w-[1000px] mx-auto text-center">
             <div className="border-2 border-white/10 bg-white/[0.02] p-14 max-sm:p-8">
               <h2 className="text-[clamp(1.5rem,4vw,2.5rem)] font-black tracking-tight leading-none mb-4 text-text-primary">

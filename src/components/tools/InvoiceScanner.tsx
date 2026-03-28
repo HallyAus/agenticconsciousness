@@ -208,7 +208,7 @@ export default function InvoiceScanner() {
             animation: 'fadeInUp 0.4s ease-out 0s forwards',
           }}
         >
-          <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
+          <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
             SUPPLIER
           </div>
           <div className="text-[1.1rem] font-black text-text-primary mb-3 leading-tight">
@@ -239,7 +239,7 @@ export default function InvoiceScanner() {
             animation: 'fadeInUp 0.4s ease-out 0.1s forwards',
           }}
         >
-          <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
+          <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
             INVOICE DETAILS
           </div>
           <div className="grid grid-cols-2 gap-x-6 gap-y-2">
@@ -268,7 +268,7 @@ export default function InvoiceScanner() {
             animation: 'fadeInUp 0.4s ease-out 0.2s forwards',
           }}
         >
-          <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
+          <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
             LINE ITEMS
           </div>
           <div className="overflow-x-auto">
@@ -330,18 +330,18 @@ export default function InvoiceScanner() {
             animation: 'fadeInUp 0.4s ease-out 0.3s forwards',
           }}
         >
-          <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
+          <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
             AI CLASSIFICATION
           </div>
           <div className="flex flex-wrap gap-2 mb-3">
             <span
-              className="font-mono text-[0.65rem] tracking-[1px] uppercase px-2 py-1"
+              className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
               style={{ border: '1px solid var(--border-subtle)', color: 'var(--text-dim)' }}
             >
               {result.classification.category}
             </span>
             <span
-              className="font-mono text-[0.65rem] tracking-[1px] uppercase px-2 py-1"
+              className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
               style={
                 result.classification.type === 'Business'
                   ? { border: '1px solid var(--red)', color: 'var(--red-text)' }
@@ -351,7 +351,7 @@ export default function InvoiceScanner() {
               {result.classification.type}
             </span>
             <span
-              className="font-mono text-[0.65rem] tracking-[1px] uppercase px-2 py-1"
+              className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
               style={
                 result.classification.taxDeductible
                   ? { border: '1px solid var(--status-green)', color: 'var(--status-green)' }
@@ -371,7 +371,7 @@ export default function InvoiceScanner() {
     : [];
 
   return (
-    <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
           <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
@@ -385,11 +385,11 @@ export default function InvoiceScanner() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 max-[900px]:grid-cols-1">
+        <div className="grid grid-cols-2 gap-8 max-md:grid-cols-1 max-sm:gap-4">
           {/* LEFT: Input */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+                <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                   Invoice File (PDF, JPG, PNG — max 10MB)
                 </label>
                 <div
@@ -413,7 +413,7 @@ export default function InvoiceScanner() {
                   ) : (
                     <>
                       <div className="text-text-ghost text-[2rem]">↑</div>
-                      <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim text-center">
+                      <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim text-center">
                         Drop file here or click to upload
                       </div>
                       <div className="font-mono text-[0.5rem] text-text-ghost">
@@ -434,7 +434,7 @@ export default function InvoiceScanner() {
                   <button
                     type="button"
                     onClick={() => { setImageData(null); setPdfData(null); setFilePreview(null); setFileName(null); if (fileRef.current) fileRef.current.value = ''; }}
-                    className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim hover:text-ac-red transition-colors duration-200 text-left"
+                    className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim hover:text-ac-red transition-colors duration-200 text-left"
                   >
                     ✕ Remove file
                   </button>
@@ -457,7 +457,7 @@ export default function InvoiceScanner() {
                   {loading ? 'Scanning...' : 'SCAN INVOICE →'}
                 </button>
                 {remainingUses < MAX_TOOL_USES && (
-                  <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-center mt-2">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim text-center mt-2">
                     {remainingUses} of {MAX_TOOL_USES} free uses remaining this minute
                   </div>
                 )}
@@ -465,7 +465,7 @@ export default function InvoiceScanner() {
             )}
 
             {error && (
-              <p className="font-mono text-[0.65rem] text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 

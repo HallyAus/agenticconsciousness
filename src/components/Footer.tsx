@@ -55,7 +55,7 @@ export default function Footer() {
           />
         </div>
         <EmailLink
-          className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 text-white"
+          className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.7rem] px-[1.4rem] no-underline transition-all duration-200 text-white"
           style={{ background: 'var(--red)' }}
         >
           Book free intro →
@@ -92,7 +92,7 @@ export default function Footer() {
             className={`py-6 px-8 flex-1 ${i < arr.length - 1 ? 'border-r max-md:border-r-0 max-md:border-b' : ''}`}
             style={{ borderColor: 'var(--border-subtle)' }}
           >
-            <div className="font-display text-[0.65rem] font-black tracking-[3px] mb-3" style={{ color: 'var(--red-ghost)' }}>
+            <div className="font-display text-[0.7rem] max-sm:text-xs font-black tracking-[3px] mb-3" style={{ color: 'var(--red-ghost)' }}>
               {group.title}
             </div>
             <div className="flex flex-wrap gap-x-5 gap-y-2">
@@ -100,7 +100,7 @@ export default function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary"
+                  className="text-text-dim no-underline text-[0.7rem] max-sm:text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary py-1"
                 >
                   {link.label}
                 </Link>
@@ -116,17 +116,17 @@ export default function Footer() {
           <Link href="/" className="font-display font-black text-[0.8rem] text-text-primary tracking-snug no-underline">
             AC<span style={{ color: 'var(--red-text)' }}>_</span>
           </Link>
-          <span className="font-mono text-[0.55rem] text-text-ghost tracking-[2px] uppercase">
+          <span className="font-mono text-[0.6rem] max-sm:text-xs text-text-ghost tracking-[2px] uppercase">
             AUSTRALIA
           </span>
         </div>
         <div className="flex items-center gap-5 flex-wrap max-sm:justify-center max-sm:gap-3">
-          <span className="font-mono text-[0.55rem] text-text-ghost tracking-[1px]">
+          <span className="font-mono text-[0.6rem] max-sm:text-xs text-text-ghost tracking-[1px]">
             &copy; {new Date().getFullYear()} AGENTIC CONSCIOUSNESS
           </span>
           <div className="flex items-center gap-2">
             <div className="w-[5px] h-[5px] animate-blink" style={{ background: 'var(--status-green)' }} />
-            <span className="font-mono text-[0.6rem] tracking-[2px]" style={{ color: 'var(--red-ghost)' }}>
+            <span className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px]" style={{ color: 'var(--red-ghost)' }}>
               AI SYSTEMS ONLINE
             </span>
           </div>

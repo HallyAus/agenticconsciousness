@@ -116,7 +116,7 @@ export default function EmailTool() {
   }
 
   return (
-    <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
           <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
@@ -130,14 +130,14 @@ export default function EmailTool() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 max-[900px]:grid-cols-1">
+        <div className="grid grid-cols-2 gap-8 max-md:grid-cols-1 max-sm:gap-4">
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="flex justify-end">
               <button
                 type="button"
                 onClick={fillExample}
-                className="font-mono text-[0.65rem] tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
                 style={{
                   border: '1px solid var(--red-pill-border)',
                   color: 'var(--red-text)',
@@ -151,24 +151,24 @@ export default function EmailTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 What do you need to say?
               </label>
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value.slice(0, 3000))}
                 placeholder="Just brain-dump it. Don't worry about tone or structure — Claude will sort that out..."
-                className={`${inputClass} min-h-[180px] resize-y`}
+                className={`${inputClass} min-h-[180px] max-sm:min-h-[100px] resize-y`}
                 style={inputStyle}
                 required
               />
-              <div className={`font-mono text-[0.65rem] tracking-[1px] text-right ${textLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
+              <div className={`font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-right ${textLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
                 {textLen.toLocaleString()} / 3,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Recipient (optional)
               </label>
               <input
@@ -182,7 +182,7 @@ export default function EmailTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Tone
               </label>
               <ToggleGroup
@@ -208,7 +208,7 @@ export default function EmailTool() {
                   {loading ? 'Drafting...' : 'DRAFT EMAIL →'}
                 </button>
                 {remainingUses < MAX_TOOL_USES && (
-                  <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-center mt-2">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim text-center mt-2">
                     {remainingUses} of {MAX_TOOL_USES} free uses remaining this minute
                   </div>
                 )}
@@ -216,7 +216,7 @@ export default function EmailTool() {
             )}
 
             {error && (
-              <p className="font-mono text-[0.65rem] text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -262,7 +262,7 @@ export default function EmailTool() {
                     animationDelay: '0ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
                     Subject Line
                   </div>
                   <p className="text-[0.95rem] font-black text-text-primary">{result?.subject}</p>
@@ -278,7 +278,7 @@ export default function EmailTool() {
                     animationDelay: '80ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3 text-text-dim">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3 text-text-dim">
                     Email Body
                   </div>
                   <div className="text-[0.84rem] font-light leading-[1.8] whitespace-pre-wrap" style={{ color: 'var(--text-body)' }}>
@@ -296,11 +296,11 @@ export default function EmailTool() {
                     animationDelay: '160ms',
                   }}
                 >
-                  <span className="font-mono text-[0.65rem] tracking-[1px] text-text-dim">
+                  <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim">
                     {result?.wordCount} words · {tone} tone
                   </span>
                   {result?.toneNotes && (
-                    <span className="font-mono text-[0.65rem] tracking-[1px] text-text-ghost">
+                    <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-ghost">
                       — {result?.toneNotes}
                     </span>
                   )}

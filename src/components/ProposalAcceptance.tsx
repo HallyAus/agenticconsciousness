@@ -113,7 +113,7 @@ export default function ProposalAcceptance({ proposalId, clientEmail, total }: P
 
         {error && <p className="text-[0.8rem] font-mono" style={{ color: 'var(--red)' }}>{error}</p>}
 
-        <p className="font-mono text-[0.55rem] text-text-ghost">
+        <p className="font-mono text-[0.6rem] max-sm:text-xs text-text-ghost">
           This constitutes a digital agreement. A confirmation will be sent to {clientEmail}.
         </p>
       </form>

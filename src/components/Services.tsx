@@ -4,7 +4,7 @@ import GlitchTitle from '@/components/GlitchTitle';
 
 export default function Services() {
   return (
-    <section id="services" aria-label="Our services" className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section id="services" aria-label="Our services" className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
@@ -23,7 +23,7 @@ export default function Services() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-[2px] bg-border-subtle max-[900px]:grid-cols-1">
+          <div className="grid grid-cols-3 gap-[2px] bg-border-subtle max-md:grid-cols-1">
             {SERVICES.map((service, i) => (
               <div
                 key={service.num}
@@ -47,7 +47,7 @@ export default function Services() {
                   {service.pills.map((pill) => (
                     <span
                       key={pill}
-                      className="font-mono text-[0.65rem] tracking-[1px] uppercase text-ac-red border border-border-red py-1 px-3 whitespace-nowrap"
+                      className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-1 px-3 whitespace-nowrap"
                     >
                       {pill}
                     </span>

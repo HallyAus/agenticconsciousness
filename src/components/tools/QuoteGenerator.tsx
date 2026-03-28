@@ -210,7 +210,7 @@ export default function QuoteGenerator() {
   }
 
   return (
-    <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
           <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
@@ -224,7 +224,7 @@ export default function QuoteGenerator() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 max-[900px]:grid-cols-1">
+        <div className="grid grid-cols-2 gap-8 max-md:grid-cols-1 max-sm:gap-4">
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* TRY AN EXAMPLE */}
@@ -232,7 +232,7 @@ export default function QuoteGenerator() {
               <button
                 type="button"
                 onClick={fillExample}
-                className="font-mono text-[0.65rem] tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
                 style={{
                   border: '1px solid var(--red-pill-border)',
                   color: 'var(--red-text)',
@@ -246,7 +246,7 @@ export default function QuoteGenerator() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Your Business Name
               </label>
               <input
@@ -260,7 +260,7 @@ export default function QuoteGenerator() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Client Name
               </label>
               <input
@@ -274,7 +274,7 @@ export default function QuoteGenerator() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Industry (optional)
               </label>
               <div className="relative">
@@ -297,23 +297,23 @@ export default function QuoteGenerator() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Job Description
               </label>
               <textarea
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value.slice(0, 3000))}
                 placeholder="Describe the work to be done, deliverables, timeline, and any relevant details..."
-                className={`${inputClass} min-h-[200px] resize-y`}
+                className={`${inputClass} min-h-[200px] max-sm:min-h-[100px] resize-y`}
                 required
               />
-              <div className={`font-mono text-[0.65rem] tracking-[1px] text-right ${descLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
+              <div className={`font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-right ${descLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
                 {descLen.toLocaleString()} / 3,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Estimated Value (optional)
               </label>
               <input
@@ -326,7 +326,7 @@ export default function QuoteGenerator() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Quote Type
               </label>
               <ToggleGroup
@@ -352,7 +352,7 @@ export default function QuoteGenerator() {
                   {loading ? 'Generating...' : 'GENERATE QUOTE →'}
                 </button>
                 {remainingUses < MAX_TOOL_USES && (
-                  <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-center mt-2">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim text-center mt-2">
                     {remainingUses} of {MAX_TOOL_USES} free uses remaining this minute
                   </div>
                 )}
@@ -360,7 +360,7 @@ export default function QuoteGenerator() {
             )}
 
             {error && (
-              <p className="font-mono text-[0.65rem] text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -411,7 +411,7 @@ export default function QuoteGenerator() {
                     </div>
                     <div className="text-right">
                       <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red font-black">QUOTE</div>
-                      <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim mt-1">{result.reference}</div>
+                      <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim mt-1">{result.reference}</div>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4 mb-4">
@@ -439,7 +439,7 @@ export default function QuoteGenerator() {
                     animationDelay: '80ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                     Scope of Work
                   </div>
                   <p className="text-[0.82rem] text-text-dim font-light leading-[1.7] whitespace-pre-line">
@@ -510,7 +510,7 @@ export default function QuoteGenerator() {
                     animationDelay: '240ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim mb-3">
                     Terms &amp; Conditions
                   </div>
                   <ul className="flex flex-col gap-1 list-none">
@@ -533,13 +533,13 @@ export default function QuoteGenerator() {
                     animationDelay: '320ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim mb-3">
                     Next Steps
                   </div>
                   <ol className="flex flex-col gap-1">
                     {result?.nextSteps?.map((step, i) => (
                       <li key={i} className="text-[0.82rem] text-text-dim font-light leading-[1.6] flex gap-3">
-                        <span className="font-mono text-[0.6rem] mt-1 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
+                        <span className="font-mono text-[0.65rem] max-sm:text-xs mt-1 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
                         <span>{step}</span>
                       </li>
                     ))}

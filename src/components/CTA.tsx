@@ -107,8 +107,9 @@ export default function CTA() {
                   </p>
 
                   <textarea
-                    className={`${INPUT_CLASS} min-h-[120px] resize-y mb-4`}
+                    className={`${INPUT_CLASS} min-h-[120px] max-sm:min-h-[100px] resize-y mb-4`}
                     placeholder="What's the biggest challenge or time-sink in your business right now?"
+                    aria-label="Your business challenge"
                     value={challenge}
                     onChange={(e) => setChallenge(e.target.value)}
                     maxLength={1000}
@@ -125,7 +126,7 @@ export default function CTA() {
                     <button
                       onClick={handleAnalyse}
                       disabled={!challenge.trim()}
-                      className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                     >
                       ANALYSE →
                     </button>
@@ -143,7 +144,7 @@ export default function CTA() {
                   <div className="text-[1.5rem] font-black text-ac-red mb-5 tracking-tight">
                     {result.recommendedService}
                     {result.confidence === 'High' && (
-                      <span className="ml-3 font-mono text-[0.65rem] tracking-[2px] text-text-dim align-middle">
+                      <span className="ml-3 font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] text-text-dim align-middle">
                         HIGH CONFIDENCE
                       </span>
                     )}
@@ -156,7 +157,7 @@ export default function CTA() {
 
                   {/* Quick win */}
                   <div className="bg-ac-block px-5 py-4 mb-8">
-                    <span className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red">
+                    <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red">
                       Try this now:
                     </span>
                     <p className="mt-2 text-text-primary font-light leading-[1.7] text-[0.9rem]">
@@ -174,6 +175,7 @@ export default function CTA() {
                       type="text"
                       className={INPUT_CLASS}
                       placeholder="Name *"
+                      aria-label="Name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
@@ -183,6 +185,7 @@ export default function CTA() {
                       type="email"
                       className={INPUT_CLASS}
                       placeholder="Email *"
+                      aria-label="Email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
@@ -192,12 +195,14 @@ export default function CTA() {
                       type="tel"
                       className={INPUT_CLASS}
                       placeholder="Phone (optional)"
+                      aria-label="Phone"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       disabled={submitting}
                     />
                     <textarea
-                      className={`${INPUT_CLASS} min-h-[100px] resize-y`}
+                      className={`${INPUT_CLASS} min-h-[100px] max-sm:min-h-[80px] resize-y`}
+                      aria-label="Message"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       disabled={submitting}
@@ -213,7 +218,7 @@ export default function CTA() {
                       <button
                         type="submit"
                         disabled={!name.trim() || !email.trim()}
-                        className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed self-start"
+                        className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed self-start focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                       >
                         SEND →
                       </button>
@@ -236,7 +241,7 @@ export default function CTA() {
                   </p>
                   {result && (
                     <div className="bg-ac-block px-5 py-4 text-left">
-                      <span className="font-mono text-[0.65rem] tracking-[2px] uppercase text-ac-red">
+                      <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red">
                         In the meantime:
                       </span>
                       <p className="mt-2 text-text-primary font-light leading-[1.7] text-[0.9rem]">

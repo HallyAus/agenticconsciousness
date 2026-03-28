@@ -142,7 +142,7 @@ export default async function BlogPost({ params }: Props) {
       />
       <Nav />
       <main className="pt-[60px] min-h-screen">
-        <article className="py-28 px-10 max-md:px-5 max-sm:py-20">
+        <article className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
           <div className="max-w-[720px] mx-auto">
             <Link
               href="/blog"
@@ -156,7 +156,7 @@ export default async function BlogPost({ params }: Props) {
             </h1>
 
             <div className="flex items-center gap-4 mb-12 flex-wrap">
-              <span className="font-mono text-[0.65rem] text-text-dim tracking-[1px] uppercase">
+              <span className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                 {new Date(post.publishedAt).toLocaleDateString('en-AU', {
                   day: 'numeric',
                   month: 'long',
@@ -164,18 +164,18 @@ export default async function BlogPost({ params }: Props) {
                 })}
               </span>
               <span className="text-text-ghost">·</span>
-              <span className="font-mono text-[0.65rem] text-text-dim tracking-[1px] uppercase">
+              <span className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                 {post.author}
               </span>
               <span className="text-text-ghost">·</span>
-              <span className="font-mono text-[0.65rem] text-text-dim tracking-[1px] uppercase">
+              <span className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                 {readingTime} min read
               </span>
               <div className="flex gap-1 flex-wrap max-sm:basis-full max-sm:mt-2">
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="font-mono text-[0.6rem] tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
+                    className="font-mono text-[0.65rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
                   >
                     {tag}
                   </span>
@@ -207,7 +207,7 @@ export default async function BlogPost({ params }: Props) {
                         {related.description}
                       </p>
                       <div className="flex items-center gap-3">
-                        <span className="font-mono text-[0.6rem] text-text-ghost tracking-[1px] uppercase">
+                        <span className="font-mono text-[0.65rem] max-sm:text-xs text-text-ghost tracking-[1px] uppercase">
                           {new Date(related.publishedAt).toLocaleDateString('en-AU', {
                             day: 'numeric',
                             month: 'short',
@@ -218,7 +218,7 @@ export default async function BlogPost({ params }: Props) {
                           {related.tags.slice(0, 2).map((tag) => (
                             <span
                               key={tag}
-                              className="font-mono text-[0.55rem] tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-1.5"
+                              className="font-mono text-[0.6rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-1.5"
                             >
                               {tag}
                             </span>

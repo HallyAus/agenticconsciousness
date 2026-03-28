@@ -74,9 +74,9 @@ export default function BlogPage() {
       />
       <Nav />
       <main className="pt-[60px] min-h-screen">
-      <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
+      <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
         <div className="max-w-[1000px] mx-auto">
-          <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
             AI-GENERATED CONTENT
           </div>
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-4">
@@ -112,13 +112,13 @@ export default function BlogPage() {
                       <span className="font-display text-[0.75rem] font-bold tracking-[2px] uppercase text-ac-red">
                         Read article →
                       </span>
-                      <span className="font-mono text-[0.6rem] text-text-dim tracking-[1px] uppercase">
+                      <span className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                         By Daniel
                       </span>
-                      <span className="font-mono text-[0.6rem] text-text-dim tracking-[1px] uppercase">
+                      <span className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                         {readingTime} min read
                       </span>
-                      <span className="font-mono text-[0.6rem] text-text-dim tracking-[1px] uppercase">
+                      <span className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                         {new Date(featured.publishedAt).toLocaleDateString('en-AU', {
                           day: 'numeric',
                           month: 'short',
@@ -142,10 +142,10 @@ export default function BlogPage() {
                     <Link
                       key={post.slug}
                       href={`/blog/${post.slug}`}
-                      className="grid grid-cols-[160px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-center no-underline max-[900px]:grid-cols-1"
+                      className="grid grid-cols-[160px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-center no-underline max-md:grid-cols-1"
                     >
-                      <div className="p-6 max-[900px]:pb-2">
-                        <div className="font-mono text-[0.55rem] text-text-dim tracking-[1px] uppercase mb-2">
+                      <div className="p-6 max-md:pb-2">
+                        <div className="font-mono text-[0.6rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase mb-2">
                           {new Date(post.publishedAt).toLocaleDateString('en-AU', {
                             day: 'numeric',
                             month: 'short',
@@ -174,7 +174,7 @@ export default function BlogPage() {
                         </p>
                       </div>
 
-                      <div className="p-6 max-[900px]:pt-0">
+                      <div className="p-6 max-md:pt-0">
                         <span className="font-display text-[0.7rem] font-bold tracking-[2px] uppercase text-ac-red">
                           READ →
                         </span>

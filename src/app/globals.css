@@ -12,8 +12,8 @@
 
   --text-primary: #0a0a0a;
   --text-body: rgba(0, 0, 0, 0.75);
-  --text-dim: rgba(0, 0, 0, 0.5);
-  --text-ghost: rgba(0, 0, 0, 0.15);
+  --text-dim: rgba(0, 0, 0, 0.65);
+  --text-ghost: rgba(0, 0, 0, 0.25);
   --text-dead: rgba(0, 0, 0, 0.05);
 
   --red: #ff3d00;

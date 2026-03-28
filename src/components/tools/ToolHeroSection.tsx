@@ -40,7 +40,7 @@ export default function ToolHeroSection({
       style={{ background: 'var(--bg-page)' }}
     >
       <ScrollReveal>
-        <div className="px-10 max-md:px-5 py-10 max-sm:py-6">
+        <div className="px-10 max-md:px-5 max-sm:px-4 py-10 max-sm:py-6">
           <div className="max-w-[1200px] mx-auto">
             <div className="flex gap-10 max-md:flex-col max-md:gap-6">
               {/* Left column */}

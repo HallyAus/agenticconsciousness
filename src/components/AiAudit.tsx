@@ -107,7 +107,7 @@ export default function AiAudit() {
     'w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 appearance-none cursor-pointer transition-colors duration-150';
 
   return (
-    <section id="ai-audit" aria-label="AI business audit" className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section id="ai-audit" aria-label="AI business audit" className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         {/* Header */}
         <div className="mb-14">
@@ -125,12 +125,12 @@ export default function AiAudit() {
         </div>
 
         {/* Two-column layout */}
-        <div className="grid grid-cols-2 gap-10 max-[900px]:grid-cols-1">
+        <div className="grid grid-cols-2 gap-10 max-md:grid-cols-1 max-sm:gap-6">
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Industry */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="audit-industry" className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label htmlFor="audit-industry" className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Industry
               </label>
               <div className="relative">
@@ -167,7 +167,7 @@ export default function AiAudit() {
 
             {/* Business size */}
             <div className="flex flex-col gap-2">
-              <label htmlFor="audit-business-size" className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label htmlFor="audit-business-size" className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Business Size
               </label>
               <div className="relative">
@@ -203,7 +203,7 @@ export default function AiAudit() {
 
             {/* Pain point */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Biggest Pain Point
               </label>
               <div className="relative">
@@ -212,11 +212,11 @@ export default function AiAudit() {
                   onChange={(e) => setPainPoint(e.target.value.slice(0, 500))}
                   placeholder="e.g. Quoting takes our estimators 3+ hours per job and we're losing work to faster competitors..."
                   rows={5}
-                  className="w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] transition-colors duration-150 placeholder:text-text-dim"
+                  className="w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] max-sm:min-h-[100px] transition-colors duration-150 placeholder:text-text-dim"
                   required
                 />
                 <div
-                  className={`text-right font-mono text-[0.65rem] tracking-[1px] mt-1 ${isOverLimit ? 'text-ac-red' : 'text-text-dim'}`}
+                  className={`text-right font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] mt-1 ${isOverLimit ? 'text-ac-red' : 'text-text-dim'}`}
                 >
                   {charCount} / 500
                 </div>
@@ -237,7 +237,7 @@ export default function AiAudit() {
             </button>
 
             {error && (
-              <p className="font-mono text-[0.65rem] text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -245,7 +245,7 @@ export default function AiAudit() {
           <div className="flex flex-col gap-6">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.6rem] tracking-[3px] uppercase text-text-dim">
+                <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[3px] uppercase text-text-dim">
                   Your snapshot will appear here
                 </div>
                 <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
@@ -302,7 +302,7 @@ export default function AiAudit() {
                         </h4>
                         <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
                           <span
-                            className={`font-mono text-[0.65rem] tracking-[1px] uppercase border px-2 py-1 ${
+                            className={`font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase border px-2 py-1 ${
                               opp.impact === 'High'
                                 ? 'border-ac-red text-ac-red'
                                 : 'border-border-subtle text-text-dim'
@@ -310,7 +310,7 @@ export default function AiAudit() {
                           >
                             {opp.impact} impact
                           </span>
-                          <span className="font-mono text-[0.65rem] tracking-[1px] uppercase border border-border-subtle text-text-dim px-2 py-1">
+                          <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase border border-border-subtle text-text-dim px-2 py-1">
                             {opp.timeframe}
                           </span>
                         </div>

@@ -73,7 +73,7 @@ function AssessmentPill({ assessment }: { assessment: Assessment }) {
   };
   return (
     <span
-      className="font-mono text-[0.65rem] tracking-[1px] uppercase px-3 py-1.5"
+      className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase px-3 py-1.5"
       style={styles[assessment]}
     >
       {assessment}
@@ -89,7 +89,7 @@ function SeverityPill({ severity }: { severity: Severity }) {
   };
   return (
     <span
-      className="font-mono text-[0.55rem] tracking-[1px] uppercase px-2 py-0.5 whitespace-nowrap"
+      className="font-mono text-[0.6rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-0.5 whitespace-nowrap"
       style={styles[severity]}
     >
       {severity}
@@ -205,7 +205,7 @@ export default function ContractTool() {
   }
 
   return (
-    <section className="py-28 px-10 max-md:px-5 max-sm:py-20">
+    <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
           <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
@@ -219,14 +219,14 @@ export default function ContractTool() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 max-[900px]:grid-cols-1">
+        <div className="grid grid-cols-2 gap-8 max-md:grid-cols-1 max-sm:gap-4">
           {/* LEFT: Form */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="flex justify-end">
               <button
                 type="button"
                 onClick={fillExample}
-                className="font-mono text-[0.65rem] tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
                 style={{
                   border: '1px solid var(--red-pill-border)',
                   color: 'var(--red-text)',
@@ -240,24 +240,24 @@ export default function ContractTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Contract Clause
               </label>
               <textarea
                 value={text}
                 onChange={(e) => setText(e.target.value.slice(0, 8000))}
                 placeholder="Paste the contract clause or section you want reviewed..."
-                className={`${inputClass} min-h-[220px] resize-y`}
+                className={`${inputClass} min-h-[220px] max-sm:min-h-[120px] resize-y`}
                 style={inputStyle}
                 required
               />
-              <div className={`font-mono text-[0.65rem] tracking-[1px] text-right ${textLen > 7500 ? 'text-ac-red' : 'text-text-dim'}`}>
+              <div className={`font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-right ${textLen > 7500 ? 'text-ac-red' : 'text-text-dim'}`}>
                 {textLen.toLocaleString()} / 8,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Context (optional)
               </label>
               <input
@@ -271,7 +271,7 @@ export default function ContractTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.65rem] tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Your Role
               </label>
               <ToggleGroup
@@ -297,7 +297,7 @@ export default function ContractTool() {
                   {loading ? 'Reviewing...' : 'REVIEW CONTRACT →'}
                 </button>
                 {remainingUses < MAX_TOOL_USES && (
-                  <div className="font-mono text-[0.65rem] tracking-[1px] text-text-dim text-center mt-2">
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim text-center mt-2">
                     {remainingUses} of {MAX_TOOL_USES} free uses remaining this minute
                   </div>
                 )}
@@ -305,7 +305,7 @@ export default function ContractTool() {
             )}
 
             {error && (
-              <p className="font-mono text-[0.65rem] text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -319,7 +319,7 @@ export default function ContractTool() {
                 <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
                   Paste the clause, select your role, and Claude will translate the legalese into plain English, rate how fair the clause is, flag risks, and give you negotiation points.
                 </p>
-                <p className="font-mono text-[0.65rem] tracking-[1px] text-text-ghost">
+                <p className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-ghost">
                   Not legal advice. Always consult a qualified lawyer before signing.
                 </p>
                 <div className="mt-4 border-t border-border-subtle pt-6 flex flex-col gap-3">
@@ -354,7 +354,7 @@ export default function ContractTool() {
                     animationDelay: '0ms',
                   }}
                 >
-                  <p className="font-mono text-[0.6rem] tracking-[1px] leading-[1.6]" style={{ color: 'var(--red)' }}>
+                  <p className="font-mono text-[0.65rem] max-sm:text-xs tracking-[1px] leading-[1.6]" style={{ color: 'var(--red)' }}>
                     NOT LEGAL ADVICE — This analysis is for informational purposes only. Consult a qualified lawyer before signing any contract.
                   </p>
                 </div>
@@ -371,7 +371,7 @@ export default function ContractTool() {
                     animationDelay: '80ms',
                   }}
                 >
-                  <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
+                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
                     Plain English
                   </div>
                   <p className="text-[0.84rem] font-light leading-[1.8]" style={{ color: 'var(--text-body)' }}>
@@ -389,7 +389,7 @@ export default function ContractTool() {
                     animationDelay: '120ms',
                   }}
                 >
-                  <span className="font-mono text-[0.6rem] tracking-[1px] uppercase text-text-dim">Overall assessment:</span>
+                  <span className="font-mono text-[0.65rem] max-sm:text-xs tracking-[1px] uppercase text-text-dim">Overall assessment:</span>
                   <AssessmentPill assessment={result?.overallAssessment} />
                 </div>
 
@@ -404,7 +404,7 @@ export default function ContractTool() {
                       animationDelay: '160ms',
                     }}
                   >
-                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
+                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
                       Risks
                     </div>
                     {result?.risks?.map((risk, i) => (
@@ -438,7 +438,7 @@ export default function ContractTool() {
                       animationDelay: '240ms',
                     }}
                   >
-                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
+                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                       Red Flags
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
@@ -463,7 +463,7 @@ export default function ContractTool() {
                       animationDelay: '280ms',
                     }}
                   >
-                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3 text-text-dim">
+                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3 text-text-dim">
                       Missing Protections
                     </div>
                     <ul className="flex flex-col gap-2 list-none">
@@ -487,7 +487,7 @@ export default function ContractTool() {
                       animationDelay: '320ms',
                     }}
                   >
-                    <div className="font-mono text-[0.65rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
+                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                       Negotiation Points
                     </div>
                     <div className="grid grid-cols-2 gap-3 max-[600px]:grid-cols-1">

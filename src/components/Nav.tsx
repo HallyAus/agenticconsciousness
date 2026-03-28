@@ -41,7 +41,7 @@ export default function Nav() {
         <ThemeToggle />
         <a
           href="#contact"
-          className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black"
+          className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.7rem] px-[1.4rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black"
         >
           Talk to us
         </a>
@@ -65,7 +65,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
-              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary"
+              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary py-2"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
@@ -80,7 +80,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
-              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary"
+              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary py-2"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
@@ -91,7 +91,7 @@ export default function Nav() {
             <ThemeToggle />
             <a
               href="#contact"
-              className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-[0.55rem] px-[1.2rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black text-center flex-1"
+              className="inline-block bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 no-underline transition-all duration-200 hover:bg-white hover:text-ac-black text-center flex-1"
               onClick={() => setMenuOpen(false)}
             >
               Talk to us

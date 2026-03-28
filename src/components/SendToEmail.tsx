@@ -40,7 +40,7 @@ export default function SendToEmail({ resultText, toolName }: SendToEmailProps) 
   if (sent) {
     return (
       <div className="flex items-center gap-2 py-2">
-        <span className="font-mono text-[0.65rem] tracking-[1px] uppercase text-[var(--status-green)]">
+        <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase text-[var(--status-green)]">
           Sent to {email} ✓
         </span>
       </div>
@@ -54,16 +54,17 @@ export default function SendToEmail({ resultText, toolName }: SendToEmailProps) 
         value={email}
         onChange={(e) => { setEmail(e.target.value); setError(''); }}
         placeholder="Email results to..."
-        className="bg-ac-black border border-border-subtle py-2 px-3 text-text-primary font-display text-[0.75rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim w-[200px]"
+        aria-label="Email results to"
+        className="bg-ac-black border border-border-subtle py-3 px-3 text-text-primary font-display text-[0.75rem] outline-none transition-colors duration-200 focus:border-ac-red focus:ring-2 focus:ring-ac-red placeholder:text-text-dim w-[200px]"
       />
       <button
         type="submit"
         disabled={sending}
-        className="font-mono text-[0.6rem] tracking-[2px] uppercase py-2 px-4 transition-all duration-200 cursor-pointer border border-ac-red bg-transparent text-ac-red hover:bg-ac-red hover:text-white disabled:opacity-40"
+        className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase py-3 px-4 transition-all duration-200 cursor-pointer border border-ac-red bg-transparent text-ac-red hover:bg-ac-red hover:text-white disabled:opacity-40 focus:ring-2 focus:ring-ac-red focus:outline-none"
       >
         {sending ? '...' : 'SEND'}
       </button>
-      {error && <span className="text-ac-red text-[0.6rem] font-mono self-center ml-2">{error}</span>}
+      {error && <span className="text-ac-red text-[0.65rem] max-sm:text-xs font-mono self-center ml-2">{error}</span>}
     </form>
   );
 }

@@ -50,7 +50,7 @@ export default function ToolExpander({ toolId, onClose }: ToolExpanderProps) {
         </div>
         <button
           onClick={onClose}
-          className="font-mono text-[0.6rem] font-black tracking-[2px] uppercase py-[6px] px-4 border-2 border-border-subtle text-text-dim bg-transparent cursor-pointer transition-all duration-200 hover:border-ac-red hover:text-ac-red"
+          className="font-mono text-[0.65rem] max-sm:text-xs font-black tracking-[2px] uppercase py-[6px] px-4 border-2 border-border-subtle text-text-dim bg-transparent cursor-pointer transition-all duration-200 hover:border-ac-red hover:text-ac-red"
         >
           &#x2715; CLOSE
         </button>

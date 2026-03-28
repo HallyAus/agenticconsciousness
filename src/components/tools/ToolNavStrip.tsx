@@ -73,7 +73,7 @@ export default function ToolNavStrip({ tools, activeSection, onSectionChange }: 
       <nav
         className={`${isSticky ? 'fixed top-0 left-0 right-0 z-40' : 'relative'} bg-[#0a0a0a] border-y-2 border-border-subtle`}
       >
-        <div className="max-w-[1200px] mx-auto px-10 max-md:px-5">
+        <div className="max-w-[1200px] mx-auto px-10 max-md:px-5 max-sm:px-4">
           <div className="flex overflow-x-auto scrollbar-hide">
             {tools.map((tool) => {
               const isActive = activeSection === tool.id;
@@ -85,7 +85,7 @@ export default function ToolNavStrip({ tools, activeSection, onSectionChange }: 
                     isActive ? 'border-t-[3px] border-t-ac-red' : 'border-t-[3px] border-t-transparent'
                   }`}
                 >
-                  <div className={`font-mono text-[9px] tracking-[2px] uppercase whitespace-nowrap ${
+                  <div className={`font-mono text-[9px] max-sm:text-[0.65rem] tracking-[2px] uppercase whitespace-nowrap ${
                     isActive ? 'text-ac-red' : 'text-text-dim hover:text-text-primary'
                   } transition-colors duration-200`}>
                     <span className="font-black">{tool.number}</span>
