@@ -12,7 +12,11 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 # Provide dummy env vars for build (real ones injected at runtime)
 ARG ANTHROPIC_API_KEY=build-placeholder
+ARG NEXT_PUBLIC_UMAMI_URL
+ARG NEXT_PUBLIC_UMAMI_WEBSITE_ID
 ENV NEXT_PUBLIC_CONTACT_EMAIL=ai@agenticconsciousness.com.au
+ENV NEXT_PUBLIC_UMAMI_URL=${NEXT_PUBLIC_UMAMI_URL}
+ENV NEXT_PUBLIC_UMAMI_WEBSITE_ID=${NEXT_PUBLIC_UMAMI_WEBSITE_ID}
 ENV SITE_URL=https://agenticconsciousness.com.au
 RUN npm run build
 
