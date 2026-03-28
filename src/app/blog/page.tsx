@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAllPosts } from '@/lib/blog';
 import EmailCapture from '@/components/EmailCapture';
-import Nav from '@/components/Nav';
-import Footer from '@/components/Footer';
+
+
 
 export const metadata: Metadata = {
   title: 'AI Insights & Implementation Guides',
@@ -72,7 +72,6 @@ export default function BlogPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
       />
-      <Nav />
       <main className="pt-[60px] min-h-screen">
       <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
         <div className="max-w-[1000px] mx-auto">
@@ -192,7 +191,6 @@ export default function BlogPage() {
         </div>
       </section>
     </main>
-    <Footer />
     </>
   );
 }

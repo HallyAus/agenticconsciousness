@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Nav from '@/components/Nav';
-import Footer from '@/components/Footer';
+
+
 
 export const metadata: Metadata = {
   title: 'Payment Confirmed',
@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 export default function PaymentSuccess() {
   return (
     <>
-    <Nav />
     <main className="pt-[60px] min-h-screen flex items-center justify-center px-10">
       <div className="text-center max-w-[500px]">
         <div className="text-[3rem] font-black mb-2" style={{ color: 'var(--status-green)' }}>&#10003;</div>
@@ -30,7 +29,6 @@ export default function PaymentSuccess() {
         </Link>
       </div>
     </main>
-    <Footer />
     </>
   );
 }

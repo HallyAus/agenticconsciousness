@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import Nav from '@/components/Nav';
-import Footer from '@/components/Footer';
 import EmailLink from '@/components/EmailLink';
 
 export const metadata: Metadata = {
@@ -19,7 +17,6 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <>
-    <Nav />
     <main className="pt-[60px] min-h-screen">
       <article className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
         <div className="max-w-[720px] mx-auto">
@@ -59,7 +56,6 @@ export default function PrivacyPage() {
         </div>
       </article>
     </main>
-    <Footer />
     </>
   );
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import PricingCards from '@/components/PricingCards';
-import Nav from '@/components/Nav';
-import Footer from '@/components/Footer';
+
+
 import EmailLink from '@/components/EmailLink';
 
 export const metadata: Metadata = {
@@ -116,7 +116,6 @@ export default function PricingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Nav />
       <main className="pt-[60px] min-h-screen">
         <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
           <div className="max-w-[1200px] mx-auto">
@@ -158,7 +157,6 @@ export default function PricingPage() {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 }

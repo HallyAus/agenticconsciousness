@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Nav from '@/components/Nav';
-import Footer from '@/components/Footer';
+
+
 
 export const metadata: Metadata = {
   title: 'Unsubscribed',
@@ -11,7 +11,6 @@ export const metadata: Metadata = {
 export default function UnsubscribePage() {
   return (
     <>
-    <Nav />
     <main className="min-h-screen flex items-center justify-center px-10 pt-[60px]" style={{ background: 'var(--bg-page)' }}>
       <div className="text-center max-w-[400px]">
         <h1 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-4">
@@ -29,7 +28,6 @@ export default function UnsubscribePage() {
         </Link>
       </div>
     </main>
-    <Footer />
     </>
   );
 }

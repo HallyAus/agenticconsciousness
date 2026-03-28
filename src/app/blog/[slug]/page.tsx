@@ -4,8 +4,6 @@ import DOMPurify from 'isomorphic-dompurify';
 import { getPostBySlug, getAllPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import EmailLink from '@/components/EmailLink';
-import Nav from '@/components/Nav';
-import Footer from '@/components/Footer';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -140,7 +138,6 @@ export default async function BlogPost({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Nav />
       <main className="pt-[60px] min-h-screen">
         <article className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
           <div className="max-w-[720px] mx-auto">
@@ -247,7 +244,6 @@ export default async function BlogPost({ params }: Props) {
           </div>
         </article>
       </main>
-      <Footer />
     </>
   );
 }
