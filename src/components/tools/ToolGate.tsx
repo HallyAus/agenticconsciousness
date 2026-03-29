@@ -146,7 +146,7 @@ function EmailGateForm({ onSent }: { onSent: (email: string) => void }) {
 
   return (
     <div className="border-2 border-ac-red p-6 max-w-[480px] mx-auto">
-      <div className="font-mono text-[9px] tracking-[3px] uppercase text-ac-red mb-4 font-black">
+      <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red mb-4 font-black">
         FREE ACCESS
       </div>
       <h3 className="text-[1.1rem] font-black tracking-tight text-text-primary mb-2">
@@ -163,7 +163,7 @@ function EmailGateForm({ onSent }: { onSent: (email: string) => void }) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your@email.com"
           required
-          className="flex-1 bg-transparent border-2 border-border-subtle text-text-primary font-mono text-[0.75rem] px-3 py-3 outline-none focus:border-ac-red transition-colors duration-200 placeholder:text-text-ghost"
+          className="flex-1 bg-transparent border-2 border-border-subtle text-text-primary font-mono text-[0.85rem] px-3 py-3 outline-none focus:border-ac-red transition-colors duration-200 placeholder:text-text-ghost"
         />
         <button
           type="submit"
@@ -218,14 +218,14 @@ function PendingVerification({ email, onRefresh }: { email: string; onRefresh: (
     <div className="border-2 border-border-subtle p-6 max-w-[480px] mx-auto text-center">
       <div className="flex items-center justify-center gap-2 mb-4">
         <span className="w-2 h-2 bg-ac-red animate-blink" />
-        <span className="font-mono text-[9px] tracking-[3px] uppercase text-ac-red font-black">
+        <span className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red font-black">
           CHECK YOUR EMAIL
         </span>
       </div>
       <p className="text-text-primary text-[0.85rem] font-light mb-2">
         Verification link sent to <strong className="text-text-primary">{email}</strong>
       </p>
-      <p className="text-text-dim text-[0.75rem] font-mono tracking-[1px] mb-4">
+      <p className="text-text-dim text-[0.85rem] font-mono tracking-[1px] mb-4">
         Click the link in your inbox. This page will update automatically.
       </p>
       <button
@@ -255,7 +255,7 @@ function CountdownBanner({ state }: { state: GateState }) {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="font-mono text-[9px] tracking-[2px] uppercase text-text-dim whitespace-nowrap shrink-0">
+      <span className="font-mono text-[0.75rem] tracking-[2px] uppercase text-text-dim whitespace-nowrap shrink-0">
         {state.remaining} / {state.limit} {isVerified ? 'daily' : 'free'} uses remaining
       </span>
     </div>
@@ -267,7 +267,7 @@ function CountdownBanner({ state }: { state: GateState }) {
 function DailyCap({ email }: { email?: string }) {
   return (
     <div className="border-2 border-ac-red p-8 max-w-[480px] mx-auto text-center">
-      <div className="font-mono text-[9px] tracking-[3px] uppercase text-ac-red mb-4 font-black">
+      <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red mb-4 font-black">
         DAILY LIMIT REACHED
       </div>
       <h3 className="text-[1.1rem] font-black tracking-tight text-text-primary mb-3">
@@ -323,7 +323,7 @@ export default function ToolGate({ children, toolId, passthrough = false }: Tool
     return (
       <ToolAccessContext.Provider value={contextValue}>
         <div className="flex items-center justify-center py-12">
-          <span className="font-mono text-[9px] tracking-[3px] uppercase text-text-ghost animate-pulse">
+          <span className="font-mono text-[0.75rem] tracking-[3px] uppercase text-text-ghost animate-pulse">
             Loading...
           </span>
         </div>

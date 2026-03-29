@@ -117,7 +117,7 @@ export default function CTA() {
                   />
 
                   {analyseError && (
-                    <p className="text-ac-red font-mono text-[0.75rem] mb-4">{analyseError}</p>
+                    <p className="text-ac-red font-mono text-[0.85rem] mb-4">{analyseError}</p>
                   )}
 
                   {analysing ? (
@@ -126,7 +126,7 @@ export default function CTA() {
                     <button
                       onClick={handleAnalyse}
                       disabled={!challenge.trim()}
-                      className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
+                      className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                     >
                       ANALYSE →
                     </button>
@@ -209,7 +209,7 @@ export default function CTA() {
                     />
 
                     {submitError && (
-                      <p className="text-ac-red font-mono text-[0.75rem]">{submitError}</p>
+                      <p className="text-ac-red font-mono text-[0.85rem]">{submitError}</p>
                     )}
 
                     {submitting ? (
@@ -218,7 +218,7 @@ export default function CTA() {
                       <button
                         type="submit"
                         disabled={!name.trim() || !email.trim()}
-                        className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed self-start focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
+                        className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed self-start focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                       >
                         SEND →
                       </button>

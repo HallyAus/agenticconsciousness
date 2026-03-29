@@ -50,7 +50,7 @@ export default function Footer() {
             AC<span style={{ color: 'var(--red-text)' }}>_</span>
           </Link>
           <EmailLink
-            className="font-mono text-[0.75rem] no-underline hover:text-text-primary transition-colors"
+            className="font-mono text-[0.85rem] no-underline hover:text-text-primary transition-colors"
             style={{ color: 'var(--red-text)' }}
           />
         </div>
@@ -100,7 +100,7 @@ export default function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-text-dim no-underline text-[0.8rem] max-sm:text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary py-1"
+                  className="text-text-dim no-underline text-[0.8rem] max-sm:text-[0.85rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary py-1"
                 >
                   {link.label}
                 </Link>
@@ -126,7 +126,7 @@ export default function Footer() {
           </span>
           <div className="flex items-center gap-2">
             <div className="w-[5px] h-[5px] animate-blink" style={{ background: 'var(--status-green)' }} />
-            <span className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px]" style={{ color: 'var(--red-ghost)' }}>
+            <span className="font-mono text-[0.85rem] max-sm:text-xs tracking-[2px]" style={{ color: 'var(--red-ghost)' }}>
               AI SYSTEMS ONLINE
             </span>
           </div>

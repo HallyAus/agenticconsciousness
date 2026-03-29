@@ -230,7 +230,7 @@ export default function ToolsShowcase() {
             ].map((s) => (
               <div key={s.label} className="text-center">
                 <div className="text-[1.8rem] font-black tracking-tight text-ac-red">{s.value}</div>
-                <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-2">{s.label}</div>
+                <div className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-2">{s.label}</div>
               </div>
             ))}
           </div>

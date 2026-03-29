@@ -31,7 +31,7 @@ export default function CopyButton({ text, label = 'COPY' }: CopyButtonProps) {
   return (
     <button
       onClick={handleCopy}
-      className={`font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase py-2 px-4 transition-all duration-200 cursor-pointer border bg-transparent focus:ring-2 focus:ring-ac-red focus:outline-none ${
+      className={`font-mono text-[0.85rem] max-sm:text-xs tracking-[2px] uppercase py-2 px-4 transition-all duration-200 cursor-pointer border bg-transparent focus:ring-2 focus:ring-ac-red focus:outline-none ${
         copied
           ? 'border-[var(--status-green)] text-[var(--status-green)]'
           : 'border-ac-red text-ac-red hover:bg-ac-red hover:text-white'

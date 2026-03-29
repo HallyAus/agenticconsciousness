@@ -105,7 +105,7 @@ export default function ProposalAcceptance({ proposalId, clientEmail, total }: P
         <button
           type="submit"
           disabled={!name.trim() || !agreed || submitting}
-          className="w-full py-4 font-display text-[0.75rem] font-black tracking-[2px] uppercase text-white cursor-pointer border-none disabled:opacity-40 transition-all duration-200"
+          className="w-full py-4 font-display text-[0.85rem] font-black tracking-[2px] uppercase text-white cursor-pointer border-none disabled:opacity-40 transition-all duration-200"
           style={{ background: 'var(--red)' }}
         >
           {submitting ? 'Processing...' : 'Accept proposal →'}

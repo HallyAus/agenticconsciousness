@@ -47,7 +47,7 @@ const inputStyle = {
 };
 
 const btnClass =
-  'w-full py-4 font-display text-[0.75rem] font-black tracking-[2px] uppercase cursor-pointer border-none text-white transition-all duration-200 hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed';
+  'w-full py-4 font-display text-[0.85rem] font-black tracking-[2px] uppercase cursor-pointer border-none text-white transition-all duration-200 hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed';
 
 const STAGED_STEPS = [
   'Reading document...',
@@ -327,7 +327,7 @@ export default function SummariseTool() {
                   <button
                     type="button"
                     onClick={clearAll}
-                    className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:opacity-80"
+                    className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:opacity-80"
                     style={{ background: 'var(--red)', color: '#fff' }}
                   >
                     SUMMARISE ANOTHER

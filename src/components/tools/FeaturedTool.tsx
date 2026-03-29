@@ -216,7 +216,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
           <div className="w-[45%] max-md:w-full flex flex-col justify-center gap-6">
             {/* Badge */}
             <div className="inline-flex self-start">
-              <span className="font-mono text-[9px] tracking-[2px] uppercase px-3 py-[5px] border-2 border-ac-red text-ac-red font-black">
+              <span className="font-mono text-[0.75rem] tracking-[2px] uppercase px-3 py-[5px] border-2 border-ac-red text-ac-red font-black">
                 MOST POPULAR
               </span>
             </div>
@@ -225,7 +225,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
               Invoice Scanner
             </h2>
 
-            <p className="text-text-dim text-[13px] font-light leading-[1.7] max-w-[420px]">
+            <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[420px]">
               Upload a photo or PDF. AI extracts every field — supplier, ABN, line items, GST classification. Export to CSV for your bookkeeper.
             </p>
 
@@ -238,7 +238,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
               ].map((s) => (
                 <div key={s.label}>
                   <div className="text-[1.1rem] font-black tracking-[-1px] text-ac-red">{s.value}</div>
-                  <div className="font-mono text-[9px] text-text-dim tracking-[2px] uppercase mt-1">{s.label}</div>
+                  <div className="font-mono text-[0.75rem] text-text-dim tracking-[2px] uppercase mt-1">{s.label}</div>
                 </div>
               ))}
             </div>
@@ -249,7 +249,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
             {/* TRY IT NOW label */}
             <div className="flex items-center gap-2 mb-4">
               <span className="w-2 h-2 bg-ac-red animate-blink" />
-              <span className="font-mono text-[9px] tracking-[3px] uppercase text-ac-red font-black">
+              <span className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red font-black">
                 TRY IT NOW
               </span>
             </div>
@@ -275,14 +275,14 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
                     ) : !result ? (
                       <>
                         <div className="text-text-ghost text-[1.5rem]">&uarr;</div>
-                        <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim text-center">
+                        <div className="font-mono text-[0.85rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim text-center">
                           Drop file here or click to upload
                         </div>
                         <div className="font-mono text-[0.5rem] text-text-ghost">PDF, JPG, PNG, WebP</div>
                       </>
                     ) : null}
                     {result && !filePreview && !pdfData && (
-                      <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
+                      <div className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                         Example data loaded
                       </div>
                     )}
@@ -299,7 +299,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
 
                 {/* Result preview */}
                 <div className="flex-1 min-w-0 border-2 border-border-subtle p-4 min-h-[220px] flex flex-col">
-                  <div className="font-mono text-[9px] tracking-[2px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.75rem] tracking-[2px] uppercase text-text-dim mb-3">
                     {result ? 'EXTRACTED DATA' : 'RESULTS PREVIEW'}
                   </div>
                   {loading && (
@@ -308,23 +308,23 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
                   {result && !loading && (
                     <div className="flex flex-col gap-[6px] flex-1">
                       <div className="flex justify-between text-[0.78rem]">
-                        <span className="text-text-dim font-mono text-[9px] tracking-[1px] uppercase">Supplier</span>
+                        <span className="text-text-dim font-mono text-[0.75rem] tracking-[1px] uppercase">Supplier</span>
                         <span className="text-text-primary font-light text-[0.78rem]">{result.supplier.name}</span>
                       </div>
                       <div className="flex justify-between text-[0.78rem]">
-                        <span className="text-text-dim font-mono text-[9px] tracking-[1px] uppercase">ABN</span>
+                        <span className="text-text-dim font-mono text-[0.75rem] tracking-[1px] uppercase">ABN</span>
                         <span className="text-text-primary font-light text-[0.78rem]">{result.supplier.abn}</span>
                       </div>
                       <div className="flex justify-between text-[0.78rem]">
-                        <span className="text-text-dim font-mono text-[9px] tracking-[1px] uppercase">Invoice #</span>
+                        <span className="text-text-dim font-mono text-[0.75rem] tracking-[1px] uppercase">Invoice #</span>
                         <span className="text-text-primary font-light text-[0.78rem]">{result.invoice.number}</span>
                       </div>
                       <div className="flex justify-between text-[0.78rem]">
-                        <span className="text-text-dim font-mono text-[9px] tracking-[1px] uppercase">Total</span>
+                        <span className="text-text-dim font-mono text-[0.75rem] tracking-[1px] uppercase">Total</span>
                         <span className="text-ac-red font-black text-[0.85rem]">{result.totals.total}</span>
                       </div>
                       <div className="flex justify-between text-[0.78rem]">
-                        <span className="text-text-dim font-mono text-[9px] tracking-[1px] uppercase">Tax</span>
+                        <span className="text-text-dim font-mono text-[0.75rem] tracking-[1px] uppercase">Tax</span>
                         <span className="text-text-primary font-light text-[0.78rem]">
                           {result.classification.type} — {result.classification.taxDeductible ? 'Deductible' : 'Not Deductible'}
                         </span>
@@ -340,7 +340,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
                     <div className="flex-1 flex flex-col gap-2 opacity-30">
                       {['Supplier', 'ABN', 'Invoice #', 'Total', 'Tax'].map((label) => (
                         <div key={label} className="flex justify-between">
-                          <span className="font-mono text-[9px] tracking-[1px] uppercase text-text-ghost">{label}</span>
+                          <span className="font-mono text-[0.75rem] tracking-[1px] uppercase text-text-ghost">{label}</span>
                           <span className="h-[10px] w-24 bg-text-dead" />
                         </div>
                       ))}
@@ -354,14 +354,14 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="flex-1 bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none"
+                  className="flex-1 bg-ac-red text-white font-display text-[0.85rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none"
                 >
                   {loading ? 'Scanning...' : 'Scan Invoice \u2192'}
                 </button>
                 <button
                   type="button"
                   onClick={result ? handleScanAnother : handleTryExample}
-                  className="flex-1 bg-transparent border-2 border-ac-red text-ac-red font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-ac-red hover:text-white cursor-pointer"
+                  className="flex-1 bg-transparent border-2 border-ac-red text-ac-red font-display text-[0.85rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-ac-red hover:text-white cursor-pointer"
                 >
                   {result ? 'Scan Another' : 'Try Example'}
                 </button>

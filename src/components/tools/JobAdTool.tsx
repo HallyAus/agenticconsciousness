@@ -68,7 +68,7 @@ const selectStyle = {
 };
 
 const btnClass =
-  'w-full py-4 font-display text-[0.75rem] font-black tracking-[2px] uppercase cursor-pointer border-none text-white transition-all duration-200 hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed';
+  'w-full py-4 font-display text-[0.85rem] font-black tracking-[2px] uppercase cursor-pointer border-none text-white transition-all duration-200 hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed';
 
 const STAGED_STEPS = [
   'Analysing role...',
@@ -360,7 +360,7 @@ export default function JobAdTool() {
                     {[result?.company, result?.location, result?.type, result?.salary].filter(Boolean).map((meta) => (
                       <span
                         key={meta}
-                        className="font-mono text-[0.75rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
+                        className="font-mono text-[0.85rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
                         style={{ background: 'var(--bg-card)', color: 'var(--text-dim)', border: '1px solid var(--border-subtle)' }}
                       >
                         {meta}
@@ -416,7 +416,7 @@ export default function JobAdTool() {
                     <ol className="flex flex-col gap-1.5 list-none">
                       {result?.responsibilities?.map((item, i) => (
                         <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
-                          <span className="font-mono text-[0.75rem] max-sm:text-xs mt-0.5 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
+                          <span className="font-mono text-[0.85rem] max-sm:text-xs mt-0.5 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -537,7 +537,7 @@ export default function JobAdTool() {
                   <button
                     type="button"
                     onClick={clearAll}
-                    className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:opacity-80"
+                    className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:opacity-80"
                     style={{ background: 'var(--red)', color: '#fff' }}
                   >
                     WRITE ANOTHER

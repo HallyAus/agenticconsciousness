@@ -56,15 +56,15 @@ export default function ToolsHero() {
         <div className="flex gap-16 max-sm:gap-8 max-sm:flex-wrap border-t pt-8" style={{ borderColor: 'var(--border-subtle)' }}>
           <div>
             <AnimatedCounter value={stats.invoices.toLocaleString()} className="text-[2rem] font-black tracking-tight" style={{ color: 'var(--red-text)' }} />
-            <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-1">Invoices scanned</div>
+            <div className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-1">Invoices scanned</div>
           </div>
           <div>
             <AnimatedCounter value={stats.quotes.toLocaleString()} className="text-[2rem] font-black tracking-tight" style={{ color: 'var(--red-text)' }} />
-            <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-1">Quotes generated</div>
+            <div className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-1">Quotes generated</div>
           </div>
           <div>
             <AnimatedCounter value={stats.competitors.toLocaleString()} className="text-[2rem] font-black tracking-tight" style={{ color: 'var(--red-text)' }} />
-            <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-1">Competitors analysed</div>
+            <div className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-1">Competitors analysed</div>
           </div>
         </div>
       </div>

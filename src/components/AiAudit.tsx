@@ -227,7 +227,7 @@ export default function AiAudit() {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full bg-ac-red text-white font-black tracking-[2px] uppercase text-[0.75rem] py-4 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity duration-150 hover:opacity-90"
+              className="w-full bg-ac-red text-white font-black tracking-[2px] uppercase text-[0.85rem] py-4 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity duration-150 hover:opacity-90"
             >
               {loading
                 ? 'Analysing...'
@@ -245,7 +245,7 @@ export default function AiAudit() {
           <div className="flex flex-col gap-6">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[3px] uppercase text-text-dim">
+                <div className="font-mono text-[0.85rem] max-sm:text-xs tracking-[3px] uppercase text-text-dim">
                   Your snapshot will appear here
                 </div>
                 <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
@@ -271,7 +271,7 @@ export default function AiAudit() {
             {loading && (
               <div className="flex flex-col gap-4 pt-2">
                 <AiLoading text="Analysing your business profile..." />
-                <p className="text-[0.75rem] text-text-dim font-mono tracking-[1px]">
+                <p className="text-[0.85rem] text-text-dim font-mono tracking-[1px]">
                   Identifying opportunities specific to your industry and pain point...
                 </p>
               </div>

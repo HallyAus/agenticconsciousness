@@ -172,7 +172,7 @@ export default async function BlogPost({ params }: Props) {
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="font-mono text-[0.75rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
+                    className="font-mono text-[0.85rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
                   >
                     {tag}
                   </span>
@@ -204,7 +204,7 @@ export default async function BlogPost({ params }: Props) {
                         {related.description}
                       </p>
                       <div className="flex items-center gap-3">
-                        <span className="font-mono text-[0.75rem] max-sm:text-xs text-text-ghost tracking-[1px] uppercase">
+                        <span className="font-mono text-[0.85rem] max-sm:text-xs text-text-ghost tracking-[1px] uppercase">
                           {new Date(related.publishedAt).toLocaleDateString('en-AU', {
                             day: 'numeric',
                             month: 'short',
@@ -236,7 +236,7 @@ export default async function BlogPost({ params }: Props) {
                 We turn these insights into real business systems.
               </p>
               <EmailLink
-                className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a]"
+                className="inline-block font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a]"
               >
                 Book free consultation →
               </EmailLink>

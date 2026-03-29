@@ -39,7 +39,7 @@ export default async function ProposalPage({ params }: Props) {
         <span className="font-display font-black text-[1.1rem] text-text-primary tracking-snug">
           AC<span style={{ color: 'var(--red-text)' }}>_</span>
         </span>
-        <span className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase">
+        <span className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase">
           PROPOSAL {id.slice(0, 8)}
         </span>
       </div>
@@ -169,7 +169,7 @@ export default async function ProposalPage({ params }: Props) {
 
         {/* Footer */}
         <div className="mt-16 pt-6 border-t text-center" style={{ borderColor: 'var(--border-subtle)' }}>
-          <p className="font-mono text-[0.75rem] max-sm:text-xs text-text-ghost tracking-[1px]">
+          <p className="font-mono text-[0.85rem] max-sm:text-xs text-text-ghost tracking-[1px]">
             Agentic Consciousness — ai@agenticconsciousness.com.au
           </p>
         </div>

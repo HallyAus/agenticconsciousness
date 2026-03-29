@@ -46,7 +46,7 @@ export default function ToolHeroSection({
               {/* Left column */}
               <div className="w-1/2 max-md:w-full flex flex-col gap-4">
                 {/* Tool label */}
-                <div className="font-mono text-[9px] tracking-[3px] uppercase text-ac-red">
+                <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red">
                   TOOL {number} / {name.toUpperCase()}
                 </div>
 
@@ -56,7 +56,7 @@ export default function ToolHeroSection({
                 </h3>
 
                 {/* Description */}
-                <p className="text-[11px] font-light leading-[1.7] text-text-dim max-w-[400px]">
+                <p className="text-[0.85rem] font-light leading-[1.7] text-text-dim max-w-[400px]">
                   {description}
                 </p>
 
@@ -70,7 +70,7 @@ export default function ToolHeroSection({
 
                 {/* Usage stat */}
                 {stats && (
-                  <div className="font-mono text-[9px] tracking-[2px] uppercase text-text-ghost">
+                  <div className="font-mono text-[0.75rem] tracking-[2px] uppercase text-text-ghost">
                     {stats}
                   </div>
                 )}
@@ -78,14 +78,14 @@ export default function ToolHeroSection({
 
               {/* Right column — sample output */}
               <div className="w-1/2 max-md:w-full">
-                <div className="font-mono text-[9px] tracking-[2px] uppercase text-text-ghost mb-3">
+                <div className="font-mono text-[0.75rem] tracking-[2px] uppercase text-text-ghost mb-3">
                   SAMPLE OUTPUT
                 </div>
                 <div className="border-2 p-5" style={{ borderColor: 'rgba(255, 61, 0, 0.15)', background: 'rgba(255, 61, 0, 0.05)' }}>
                   <div className="flex flex-col gap-[10px]">
                     {sampleOutput.map((row) => (
                       <div key={row.key} className="flex justify-between items-baseline gap-4">
-                        <span className="font-mono text-[9px] tracking-[1px] uppercase text-text-dim flex-shrink-0">
+                        <span className="font-mono text-[0.75rem] tracking-[1px] uppercase text-text-dim flex-shrink-0">
                           {row.key}
                         </span>
                         <span className="text-[0.82rem] font-light text-text-primary text-right">

@@ -37,7 +37,7 @@ export default function Process() {
                 <div key={step.phase} className="flex flex-col items-center text-center relative">
                   {/* Node */}
                   <div className="w-[54px] h-[54px] border-2 border-ac-red bg-[#0a0a0a] flex items-center justify-center relative z-10 mb-5">
-                    <span className="font-mono text-[0.75rem] text-ac-red font-bold tracking-wider">
+                    <span className="font-mono text-[0.85rem] text-ac-red font-bold tracking-wider">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                   </div>
@@ -91,11 +91,11 @@ export default function Process() {
                       <h3 className="text-[1rem] font-black text-text-primary tracking-[-0.3px]">
                         {step.title}
                       </h3>
-                      <span className="font-mono text-[0.75rem] text-ac-red">
+                      <span className="font-mono text-[0.85rem] text-ac-red">
                         {step.time}
                       </span>
                     </div>
-                    <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-2">
+                    <div className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-2">
                       {step.subtitle}
                     </div>
                     <p className="text-[0.8rem] text-text-dim leading-[1.6] font-light">

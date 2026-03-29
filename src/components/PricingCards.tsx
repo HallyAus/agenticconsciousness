@@ -114,7 +114,7 @@ export default function PricingCards() {
           <div className="text-[1.8rem] font-black mb-1" style={{ color: 'var(--red-text)' }}>
             {tier.price}
           </div>
-          <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[1px] mb-6">+ GST</div>
+          <div className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[1px] mb-6">+ GST</div>
 
           <ul className="flex flex-col gap-2 mb-6">
             {tier.items.map((item) => (
@@ -125,7 +125,7 @@ export default function PricingCards() {
             ))}
           </ul>
 
-          <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-6">
+          <div className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-6">
             Timeline: {tier.timeline}
           </div>
 

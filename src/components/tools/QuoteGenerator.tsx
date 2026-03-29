@@ -62,7 +62,7 @@ const inputClass =
   'w-full bg-ac-card border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim';
 
 const btnClass =
-  'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
+  'w-full bg-ac-red text-white font-display text-[0.85rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
 
 const selectClass =
   'w-full bg-ac-card border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red appearance-none cursor-pointer';
@@ -388,7 +388,7 @@ export default function QuoteGenerator() {
                       <div className="text-[1.4rem] font-black text-text-primary leading-none">{result.businessName}</div>
                     </div>
                     <div className="text-right">
-                      <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red font-black">QUOTE</div>
+                      <div className="font-mono text-[0.85rem] tracking-[3px] uppercase text-ac-red font-black">QUOTE</div>
                       <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] text-text-dim mt-1">{result.reference}</div>
                     </div>
                   </div>
@@ -517,7 +517,7 @@ export default function QuoteGenerator() {
                   <ol className="flex flex-col gap-1">
                     {result?.nextSteps?.map((step, i) => (
                       <li key={i} className="text-[0.82rem] text-text-dim font-light leading-[1.6] flex gap-3">
-                        <span className="font-mono text-[0.75rem] max-sm:text-xs mt-1 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
+                        <span className="font-mono text-[0.85rem] max-sm:text-xs mt-1 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
                         <span>{step}</span>
                       </li>
                     ))}
@@ -540,7 +540,7 @@ export default function QuoteGenerator() {
                   <button
                     type="button"
                     onClick={clearAll}
-                    className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
+                    className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
                     style={{ background: 'var(--red)', color: '#fff' }}
                   >
                     GENERATE ANOTHER

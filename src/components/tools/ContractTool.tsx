@@ -53,7 +53,7 @@ const inputStyle = {
 };
 
 const btnClass =
-  'w-full py-4 font-display text-[0.75rem] font-black tracking-[2px] uppercase cursor-pointer border-none text-white transition-all duration-200 hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed';
+  'w-full py-4 font-display text-[0.85rem] font-black tracking-[2px] uppercase cursor-pointer border-none text-white transition-all duration-200 hover:opacity-80 disabled:opacity-40 disabled:cursor-not-allowed';
 
 const STAGED_STEPS = [
   'Analysing clause...',
@@ -333,7 +333,7 @@ export default function ContractTool() {
                     animationDelay: '0ms',
                   }}
                 >
-                  <p className="font-mono text-[0.75rem] max-sm:text-xs tracking-[1px] leading-[1.6]" style={{ color: 'var(--red)' }}>
+                  <p className="font-mono text-[0.85rem] max-sm:text-xs tracking-[1px] leading-[1.6]" style={{ color: 'var(--red)' }}>
                     NOT LEGAL ADVICE — This analysis is for informational purposes only. Consult a qualified lawyer before signing any contract.
                   </p>
                 </div>
@@ -368,7 +368,7 @@ export default function ContractTool() {
                     animationDelay: '120ms',
                   }}
                 >
-                  <span className="font-mono text-[0.75rem] max-sm:text-xs tracking-[1px] uppercase text-text-dim">Overall assessment:</span>
+                  <span className="font-mono text-[0.85rem] max-sm:text-xs tracking-[1px] uppercase text-text-dim">Overall assessment:</span>
                   <AssessmentPill assessment={result?.overallAssessment} />
                 </div>
 
@@ -499,7 +499,7 @@ export default function ContractTool() {
                   <button
                     type="button"
                     onClick={clearAll}
-                    className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:opacity-80"
+                    className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-3 px-5 cursor-pointer border-none transition-all duration-200 hover:opacity-80"
                     style={{ background: 'var(--red)', color: '#fff' }}
                   >
                     REVIEW ANOTHER

@@ -28,7 +28,7 @@ export default function Nav() {
           <li key={link.href}>
             <a
               href={link.href}
-              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary"
+              className="text-text-dim no-underline text-[0.85rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary"
             >
               {link.label}
             </a>
@@ -65,7 +65,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
-              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary py-2"
+              className="text-text-dim no-underline text-[0.85rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary py-2"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
@@ -80,7 +80,7 @@ export default function Nav() {
             <a
               key={link.href}
               href={link.href}
-              className="text-text-dim no-underline text-[0.75rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary py-2"
+              className="text-text-dim no-underline text-[0.85rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary py-2"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}

@@ -46,12 +46,12 @@ export default function ToolExpander({ toolId, onClose }: ToolExpanderProps) {
     >
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-3 border-b-2 border-ac-red">
-        <div className="font-mono text-[9px] tracking-[3px] uppercase text-ac-red font-black">
+        <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red font-black">
           {label}
         </div>
         <button
           onClick={onClose}
-          className="font-mono text-[0.75rem] max-sm:text-xs font-black tracking-[2px] uppercase py-[6px] px-4 border-2 border-border-subtle text-text-dim bg-transparent cursor-pointer transition-all duration-200 hover:border-ac-red hover:text-ac-red"
+          className="font-mono text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-[6px] px-4 border-2 border-border-subtle text-text-dim bg-transparent cursor-pointer transition-all duration-200 hover:border-ac-red hover:text-ac-red"
         >
           &#x2715; CLOSE
         </button>

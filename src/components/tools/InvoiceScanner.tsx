@@ -44,7 +44,7 @@ interface InvoiceResult {
 }
 
 const btnClass =
-  'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
+  'w-full bg-ac-red text-white font-display text-[0.85rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
 
 const STAGED_STEPS = [
   'Reading document...',
@@ -490,7 +490,7 @@ export default function InvoiceScanner() {
                 <button
                   type="button"
                   onClick={handleScanAnother}
-                  className="w-full font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 cursor-pointer border-none text-white"
+                  className="w-full font-display text-[0.85rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 cursor-pointer border-none text-white"
                   style={{ background: 'var(--red)' }}
                   onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'white'; (e.currentTarget as HTMLButtonElement).style.color = '#000'; }}
                   onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--red)'; (e.currentTarget as HTMLButtonElement).style.color = 'white'; }}

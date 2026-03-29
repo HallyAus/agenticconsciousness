@@ -22,7 +22,7 @@ export default function PaymentSuccess() {
         </p>
         <Link
           href="/"
-          className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 text-white"
+          className="inline-block font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 text-white"
           style={{ background: 'var(--red)' }}
         >
           Back to home &rarr;

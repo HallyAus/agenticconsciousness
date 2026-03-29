@@ -75,7 +75,7 @@ export default function BlogPage() {
       <main className="pt-[60px] min-h-screen">
       <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
         <div className="max-w-[1000px] mx-auto">
-          <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.85rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
             AI-GENERATED CONTENT
           </div>
           <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-4">
@@ -108,16 +108,16 @@ export default function BlogPage() {
                       {featured.description}
                     </p>
                     <div className="flex items-center gap-6 flex-wrap">
-                      <span className="font-display text-[0.75rem] font-bold tracking-[2px] uppercase text-ac-red">
+                      <span className="font-display text-[0.85rem] font-bold tracking-[2px] uppercase text-ac-red">
                         Read article →
                       </span>
-                      <span className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
+                      <span className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                         By Daniel
                       </span>
-                      <span className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
+                      <span className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                         {readingTime} min read
                       </span>
-                      <span className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
+                      <span className="font-mono text-[0.85rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                         {new Date(featured.publishedAt).toLocaleDateString('en-AU', {
                           day: 'numeric',
                           month: 'short',
