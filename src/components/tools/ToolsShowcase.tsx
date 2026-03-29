@@ -8,7 +8,6 @@ import EmailLink from '@/components/EmailLink';
 import ToolHeroSection from '@/components/tools/ToolHeroSection';
 import ToolExpander from '@/components/tools/ToolExpander';
 import Link from 'next/link';
-import ToolGate from '@/components/tools/ToolGate';
 
 const TOOL_DATA = [
   {

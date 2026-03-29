@@ -296,11 +296,12 @@ function DailyCap({ email }: { email?: string }) {
 
 interface ToolGateProps {
   children: ReactNode;
+  toolId?: string;
   /** If true, always show children (used for FeaturedTool's "Try Example" button) */
   passthrough?: boolean;
 }
 
-export default function ToolGate({ children, passthrough = false }: ToolGateProps) {
+export default function ToolGate({ children, toolId, passthrough = false }: ToolGateProps) {
   const [state, refresh] = useSharedGateState();
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [showEmailGate, setShowEmailGate] = useState(false);
