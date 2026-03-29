@@ -4,33 +4,35 @@
 
 ## Last Updated
 
-- **Date:** 2026-03-27
+- **Date:** 2026-03-29
 - **Branch:** master
-- **Focus:** Tools page redesign — full-width showcase layout
+- **Focus:** SQLite rate limiting + email verification gate for tools
 
 ## Accomplished
 
-- Rebuilt /tools page: grid-of-cards replaced with full-width hero sections per tool
-- New components: ToolsShowcase, FeaturedTool (live Invoice Scanner demo), ToolNavStrip (sticky scroll-tracking), ToolHeroSection (per-tool hero with sample output), ToolExpander (inline expansion wrapping existing tool components)
-- Deleted: ToolGrid.tsx, ToolPanel.tsx, ToolsPageClient.tsx
-- Server-rendered SEO content (H1, H2 headings, descriptions) in page.tsx
-- Featured tool hero with live upload + "Try Example" flow
-- Sticky nav strip with IntersectionObserver scroll tracking
-- Tool sections dim to 25% opacity when another tool is expanded
-- Fixed 12 landing pages to have UNIQUE server-rendered content per page (was duplicating homepage)
-- Built entire site from scratch to production (53 pages, 20 API routes)
-- 8 AI-powered tools on /tools page (full-width showcase layout)
-- Dark/light theme with CSS custom properties
-- Stripe payments + pricing page
-- Proposal builder with acceptance flow
-- Email drip system (5 emails over 14 days)
-- Dynamic hero personalisation (UTM, landing pages, referrer, geo)
-- Exit intent popup with AI opportunity snapshot
-- 8 blog posts (3 seed + 5 new)
-- Plausible analytics integrated
-- Resend email utility (needs domain verification)
-- Multiple security + SEO audits completed
-- All tools use Haiku (fast) or Sonnet (complex) via centralised config
+### This Session (2026-03-29)
+- Replaced client-side localStorage rate limiting with server-side SQLite
+- Anonymous users: 3 free tool uses per day (IP+UA fingerprint)
+- Email-verified users: 20 free tool uses per day (HMAC cookie, 90-day sliding)
+- `src/lib/db.ts` — SQLite via better-sqlite3, WAL mode, startup integrity check, 90-day log cleanup
+- `src/lib/toolAccess.ts` — `checkToolAccess()` (increments + enforces), `getUsageStatus()` (read-only), `makeVerifiedCookie()`
+- `/api/tool-auth` — email submission, token generation, Resend email, auto-verify fallback if no RESEND_API_KEY
+- `/api/verify` — token verification, HMAC cookie set, cross-browser redirect page
+- `/api/tool-usage` — read-only usage state for ToolGate polling
+- `ToolGate.tsx` — shared context component with 5 states: loading/anonymous_ok/email_gate/verified_ok/capped
+- All 8 tool API routes updated to use `checkToolAccess()` (402 email_gate, 429 capped)
+- All 9 tool components migrated from `toolRateLimit` to `useToolAccess()` context
+- `ToolsShowcase.tsx` and `FeaturedTool.tsx` wrapped with `ToolGate`
+- Deleted `src/lib/toolRateLimit.ts`
+- Dockerfile: added python3/make/g++ for native SQLite build + copy bindings to runner stage
+- `next.config.ts`: added `serverExternalPackages: ['better-sqlite3']`
+- TypeScript: zero type errors (`npx tsc --noEmit` passes clean)
+- Note: `npm run build` fails in this dev environment due to Google Fonts network restriction (pre-existing, not a regression — production server has internet access)
+
+### Previous Sessions
+- Rebuilt /tools page: grid-of-cards → full-width hero sections per tool
+- 8 AI-powered tools, dark/light theme, Stripe, proposals, email drip
+- 53 pages, 20 API routes
 
 ## In Progress
 
@@ -41,30 +43,45 @@
 - Resend: needs domain DNS verification before emails actually send
 - Stripe: needs live API keys
 - Meta Pixel / Google Ads: needs account IDs
+- `npm run build` in dev env: Google Fonts 403 (network restriction — works on server)
 
 ## Next Steps
 
-1. Verify all 8 tools work on live site after latest deploy
-2. Set up Resend domain verification (DNS records)
-3. Add Stripe live keys + test checkout flow
-4. Mobile testing on physical devices
-5. Set up drip email cron job on server
-6. Generate more blog content for SEO
+1. **Deploy to production** — `docker build && docker-compose up -d`
+2. **Set COOKIE_SECRET** in production `.env` — `openssl rand -hex 32`
+3. Verify all 8 tools work on live site (rate limiting active)
+4. Set up Resend domain verification (DNS records)
+5. Add Stripe live keys + test checkout flow
+6. Mobile testing on physical devices
 
 ## Context
 
 - Server: /opt/agenticconsciousness/ (flat structure, no nesting)
-- Docker volumes: ac-data, ac-blog, ac-proposals, ac-drip
+- Docker volumes: ac-data (SQLite DB lives here), ac-blog, ac-proposals, ac-drip
+- SQLite DB: `/app/data/tool-access.db` in production (`data/tool-access.db` in dev)
 - Haiku for 7 fast routes, Sonnet for 8 complex routes
 - parseAiJson handles markdown-wrapped JSON from Claude
 - Docker nextjs user needs chown on /app/data and /app/content
 - Cloudflare Tunnel: cf-ipcountry only (no city), using ip-api.com for geolocation
+- COOKIE_SECRET must be set in production for email gate to work — without it, anonymous 3-use limit still enforced but no upgrade path
 
 ## Files Modified
 
 ```
-Too many to list — see git log for full history (40+ commits)
-Key: src/lib/parseAiJson.ts, src/lib/models.ts, src/lib/email.ts,
-     all components in src/components/tools/,
-     all routes in src/app/api/tools/
+Key new files:
+  src/lib/db.ts
+  src/lib/toolAccess.ts
+  src/app/api/tool-auth/route.ts
+  src/app/api/tool-usage/route.ts
+  src/app/api/verify/route.ts
+  src/components/tools/ToolGate.tsx
+
+Modified:
+  Dockerfile, next.config.ts, package.json
+  All 8 src/app/api/tools/*/route.ts
+  All 9 src/components/tools/*.tsx (tool components)
+  src/components/tools/ToolsShowcase.tsx
+
+Deleted:
+  src/lib/toolRateLimit.ts
 ```
