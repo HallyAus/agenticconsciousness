@@ -7,6 +7,7 @@ import EmailLink from '@/components/EmailLink';
 import ToolHeroSection from '@/components/tools/ToolHeroSection';
 import ToolExpander from '@/components/tools/ToolExpander';
 import Link from 'next/link';
+import ToolGate from '@/components/tools/ToolGate';
 
 const TOOL_DATA = [
   {
@@ -158,7 +159,9 @@ export default function ToolsShowcase() {
   return (
     <main className="pt-[60px] min-h-screen">
       {/* Featured Tool Hero */}
-      <FeaturedTool stats={stats} />
+      <ToolGate>
+        <FeaturedTool stats={stats} />
+      </ToolGate>
 
       {/* Sticky Nav Strip */}
       <ToolNavStrip
@@ -185,7 +188,9 @@ export default function ToolsShowcase() {
             />
             {expandedTool === tool.id && (
               <div id={`tool-expander-${tool.id}`}>
-                <ToolExpander toolId={tool.id} onClose={handleClose} />
+                <ToolGate>
+                  <ToolExpander toolId={tool.id} onClose={handleClose} />
+                </ToolGate>
               </div>
             )}
           </div>

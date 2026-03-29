@@ -2,6 +2,7 @@ FROM node:20-alpine AS base
 
 FROM base AS deps
 WORKDIR /app
+RUN apk add --no-cache python3 make g++
 COPY package.json package-lock.json* ./
 RUN npm ci
 
@@ -32,6 +33,9 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy better-sqlite3 native bindings
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
 
 # Create writable directories for runtime data
 RUN mkdir -p /app/data /app/content/blog /app/content/proposals /app/content/drip \

@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { checkToolAccess } from '@/lib/toolAccess';
 import { validateCsrf } from '@/lib/csrf';
 import { incrementToolStat } from '@/lib/toolStats';
 import { parseAiJson } from '@/lib/parseAiJson';
@@ -11,11 +11,16 @@ const client = new Anthropic({
 });
 
 export async function POST(req: NextRequest) {
-  const ip = (req.headers.get('x-forwarded-for')?.split(',')[0] ?? req.headers.get('x-real-ip'))?.trim() || 'unknown';
-  const rateLimit = checkRateLimit(ip);
-  if (!rateLimit.allowed) {
+  const access = checkToolAccess(req, 'contract');
+  if (access.status === 'email_gate') {
     return NextResponse.json(
-      { error: `Rate limit exceeded. Try again in ${rateLimit.retryAfter}s.` },
+      { error: 'Daily limit reached. Verify your email for 20 uses per day.', code: 'email_gate' },
+      { status: 402 }
+    );
+  }
+  if (access.status === 'capped') {
+    return NextResponse.json(
+      { error: 'Daily limit reached. Resets at midnight.', code: 'capped' },
       { status: 429 }
     );
   }

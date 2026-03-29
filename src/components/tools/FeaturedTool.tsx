@@ -4,10 +4,9 @@ import { useState, useRef, useCallback } from 'react';
 import StagedLoading from '@/components/StagedLoading';
 import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
-import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 import { trackEvent } from '@/lib/tracking';
 import { useCsrf } from '@/lib/useCsrf';
-import Link from 'next/link';
+import { useToolAccess } from '@/components/tools/ToolGate';
 
 interface InvoiceResult {
   supplier: {
@@ -74,6 +73,7 @@ const EXAMPLE_RESULT: InvoiceResult = {
 
 export default function FeaturedTool({ stats }: FeaturedToolProps) {
   const csrfToken = useCsrf();
+  const toolAccess = useToolAccess();
   const [imageData, setImageData] = useState<{ data: string; mediaType: 'image/jpeg' | 'image/png' | 'image/webp' } | null>(null);
   const [pdfData, setPdfData] = useState<{ data: string } | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
@@ -82,7 +82,6 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
   const [apiDone, setApiDone] = useState(false);
   const [result, setResult] = useState<InvoiceResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [remainingUses, setRemainingUses] = useState<number>(() => getUsesRemaining());
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -148,17 +147,11 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
     if (fileRef.current) fileRef.current.value = '';
   }
 
-  const canSubmit = !loading && remainingUses > 0 && (imageData !== null || pdfData !== null);
+  const canSubmit = !loading && (imageData !== null || pdfData !== null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!canSubmit) return;
-
-    const currentRemaining = getUsesRemaining();
-    if (currentRemaining <= 0) {
-      setRemainingUses(0);
-      return;
-    }
 
     setLoading(true);
     setApiDone(false);
@@ -174,11 +167,18 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
       });
 
       const data = await res.json();
+
+      if (res.status === 402 || res.status === 429) {
+        setError(data.error || 'Daily limit reached. Please verify your email.');
+        toolAccess?.triggerEmailGate();
+        toolAccess?.refresh();
+        return;
+      }
+
       if (!res.ok) {
         setError(data.error || 'Scanning failed. Please try again.');
       } else {
-        const next = incrementRateLimit();
-        setRemainingUses(Math.max(0, MAX_TOOL_USES - next.count));
+        toolAccess?.refresh();
         setApiDone(true);
         setTimeout(() => {
           setResult(data);
@@ -351,40 +351,24 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
 
               {/* Buttons */}
               <div className="flex gap-[2px] mt-[2px]">
-                {remainingUses <= 0 ? (
-                  <div className="flex-1 bg-ac-card border-2 border-ac-red p-4 text-center">
-                    <p className="text-[0.8rem] font-black text-text-primary mb-1">You&apos;ve hit the limit.</p>
-                    <Link href="/#contact" className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red no-underline hover:underline">
-                      Book free consultation &rarr;
-                    </Link>
-                  </div>
-                ) : (
-                  <>
-                    <button
-                      type="submit"
-                      disabled={!canSubmit}
-                      className="flex-1 bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none"
-                    >
-                      {loading ? 'Scanning...' : 'Scan Invoice \u2192'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={result ? handleScanAnother : handleTryExample}
-                      className="flex-1 bg-transparent border-2 border-ac-red text-ac-red font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-ac-red hover:text-white cursor-pointer"
-                    >
-                      {result ? 'Scan Another' : 'Try Example'}
-                    </button>
-                  </>
-                )}
+                <button
+                  type="submit"
+                  disabled={!canSubmit}
+                  className="flex-1 bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none"
+                >
+                  {loading ? 'Scanning...' : 'Scan Invoice \u2192'}
+                </button>
+                <button
+                  type="button"
+                  onClick={result ? handleScanAnother : handleTryExample}
+                  className="flex-1 bg-transparent border-2 border-ac-red text-ac-red font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-ac-red hover:text-white cursor-pointer"
+                >
+                  {result ? 'Scan Another' : 'Try Example'}
+                </button>
               </div>
 
               {error && (
                 <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px] mt-2">{error}</p>
-              )}
-              {remainingUses > 0 && remainingUses < MAX_TOOL_USES && (
-                <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[1px] text-text-dim text-center mt-2">
-                  {remainingUses} of {MAX_TOOL_USES} free uses remaining this minute
-                </div>
               )}
             </form>
           </div>
