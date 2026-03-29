@@ -17,3 +17,10 @@
 - [2026-03-24] The tunnel service type must be HTTP not HTTPS — the Next.js container serves plain HTTP, Cloudflare handles SSL at the edge
 - [2026-03-24] next-sitemap postbuild generates sitemap.xml and robots.txt in public/ — these need to be committed to git for Docker builds
 - [2026-03-24] Server deployment path is /opt/agenticconsciousness/ (flat) — initial clone created nested directory which caused confusion
+- [2026-03-29] NEXT_PUBLIC_ env vars must be Docker build args, not just runtime env — they're baked into JS at build time. Add to both Dockerfile ARG and docker-compose.yml build.args
+- [2026-03-29] better-sqlite3 needs python3/make/g++ in Alpine Docker deps stage for native module compilation, plus serverExternalPackages in next.config.ts for standalone mode
+- [2026-03-29] Cloudflare Email Obfuscation replaces mailto: links with /cdn-cgi/l/email-protection# URLs that 404 — either disable in dashboard or use client-side JS to assemble email addresses at runtime
+- [2026-03-29] Docker Compose reads .env by default (not .env.local) — .env.local is a Next.js dev convention only. Deploy docs had this wrong.
+- [2026-03-29] Squirrel audit scans the LIVE site, not local — changes must be deployed before re-auditing shows improvement
+- [2026-03-30] hover:text-ac-black breaks in light mode because ac-black maps to var(--bg-page) which is light beige — use hover:text-[#0a0a0a] for always-dark hover text
+- [2026-03-30] Form inputs using bg-ac-black disappear in light mode because page bg is the same colour — use bg-ac-card instead for theme-safe input backgrounds
