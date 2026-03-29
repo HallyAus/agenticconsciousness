@@ -16,7 +16,7 @@ interface AiResult {
 type Step = 'challenge' | 'recommend' | 'done';
 
 const INPUT_CLASS =
-  'w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary py-3 px-4 font-display text-[0.85rem] placeholder:text-text-dim transition-colors duration-150';
+  'w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary py-3 px-4 font-display text-[0.85rem] placeholder:text-text-dim transition-colors duration-150';
 
 export default function CTA() {
   const csrfToken = useCsrf();
@@ -86,7 +86,7 @@ export default function CTA() {
     <section id="contact" aria-label="Contact us" className="py-28 px-10 relative overflow-hidden max-md:px-5 max-sm:py-20">
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
-          <div className="bg-ac-card border-2 border-ac-red py-20 px-12 relative max-sm:py-12 max-sm:px-6">
+          <div className="bg-ac-card border-2 border-ac-red py-20 px-12 max-sm:px-5 relative max-sm:py-12">
             {/* Ghost watermark */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[20rem] font-black text-[var(--ghost-watermark)] pointer-events-none tracking-[-10px] select-none">
               AC
@@ -126,7 +126,7 @@ export default function CTA() {
                     <button
                       onClick={handleAnalyse}
                       disabled={!challenge.trim()}
-                      className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
+                      className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                     >
                       ANALYSE →
                     </button>
@@ -202,7 +202,7 @@ export default function CTA() {
                     />
                     <textarea
                       className={`${INPUT_CLASS} min-h-[100px] max-sm:min-h-[80px] resize-y`}
-                      aria-label="Message"
+                      aria-label="Your message"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       disabled={submitting}
@@ -218,7 +218,7 @@ export default function CTA() {
                       <button
                         type="submit"
                         disabled={!name.trim() || !email.trim()}
-                        className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed self-start focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
+                        className="font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed self-start focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                       >
                         SEND →
                       </button>

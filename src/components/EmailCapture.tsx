@@ -50,11 +50,11 @@ export default function EmailCapture() {
           onChange={(e) => { setEmail(e.target.value); setError(''); }}
           placeholder="you@business.com.au"
           aria-label="Email address"
-          className="flex-1 bg-ac-black border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim"
+          className="flex-1 bg-ac-card border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim"
         />
         <button
           type="submit"
-          className="bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase px-6 py-3 transition-all duration-200 hover:bg-white hover:text-ac-black cursor-pointer border-none"
+          className="bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase px-6 py-3 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] cursor-pointer border-none"
         >
           Subscribe
         </button>

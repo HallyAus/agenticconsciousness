@@ -131,7 +131,7 @@ export default function BlogPage() {
 
               {/* Separator */}
               {posts.length > 1 && (
-                <div className="my-8 border-t border-white/[0.06]" />
+                <div className="my-8 border-t border-border-subtle" />
               )}
 
               {/* Remaining Posts */}

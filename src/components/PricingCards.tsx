@@ -131,7 +131,7 @@ export default function PricingCards() {
 
           <div className="flex flex-col gap-2">
             <EmailLink
-              className="block text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 no-underline transition-all duration-200"
+              className="block text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 max-sm:py-4 no-underline transition-all duration-200"
               style={{
                 border: '2px solid var(--red)',
                 color: 'var(--red-text)',
@@ -143,7 +143,7 @@ export default function PricingCards() {
             <button
               onClick={() => handleCheckout(tier.packageId)}
               disabled={loading === tier.packageId}
-              className="block w-full text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 transition-all duration-200 cursor-pointer border-none text-white disabled:opacity-40"
+              className="block w-full text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 max-sm:py-4 transition-all duration-200 cursor-pointer border-none text-white disabled:opacity-40"
               style={{ background: 'var(--red)' }}
             >
               {loading === tier.packageId ? 'Processing...' : `Pay deposit (${tier.deposit}) \u2192`}

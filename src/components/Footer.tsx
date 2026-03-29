@@ -44,7 +44,7 @@ export default function Footer() {
   return (
     <footer>
       {/* Tier 1 — Logo + Email + CTA */}
-      <div className="border-t-2 py-6 px-8 flex justify-between items-center gap-6 flex-wrap border-b max-md:flex-col max-md:items-start" style={{ borderTopColor: 'var(--red)', borderBottomColor: 'var(--border-subtle)' }}>
+      <div className="border-t-2 py-6 px-8 max-sm:px-4 flex justify-between items-center gap-6 flex-wrap border-b max-md:flex-col max-md:items-start" style={{ borderTopColor: 'var(--red)', borderBottomColor: 'var(--border-subtle)' }}>
         <div className="flex items-center gap-6 flex-wrap">
           <Link href="/" className="font-display font-black text-[1.1rem] text-text-primary tracking-snug no-underline">
             AC<span style={{ color: 'var(--red-text)' }}>_</span>
@@ -55,7 +55,7 @@ export default function Footer() {
           />
         </div>
         <EmailLink
-          className="inline-block font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-[0.7rem] px-[1.4rem] no-underline transition-all duration-200 text-white"
+          className="inline-block font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-5 no-underline transition-all duration-200 text-white"
           style={{ background: 'var(--red)' }}
         >
           Book free intro →
@@ -63,7 +63,7 @@ export default function Footer() {
       </div>
 
       {/* Tier 1.5 — Brand name */}
-      <div className="py-8 px-8 border-b" style={{ borderColor: 'var(--border-subtle)' }}>
+      <div className="py-8 px-8 max-sm:px-4 border-b" style={{ borderColor: 'var(--border-subtle)' }}>
         <div
           className="font-display font-black leading-[0.92]"
           style={{ fontSize: 'clamp(1.8rem, 5vw, 2.5rem)', letterSpacing: '-2px' }}
@@ -89,7 +89,7 @@ export default function Footer() {
         ].map((group, i, arr) => (
           <div
             key={group.title}
-            className={`py-6 px-8 flex-1 ${i < arr.length - 1 ? 'border-r max-md:border-r-0 max-md:border-b' : ''}`}
+            className={`py-6 px-8 max-sm:px-4 flex-1 ${i < arr.length - 1 ? 'border-r max-md:border-r-0 max-md:border-b' : ''}`}
             style={{ borderColor: 'var(--border-subtle)' }}
           >
             <div className="font-display text-[0.8rem] max-sm:text-xs font-black tracking-[3px] mb-3" style={{ color: 'var(--red-ghost)' }}>
@@ -111,7 +111,7 @@ export default function Footer() {
       </div>
 
       {/* Tier 3 — Status bar */}
-      <div className="h-12 px-8 flex justify-between items-center border-t-2 max-sm:h-auto max-sm:py-4 max-sm:flex-col max-sm:gap-3" style={{ borderColor: 'var(--red)' }}>
+      <div className="h-12 px-8 max-sm:px-4 flex justify-between items-center border-t-2 max-sm:h-auto max-sm:py-4 max-sm:flex-col max-sm:gap-3" style={{ borderColor: 'var(--red)' }}>
         <div className="flex items-center gap-5 flex-wrap max-sm:justify-center max-sm:gap-3">
           <Link href="/" className="font-display font-black text-[0.8rem] text-text-primary tracking-snug no-underline">
             AC<span style={{ color: 'var(--red-text)' }}>_</span>

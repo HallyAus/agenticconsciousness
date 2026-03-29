@@ -41,7 +41,7 @@ export default function Nav() {
         <ThemeToggle />
         <a
           href="#contact"
-          className="inline-block bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-[0.7rem] px-[1.4rem] no-underline transition-all duration-200 hover:bg-white hover:text-ac-black"
+          className="inline-block bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-5 no-underline transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
         >
           Talk to us
         </a>
@@ -91,7 +91,7 @@ export default function Nav() {
             <ThemeToggle />
             <a
               href="#contact"
-              className="inline-block bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-6 no-underline transition-all duration-200 hover:bg-white hover:text-ac-black text-center flex-1"
+              className="inline-block bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-6 no-underline transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] text-center flex-1"
               onClick={() => setMenuOpen(false)}
             >
               Talk to us

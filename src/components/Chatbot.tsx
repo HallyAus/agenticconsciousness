@@ -128,7 +128,7 @@ export default function Chatbot() {
         className={`fixed bottom-6 right-6 z-[9999] w-14 h-14 border-none text-[1.2rem] font-black cursor-pointer transition-all duration-200 flex items-center justify-center focus:ring-2 focus:ring-ac-red focus:outline-none ${
           isOpen
             ? 'bg-white text-ac-black'
-            : 'bg-ac-red text-white hover:bg-white hover:text-ac-black'
+            : 'bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a]'
         }`}
         onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? 'Close chat' : 'Open AI chat assistant'}
@@ -186,14 +186,14 @@ export default function Chatbot() {
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything..."
               maxLength={2000}
-              className="flex-1 bg-ac-black border border-border-subtle py-3 px-[0.8rem] text-text-primary font-display text-[0.8rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim"
+              className="flex-1 bg-ac-card border border-border-subtle py-3 px-[0.8rem] text-text-primary font-display text-[0.8rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim"
               aria-label="Chat message"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="bg-ac-red border-none text-white px-4 py-3 font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] cursor-pointer transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:outline-none"
+              className="bg-ac-red border-none text-white px-4 py-3 font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] cursor-pointer transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:outline-none"
             >
               SEND
             </button>

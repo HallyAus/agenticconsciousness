@@ -44,7 +44,7 @@ interface InvoiceResult {
 }
 
 const btnClass =
-  'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
+  'w-full bg-ac-red text-white font-display text-[0.75rem] font-black tracking-[2px] uppercase py-4 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer border-none';
 
 const STAGED_STEPS = [
   'Reading document...',
@@ -274,8 +274,7 @@ export default function InvoiceScanner() {
                   {['Description', 'Qty', 'Unit Price', 'Amount'].map((h, hi) => (
                     <th
                       key={h}
-                      style={{ color: 'white' }}
-                      className={`font-mono text-[0.5rem] tracking-[1px] uppercase py-2 px-2 text-left ${hi === 3 ? 'text-right' : ''}`}
+                      className={`font-mono text-[0.5rem] tracking-[1px] uppercase text-white py-2 px-2 text-left ${hi === 3 ? 'text-right' : ''}`}
                     >
                       {h}
                     </th>

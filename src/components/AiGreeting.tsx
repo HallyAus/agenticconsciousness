@@ -100,7 +100,7 @@ export default function AiGreeting() {
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 translate-y-1'
             }`}
-            style={{ color: 'rgba(255,255,255,0.35)' }}
+            style={{ color: 'var(--text-ghost)' }}
           >
             <span
               className="inline-block w-[5px] h-[5px] mr-[5px] align-middle"

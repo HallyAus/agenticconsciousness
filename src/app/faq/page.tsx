@@ -492,7 +492,7 @@ export default function FAQPage() {
             </div>
 
             <div className="mt-14 text-center">
-              <div className="border-2 border-white/10 bg-white/[0.02] p-10 max-sm:p-6">
+              <div className="border-2 border-border-subtle bg-ac-card p-10 max-sm:p-6">
                 <p className="text-text-primary text-[1.1rem] font-black mb-3">
                   Still have questions?
                 </p>
@@ -500,7 +500,7 @@ export default function FAQPage() {
                   Book a free consultation — no obligation, no sales pitch.
                 </p>
                 <EmailLink
-                  className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-ac-black"
+                  className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a]"
                 >
                   Get in touch →
                 </EmailLink>

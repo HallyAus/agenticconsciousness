@@ -91,7 +91,7 @@ export default function AboutPage() {
               We exist because most businesses are being sold AI hype, not AI outcomes.
             </p>
 
-            <div className="border-2 border-white/10 bg-white/[0.02] p-10 max-sm:p-6 mb-[2px]">
+            <div className="border-2 border-border-subtle bg-ac-card p-10 max-sm:p-6 mb-[2px]">
               <div className="text-ac-red font-black text-[1.6rem] tracking-[-1px] mb-2">
                 21+ Years in the Field
               </div>
@@ -161,7 +161,7 @@ export default function AboutPage() {
               ))}
             </div>
 
-            <div className="border-2 border-white/10 bg-white/[0.02] p-10 max-sm:p-6">
+            <div className="border-2 border-border-subtle bg-ac-card p-10 max-sm:p-6">
               <p className="text-text-dim text-[0.9rem] font-light leading-[1.8] mb-5">
                 Most AI consultants stop at strategy. They hand you a PDF and wish you luck. We don&apos;t
                 operate that way. Our{' '}
@@ -231,7 +231,7 @@ export default function AboutPage() {
         {/* Section 4 — CTA */}
         <section className="py-20 px-10 max-md:px-5 max-sm:px-4 max-sm:py-16">
           <div className="max-w-[1000px] mx-auto text-center">
-            <div className="border-2 border-white/10 bg-white/[0.02] p-14 max-sm:p-8">
+            <div className="border-2 border-border-subtle bg-ac-card p-14 max-sm:p-8">
               <h2 className="text-[clamp(1.5rem,4vw,2.5rem)] font-black tracking-tight leading-none mb-4 text-text-primary">
                 Ready to talk?
               </h2>
@@ -240,7 +240,7 @@ export default function AboutPage() {
                 conversation about what AI can do for your business.
               </p>
               <EmailLink
-                className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-ac-black"
+                className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a]"
               >
                 Book free consultation →
               </EmailLink>

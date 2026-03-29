@@ -104,7 +104,7 @@ export default function AiAudit() {
   }
 
   const selectClass =
-    'w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 appearance-none cursor-pointer transition-colors duration-150';
+    'w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 appearance-none cursor-pointer transition-colors duration-150';
 
   return (
     <section id="ai-audit" aria-label="AI business audit" className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
@@ -212,7 +212,7 @@ export default function AiAudit() {
                   onChange={(e) => setPainPoint(e.target.value.slice(0, 500))}
                   placeholder="e.g. Quoting takes our estimators 3+ hours per job and we're losing work to faster competitors..."
                   rows={5}
-                  className="w-full bg-ac-black border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] max-sm:min-h-[100px] transition-colors duration-150 placeholder:text-text-dim"
+                  className="w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] max-sm:min-h-[100px] transition-colors duration-150 placeholder:text-text-dim"
                   required
                 />
                 <div

@@ -57,7 +57,7 @@ export default function Hero() {
       <ScrollReveal delay={0.15}>
         <a
           href="#contact"
-          className="inline-block font-display text-[0.95rem] font-black tracking-[2px] uppercase py-[1.1rem] px-10 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-ac-black mb-2"
+          className="inline-block font-display text-[0.95rem] font-black tracking-[2px] uppercase py-[1.1rem] px-10 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a] mb-2"
         >
           Free consultation →
         </a>
@@ -67,11 +67,11 @@ export default function Hero() {
       </ScrollReveal>
 
       <ScrollReveal delay={0.2}>
-        <div className="flex gap-[2px] w-full max-w-[640px]">
+        <div className="flex gap-[2px] w-full max-w-[640px] max-sm:max-w-full">
           {counters.map((c, i) => (
             <div
               key={c.label}
-              className={`flex-1 bg-white/[0.02] border border-white/[0.06] py-5 px-4 text-center ${
+              className={`flex-1 bg-ac-card border border-border-subtle py-5 px-4 text-center ${
                 i === counters.length - 1 ? 'border-t-2 border-t-ac-red' : ''
               }`}
             >

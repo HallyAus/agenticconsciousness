@@ -77,7 +77,7 @@ export default function Process() {
               {PROCESS_STEPS.map((step, i) => (
                 <div key={step.phase} className="relative">
                   {/* Node */}
-                  <div className="absolute -left-10 top-0 w-[32px] h-[32px] border-2 border-ac-red bg-ac-bg flex items-center justify-center z-10"
+                  <div className="absolute -left-10 top-0 w-[32px] h-[32px] border-2 border-ac-red bg-ac-black flex items-center justify-center z-10"
                     style={{ transform: 'translateX(-50%)' }}
                   >
                     <span className="font-mono text-[0.8rem] max-sm:text-xs text-ac-red font-bold">

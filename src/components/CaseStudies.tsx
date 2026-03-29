@@ -28,11 +28,11 @@ export default function CaseStudies() {
             {CASE_STUDIES.map((cs) => (
               <div
                 key={cs.title}
-                className="grid grid-cols-[200px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-stretch max-md:grid-cols-1"
+                className="grid grid-cols-[200px_1fr_auto] max-sm:grid-cols-1 bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-stretch max-md:grid-cols-1"
               >
                 <div className="flex flex-col items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red text-center max-md:border-r-0 max-md:border-b-2 max-md:p-4">
                   <span>{cs.industry}</span>
-                  <span className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-white/20 mt-1">
+                  <span className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-text-ghost mt-1">
                     {cs.timeline}
                   </span>
                 </div>
@@ -44,8 +44,8 @@ export default function CaseStudies() {
                     {cs.desc}
                   </p>
                   <div className="grid grid-cols-2 gap-[2px] mt-4 max-w-[500px]">
-                    <div className="border border-white/10 p-3">
-                      <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-white/30 mb-1">
+                    <div className="border border-border-subtle p-3">
+                      <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-text-ghost mb-1">
                         BEFORE
                       </div>
                       <div className="text-[0.8rem] text-text-dim font-light leading-[1.5]">

@@ -311,7 +311,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
             <div className="flex gap-4 max-sm:flex-col">
               <a
                 href="#contact"
-                className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-ac-black"
+                className="inline-block font-display text-[0.75rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a]"
               >
                 Free consultation &rarr;
               </a>

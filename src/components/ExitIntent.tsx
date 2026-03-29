@@ -285,7 +285,7 @@ export default function ExitIntent() {
               </EmailLink>
             </div>
 
-            <p className="font-mono mt-4" style={{ fontSize: '0.55rem', color: 'var(--text-ghost)' }}>
+            <p className="font-mono mt-4 max-sm:text-xs" style={{ fontSize: '0.55rem', color: 'var(--text-ghost)' }}>
               No spam. One email. That&apos;s it.
             </p>
           </>

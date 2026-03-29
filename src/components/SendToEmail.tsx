@@ -55,7 +55,7 @@ export default function SendToEmail({ resultText, toolName }: SendToEmailProps) 
         onChange={(e) => { setEmail(e.target.value); setError(''); }}
         placeholder="Email results to..."
         aria-label="Email results to"
-        className="bg-ac-black border border-border-subtle py-3 px-3 text-text-primary font-display text-[0.75rem] outline-none transition-colors duration-200 focus:border-ac-red focus:ring-2 focus:ring-ac-red placeholder:text-text-dim w-[200px]"
+        className="bg-ac-card border border-border-subtle py-3 px-3 text-text-primary font-display text-[0.75rem] outline-none transition-colors duration-200 focus:border-ac-red focus:ring-2 focus:ring-ac-red placeholder:text-text-dim w-[200px]"
       />
       <button
         type="submit"
