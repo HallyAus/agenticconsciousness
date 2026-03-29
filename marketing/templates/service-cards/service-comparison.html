@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AC_ Service — Comparison</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+body { width: 1080px; height: 1350px; background: #0a0a0a; color: #ffffff; font-family: 'Be Vietnam Pro', sans-serif; overflow: hidden; position: relative; }
+.ghost-text { position: absolute; top: -40px; right: -20px; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 250px; color: rgba(255, 255, 255, 0.04); line-height: 1; pointer-events: none; }
+.top-bar { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ff3d00; }
+.header { position: absolute; top: 50px; left: 80px; right: 80px; }
+.logo { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 28px; color: #ffffff; margin-bottom: 20px; }
+.logo span { color: #ff3d00; }
+.page-title { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 44px; line-height: 1.1; color: #ffffff; margin-bottom: 8px; }
+.page-title em { font-style: normal; color: #ff3d00; }
+.subtitle { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 13px; text-transform: uppercase; letter-spacing: 3px; color: rgba(255, 255, 255, 0.5); }
+.tiers { position: absolute; top: 240px; left: 80px; right: 80px; display: flex; flex-direction: column; gap: 2px; }
+.tier { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); padding: 40px; display: flex; align-items: flex-start; gap: 40px; position: relative; }
+.tier.featured { border-color: #ff3d00; background: rgba(255, 61, 0, 0.05); }
+.tier-num { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 12px; color: #ff3d00; text-transform: uppercase; letter-spacing: 2px; min-width: 80px; padding-top: 4px; }
+.tier-content { flex: 1; }
+.tier-name { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 28px; color: #ffffff; margin-bottom: 10px; }
+.tier-desc { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; font-size: 16px; line-height: 1.5; color: rgba(255, 255, 255, 0.6); margin-bottom: 16px; }
+.tier-features { display: flex; flex-wrap: wrap; gap: 8px; }
+.tier-feature { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.4); padding: 6px 12px; border: 1px solid rgba(255, 255, 255, 0.1); }
+.tier.featured .tier-feature { border-color: rgba(255, 61, 0, 0.3); color: rgba(255, 255, 255, 0.6); }
+.tier-price { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 20px; color: #ff3d00; min-width: 120px; text-align: right; padding-top: 4px; }
+.featured-badge { position: absolute; top: -1px; right: 40px; background: #ff3d00; color: #0a0a0a; font-family: 'Space Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; padding: 6px 16px; }
+.footer { position: absolute; bottom: 50px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; }
+.cta { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 18px; color: #ff3d00; }
+.url { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 12px; color: rgba(255, 255, 255, 0.4); letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="ghost-text">TIERS</div>
+<div class="top-bar"></div>
+<div class="header">
+<div class="logo">AC<span>_</span></div>
+<div class="page-title">Choose Your <em>Path</em></div>
+<div class="subtitle">// Service Tiers</div>
+</div>
+<div class="tiers">
+<div class="tier">
+<div class="tier-num">Tier 01</div>
+<div class="tier-content">
+<div class="tier-name">Strategy & Workshops</div>
+<div class="tier-desc">AI readiness audit, opportunity mapping, team workshops, and a practical implementation roadmap.</div>
+<div class="tier-features">
+<div class="tier-feature">Audit</div>
+<div class="tier-feature">Roadmap</div>
+<div class="tier-feature">Workshop</div>
+<div class="tier-feature">Report</div>
+</div>
+</div>
+<div class="tier-price">From $2,500</div>
+</div>
+<div class="tier featured">
+<div class="featured-badge">Popular</div>
+<div class="tier-num">Tier 02</div>
+<div class="tier-content">
+<div class="tier-name">Tool Implementation</div>
+<div class="tier-desc">Deploy AI tools that integrate with your existing stack. Custom configuration, training, and support.</div>
+<div class="tier-features">
+<div class="tier-feature">Integration</div>
+<div class="tier-feature">Training</div>
+<div class="tier-feature">Support</div>
+<div class="tier-feature">Custom Config</div>
+</div>
+</div>
+<div class="tier-price">From $5,000</div>
+</div>
+<div class="tier">
+<div class="tier-num">Tier 03</div>
+<div class="tier-content">
+<div class="tier-name">Automation & Agents</div>
+<div class="tier-desc">Build autonomous AI agents that handle repetitive work 24/7. Full orchestration and monitoring.</div>
+<div class="tier-features">
+<div class="tier-feature">Agents</div>
+<div class="tier-feature">Automation</div>
+<div class="tier-feature">Monitoring</div>
+<div class="tier-feature">24/7 Ops</div>
+</div>
+</div>
+<div class="tier-price">From $10,000</div>
+</div>
+</div>
+<div class="footer">
+<div class="cta">Book a free strategy call &rarr;</div>
+<div class="url">agenticconsciousness.com.au</div>
+</div>
+</body>
+</html>

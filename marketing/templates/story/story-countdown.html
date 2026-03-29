@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AC_ Story — Countdown Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+body { width: 1080px; height: 1920px; background: #0a0a0a; color: #ffffff; font-family: 'Be Vietnam Pro', sans-serif; overflow: hidden; position: relative; }
+.ghost-clock { position: absolute; top: 250px; right: -60px; font-family: 'Space Mono', monospace; font-weight: 400; font-size: 600px; color: rgba(255, 61, 0, 0.05); line-height: 1; pointer-events: none; }
+.pulse-border { position: absolute; top: 50px; left: 50px; right: 50px; bottom: 50px; border: 2px solid #ff3d00; }
+.inner-border { position: absolute; top: 70px; left: 70px; right: 70px; bottom: 70px; border: 1px solid rgba(255, 61, 0, 0.2); }
+.header { position: absolute; top: 110px; left: 100px; right: 100px; display: flex; justify-content: space-between; align-items: center; z-index: 1; }
+.logo { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 32px; color: #ffffff; }
+.logo span { color: #ff3d00; }
+.urgent-badge { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: #0a0a0a; background: #ff3d00; padding: 10px 20px; }
+.content { position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%); padding: 0 100px; text-align: center; z-index: 1; }
+.urgency-label { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 16px; text-transform: uppercase; letter-spacing: 6px; color: #ff3d00; margin-bottom: 50px; }
+.countdown-boxes { display: flex; justify-content: center; gap: 20px; margin-bottom: 60px; }
+.countdown-box { width: 160px; height: 160px; border: 2px solid #ff3d00; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255, 61, 0, 0.05); }
+.countdown-num { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 64px; color: #ffffff; line-height: 1; }
+.countdown-unit { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255, 255, 255, 0.4); margin-top: 8px; }
+.offer-title { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 56px; line-height: 1.1; color: #ffffff; margin-bottom: 30px; }
+.offer-title em { font-style: normal; color: #ff3d00; }
+.accent-line { width: 60px; height: 2px; background: #ff3d00; margin: 0 auto 30px; }
+.offer-desc { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; font-size: 24px; line-height: 1.5; color: rgba(255, 255, 255, 0.6); max-width: 700px; margin: 0 auto; }
+.footer { position: absolute; bottom: 100px; left: 100px; right: 100px; display: flex; flex-direction: column; align-items: center; gap: 20px; z-index: 1; }
+.cta-button { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 20px; color: #0a0a0a; background: #ff3d00; padding: 22px 80px; text-transform: uppercase; letter-spacing: 2px; }
+.url { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 13px; color: rgba(255, 255, 255, 0.4); letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="ghost-clock">&#8986;</div>
+<div class="pulse-border"></div>
+<div class="inner-border"></div>
+<div class="header">
+<div class="logo">AC<span>_</span></div>
+<div class="urgent-badge">Limited Time</div>
+</div>
+<div class="content">
+<div class="urgency-label">// Offer Ends In</div>
+<div class="countdown-boxes">
+<div class="countdown-box">
+<div class="countdown-num">02</div>
+<div class="countdown-unit">Days</div>
+</div>
+<div class="countdown-box">
+<div class="countdown-num">14</div>
+<div class="countdown-unit">Hours</div>
+</div>
+<div class="countdown-box">
+<div class="countdown-num">37</div>
+<div class="countdown-unit">Mins</div>
+</div>
+</div>
+<div class="offer-title">Free AI <em>Strategy</em> Session</div>
+<div class="accent-line"></div>
+<div class="offer-desc">Book before the timer runs out. 30-minute call, zero obligation, full clarity on your AI opportunities.</div>
+</div>
+<div class="footer">
+<div class="cta-button">Claim Your Spot</div>
+<div class="url">agenticconsciousness.com.au</div>
+</div>
+</body>
+</html>

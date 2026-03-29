@@ -10,7 +10,7 @@ export default function CaseStudies() {
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
             <div>
-              <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
+              <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
                 003 / RESULTS
               </div>
               <GlitchTitle>
@@ -30,9 +30,9 @@ export default function CaseStudies() {
                 key={cs.title}
                 className="grid grid-cols-[200px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-stretch max-md:grid-cols-1"
               >
-                <div className="flex flex-col items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red text-center max-md:border-r-0 max-md:border-b-2 max-md:p-4">
+                <div className="flex flex-col items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red text-center max-md:border-r-0 max-md:border-b-2 max-md:p-4">
                   <span>{cs.industry}</span>
-                  <span className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-white/20 mt-1">
+                  <span className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-white/20 mt-1">
                     {cs.timeline}
                   </span>
                 </div>
@@ -45,7 +45,7 @@ export default function CaseStudies() {
                   </p>
                   <div className="grid grid-cols-2 gap-[2px] mt-4 max-w-[500px]">
                     <div className="border border-white/10 p-3">
-                      <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-white/30 mb-1">
+                      <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-white/30 mb-1">
                         BEFORE
                       </div>
                       <div className="text-[0.8rem] text-text-dim font-light leading-[1.5]">
@@ -53,7 +53,7 @@ export default function CaseStudies() {
                       </div>
                     </div>
                     <div className="border border-ac-red/30 bg-ac-red/[0.04] p-3">
-                      <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red mb-1">
+                      <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red mb-1">
                         AFTER
                       </div>
                       <div className="text-[0.8rem] text-text-primary font-light leading-[1.5]">
@@ -69,7 +69,7 @@ export default function CaseStudies() {
                         value={m.value}
                         className="text-[1.8rem] font-black text-text-primary tracking-[-1px] leading-none"
                       />
-                      <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase">
+                      <div className="font-mono text-[0.8rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase">
                         {m.label}
                       </div>
                     </div>

@@ -30,7 +30,7 @@ export default function About() {
       <ScrollReveal>
         <div className="max-w-[1200px] mx-auto">
           <div className="mb-14">
-            <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
+            <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
               004 / ABOUT
             </div>
             <GlitchTitle>

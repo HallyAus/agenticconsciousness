@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AC_ Story — Testimonial Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+body { width: 1080px; height: 1920px; background: #0a0a0a; color: #ffffff; font-family: 'Be Vietnam Pro', sans-serif; overflow: hidden; position: relative; }
+.ghost-quote { position: absolute; top: 200px; left: -40px; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 800px; color: rgba(255, 255, 255, 0.03); line-height: 1; pointer-events: none; }
+.ghost-quote-end { position: absolute; bottom: 200px; right: -40px; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 800px; color: rgba(255, 255, 255, 0.03); line-height: 1; pointer-events: none; }
+.top-bar { position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: #ff3d00; }
+.header { position: absolute; top: 80px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; z-index: 1; }
+.logo { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 32px; color: #ffffff; }
+.logo span { color: #ff3d00; }
+.badge { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #ff3d00; }
+.content { position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%); padding: 0 100px; z-index: 1; }
+.stars { display: flex; gap: 8px; margin-bottom: 40px; }
+.star { width: 24px; height: 24px; background: #ff3d00; }
+.testimonial-text { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 48px; line-height: 1.2; color: #ffffff; margin-bottom: 50px; }
+.testimonial-text em { font-style: normal; color: #ff3d00; }
+.accent-line { width: 60px; height: 2px; background: #ff3d00; margin-bottom: 40px; }
+.client-info { display: flex; align-items: center; gap: 24px; }
+.client-avatar { width: 60px; height: 60px; background: rgba(255, 61, 0, 0.2); border: 2px solid #ff3d00; display: flex; align-items: center; justify-content: center; }
+.client-avatar span { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 24px; color: #ff3d00; }
+.client-details { display: flex; flex-direction: column; }
+.client-name { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 22px; color: #ffffff; }
+.client-role { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255, 255, 255, 0.4); margin-top: 4px; }
+.result-box { margin-top: 50px; padding: 30px; border: 2px solid #ff3d00; background: rgba(255, 61, 0, 0.05); display: flex; align-items: center; gap: 30px; }
+.result-number { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 48px; color: #ff3d00; }
+.result-text { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 13px; text-transform: uppercase; letter-spacing: 2px; color: rgba(255, 255, 255, 0.6); }
+.footer { position: absolute; bottom: 80px; left: 80px; right: 80px; text-align: center; z-index: 1; }
+.url { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 13px; color: rgba(255, 255, 255, 0.4); letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="ghost-quote">&ldquo;</div>
+<div class="ghost-quote-end">&rdquo;</div>
+<div class="top-bar"></div>
+<div class="header">
+<div class="logo">AC<span>_</span></div>
+<div class="badge">// Client Story</div>
+</div>
+<div class="content">
+<div class="stars">
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+</div>
+<div class="testimonial-text">&ldquo;We saved 20 hours a week on invoicing alone. The ROI was <em>immediate.</em>&rdquo;</div>
+<div class="accent-line"></div>
+<div class="client-info">
+<div class="client-avatar"><span>JM</span></div>
+<div class="client-details">
+<div class="client-name">Client Name</div>
+<div class="client-role">Position &mdash; Company</div>
+</div>
+</div>
+<div class="result-box">
+<div class="result-number">20hrs</div>
+<div class="result-text">Saved per week<br>on admin tasks</div>
+</div>
+</div>
+<div class="footer">
+<div class="url">agenticconsciousness.com.au</div>
+</div>
+</body>
+</html>

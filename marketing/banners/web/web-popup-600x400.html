@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AC_ Popup 600x400</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{width:600px;height:400px;overflow:hidden;background:#0a0a0a;font-family:'Be Vietnam Pro',sans-serif}
+.banner{width:600px;height:400px;border:2px solid #ff3d00;position:relative;overflow:hidden;display:grid;grid-template-columns:220px 1fr}
+.ghost{position:absolute;right:-20px;bottom:-30px;font-weight:900;font-size:300px;color:rgba(255,61,0,0.03);pointer-events:none;line-height:1}
+.left{background:rgba(255,61,0,0.04);border-right:2px solid #ff3d00;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:30px}
+.logo{font-family:'Space Mono',monospace;font-size:36px;color:#ff3d00;margin-bottom:16px}
+.logo-sub{font-family:'Space Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:2px;text-align:center}
+.bars{margin-top:24px;display:flex;flex-direction:column;gap:4px;width:100%}
+.bar{height:3px;background:#ff3d00}
+.bar:nth-child(1){width:100%;opacity:1}
+.bar:nth-child(2){width:70%;opacity:0.6}
+.bar:nth-child(3){width:40%;opacity:0.3}
+.right{padding:30px;display:flex;flex-direction:column;justify-content:center}
+.close{position:absolute;top:12px;right:16px;font-family:'Space Mono',monospace;font-size:14px;color:rgba(255,255,255,0.3)}
+.eyebrow{font-family:'Space Mono',monospace;font-size:10px;color:#ff3d00;text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.headline{font-weight:900;font-size:28px;color:#fff;line-height:1.1;letter-spacing:-1px}
+.red{color:#ff3d00}
+.body{font-weight:300;font-size:13px;color:rgba(255,255,255,0.5);line-height:1.5;margin-top:12px}
+.input-row{margin-top:20px;display:flex;gap:2px}
+.input{flex:1;border:2px solid rgba(255,61,0,0.3);background:transparent;padding:12px 14px;font-family:'Space Mono',monospace;font-size:11px;color:rgba(255,255,255,0.3)}
+.cta{background:#ff3d00;color:#0a0a0a;font-weight:900;font-size:11px;padding:12px 18px;text-transform:uppercase;letter-spacing:1px;border:none;white-space:nowrap}
+.url{font-family:'Space Mono',monospace;font-size:9px;color:rgba(255,255,255,0.2);margin-top:16px}
+</style>
+</head>
+<body>
+<div class="banner">
+<div class="ghost">AC_</div>
+<div class="close">✕</div>
+<div class="left">
+<div class="logo">AC_</div>
+<div class="logo-sub">Agentic<br>Consciousness</div>
+<div class="bars">
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+</div>
+</div>
+<div class="right">
+<div class="eyebrow">Free AI Assessment</div>
+<div class="headline">Is Your Business <span class="red">AI-Ready?</span></div>
+<div class="body">Get a personalised AI readiness score and actionable recommendations. Takes 2 minutes.</div>
+<div class="input-row">
+<div class="input">your@email.com</div>
+<div class="cta">Get Score →</div>
+</div>
+<div class="url">agenticconsciousness.com.au</div>
+</div>
+</div>
+</body>
+</html>

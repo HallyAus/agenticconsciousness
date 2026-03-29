@@ -9,7 +9,7 @@ export default function Process() {
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
             <div>
-              <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
+              <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
                 002 / METHOD
               </div>
               <GlitchTitle>
@@ -46,7 +46,7 @@ export default function Process() {
                   <div className="font-mono text-[0.8rem] text-ac-red tracking-wide mb-1">
                     {step.time}
                   </div>
-                  <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-4">
+                  <div className="font-mono text-[0.8rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-4">
                     {step.subtitle}
                   </div>
 
@@ -80,7 +80,7 @@ export default function Process() {
                   <div className="absolute -left-10 top-0 w-[32px] h-[32px] border-2 border-ac-red bg-ac-bg flex items-center justify-center z-10"
                     style={{ transform: 'translateX(-50%)' }}
                   >
-                    <span className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red font-bold">
+                    <span className="font-mono text-[0.8rem] max-sm:text-xs text-ac-red font-bold">
                       {String(i + 1).padStart(2, '0')}
                     </span>
                   </div>
@@ -95,7 +95,7 @@ export default function Process() {
                         {step.time}
                       </span>
                     </div>
-                    <div className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-2">
+                    <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-2">
                       {step.subtitle}
                     </div>
                     <p className="text-[0.8rem] text-text-dim leading-[1.6] font-light">

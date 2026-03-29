@@ -61,7 +61,7 @@ export default function ProposalAcceptance({ proposalId, clientEmail, total }: P
         </p>
         <Link
           href="/pricing"
-          className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 no-underline text-white"
+          className="inline-block font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-6 no-underline text-white"
           style={{ background: 'var(--red)' }}
         >
           Pay deposit →
@@ -72,7 +72,7 @@ export default function ProposalAcceptance({ proposalId, clientEmail, total }: P
 
   return (
     <div className="p-6 border-2" style={{ borderColor: 'var(--red)' }}>
-      <div className="font-mono text-[0.7rem] tracking-[3px] uppercase mb-3" style={{ color: 'var(--red-text)' }}>ACCEPT THIS PROPOSAL</div>
+      <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-3" style={{ color: 'var(--red-text)' }}>ACCEPT THIS PROPOSAL</div>
       <p className="text-text-dim text-[0.85rem] font-light mb-6">
         By typing your name below and clicking accept, you agree to the scope, pricing, and terms outlined above.
       </p>
@@ -113,7 +113,7 @@ export default function ProposalAcceptance({ proposalId, clientEmail, total }: P
 
         {error && <p className="text-[0.8rem] font-mono" style={{ color: 'var(--red)' }}>{error}</p>}
 
-        <p className="font-mono text-[0.6rem] max-sm:text-xs text-text-ghost">
+        <p className="font-mono text-[0.7rem] max-sm:text-xs text-text-ghost">
           This constitutes a digital agreement. A confirmation will be sent to {clientEmail}.
         </p>
       </form>

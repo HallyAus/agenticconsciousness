@@ -11,7 +11,7 @@
 #   5. Print next steps (Cloudflare Tunnel config)
 #
 # Usage:
-#   cd /opt/agentic-consciousness
+#   cd /opt/agenticconsciousness
 #   bash scripts/setup-umami.sh
 # ============================================================
 

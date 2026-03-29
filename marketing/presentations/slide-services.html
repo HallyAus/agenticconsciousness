@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Agentic Consciousness — Services Slide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+  body { background: #1a1a1a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .slide {
+    width: 1920px; height: 1080px; background: #0a0a0a; position: relative; overflow: hidden;
+    font-family: 'Be Vietnam Pro', sans-serif; color: #ffffff;
+  }
+  .ghost-block { position: absolute; bottom: 0; left: 0; width: 100%; height: 200px; background: rgba(255,61,0,0.06); }
+  .red-line-top { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ff3d00; }
+  .content { position: relative; z-index: 1; padding: 80px 120px; height: 100%; display: flex; flex-direction: column; }
+  .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 48px; }
+  .logo { font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 400; color: #ff3d00; }
+  .slide-label { font-family: 'Space Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 3px; }
+  .section-tag { font-family: 'Space Mono', monospace; font-size: 12px; color: #ff3d00; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 16px; }
+  .heading { font-weight: 900; font-size: 56px; letter-spacing: -2px; margin-bottom: 60px; }
+  .services { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px; flex: 1; }
+  .service { padding: 48px 40px; border: 2px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 20px; position: relative; }
+  .service:hover { border-color: #ff3d00; }
+  .service-number { font-family: 'Space Mono', monospace; font-size: 48px; color: rgba(255,61,0,0.15); font-weight: 400; }
+  .service-name { font-weight: 900; font-size: 28px; letter-spacing: -0.5px; }
+  .service-desc { font-weight: 300; font-size: 16px; color: rgba(255,255,255,0.6); line-height: 1.7; }
+  .service-features { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: auto; }
+  .service-features li { font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.4); padding-left: 16px; position: relative; }
+  .service-features li::before { content: '_'; color: #ff3d00; position: absolute; left: 0; }
+  .footer-bar { display: flex; justify-content: space-between; align-items: center; padding-top: 32px; margin-top: auto; }
+  .url { font-family: 'Space Mono', monospace; font-size: 13px; color: rgba(255,255,255,0.25); }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="ghost-block"></div>
+  <div class="red-line-top"></div>
+  <div class="content">
+    <div class="top-bar">
+      <div class="logo">AC_</div>
+      <div class="slide-label">Services</div>
+    </div>
+    <div class="section-tag">What We Do</div>
+    <div class="heading">Three Ways We Help</div>
+    <div class="services">
+      <div class="service">
+        <div class="service-number">01</div>
+        <div class="service-name">AI Strategy<br>& Audit</div>
+        <div class="service-desc">Comprehensive assessment of your operations to map automation opportunities and build a practical AI roadmap.</div>
+        <ul class="service-features">
+          <li>Operations audit</li>
+          <li>Opportunity mapping</li>
+          <li>ROI projections</li>
+          <li>Implementation roadmap</li>
+        </ul>
+      </div>
+      <div class="service">
+        <div class="service-number">02</div>
+        <div class="service-name">Custom AI<br>Development</div>
+        <div class="service-desc">Bespoke AI tools, chatbots, and automation systems designed and built for your specific business requirements.</div>
+        <ul class="service-features">
+          <li>Custom chatbots</li>
+          <li>Process automation</li>
+          <li>Data pipelines</li>
+          <li>API integrations</li>
+        </ul>
+      </div>
+      <div class="service">
+        <div class="service-number">03</div>
+        <div class="service-name">Training &<br>Enablement</div>
+        <div class="service-desc">Upskill your team with hands-on AI workshops, ongoing support, and practical training that sticks.</div>
+        <ul class="service-features">
+          <li>Team workshops</li>
+          <li>Prompt engineering</li>
+          <li>Tool adoption</li>
+          <li>Ongoing support</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="url">agenticconsciousness.com.au</div>
+      <div class="url">ai@agenticconsciousness.com.au</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

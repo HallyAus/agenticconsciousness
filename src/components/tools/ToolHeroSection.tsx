@@ -63,7 +63,7 @@ export default function ToolHeroSection({
                 {/* CTA button */}
                 <button
                   onClick={() => onExpand(toolId)}
-                  className="self-start font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 bg-ac-red text-white border-none cursor-pointer transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
+                  className="self-start font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-6 bg-ac-red text-white border-none cursor-pointer transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
                 >
                   {isExpanded ? 'Close \u2715' : 'Try it free \u2192'}
                 </button>

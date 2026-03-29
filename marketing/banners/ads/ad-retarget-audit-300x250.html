@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AC_ Retarget Audit 300x250</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;border-radius:0!important}
+body{width:300px;height:250px;overflow:hidden;background:#0a0a0a;font-family:'Be Vietnam Pro',sans-serif}
+.ad{width:300px;height:250px;border:2px solid #ff3d00;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.ghost{position:absolute;left:-15px;top:30px;font-weight:900;font-size:180px;color:rgba(255,61,0,0.04);pointer-events:none;line-height:1}
+.header{padding:14px 18px;border-bottom:2px solid rgba(255,61,0,0.3);display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Space Mono',monospace;font-size:12px;color:#ff3d00}
+.timer{font-family:'Space Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3)}
+.content{flex:1;padding:16px 18px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.icon{font-size:32px;color:#ff3d00;margin-bottom:8px}
+.headline{font-weight:900;font-size:20px;color:#fff;line-height:1.1}
+.red{color:#ff3d00}
+.sub{font-weight:300;font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;line-height:1.4}
+.progress{margin-top:10px;display:flex;gap:2px}
+.bar{height:4px;flex:1;background:rgba(255,61,0,0.15)}
+.bar.filled{background:#ff3d00}
+.progress-label{font-family:'Space Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3);text-align:center;margin-top:4px}
+.cta-bar{border-top:2px solid #ff3d00;display:flex}
+.cta{background:#ff3d00;color:#0a0a0a;font-weight:900;font-size:11px;padding:12px;text-transform:uppercase;letter-spacing:1px;flex:1;text-align:center}
+</style>
+</head>
+<body>
+<div class="ad">
+<div class="ghost">?</div>
+<div class="header">
+<div class="logo">AC_</div>
+<div class="timer">2 min left</div>
+</div>
+<div class="content">
+<div class="headline">Finish Your<br><span class="red">AI Audit</span></div>
+<div class="sub">You were almost done. Come back and see your AI readiness score.</div>
+<div class="progress">
+<div class="bar filled"></div>
+<div class="bar filled"></div>
+<div class="bar filled"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+</div>
+<div class="progress-label">60% Complete</div>
+</div>
+<div class="cta-bar">
+<div class="cta">Finish My Audit →</div>
+</div>
+</div>
+</body>
+</html>

@@ -145,7 +145,7 @@ export default function SummariseTool() {
     <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
-          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
             TOOL / SUMMARISE
           </div>
           <h2 className="text-[clamp(1.5rem,3vw,2rem)] font-black tracking-tight leading-none mb-4">
@@ -163,7 +163,7 @@ export default function SummariseTool() {
               <button
                 type="button"
                 onClick={fillExample}
-                className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
                 style={{
                   border: '1px solid var(--red-pill-border)',
                   color: 'var(--red-text)',
@@ -177,7 +177,7 @@ export default function SummariseTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Document Text
               </label>
               <textarea
@@ -188,13 +188,13 @@ export default function SummariseTool() {
                 style={inputStyle}
                 required
               />
-              <div className={`font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-right ${textLen > 9500 ? 'text-ac-red' : 'text-text-dim'}`}>
+              <div className={`font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] text-right ${textLen > 9500 ? 'text-ac-red' : 'text-text-dim'}`}>
                 {textLen.toLocaleString()} / 10,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Summary Length
               </label>
               <ToggleGroup
@@ -209,7 +209,7 @@ export default function SummariseTool() {
             </button>
 
             {error && (
-              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.8rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -217,7 +217,7 @@ export default function SummariseTool() {
           <div className="flex flex-col gap-5">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-dim">
+                <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-text-dim">
                   Summary will appear here
                 </div>
                 <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
@@ -259,7 +259,7 @@ export default function SummariseTool() {
                     { label: 'Compression', value: result?.compressionRatio },
                   ].map((stat) => (
                     <div key={stat.label} className="flex-1 min-w-[100px] p-4" style={{ background: 'var(--bg-card)' }}>
-                      <div className="font-mono text-[0.6rem] max-sm:text-xs tracking-[1px] uppercase mb-1" style={{ color: 'var(--text-dim)' }}>
+                      <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase mb-1" style={{ color: 'var(--text-dim)' }}>
                         {stat.label}
                       </div>
                       <div className="font-black text-[0.9rem]" style={{ color: 'var(--red)' }}>{stat.value}</div>
@@ -280,7 +280,7 @@ export default function SummariseTool() {
                       animationDelay: '80ms',
                     }}
                   >
-                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
+                    <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
                       Executive Summary
                     </div>
                     <p className="text-[0.84rem] font-light leading-[1.8]" style={{ color: 'var(--text-body)' }}>
@@ -299,7 +299,7 @@ export default function SummariseTool() {
                     animationDelay: '160ms',
                   }}
                 >
-                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
+                  <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>
                     Key Points
                   </div>
                   <ul className="flex flex-col gap-2 list-none">

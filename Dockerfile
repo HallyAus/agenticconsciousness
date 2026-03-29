@@ -4,6 +4,7 @@ FROM base AS deps
 WORKDIR /app
 RUN apk add --no-cache python3 make g++
 COPY package.json package-lock.json* ./
+RUN apk add --no-cache python3 make g++
 RUN npm ci
 
 FROM base AS builder
@@ -40,6 +41,8 @@ COPY --from=deps --chown=nextjs:nodejs /app/node_modules/better-sqlite3 ./node_m
 # Create writable directories for runtime data
 RUN mkdir -p /app/data /app/content/blog /app/content/proposals /app/content/drip \
     && chown -R nextjs:nodejs /app/data /app/content
+
+COPY --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
 
 USER nextjs
 EXPOSE 3000

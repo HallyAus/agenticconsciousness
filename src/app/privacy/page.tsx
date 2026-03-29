@@ -20,7 +20,7 @@ export default function PrivacyPage() {
     <main className="pt-[60px] min-h-screen">
       <article className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
         <div className="max-w-[720px] mx-auto">
-          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase mb-3" style={{ color: 'var(--red-text)' }}>LEGAL</div>
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-3" style={{ color: 'var(--red-text)' }}>LEGAL</div>
           <h1 className="text-[clamp(1.8rem,4vw,2.5rem)] font-black tracking-tight leading-[1.1] mb-8 text-text-primary">
             Privacy Policy
           </h1>

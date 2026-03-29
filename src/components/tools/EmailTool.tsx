@@ -116,7 +116,7 @@ export default function EmailTool() {
     <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
-          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
             TOOL / EMAIL DRAFTER
           </div>
           <h2 className="text-[clamp(1.5rem,3vw,2rem)] font-black tracking-tight leading-none mb-4">
@@ -134,7 +134,7 @@ export default function EmailTool() {
               <button
                 type="button"
                 onClick={fillExample}
-                className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
                 style={{
                   border: '1px solid var(--red-pill-border)',
                   color: 'var(--red-text)',
@@ -148,7 +148,7 @@ export default function EmailTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 What do you need to say?
               </label>
               <textarea
@@ -159,13 +159,13 @@ export default function EmailTool() {
                 style={inputStyle}
                 required
               />
-              <div className={`font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-right ${textLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
+              <div className={`font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] text-right ${textLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
                 {textLen.toLocaleString()} / 3,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Recipient (optional)
               </label>
               <input
@@ -179,7 +179,7 @@ export default function EmailTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Tone
               </label>
               <ToggleGroup
@@ -194,7 +194,7 @@ export default function EmailTool() {
             </button>
 
             {error && (
-              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.8rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -202,7 +202,7 @@ export default function EmailTool() {
           <div className="flex flex-col gap-5">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-dim">
+                <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-text-dim">
                   Your email will appear here
                 </div>
                 <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
@@ -240,7 +240,7 @@ export default function EmailTool() {
                     animationDelay: '0ms',
                   }}
                 >
-                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
+                  <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-2" style={{ color: 'var(--red)' }}>
                     Subject Line
                   </div>
                   <p className="text-[0.95rem] font-black text-text-primary">{result?.subject}</p>
@@ -256,7 +256,7 @@ export default function EmailTool() {
                     animationDelay: '80ms',
                   }}
                 >
-                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3 text-text-dim">
+                  <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-3 text-text-dim">
                     Email Body
                   </div>
                   <div className="text-[0.84rem] font-light leading-[1.8] whitespace-pre-wrap" style={{ color: 'var(--text-body)' }}>
@@ -274,11 +274,11 @@ export default function EmailTool() {
                     animationDelay: '160ms',
                   }}
                 >
-                  <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim">
+                  <span className="font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] text-text-dim">
                     {result?.wordCount} words · {tone} tone
                   </span>
                   {result?.toneNotes && (
-                    <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-ghost">
+                    <span className="font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] text-text-ghost">
                       — {result?.toneNotes}
                     </span>
                   )}

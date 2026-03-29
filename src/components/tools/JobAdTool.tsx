@@ -194,7 +194,7 @@ export default function JobAdTool() {
     <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
-          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
             TOOL / JOB AD WRITER
           </div>
           <h2 className="text-[clamp(1.5rem,3vw,2rem)] font-black tracking-tight leading-none mb-4">
@@ -212,7 +212,7 @@ export default function JobAdTool() {
               <button
                 type="button"
                 onClick={fillExample}
-                className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
+                className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase px-3 py-2 cursor-pointer transition-all duration-200"
                 style={{
                   border: '1px solid var(--red-pill-border)',
                   color: 'var(--red-text)',
@@ -226,7 +226,7 @@ export default function JobAdTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Job Title
               </label>
               <input
@@ -241,7 +241,7 @@ export default function JobAdTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Company Name
               </label>
               <input
@@ -256,7 +256,7 @@ export default function JobAdTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Industry (optional)
               </label>
               <div className="relative">
@@ -280,7 +280,7 @@ export default function JobAdTool() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Role Description
               </label>
               <textarea
@@ -291,13 +291,13 @@ export default function JobAdTool() {
                 style={inputStyle}
                 required
               />
-              <div className={`font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-right ${descLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
+              <div className={`font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] text-right ${descLen > 2800 ? 'text-ac-red' : 'text-text-dim'}`}>
                 {descLen.toLocaleString()} / 3,000
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Employment Type
               </label>
               <ToggleGroup
@@ -312,7 +312,7 @@ export default function JobAdTool() {
             </button>
 
             {error && (
-              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.8rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -320,7 +320,7 @@ export default function JobAdTool() {
           <div className="flex flex-col gap-5">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-dim">
+                <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-text-dim">
                   Your job ad will appear here
                 </div>
                 <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">
@@ -360,7 +360,7 @@ export default function JobAdTool() {
                     {[result?.company, result?.location, result?.type, result?.salary].filter(Boolean).map((meta) => (
                       <span
                         key={meta}
-                        className="font-mono text-[0.65rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
+                        className="font-mono text-[0.75rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
                         style={{ background: 'var(--bg-card)', color: 'var(--text-dim)', border: '1px solid var(--border-subtle)' }}
                       >
                         {meta}
@@ -380,7 +380,7 @@ export default function JobAdTool() {
                       animationDelay: '80ms',
                     }}
                   >
-                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-2 text-text-dim">About Us</div>
+                    <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-2 text-text-dim">About Us</div>
                     <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>{result?.about}</p>
                   </div>
                 )}
@@ -396,7 +396,7 @@ export default function JobAdTool() {
                       animationDelay: '120ms',
                     }}
                   >
-                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-2 text-text-dim">The Role</div>
+                    <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-2 text-text-dim">The Role</div>
                     <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>{result?.overview}</p>
                   </div>
                 )}
@@ -412,11 +412,11 @@ export default function JobAdTool() {
                       animationDelay: '160ms',
                     }}
                   >
-                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>Responsibilities</div>
+                    <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>Responsibilities</div>
                     <ol className="flex flex-col gap-1.5 list-none">
                       {result?.responsibilities?.map((item, i) => (
                         <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
-                          <span className="font-mono text-[0.65rem] max-sm:text-xs mt-0.5 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
+                          <span className="font-mono text-[0.75rem] max-sm:text-xs mt-0.5 flex-shrink-0" style={{ color: 'var(--red)' }}>{i + 1}.</span>
                           <span>{item}</span>
                         </li>
                       ))}
@@ -435,10 +435,10 @@ export default function JobAdTool() {
                       animationDelay: '240ms',
                     }}
                   >
-                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>Requirements</div>
+                    <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--red)' }}>Requirements</div>
                     {result?.requirements?.essential && result.requirements.essential.length > 0 && (
                       <>
-                        <div className="font-mono text-[0.6rem] max-sm:text-xs tracking-[1px] uppercase mb-2 text-text-dim">Essential</div>
+                        <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase mb-2 text-text-dim">Essential</div>
                         <ul className="flex flex-col gap-1.5 list-none mb-3">
                           {result?.requirements?.essential?.map((req, i) => (
                             <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
@@ -451,7 +451,7 @@ export default function JobAdTool() {
                     )}
                     {result?.requirements?.desirable && result.requirements.desirable.length > 0 && (
                       <>
-                        <div className="font-mono text-[0.6rem] max-sm:text-xs tracking-[1px] uppercase mb-2 text-text-dim">Desirable</div>
+                        <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase mb-2 text-text-dim">Desirable</div>
                         <ul className="flex flex-col gap-1.5 list-none">
                           {result?.requirements?.desirable?.map((req, i) => (
                             <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3 text-text-dim">
@@ -476,7 +476,7 @@ export default function JobAdTool() {
                       animationDelay: '320ms',
                     }}
                   >
-                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3 text-text-dim">What We Offer</div>
+                    <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-3 text-text-dim">What We Offer</div>
                     <ul className="flex flex-col gap-1.5 list-none">
                       {result?.benefits?.map((b, i) => (
                         <li key={i} className="text-[0.82rem] font-light leading-[1.6] flex gap-3" style={{ color: 'var(--text-body)' }}>
@@ -499,7 +499,7 @@ export default function JobAdTool() {
                       animationDelay: '360ms',
                     }}
                   >
-                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-2 text-text-dim">How to Apply</div>
+                    <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-2 text-text-dim">How to Apply</div>
                     <p className="text-[0.82rem] font-light leading-[1.7]" style={{ color: 'var(--text-body)' }}>{result?.howToApply}</p>
                   </div>
                 )}
@@ -517,7 +517,7 @@ export default function JobAdTool() {
                       animationDelay: '400ms',
                     }}
                   >
-                    <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-2 text-text-dim">Bias Check</div>
+                    <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-2 text-text-dim">Bias Check</div>
                     <p className="text-[0.78rem] font-light leading-[1.6] text-text-ghost">{result.biasCheck}</p>
                   </div>
                 )}
