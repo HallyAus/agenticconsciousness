@@ -96,7 +96,7 @@ export default function PricingCards() {
         >
           {tier.featured && (
             <div
-              className="font-mono text-[0.6rem] max-sm:text-xs tracking-[2px] uppercase py-1 px-3 absolute top-4 right-4"
+              className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase py-1 px-3 absolute top-4 right-4"
               style={{ background: 'var(--red)', color: '#fff' }}
             >
               MOST POPULAR
@@ -114,7 +114,7 @@ export default function PricingCards() {
           <div className="text-[1.8rem] font-black mb-1" style={{ color: 'var(--red-text)' }}>
             {tier.price}
           </div>
-          <div className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[1px] mb-6">+ GST</div>
+          <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[1px] mb-6">+ GST</div>
 
           <ul className="flex flex-col gap-2 mb-6">
             {tier.items.map((item) => (
@@ -125,13 +125,13 @@ export default function PricingCards() {
             ))}
           </ul>
 
-          <div className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-6">
+          <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-6">
             Timeline: {tier.timeline}
           </div>
 
           <div className="flex flex-col gap-2">
             <EmailLink
-              className="block text-center font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 no-underline transition-all duration-200"
+              className="block text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 no-underline transition-all duration-200"
               style={{
                 border: '2px solid var(--red)',
                 color: 'var(--red-text)',
@@ -143,7 +143,7 @@ export default function PricingCards() {
             <button
               onClick={() => handleCheckout(tier.packageId)}
               disabled={loading === tier.packageId}
-              className="block w-full text-center font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 transition-all duration-200 cursor-pointer border-none text-white disabled:opacity-40"
+              className="block w-full text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 transition-all duration-200 cursor-pointer border-none text-white disabled:opacity-40"
               style={{ background: 'var(--red)' }}
             >
               {loading === tier.packageId ? 'Processing...' : `Pay deposit (${tier.deposit}) \u2192`}

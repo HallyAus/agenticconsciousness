@@ -198,7 +198,7 @@ export default function ToolsShowcase() {
       {/* Bottom CTA */}
       <section className="py-24 px-10 max-md:px-5 max-sm:px-4 border-t-2 border-ac-red">
         <div className="max-w-[600px] mx-auto text-center">
-          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase mb-4 text-ac-red">
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-4 text-ac-red">
             WHAT&apos;S NEXT
           </div>
           <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-6">
@@ -209,13 +209,13 @@ export default function ToolsShowcase() {
           </p>
           <div className="flex gap-4 justify-center flex-wrap mb-10">
             <EmailLink
-              className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 no-underline text-white bg-ac-red transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
+              className="inline-block font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-6 no-underline text-white bg-ac-red transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
             >
               Book free consultation &rarr;
             </EmailLink>
             <Link
               href="/#ai-audit"
-              className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 no-underline border-2 border-ac-red text-ac-red transition-all duration-200 hover:bg-ac-red hover:text-white"
+              className="inline-block font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-6 no-underline border-2 border-ac-red text-ac-red transition-all duration-200 hover:bg-ac-red hover:text-white"
             >
               Take AI audit &rarr;
             </Link>
@@ -228,7 +228,7 @@ export default function ToolsShowcase() {
             ].map((s) => (
               <div key={s.label} className="text-center">
                 <div className="text-[1.8rem] font-black tracking-tight text-ac-red">{s.value}</div>
-                <div className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-2">{s.label}</div>
+                <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-2">{s.label}</div>
               </div>
             ))}
           </div>

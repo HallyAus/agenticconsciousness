@@ -9,7 +9,7 @@ export default function Services() {
         <div className="max-w-[1200px] mx-auto">
           <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
             <div>
-              <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
+              <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
                 001 / SERVICES
               </div>
               <GlitchTitle>
@@ -47,7 +47,7 @@ export default function Services() {
                   {service.pills.map((pill) => (
                     <span
                       key={pill}
-                      className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-1 px-3 whitespace-nowrap"
+                      className="font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-1 px-3 whitespace-nowrap"
                     >
                       {pill}
                     </span>

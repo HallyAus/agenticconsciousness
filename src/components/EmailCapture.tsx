@@ -54,12 +54,12 @@ export default function EmailCapture() {
         />
         <button
           type="submit"
-          className="bg-ac-red text-white font-display text-[0.7rem] font-black tracking-[2px] uppercase px-6 py-3 transition-all duration-200 hover:bg-white hover:text-ac-black cursor-pointer border-none"
+          className="bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase px-6 py-3 transition-all duration-200 hover:bg-white hover:text-ac-black cursor-pointer border-none"
         >
           Subscribe
         </button>
       </form>
-      {error && <p className="text-ac-red text-[0.7rem] font-mono mt-2">{error}</p>}
+      {error && <p className="text-ac-red text-[0.8rem] max-sm:text-xs font-mono mt-2">{error}</p>}
     </div>
   );
 }

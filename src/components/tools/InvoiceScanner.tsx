@@ -195,7 +195,7 @@ export default function InvoiceScanner() {
             animation: 'fadeInUp 0.4s ease-out 0s forwards',
           }}
         >
-          <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-1" style={{ color: 'var(--red)' }}>
             SUPPLIER
           </div>
           <div className="text-[1.1rem] font-black text-text-primary mb-3 leading-tight">
@@ -226,7 +226,7 @@ export default function InvoiceScanner() {
             animation: 'fadeInUp 0.4s ease-out 0.1s forwards',
           }}
         >
-          <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
             INVOICE DETAILS
           </div>
           <div className="grid grid-cols-2 gap-x-6 gap-y-2">
@@ -255,7 +255,7 @@ export default function InvoiceScanner() {
             animation: 'fadeInUp 0.4s ease-out 0.2s forwards',
           }}
         >
-          <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
             LINE ITEMS
           </div>
           <div className="overflow-x-auto">
@@ -317,18 +317,18 @@ export default function InvoiceScanner() {
             animation: 'fadeInUp 0.4s ease-out 0.3s forwards',
           }}
         >
-          <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase mb-3" style={{ color: 'var(--text-dim)' }}>
             AI CLASSIFICATION
           </div>
           <div className="flex flex-wrap gap-2 mb-3">
             <span
-              className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
+              className="font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
               style={{ border: '1px solid var(--border-subtle)', color: 'var(--text-dim)' }}
             >
               {result.classification.category}
             </span>
             <span
-              className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
+              className="font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
               style={
                 result.classification.type === 'Business'
                   ? { border: '1px solid var(--red)', color: 'var(--red-text)' }
@@ -338,7 +338,7 @@ export default function InvoiceScanner() {
               {result.classification.type}
             </span>
             <span
-              className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
+              className="font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] uppercase px-2 py-1"
               style={
                 result.classification.taxDeductible
                   ? { border: '1px solid var(--status-green)', color: 'var(--status-green)' }
@@ -361,7 +361,7 @@ export default function InvoiceScanner() {
     <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14">
-          <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
+          <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
             TOOL 01 / INVOICE SCANNER
           </div>
           <h2 className="text-[clamp(1.5rem,3vw,2rem)] font-black tracking-tight leading-none mb-4">
@@ -376,7 +376,7 @@ export default function InvoiceScanner() {
           {/* LEFT: Input */}
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+                <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                   Invoice File (PDF, JPG, PNG — max 10MB)
                 </label>
                 <div
@@ -395,12 +395,12 @@ export default function InvoiceScanner() {
                   ) : fileName && pdfData ? (
                     <div className="text-center">
                       <div className="text-ac-red text-[2rem] mb-2">PDF</div>
-                      <div className="font-mono text-[0.7rem] text-text-primary">{fileName}</div>
+                      <div className="font-mono text-[0.8rem] max-sm:text-xs text-text-primary">{fileName}</div>
                     </div>
                   ) : (
                     <>
                       <div className="text-text-ghost text-[2rem]">↑</div>
-                      <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim text-center">
+                      <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim text-center">
                         Drop file here or click to upload
                       </div>
                       <div className="font-mono text-[0.5rem] text-text-ghost">
@@ -421,7 +421,7 @@ export default function InvoiceScanner() {
                   <button
                     type="button"
                     onClick={() => { setImageData(null); setPdfData(null); setFilePreview(null); setFileName(null); if (fileRef.current) fileRef.current.value = ''; }}
-                    className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim hover:text-ac-red transition-colors duration-200 text-left"
+                    className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim hover:text-ac-red transition-colors duration-200 text-left"
                   >
                     ✕ Remove file
                   </button>
@@ -433,7 +433,7 @@ export default function InvoiceScanner() {
             </button>
 
             {error && (
-              <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
+              <p className="font-mono text-[0.8rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>
             )}
           </form>
 
@@ -441,7 +441,7 @@ export default function InvoiceScanner() {
           <div className="flex flex-col gap-6">
             {!result && !loading && (
               <div className="flex flex-col gap-3 pt-2">
-                <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-dim">
+                <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-text-dim">
                   Extracted data will appear here
                 </div>
                 <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light">

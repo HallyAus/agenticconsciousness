@@ -143,7 +143,7 @@ export default async function BlogPost({ params }: Props) {
           <div className="max-w-[720px] mx-auto">
             <Link
               href="/blog"
-              className="font-display text-[0.7rem] font-bold tracking-[2px] uppercase text-ac-red no-underline hover:text-text-primary transition-colors mb-12 block"
+              className="font-display text-[0.8rem] max-sm:text-xs font-bold tracking-[2px] uppercase text-ac-red no-underline hover:text-text-primary transition-colors mb-12 block"
             >
               ← Back to insights
             </Link>
@@ -153,7 +153,7 @@ export default async function BlogPost({ params }: Props) {
             </h1>
 
             <div className="flex items-center gap-4 mb-12 flex-wrap">
-              <span className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
+              <span className="font-mono text-[0.8rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                 {new Date(post.publishedAt).toLocaleDateString('en-AU', {
                   day: 'numeric',
                   month: 'long',
@@ -161,18 +161,18 @@ export default async function BlogPost({ params }: Props) {
                 })}
               </span>
               <span className="text-text-ghost">·</span>
-              <span className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
+              <span className="font-mono text-[0.8rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                 {post.author}
               </span>
               <span className="text-text-ghost">·</span>
-              <span className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
+              <span className="font-mono text-[0.8rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                 {readingTime} min read
               </span>
               <div className="flex gap-1 flex-wrap max-sm:basis-full max-sm:mt-2">
                 {post.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="font-mono text-[0.65rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
+                    className="font-mono text-[0.75rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-2"
                   >
                     {tag}
                   </span>
@@ -187,7 +187,7 @@ export default async function BlogPost({ params }: Props) {
 
             {relatedPosts.length > 0 && (
               <div className="mt-16 pt-8 border-t-2 border-ac-red">
-                <h2 className="font-display text-[0.7rem] font-bold tracking-[2px] uppercase text-ac-red mb-6">
+                <h2 className="font-display text-[0.8rem] max-sm:text-xs font-bold tracking-[2px] uppercase text-ac-red mb-6">
                   Related insights
                 </h2>
                 <div className="grid gap-[2px]">
@@ -204,7 +204,7 @@ export default async function BlogPost({ params }: Props) {
                         {related.description}
                       </p>
                       <div className="flex items-center gap-3">
-                        <span className="font-mono text-[0.65rem] max-sm:text-xs text-text-ghost tracking-[1px] uppercase">
+                        <span className="font-mono text-[0.75rem] max-sm:text-xs text-text-ghost tracking-[1px] uppercase">
                           {new Date(related.publishedAt).toLocaleDateString('en-AU', {
                             day: 'numeric',
                             month: 'short',
@@ -215,7 +215,7 @@ export default async function BlogPost({ params }: Props) {
                           {related.tags.slice(0, 2).map((tag) => (
                             <span
                               key={tag}
-                              className="font-mono text-[0.6rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-1.5"
+                              className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] uppercase text-ac-red border border-border-red py-0.5 px-1.5"
                             >
                               {tag}
                             </span>

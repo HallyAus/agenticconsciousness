@@ -43,7 +43,7 @@ export default function Hero() {
       </ScrollReveal>
 
       <ScrollReveal delay={0.05}>
-        <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[3px] uppercase mb-3">
+        <div className="font-mono text-[0.8rem] max-sm:text-xs text-text-dim tracking-[3px] uppercase mb-3">
           AI Strategy · Implementation · Automation
         </div>
       </ScrollReveal>
@@ -61,7 +61,7 @@ export default function Hero() {
         >
           Free consultation →
         </a>
-        <div className="font-mono text-[0.7rem] text-text-dim tracking-[2px] uppercase mb-10">
+        <div className="font-mono text-[0.8rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-10">
           No obligation · 30 minute call · Australia-wide
         </div>
       </ScrollReveal>
@@ -79,7 +79,7 @@ export default function Hero() {
                 value={c.value}
                 className="text-[1.8rem] font-black text-ac-red tracking-tight leading-none"
               />
-              <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-2">
+              <div className="font-mono text-[0.8rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mt-2">
                 {c.label}
               </div>
             </div>

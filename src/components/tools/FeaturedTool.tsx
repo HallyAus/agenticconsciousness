@@ -259,19 +259,19 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
                     ) : fileName && pdfData ? (
                       <div className="text-center">
                         <div className="text-ac-red text-[1.5rem] mb-1">PDF</div>
-                        <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-primary">{fileName}</div>
+                        <div className="font-mono text-[0.8rem] max-sm:text-xs text-text-primary">{fileName}</div>
                       </div>
                     ) : !result ? (
                       <>
                         <div className="text-text-ghost text-[1.5rem]">&uarr;</div>
-                        <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim text-center">
+                        <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim text-center">
                           Drop file here or click to upload
                         </div>
                         <div className="font-mono text-[0.5rem] text-text-ghost">PDF, JPG, PNG, WebP</div>
                       </>
                     ) : null}
                     {result && !filePreview && !pdfData && (
-                      <div className="font-mono text-[0.65rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
+                      <div className="font-mono text-[0.75rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase">
                         Example data loaded
                       </div>
                     )}
@@ -357,7 +357,7 @@ export default function FeaturedTool({ stats }: FeaturedToolProps) {
               </div>
 
               {error && (
-                <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px] mt-2">{error}</p>
+                <p className="font-mono text-[0.8rem] max-sm:text-xs text-ac-red tracking-[1px] mt-2">{error}</p>
               )}
             </form>
           </div>

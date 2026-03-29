@@ -95,7 +95,7 @@ export default function AiGreeting() {
         {STATUS_ITEMS.map((item, i) => (
           <span
             key={item.label}
-            className={`font-mono text-[0.65rem] max-sm:text-xs tracking-[2px] uppercase transition-all duration-300 ${
+            className={`font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase transition-all duration-300 ${
               visibleStatuses.includes(i)
                 ? 'opacity-100 translate-y-0'
                 : 'opacity-0 translate-y-1'

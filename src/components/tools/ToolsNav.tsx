@@ -41,7 +41,7 @@ export default function ToolsNav() {
         <a
           key={tab.id}
           href={`#${tab.id}`}
-          className={`font-display text-[0.7rem] font-bold tracking-[2px] uppercase py-3 px-4 no-underline transition-all duration-200 border-b-2 ${
+          className={`font-display text-[0.8rem] max-sm:text-xs font-bold tracking-[2px] uppercase py-3 px-4 no-underline transition-all duration-200 border-b-2 ${
             active === tab.id
               ? 'border-b-[var(--red)]'
               : 'border-b-transparent'

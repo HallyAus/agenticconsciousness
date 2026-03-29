@@ -96,7 +96,7 @@ export default function CTA() {
               {/* ── Step 1: Challenge input ── */}
               {step === 'challenge' && (
                 <div className="max-w-[640px] mx-auto">
-                  <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-6">
+                  <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-6">
                     READY?
                   </div>
                   <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight mb-4">
@@ -138,13 +138,13 @@ export default function CTA() {
               {step === 'recommend' && result && (
                 <div className="max-w-[640px] mx-auto">
                   {/* Recommended service */}
-                  <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-text-dim mb-3">
+                  <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-text-dim mb-3">
                     AI RECOMMENDATION
                   </div>
                   <div className="text-[1.5rem] font-black text-ac-red mb-5 tracking-tight">
                     {result.recommendedService}
                     {result.confidence === 'High' && (
-                      <span className="ml-3 font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] text-text-dim align-middle">
+                      <span className="ml-3 font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] text-text-dim align-middle">
                         HIGH CONFIDENCE
                       </span>
                     )}
@@ -157,7 +157,7 @@ export default function CTA() {
 
                   {/* Quick win */}
                   <div className="bg-ac-block px-5 py-4 mb-8">
-                    <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red">
+                    <span className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red">
                       Try this now:
                     </span>
                     <p className="mt-2 text-text-primary font-light leading-[1.7] text-[0.9rem]">
@@ -230,7 +230,7 @@ export default function CTA() {
               {/* ── Step 3: Confirmation ── */}
               {step === 'done' && (
                 <div className="max-w-[640px] mx-auto text-center">
-                  <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-6">
+                  <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-6">
                     RECEIVED
                   </div>
                   <div className="text-[clamp(1.5rem,4vw,2.5rem)] font-black tracking-tight mb-6">
@@ -241,7 +241,7 @@ export default function CTA() {
                   </p>
                   {result && (
                     <div className="bg-ac-block px-5 py-4 text-left">
-                      <span className="font-mono text-[0.7rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red">
+                      <span className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red">
                         In the meantime:
                       </span>
                       <p className="mt-2 text-text-primary font-light leading-[1.7] text-[0.9rem]">

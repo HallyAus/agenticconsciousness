@@ -465,7 +465,7 @@ export default function FAQPage() {
       <main className="pt-[60px] min-h-screen">
         <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
           <div className="max-w-[800px] mx-auto">
-            <div className="font-mono text-[0.65rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
+            <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
               FAQ
             </div>
             <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-4 text-text-primary">

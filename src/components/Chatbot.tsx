@@ -142,10 +142,10 @@ export default function Chatbot() {
           <div className="py-3 px-4 border-b-2 border-ac-red flex items-center gap-3 bg-ac-card">
             <div className="w-[7px] h-[7px] bg-[var(--status-green)] animate-blink" />
             <div>
-              <div className="text-[0.7rem] font-black tracking-[2px] uppercase text-text-primary">
+              <div className="text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase text-text-primary">
                 AC Neural Agent
               </div>
-              <div className="font-mono text-[0.6rem] max-sm:text-xs text-text-dim">
+              <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim">
                 Powered by Claude — ask anything
               </div>
             </div>
@@ -193,7 +193,7 @@ export default function Chatbot() {
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="bg-ac-red border-none text-white px-4 py-3 font-display text-[0.7rem] font-black tracking-[2px] cursor-pointer transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:outline-none"
+              className="bg-ac-red border-none text-white px-4 py-3 font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] cursor-pointer transition-all duration-200 hover:bg-white hover:text-ac-black disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:outline-none"
             >
               SEND
             </button>

@@ -289,7 +289,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
 
           <ScrollReveal>
             <div className="flex gap-2 mb-8 flex-wrap">
-              <span className="text-[0.7rem] font-black tracking-[2.5px] uppercase py-[0.35rem] px-[0.9rem] bg-ac-red text-white">
+              <span className="text-[0.8rem] max-sm:text-xs font-black tracking-[2.5px] uppercase py-[0.35rem] px-[0.9rem] bg-ac-red text-white">
                 {page.isCity ? `AI FOR / ${page.cityName!.toUpperCase()}` : page.title.toUpperCase()}
               </span>
             </div>
@@ -333,7 +333,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
             <div className="max-w-[1200px] mx-auto">
               <div className="flex justify-between items-end mb-14 gap-8 flex-wrap">
                 <div>
-                  <div className="font-mono text-[0.7rem] tracking-[3px] uppercase text-ac-red mb-3">
+                  <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red mb-3">
                     {page.isCity ? `WHY ${page.cityName!.toUpperCase()}` : 'WHY US'}
                   </div>
                   <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none text-text-primary">
