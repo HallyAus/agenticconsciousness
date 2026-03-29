@@ -1,6 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { checkToolAccess } from '@/lib/toolAccess';
 import { validateCsrf } from '@/lib/csrf';
 import { incrementToolStat } from '@/lib/toolStats';
 import { parseAiJson } from '@/lib/parseAiJson';
@@ -11,13 +11,14 @@ const client = new Anthropic({
 });
 
 export async function POST(req: NextRequest) {
-  const ip = (req.headers.get('x-forwarded-for')?.split(',')[0] ?? req.headers.get('x-real-ip'))?.trim() || 'unknown';
-  const rateLimit = checkRateLimit(ip);
-  if (!rateLimit.allowed) {
-    return NextResponse.json(
-      { error: `Rate limit exceeded. Try again in ${rateLimit.retryAfter}s.` },
-      { status: 429 }
-    );
+  const access = checkToolAccess(req, 'contract');
+  if (!access.allowed) {
+    return NextResponse.json({
+      error: access.message || 'Rate limit exceeded.',
+      requiresEmail: access.requiresEmail,
+      tier: access.tier,
+      remainingUses: access.remainingUses,
+    }, { status: 429 });
   }
 
   const csrfValid = await validateCsrf(req);

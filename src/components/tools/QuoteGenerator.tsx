@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import StagedLoading from '@/components/StagedLoading';
 import CopyButton from '@/components/CopyButton';
 import SendToEmail from '@/components/SendToEmail';
 import ToggleGroup from '@/components/ToggleGroup';
-import { incrementRateLimit, usesRemaining as getUsesRemaining, MAX_TOOL_USES } from '@/lib/toolRateLimit';
 import { trackEvent } from '@/lib/tracking';
 import { useCsrf } from '@/lib/useCsrf';
 
@@ -88,12 +86,10 @@ export default function QuoteGenerator() {
   const [loadingComplete, setLoadingComplete] = useState(false);
   const [result, setResult] = useState<QuoteResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [remainingUses, setRemainingUses] = useState<number>(() => getUsesRemaining());
 
   const descLen = jobDescription.length;
   const canSubmit =
     !loading &&
-    remainingUses > 0 &&
     businessName.trim() &&
     clientName.trim() &&
     descLen >= 10 &&
@@ -126,12 +122,6 @@ export default function QuoteGenerator() {
     e.preventDefault();
     if (!canSubmit) return;
 
-    const currentRemaining = getUsesRemaining();
-    if (currentRemaining <= 0) {
-      setRemainingUses(0);
-      return;
-    }
-
     setLoading(true);
     setLoadingComplete(false);
     setError(null);
@@ -155,8 +145,6 @@ export default function QuoteGenerator() {
       if (!res.ok) {
         setError(data.error || 'Quote generation failed. Please try again.');
       } else {
-        const next = incrementRateLimit();
-        setRemainingUses(Math.max(0, MAX_TOOL_USES - next.count));
         setLoadingComplete(true);
         setTimeout(() => {
           setResult(data);
@@ -336,28 +324,9 @@ export default function QuoteGenerator() {
               />
             </div>
 
-            {remainingUses <= 0 ? (
-              <div className="bg-ac-card border-2 border-ac-red p-6 text-center">
-                <p className="text-[0.9rem] font-black text-text-primary mb-2">You&apos;ve hit the limit.</p>
-                <p className="text-text-dim text-[0.8rem] font-light mb-4">
-                  Imagine these tools running 24/7, customised for your business — that&apos;s what we build.
-                </p>
-                <Link href="/#contact" className="inline-block font-display text-[0.7rem] font-black tracking-[2px] uppercase py-3 px-6 bg-ac-red text-white no-underline transition-all duration-200 hover:bg-white hover:text-ac-black">
-                  Book free consultation →
-                </Link>
-              </div>
-            ) : (
-              <>
-                <button type="submit" disabled={!canSubmit} className={btnClass}>
-                  {loading ? 'Generating...' : 'GENERATE QUOTE →'}
-                </button>
-                {remainingUses < MAX_TOOL_USES && (
-                  <div className="font-mono text-[0.7rem] max-sm:text-xs tracking-[1px] text-text-dim text-center mt-2">
-                    {remainingUses} of {MAX_TOOL_USES} free uses remaining this minute
-                  </div>
-                )}
-              </>
-            )}
+            <button type="submit" disabled={!canSubmit} className={btnClass}>
+              {loading ? 'Generating...' : 'GENERATE QUOTE →'}
+            </button>
 
             {error && (
               <p className="font-mono text-[0.7rem] max-sm:text-xs text-ac-red tracking-[1px]">{error}</p>

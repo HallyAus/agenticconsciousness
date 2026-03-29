@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Agentic Consciousness — About Slide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+  body { background: #1a1a1a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .slide {
+    width: 1920px; height: 1080px; background: #0a0a0a; position: relative; overflow: hidden;
+    font-family: 'Be Vietnam Pro', sans-serif; color: #ffffff;
+  }
+  .ghost-block { position: absolute; top: 0; right: 0; width: 500px; height: 100%; background: rgba(255,61,0,0.06); }
+  .ghost-line { position: absolute; top: 340px; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.06); }
+  .red-line-top { position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: #ff3d00; }
+  .content { position: relative; z-index: 1; padding: 80px 120px; height: 100%; display: flex; flex-direction: column; }
+  .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 60px; }
+  .logo { font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 400; color: #ff3d00; }
+  .slide-label { font-family: 'Space Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 3px; }
+  .section-tag { font-family: 'Space Mono', monospace; font-size: 12px; color: #ff3d00; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 16px; }
+  .heading { font-weight: 900; font-size: 64px; line-height: 1.05; letter-spacing: -2px; margin-bottom: 48px; }
+  .body-content { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; flex: 1; }
+  .left-col { display: flex; flex-direction: column; gap: 32px; }
+  .bio { font-weight: 300; font-size: 20px; color: rgba(255,255,255,0.75); line-height: 1.7; }
+  .right-col { display: flex; flex-direction: column; gap: 24px; justify-content: center; }
+  .stat-block { padding: 28px 32px; border: 2px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 24px; }
+  .stat-number { font-weight: 900; font-size: 40px; color: #ff3d00; min-width: 100px; }
+  .stat-text { font-weight: 300; font-size: 16px; color: rgba(255,255,255,0.6); }
+  .mission { padding: 28px 32px; border-left: 3px solid #ff3d00; background: rgba(255,61,0,0.04); }
+  .mission-label { font-family: 'Space Mono', monospace; font-size: 10px; color: #ff3d00; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; }
+  .mission-text { font-weight: 300; font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.6; }
+  .footer-bar { display: flex; justify-content: space-between; align-items: center; padding-top: 40px; border-top: 2px solid rgba(255,255,255,0.06); margin-top: auto; }
+  .url { font-family: 'Space Mono', monospace; font-size: 13px; color: rgba(255,255,255,0.25); }
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="ghost-block"></div>
+  <div class="ghost-line"></div>
+  <div class="red-line-top"></div>
+  <div class="content">
+    <div class="top-bar">
+      <div class="logo">AC_</div>
+      <div class="slide-label">About Us</div>
+    </div>
+    <div class="section-tag">The Founder</div>
+    <div class="heading">Meet Daniel</div>
+    <div class="body-content">
+      <div class="left-col">
+        <div class="bio">Daniel brings 21+ years of hands-on industry experience spanning Linux infrastructure, automation, and AI deployment. He founded Agentic Consciousness to bridge the gap between AI hype and practical business outcomes.</div>
+        <div class="bio">Based in Australia, Daniel works directly with businesses to identify where AI creates real value — not where it creates noise.</div>
+      </div>
+      <div class="right-col">
+        <div class="stat-block">
+          <div class="stat-number">21+</div>
+          <div class="stat-text">Years of industry experience</div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-number">8</div>
+          <div class="stat-text">Production AI tools built</div>
+        </div>
+        <div class="mission">
+          <div class="mission-label">Mission</div>
+          <div class="mission-text">Deploy practical AI that delivers measurable results — no buzzwords, no vaporware, just intelligence that works.</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <div class="url">agenticconsciousness.com.au</div>
+      <div class="url">ai@agenticconsciousness.com.au</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

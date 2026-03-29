@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AC_ Quote — Simple</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+body { width: 1080px; height: 1080px; background: #0a0a0a; color: #ffffff; font-family: 'Be Vietnam Pro', sans-serif; overflow: hidden; position: relative; }
+.ghost-symbol { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 600px; color: rgba(255, 255, 255, 0.04); line-height: 1; pointer-events: none; }
+.dot-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(rgba(255, 61, 0, 0.12) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; }
+.content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 100px; z-index: 1; }
+.label { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 14px; text-transform: uppercase; letter-spacing: 4px; color: #ff3d00; margin-bottom: 50px; }
+.quote { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 68px; line-height: 1.1; color: #ffffff; max-width: 800px; }
+.quote em { font-style: normal; color: #ff3d00; }
+.divider { width: 2px; height: 40px; background: #ff3d00; margin: 40px auto; }
+.footer { position: absolute; bottom: 60px; left: 100px; right: 100px; display: flex; justify-content: space-between; align-items: center; z-index: 1; }
+.logo { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 28px; color: #ffffff; }
+.logo span { color: #ff3d00; }
+.url { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 13px; color: rgba(255, 255, 255, 0.5); letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="ghost-symbol">&gt;</div>
+<div class="dot-grid"></div>
+<div class="content">
+<div class="label">// Philosophy</div>
+<div class="quote">Simple beats clever. <em>Deployed</em> beats perfect.</div>
+</div>
+<div class="footer">
+<div class="logo">AC<span>_</span></div>
+<div class="url">agenticconsciousness.com.au</div>
+</div>
+</body>
+</html>

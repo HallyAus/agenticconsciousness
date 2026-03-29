@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AC_ Tool — Contract Reviewer</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+body { width: 1080px; height: 1080px; background: #0a0a0a; color: #ffffff; font-family: 'Be Vietnam Pro', sans-serif; overflow: hidden; position: relative; }
+.ghost-text { position: absolute; top: 50%; right: -30px; transform: translateY(-50%); font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 220px; color: rgba(255, 255, 255, 0.04); line-height: 1; pointer-events: none; writing-mode: vertical-lr; letter-spacing: 10px; }
+.border-frame { position: absolute; top: 40px; left: 40px; right: 40px; bottom: 40px; border: 1px solid rgba(255, 255, 255, 0.06); }
+.red-corner { position: absolute; top: 40px; left: 40px; width: 100px; height: 100px; border-top: 2px solid #ff3d00; border-left: 2px solid #ff3d00; }
+.content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 100px; }
+.badge { display: inline-block; font-family: 'Space Mono', monospace; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: #0a0a0a; background: #ff3d00; padding: 8px 16px; margin-bottom: 40px; width: fit-content; }
+.tool-name { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 58px; line-height: 1.05; color: #ffffff; margin-bottom: 30px; }
+.tool-name em { font-style: normal; color: #ff3d00; }
+.accent-line { width: 60px; height: 2px; background: #ff3d00; margin-bottom: 30px; }
+.tool-desc { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; font-size: 22px; line-height: 1.6; color: rgba(255, 255, 255, 0.6); max-width: 650px; margin-bottom: 40px; }
+.risk-levels { display: flex; gap: 30px; }
+.risk { display: flex; flex-direction: column; align-items: center; padding: 16px 24px; border: 2px solid rgba(255, 255, 255, 0.1); }
+.risk-indicator { width: 12px; height: 12px; margin-bottom: 8px; }
+.risk-indicator.high { background: #ff3d00; }
+.risk-indicator.med { background: rgba(255, 61, 0, 0.5); }
+.risk-indicator.low { background: rgba(255, 255, 255, 0.3); }
+.risk span { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255, 255, 255, 0.5); }
+.footer { position: absolute; bottom: 60px; left: 100px; right: 100px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 28px; color: #ffffff; }
+.logo span { color: #ff3d00; }
+.cta { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #ff3d00; }
+</style>
+</head>
+<body>
+<div class="ghost-text">REVIEW</div>
+<div class="border-frame"></div>
+<div class="red-corner"></div>
+<div class="content">
+<div class="badge">Free AI Tool</div>
+<div class="tool-name">Contract <em>Reviewer</em></div>
+<div class="accent-line"></div>
+<div class="tool-desc">Upload any contract. Get a plain-English summary of key terms, risks, and clauses that need attention.</div>
+<div class="risk-levels">
+<div class="risk">
+<div class="risk-indicator high"></div>
+<span>High Risk</span>
+</div>
+<div class="risk">
+<div class="risk-indicator med"></div>
+<span>Medium Risk</span>
+</div>
+<div class="risk">
+<div class="risk-indicator low"></div>
+<span>Low Risk</span>
+</div>
+</div>
+</div>
+<div class="footer">
+<div class="logo">AC<span>_</span></div>
+<div class="cta">Try Free &rarr; agenticconsciousness.com.au</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect x="0" y="0" width="128" height="128" fill="#0a0a0a"/>
+  <rect x="0" y="0" width="128" height="128" fill="none" stroke="#ff3d00" stroke-width="2"/>
+  <text x="14" y="82" font-family="Be Vietnam Pro, sans-serif" font-weight="900" font-size="66" fill="#ffffff" letter-spacing="2">AC</text>
+  <text x="100" y="82" font-family="Be Vietnam Pro, sans-serif" font-weight="900" font-size="66" fill="#ff3d00" letter-spacing="2">_</text>
+</svg>

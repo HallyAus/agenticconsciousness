@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import type { ComponentType } from 'react';
+import ToolGate from '@/components/tools/ToolGate';
 
 const toolComponents: Record<string, ComponentType> = {
   invoice: dynamic(() => import('@/components/tools/InvoiceScanner')),
@@ -58,7 +59,9 @@ export default function ToolExpander({ toolId, onClose }: ToolExpanderProps) {
 
       {/* Tool content */}
       <div className="max-w-[1200px] mx-auto">
-        <ToolComponent />
+        <ToolGate toolId={toolId}>
+          <ToolComponent />
+        </ToolGate>
       </div>
 
       <style>{`

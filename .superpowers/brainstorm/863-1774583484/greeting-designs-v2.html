@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Greeting — 10 Options</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0a0a0a; color: rgba(255,255,255,0.85); font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; }
+
+  .page-title { text-align: center; padding: 40px 20px 10px; font-size: 14px; font-family: 'Space Mono', monospace; color: #ff3d00; text-transform: uppercase; letter-spacing: 2px; }
+  .page-subtitle { text-align: center; padding: 0 20px 40px; font-size: 13px; color: rgba(255,255,255,0.4); }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; }
+  @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+
+  .card { border: 2px solid rgba(255,255,255,0.08); cursor: pointer; transition: border-color 0.2s; overflow: hidden; }
+  .card:hover { border-color: rgba(255,61,0,0.5) !important; }
+  .card.selected { border-color: #ff3d00 !important; box-shadow: 0 0 0 1px #ff3d00; }
+  .card-header { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center; }
+  .card-num { font-family: 'Space Mono', monospace; font-size: 10px; color: #ff3d00; }
+  .card-title { font-weight: 900; font-size: 12px; }
+  .card-body { padding: 0; }
+
+  /* Hero mini */
+  .mini-hero { text-align: center; padding: 20px 16px 18px; background: #0d0d0d; }
+  .mini-brand { font-weight: 900; font-size: 22px; line-height: 0.9; letter-spacing: -1px; margin-bottom: 4px; }
+  .mini-red { color: #ff3d00; }
+  .mini-sub { font-family: 'Space Mono', monospace; font-size: 7px; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+  .mini-btn { display: inline-block; background: #ff3d00; color: white; padding: 6px 14px; font-family: 'Space Mono', monospace; font-size: 8px; text-transform: uppercase; margin-top: 8px; }
+  .mini-desc { font-size: 9px; color: rgba(255,255,255,0.3); padding: 8px 16px; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.04); }
+
+  /* Greeting styles */
+  .g-text { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 6px; }
+  .g-cursor { display: inline-block; width: 2px; height: 11px; background: #ff3d00; animation: blink 1s infinite; vertical-align: middle; }
+  @keyframes blink { 0%,50% { opacity:1; } 51%,100% { opacity:0; } }
+  .g-live { font-family: 'Space Mono', monospace; font-size: 7px; color: #ff3d00; border: 1px solid #ff3d00; padding: 1px 5px; text-transform: uppercase; letter-spacing: 1px; }
+  .g-terminal { background: #080808; border: 1px solid rgba(255,61,0,0.2); padding: 8px 12px; text-align: left; font-family: 'Space Mono', monospace; margin: 0 auto; max-width: 340px; }
+  .g-prompt { font-size: 8px; color: #ff3d00; margin-bottom: 3px; }
+  .g-output { font-size: 9px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+  .g-block-cursor { display: inline-block; width: 6px; height: 10px; background: #ff3d00; animation: blink 1s infinite; vertical-align: middle; }
+  .g-question { font-size: 14px; font-weight: 900; color: rgba(255,255,255,0.75); line-height: 1.3; margin-bottom: 4px; }
+  .g-answer { font-size: 9px; color: rgba(255,255,255,0.3); }
+  .g-stat-val { color: #ff3d00; font-weight: 900; font-size: 13px; }
+  .g-tagline-box { border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); padding: 8px 14px; margin: 0 auto; max-width: 320px; }
+  .g-matrix { font-family: 'Space Mono', monospace; font-size: 8px; color: rgba(255,61,0,0.3); letter-spacing: 3px; margin-bottom: 6px; overflow: hidden; height: 12px; }
+  .g-scan-line { height: 1px; background: linear-gradient(90deg, transparent, #ff3d00, transparent); margin-bottom: 8px; animation: scan 2s infinite; }
+  @keyframes scan { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+  .g-status-row { display: flex; gap: 8px; justify-content: center; margin-bottom: 6px; }
+  .g-status-item { font-family: 'Space Mono', monospace; font-size: 7px; color: rgba(255,255,255,0.3); text-transform: uppercase; }
+  .g-status-dot { display: inline-block; width: 4px; height: 4px; background: #22c55e; margin-right: 3px; vertical-align: middle; }
+  .g-red-dot { background: #ff3d00; }
+  .g-chat-bubble { background: rgba(255,61,0,0.06); border-left: 2px solid #ff3d00; padding: 8px 12px; text-align: left; margin: 0 auto; max-width: 320px; }
+  .g-chat-label { font-family: 'Space Mono', monospace; font-size: 7px; color: #ff3d00; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+  .g-glitch { position: relative; font-size: 13px; font-weight: 900; color: rgba(255,255,255,0.7); }
+  .g-word-cycle { display: inline; }
+  .g-counter-box { display: inline-flex; gap: 2px; }
+  .g-counter-digit { background: rgba(255,61,0,0.1); border: 1px solid rgba(255,61,0,0.2); padding: 3px 6px; font-family: 'Space Mono', monospace; font-size: 12px; color: #ff3d00; font-weight: 900; }
+
+  .vote-hint { text-align: center; padding: 20px; font-family: 'Space Mono', monospace; font-size: 11px; color: rgba(255,255,255,0.3); }
+</style>
+<script>
+function toggleSelect(el) {
+  document.querySelectorAll('.card').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+  const choice = el.dataset.choice;
+  fetch('/.events', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({type:'click',choice,text:el.querySelector('.card-title')?.textContent||choice,timestamp:Date.now()}) });
+}
+</script>
+</head>
+<body>
+
+<div class="page-title">AI Greeting — 10 Options</div>
+<div class="page-subtitle">What should visitors see below the headline when they land? Click your pick.</div>
+
+<div class="grid">
+
+  <!-- 1: Current -->
+  <div class="card" data-choice="1-current" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">01</span><span class="card-title">Current — AI Typewriter</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div class="g-text">Good evening. While most businesses wind down, AI keeps working.<span class="g-cursor"></span></div>
+        <div class="g-live">● LIVE</div>
+        <br><div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">AI-generated greeting based on time, location, returning status. API call each visit.</div>
+    </div>
+  </div>
+
+  <!-- 2: Terminal -->
+  <div class="card" data-choice="2-terminal" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">02</span><span class="card-title">Terminal Prompt</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div class="g-terminal">
+          <div class="g-prompt">&gt; ac.greet(visitor)</div>
+          <div class="g-output">Your competitors are already automating. The question is whether you're next.<span class="g-block-cursor"></span></div>
+        </div>
+        <br><div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">Greeting in a terminal box. Hacker aesthetic. Reinforces "we're engineers, not consultants".</div>
+    </div>
+  </div>
+
+  <!-- 3: Challenge question -->
+  <div class="card" data-choice="3-question" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">03</span><span class="card-title">Challenge Question</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div class="g-question">How many hours did your team waste this week?</div>
+        <div class="g-answer">We build AI that eliminates them.</div>
+        <div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">Bold provocative question. Rotates between 10+ questions each visit. No API call.</div>
+    </div>
+  </div>
+
+  <!-- 4: Chat bubble -->
+  <div class="card" data-choice="4-chat" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">04</span><span class="card-title">AI Chat Bubble</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div class="g-chat-bubble">
+          <div class="g-chat-label">AC_ AI</div>
+          <div class="g-output">Evening. I've scanned 47 invoices today, drafted 23 emails, and analysed 8 competitors. What can I build for you?<span class="g-cursor"></span></div>
+        </div>
+        <br><div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">Greeting styled as a chat message from the AI. Personal, conversational. Shows the AI is "alive".</div>
+    </div>
+  </div>
+
+  <!-- 5: Scanning/boot sequence -->
+  <div class="card" data-choice="5-boot" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">05</span><span class="card-title">Boot Sequence</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div class="g-status-row">
+          <span class="g-status-item"><span class="g-status-dot"></span>AI Online</span>
+          <span class="g-status-item"><span class="g-status-dot"></span>8 Tools Active</span>
+          <span class="g-status-item"><span class="g-status-dot"></span>Models Loaded</span>
+        </div>
+        <div class="g-scan-line"></div>
+        <div class="g-text" style="font-family:'Space Mono',monospace;font-size:9px">System initialised. Ready to automate your business.</div>
+        <div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">System boot-up animation. Status indicators appear one by one, then greeting types in. Sci-fi feel.</div>
+    </div>
+  </div>
+
+  <!-- 6: Rotating taglines in box -->
+  <div class="card" data-choice="6-taglines" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">06</span><span class="card-title">Rotating Taglines</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div class="g-tagline-box">
+          <div class="g-text" style="margin:0;font-size:12px;color:rgba(255,255,255,0.6)">"We don't just advise — we build AI systems that run your business better than you thought possible."</div>
+        </div>
+        <br><div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">Pre-written taglines in a bordered box. Different one each visit. Zero API cost, instant load.</div>
+    </div>
+  </div>
+
+  <!-- 7: Counter + message -->
+  <div class="card" data-choice="7-counter" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">07</span><span class="card-title">Live Counter + Greeting</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div style="margin-bottom:8px">
+          <div class="g-counter-box">
+            <span class="g-counter-digit">0</span><span class="g-counter-digit">4</span><span class="g-counter-digit">7</span>
+          </div>
+          <span style="font-family:'Space Mono',monospace;font-size:8px;color:rgba(255,255,255,0.3);margin-left:6px;text-transform:uppercase;letter-spacing:1px">businesses audited</span>
+        </div>
+        <div class="g-text">Your industry is already moving. Let's make sure you're ahead.</div>
+        <div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">Animated counter ticking up + contextual message. Urgency + social proof combined.</div>
+    </div>
+  </div>
+
+  <!-- 8: Word cycling -->
+  <div class="card" data-choice="8-cycle" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">08</span><span class="card-title">Word Cycling</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div style="font-size:16px;font-weight:900;color:rgba(255,255,255,0.7);margin-bottom:6px;line-height:1.3">
+          We build AI that<br><span style="color:#ff3d00;border-bottom:2px solid #ff3d00;padding-bottom:2px">writes your proposals</span>
+        </div>
+        <div class="g-answer">Cycling: scans invoices → drafts emails → analyses competitors → reviews contracts</div>
+        <div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">"We build AI that [cycles through actions]" — each word fades/slides to the next. Shows breadth of capability.</div>
+    </div>
+  </div>
+
+  <!-- 9: Minimal one-liner -->
+  <div class="card" data-choice="9-minimal" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">09</span><span class="card-title">Minimal One-Liner</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.4);font-weight:300;margin-bottom:10px">AI that works while you don't have to.</div>
+        <div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">One static line. No animation, no API, no gimmicks. Ultra minimal. Let the brand speak.</div>
+    </div>
+  </div>
+
+  <!-- 10: Matrix decode -->
+  <div class="card" data-choice="10-decode" onclick="toggleSelect(this)">
+    <div class="card-header"><span class="card-num">10</span><span class="card-title">Matrix Decode</span></div>
+    <div class="card-body">
+      <div class="mini-hero">
+        <div class="mini-brand">AGENTIC<br><span class="mini-red">CONSCIOUSNESS</span></div>
+        <div class="mini-sub">AI Strategy · Implementation · Automation</div>
+        <div class="g-matrix">01001 10110 01001 11010 00101 10011 01110 10010</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);font-weight:300;margin-bottom:6px">
+          <span style="color:#ff3d00;font-family:'Space Mono',monospace;font-size:9px">DECODED:</span>
+          We turn data into decisions. Automatically.
+        </div>
+        <div class="mini-btn">Free consultation →</div>
+      </div>
+      <div class="mini-desc">Binary/random characters scramble then decode into the greeting. Matrix-style reveal animation.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="vote-hint">Click the greeting style you prefer</div>
+
+</body>
+</html>

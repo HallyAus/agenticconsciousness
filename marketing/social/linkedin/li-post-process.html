@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LI Process — Agentic Consciousness</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  width: 1200px;
+  height: 627px;
+  overflow: hidden;
+  background: #0a0a0a;
+  color: #ffffff;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  position: relative;
+}
+.noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+.container { position: relative; z-index: 1; width: 100%; height: 100%; }
+.ghost { position: absolute; opacity: 0.06; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; pointer-events: none; z-index: 0; }
+.logo { font-family: 'Space Mono', monospace; font-weight: 700; color: #ff3d00; }
+.label { font-family: 'Space Mono', monospace; font-weight: 400; text-transform: uppercase; letter-spacing: 2px; font-size: 12px; color: rgba(255,255,255,0.5); }
+.headline { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; line-height: 1.05; color: #ffffff; }
+.body-text { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; line-height: 1.5; color: rgba(255,255,255,0.7); }
+.red { color: #ff3d00; }
+.red-bg { background: #ff3d00; color: #0a0a0a; }
+.border-red { border: 2px solid #ff3d00; }
+.url { font-family: 'Space Mono', monospace; font-size: 13px; color: rgba(255,255,255,0.4); }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="container" style="display:flex; flex-direction:column; justify-content:center; padding:40px 60px;">
+  <div class="ghost" style="font-size:150px; top:-10px; right:40px; line-height:1;">1234</div>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+    <div class="logo" style="font-size:24px;">AC_</div>
+    <div class="label">// OUR PROCESS</div>
+  </div>
+  <div class="headline" style="font-size:32px; margin-bottom:28px;">Our <span class="red">4-step</span> process</div>
+  <div style="display:flex; gap:2px;">
+    <div style="flex:1; border:2px solid #ff3d00; padding:20px;"><div style="font-weight:900; font-size:48px; color:#ff3d00; margin-bottom:8px;">01</div><div style="font-weight:900; font-size:18px; margin-bottom:4px;">Discover</div><div class="body-text" style="font-size:13px;">Audit your workflows, find AI opportunities</div></div>
+    <div style="flex:1; border:2px solid rgba(255,255,255,0.15); padding:20px;"><div style="font-weight:900; font-size:48px; color:#ff3d00; margin-bottom:8px;">02</div><div style="font-weight:900; font-size:18px; margin-bottom:4px;">Strategise</div><div class="body-text" style="font-size:13px;">Build your AI roadmap and business case</div></div>
+    <div style="flex:1; border:2px solid rgba(255,255,255,0.15); padding:20px;"><div style="font-weight:900; font-size:48px; color:#ff3d00; margin-bottom:8px;">03</div><div style="font-weight:900; font-size:18px; margin-bottom:4px;">Implement</div><div class="body-text" style="font-size:13px;">Deploy tools, train your team</div></div>
+    <div style="flex:1; border:2px solid #ff3d00; padding:20px;"><div style="font-weight:900; font-size:48px; color:#ff3d00; margin-bottom:8px;">04</div><div style="font-weight:900; font-size:18px; margin-bottom:4px;">Optimise</div><div class="body-text" style="font-size:13px;">Measure results, iterate, scale</div></div>
+  </div>
+  <div class="url" style="margin-top:16px; text-align:right;">agenticconsciousness.com.au</div>
+</div>
+</body>
+</html>

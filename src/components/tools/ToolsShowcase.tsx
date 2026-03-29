@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import FeaturedTool from '@/components/tools/FeaturedTool';
+import ToolGate from '@/components/tools/ToolGate';
 import ToolNavStrip from '@/components/tools/ToolNavStrip';
 import EmailLink from '@/components/EmailLink';
 import ToolHeroSection from '@/components/tools/ToolHeroSection';
@@ -158,7 +159,9 @@ export default function ToolsShowcase() {
   return (
     <main className="pt-[60px] min-h-screen">
       {/* Featured Tool Hero */}
-      <FeaturedTool stats={stats} />
+      <ToolGate toolId="invoice">
+        <FeaturedTool stats={stats} />
+      </ToolGate>
 
       {/* Sticky Nav Strip */}
       <ToolNavStrip

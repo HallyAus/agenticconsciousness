@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1050">
+<title>Agentic Consciousness — Business Card Back</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+  body { background: #1a1a1a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+  .card {
+    width: 1050px; height: 600px; background: #0a0a0a; position: relative; overflow: hidden;
+    border: 2px solid #ff3d00; font-family: 'Be Vietnam Pro', sans-serif; color: #ffffff;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+  }
+  .ghost-grid { position: absolute; inset: 0; background-image:
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .ghost-corner-tl { position: absolute; top: 0; left: 0; width: 200px; height: 200px; border-right: 2px solid rgba(255,61,0,0.06); border-bottom: 2px solid rgba(255,61,0,0.06); }
+  .ghost-corner-br { position: absolute; bottom: 0; right: 0; width: 200px; height: 200px; border-left: 2px solid rgba(255,61,0,0.06); border-top: 2px solid rgba(255,61,0,0.06); }
+  .content { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 24px; }
+  .logo { font-family: 'Space Mono', monospace; font-size: 64px; font-weight: 400; color: #ff3d00; letter-spacing: -2px; }
+  .divider { width: 80px; height: 2px; background: #ff3d00; }
+  .tagline { font-weight: 300; font-size: 18px; color: rgba(255,255,255,0.8); letter-spacing: 2px; text-transform: uppercase; }
+  .urls { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+  .url { font-family: 'Space Mono', monospace; font-size: 13px; color: rgba(255,255,255,0.5); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="ghost-grid"></div>
+  <div class="ghost-corner-tl"></div>
+  <div class="ghost-corner-br"></div>
+  <div class="content">
+    <div class="logo">AC_</div>
+    <div class="divider"></div>
+    <div class="tagline">Intelligence. Deployed.</div>
+    <div class="urls">
+      <div class="url">agenticconsciousness.com.au</div>
+      <div class="url">ai@agenticconsciousness.com.au</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

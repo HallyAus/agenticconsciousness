@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AC_ Story — Tip Template</title>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;900&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+body { width: 1080px; height: 1920px; background: #0a0a0a; color: #ffffff; font-family: 'Be Vietnam Pro', sans-serif; overflow: hidden; position: relative; }
+.ghost-number { position: absolute; top: 200px; right: -30px; font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 600px; color: rgba(255, 255, 255, 0.04); line-height: 1; pointer-events: none; }
+.top-bar { position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: #ff3d00; }
+.header { position: absolute; top: 80px; left: 80px; right: 80px; display: flex; justify-content: space-between; align-items: center; }
+.logo { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 32px; color: #ffffff; }
+.logo span { color: #ff3d00; }
+.badge { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 12px; text-transform: uppercase; letter-spacing: 3px; color: #ff3d00; border: 1px solid #ff3d00; padding: 8px 16px; }
+.content { position: absolute; top: 50%; left: 0; width: 100%; transform: translateY(-50%); padding: 0 80px; }
+.tip-label { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 16px; text-transform: uppercase; letter-spacing: 4px; color: #ff3d00; margin-bottom: 40px; }
+.tip-title { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 900; font-size: 72px; line-height: 1.05; color: #ffffff; margin-bottom: 40px; }
+.tip-title em { font-style: normal; color: #ff3d00; }
+.accent-line { width: 80px; height: 2px; background: #ff3d00; margin-bottom: 40px; }
+.tip-body { font-family: 'Be Vietnam Pro', sans-serif; font-weight: 300; font-size: 28px; line-height: 1.5; color: rgba(255, 255, 255, 0.6); max-width: 800px; }
+.footer { position: absolute; bottom: 80px; left: 80px; right: 80px; display: flex; flex-direction: column; gap: 20px; }
+.swipe-cta { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 14px; text-transform: uppercase; letter-spacing: 3px; color: #ff3d00; text-align: center; }
+.url { font-family: 'Space Mono', monospace; font-weight: 400; font-size: 13px; color: rgba(255, 255, 255, 0.4); text-align: center; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+<div class="ghost-number">01</div>
+<div class="top-bar"></div>
+<div class="header">
+<div class="logo">AC<span>_</span></div>
+<div class="badge">AI Tip</div>
+</div>
+<div class="content">
+<div class="tip-label">// Quick Tip</div>
+<div class="tip-title">Start with <em>one</em> workflow.</div>
+<div class="accent-line"></div>
+<div class="tip-body">Don't try to automate everything at once. Pick your most repetitive task and automate that first. Build momentum from there.</div>
+</div>
+<div class="footer">
+<div class="swipe-cta">Swipe up to learn more &uarr;</div>
+<div class="url">agenticconsciousness.com.au</div>
+</div>
+</body>
+</html>

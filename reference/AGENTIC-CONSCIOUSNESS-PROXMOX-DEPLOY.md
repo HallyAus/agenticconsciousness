@@ -42,8 +42,8 @@ docker compose version
 If you already have a VM running Docker for other services, just create a new directory:
 
 ```bash
-mkdir -p /opt/agentic-consciousness
-cd /opt/agentic-consciousness
+mkdir -p /opt/agenticconsciousness
+cd /opt/agenticconsciousness
 ```
 
 ---

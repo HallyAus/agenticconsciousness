@@ -3,6 +3,7 @@ FROM node:20-alpine AS base
 FROM base AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
+RUN apk add --no-cache python3 make g++
 RUN npm ci
 
 FROM base AS builder
@@ -36,6 +37,8 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Create writable directories for runtime data
 RUN mkdir -p /app/data /app/content/blog /app/content/proposals /app/content/drip \
     && chown -R nextjs:nodejs /app/data /app/content
+
+COPY --from=builder /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
 
 USER nextjs
 EXPOSE 3000
