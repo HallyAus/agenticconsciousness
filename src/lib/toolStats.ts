@@ -11,6 +11,7 @@ const DEFAULT_STATS = {
   meetings: 0,
   jobads: 0,
   contracts: 0,
+  energy: 0,
 };
 
 export function getToolStats(): Record<string, number> {
@@ -23,7 +24,7 @@ export function getToolStats(): Record<string, number> {
 }
 
 export function incrementToolStat(
-  tool: 'invoices' | 'quotes' | 'competitors' | 'emails' | 'summaries' | 'meetings' | 'jobads' | 'contracts'
+  tool: 'invoices' | 'quotes' | 'competitors' | 'emails' | 'summaries' | 'meetings' | 'jobads' | 'contracts' | 'energy'
 ) {
   const stats = getToolStats();
   stats[tool] = (stats[tool] || 0) + 1;
