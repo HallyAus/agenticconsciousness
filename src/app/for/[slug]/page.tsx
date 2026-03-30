@@ -351,7 +351,7 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
                 {page.points.map((point, i) => (
                   <div
                     key={point.title}
-                    className="bg-ac-card p-10 relative transition-colors duration-300 hover:bg-ac-card-hover"
+                    className="bg-ac-card p-10 relative transition-colors duration-200 hover:bg-ac-card-hover"
                     style={{
                       borderTop: `3px solid ${
                         i === 0 ? '#ff3d00' : i === 1 ? 'rgba(255,61,0,0.6)' : i === 2 ? 'rgba(255,61,0,0.35)' : 'rgba(255,61,0,0.2)'

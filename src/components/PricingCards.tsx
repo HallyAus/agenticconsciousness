@@ -87,7 +87,7 @@ export default function PricingCards() {
       {tiers.map((tier) => (
         <div
           key={tier.num}
-          className="p-8 relative transition-colors duration-300"
+          className="p-8 relative transition-colors duration-200"
           style={{
             background: 'var(--bg-card)',
             border: tier.featured ? '2px solid var(--red)' : undefined,

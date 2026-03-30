@@ -104,7 +104,7 @@ export default function AiAudit() {
   }
 
   const selectClass =
-    'w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 appearance-none cursor-pointer transition-colors duration-150';
+    'w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 appearance-none cursor-pointer transition-colors duration-200';
 
   return (
     <section id="ai-audit" aria-label="AI business audit" className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
@@ -212,7 +212,7 @@ export default function AiAudit() {
                   onChange={(e) => setPainPoint(e.target.value.slice(0, 500))}
                   placeholder="e.g. Quoting takes our estimators 3+ hours per job and we're losing work to faster competitors..."
                   rows={5}
-                  className="w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] max-sm:min-h-[100px] transition-colors duration-150 placeholder:text-text-dim"
+                  className="w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] max-sm:min-h-[100px] transition-colors duration-200 placeholder:text-text-dim"
                   required
                 />
                 <div
@@ -227,13 +227,13 @@ export default function AiAudit() {
             <button
               type="submit"
               disabled={!canSubmit}
-              className="w-full bg-ac-red text-white font-black tracking-[2px] uppercase text-[0.85rem] py-4 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity duration-150 hover:opacity-90"
+              className="w-full bg-ac-red text-white font-black tracking-[2px] uppercase text-[0.85rem] py-4 disabled:opacity-40 disabled:cursor-not-allowed transition-opacity duration-200 hover:opacity-90"
             >
               {loading
-                ? 'Analysing...'
+                ? 'Analysing your business...'
                 : cooldown > 0
                   ? `Try again in ${cooldown}s...`
-                  : 'Run AI Audit'}
+                  : 'GET MY AI SNAPSHOT →'}
             </button>
 
             {error && (
@@ -329,7 +329,7 @@ export default function AiAudit() {
                   </p>
                   <a
                     href="#contact"
-                    className="inline-block bg-ac-red text-white font-black tracking-[2px] uppercase text-[0.8rem] max-sm:text-xs px-6 py-3 hover:opacity-90 transition-opacity duration-150"
+                    className="inline-block bg-ac-red text-white font-black tracking-[2px] uppercase text-[0.8rem] max-sm:text-xs px-6 py-3 hover:opacity-90 transition-opacity duration-200"
                   >
                     Book Free Consultation
                   </a>

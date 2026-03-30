@@ -142,6 +142,47 @@ URL: https://agenticconsciousness.com.au/blog/real-cost-of-not-using-ai-in-your-
 
 RSS Feed: https://agenticconsciousness.com.au/feed.xml
 
+## Industries Served
+
+- **Trades businesses** — quoting, scheduling, customer follow-ups, invoicing automation
+- **Manufacturing** — AI quality inspection, predictive maintenance, production scheduling, supply chain
+- **Professional services** — proposals, document review, client communications, knowledge management
+- **Healthcare** — clinical documentation, scheduling, patient communications, billing
+- **Retail** — demand forecasting, customer service, personalised marketing, pricing
+- **Finance** — document processing, compliance, financial reporting, fraud detection
+
+## Geographic Coverage
+
+Based in Australia, operating nationally across all states and territories. Remote delivery for most engagements, on-site availability where needed. Australian-hosted infrastructure.
+
+City-specific services:
+- [AI Consulting Sydney](https://agenticconsciousness.com.au/for/sydney) — financial services, professional services, retail, tech
+- [AI Consulting Melbourne](https://agenticconsciousness.com.au/for/melbourne) — manufacturing, creative, education, property
+- [AI Consulting Brisbane](https://agenticconsciousness.com.au/for/brisbane) — mining, tourism, trades, government
+- [AI Consulting Perth](https://agenticconsciousness.com.au/for/perth) — mining, energy, professional services, agriculture
+- [AI Consulting Adelaide](https://agenticconsciousness.com.au/for/adelaide) — defence, wine, healthcare, manufacturing
+- [AI Consulting Gold Coast](https://agenticconsciousness.com.au/for/gold-coast) — tourism, property, health, trades
+
+Industry-specific pages:
+- [AI for Manufacturing](https://agenticconsciousness.com.au/for/manufacturing)
+- [AI for Professional Services](https://agenticconsciousness.com.au/for/professional-services)
+- [AI for Trades](https://agenticconsciousness.com.au/for/trades)
+- [AI for Healthcare](https://agenticconsciousness.com.au/for/healthcare)
+- [AI for Retail](https://agenticconsciousness.com.au/for/retail)
+- [AI for Finance](https://agenticconsciousness.com.au/for/finance)
+
+## Expertise Areas
+
+- Artificial intelligence strategy and consulting
+- Large language model deployment (ChatGPT, Claude, Copilot)
+- Business process automation and agentic AI systems
+- AI readiness assessment and opportunity mapping
+- Prompt engineering and optimisation
+- Document processing and data extraction
+- Customer service AI (chatbots, email triage)
+- Enterprise systems integration
+- Linux infrastructure, Docker, Proxmox virtualisation
+
 ## Contact
 
 - Website: https://agenticconsciousness.com.au
@@ -155,3 +196,8 @@ RSS Feed: https://agenticconsciousness.com.au/feed.xml
 2. AI readiness audit — assess your systems, data, and team
 3. Implementation sprint — build and deploy in weeks, not months
 4. Optimise and scale — iterate based on real results
+
+## Legal
+
+- [Privacy Policy](https://agenticconsciousness.com.au/privacy)
+- [Terms of Service](https://agenticconsciousness.com.au/terms)

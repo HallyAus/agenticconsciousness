@@ -13,13 +13,13 @@ export default function Error({
           ERROR
         </div>
         <p className="text-text-dim text-[1rem] font-light mb-8">
-          Something went wrong. Our systems are being looked at.
+          Something went wrong. Refresh to try again, or come back shortly.
         </p>
         <button
           onClick={reset}
           className="inline-block font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a] cursor-pointer border-none"
         >
-          Try again
+          REFRESH PAGE →
         </button>
       </div>
     </main>

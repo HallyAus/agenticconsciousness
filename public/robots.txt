@@ -59,3 +59,7 @@ Host: https://agenticconsciousness.com.au
 
 # Sitemaps
 Sitemap: https://agenticconsciousness.com.au/sitemap.xml
+
+# LLMs
+# See https://llmstxt.org/ for the llms.txt specification
+# https://agenticconsciousness.com.au/llms.txt

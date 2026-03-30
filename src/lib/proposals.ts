@@ -3,6 +3,10 @@ import path from 'path';
 
 const PROPOSALS_DIR = path.join(process.cwd(), 'content', 'proposals');
 
+function isValidId(id: string): boolean {
+  return /^[a-f0-9-]{36}$/.test(id);
+}
+
 export interface Proposal {
   id: string;
   clientName: string;
@@ -29,6 +33,7 @@ export interface Proposal {
 }
 
 export function getProposal(id: string): Proposal | null {
+  if (!isValidId(id)) return null;
   const filePath = path.join(PROPOSALS_DIR, `${id}.json`);
   if (!filePath.startsWith(PROPOSALS_DIR)) return null; // path traversal guard
   try {
@@ -40,6 +45,7 @@ export function getProposal(id: string): Proposal | null {
 }
 
 export function saveProposal(proposal: Proposal): void {
+  if (!isValidId(proposal.id)) throw new Error('Invalid proposal ID');
   if (!fs.existsSync(PROPOSALS_DIR)) fs.mkdirSync(PROPOSALS_DIR, { recursive: true });
   fs.writeFileSync(
     path.join(PROPOSALS_DIR, `${proposal.id}.json`),

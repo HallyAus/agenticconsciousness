@@ -21,14 +21,14 @@ export async function POST(req: NextRequest) {
 
   const csrfValid = await validateCsrf(req);
   if (!csrfValid) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 403 });
+    return NextResponse.json({ error: 'Your session has expired. Refresh the page and try again.' }, { status: 403 });
   }
 
   try {
     const { challenge } = await req.json();
 
     if (!challenge || challenge.length > 1000) {
-      return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
+      return NextResponse.json({ error: 'Describe your challenge in under 1,000 characters.' }, { status: 400 });
     }
 
     const response = await client.messages.create({
@@ -81,11 +81,11 @@ Rules:
     } catch (parseErr) {
       console.error('Failed to parse AI response:', parseErr instanceof Error ? parseErr.message : parseErr);
       console.error('Raw AI text:', text);
-      return NextResponse.json({ error: 'Invalid response format. Please try again.' }, { status: 500 });
+      return NextResponse.json({ error: 'The AI produced an unexpected response. Try again or rephrase your challenge.' }, { status: 500 });
     }
     return NextResponse.json(result);
   } catch (error) {
     console.error('Smart contact error:', error instanceof Error ? error.message : 'Unknown error');
-    return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
+    return NextResponse.json({ error: 'Analysis failed. Refresh the page and try again.' }, { status: 500 });
   }
 }

@@ -125,7 +125,7 @@ function EmailGateForm({ onSent }: { onSent: (email: string) => void }) {
       const data = (await res.json()) as { status?: string; token?: string; error?: string };
 
       if (!res.ok) {
-        setError(data.error || 'Something went wrong. Please try again.');
+        setError(data.error || 'Could not send verification email. Check your address and try again.');
         return;
       }
 
@@ -138,7 +138,7 @@ function EmailGateForm({ onSent }: { onSent: (email: string) => void }) {
         onSent(email);
       }
     } catch {
-      setError('Network error. Please try again.');
+      setError('Network error. Check your connection and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -251,7 +251,7 @@ function CountdownBanner({ state }: { state: GateState }) {
     <div className="border-b-2 border-border-subtle px-6 py-2 flex items-center gap-4">
       <div className="flex-1 h-[2px] bg-ac-card">
         <div
-          className={`h-full ${barColor} transition-all duration-500`}
+          className={`h-full ${barColor} transition-[width] duration-200`}
           style={{ width: `${pct}%` }}
         />
       </div>
@@ -324,7 +324,7 @@ export default function ToolGate({ children, toolId, passthrough = false }: Tool
       <ToolAccessContext.Provider value={contextValue}>
         <div className="flex items-center justify-center py-12">
           <span className="font-mono text-[0.75rem] tracking-[3px] uppercase text-text-ghost animate-pulse">
-            Loading...
+            Preparing tools...
           </span>
         </div>
       </ToolAccessContext.Provider>

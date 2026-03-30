@@ -2,6 +2,8 @@
 
 > AI consulting for Australian businesses. Strategy, implementation, automation. Founded by Daniel with 21+ years of industry experience.
 
+- [Full details](https://agenticconsciousness.com.au/llms-full.txt): Extended information for LLMs including service details, expertise areas, and content summaries.
+
 ## About
 
 Agentic Consciousness is an AI consulting company that helps businesses understand, implement, and scale AI — from strategy workshops to full automation pipelines. Based in Australia, available nationally.

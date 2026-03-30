@@ -13,7 +13,7 @@ const TOOL_DATA = [
   {
     id: 'invoice', number: '01', name: 'Invoice Scanner',
     headline: 'Scan any invoice in seconds',
-    description: 'Upload a photo or PDF. AI extracts every field — supplier, ABN, line items, GST classification. Export to CSV for your bookkeeper.',
+    description: 'Upload a photo or PDF of any invoice. In under 10 seconds, AI extracts every field — supplier, ABN, line items, GST classification. Export to CSV or JSON for your bookkeeper.',
     sampleOutput: [
       { key: 'Supplier', value: 'Bunnings Warehouse' },
       { key: 'ABN', value: '26 008 445 485' },
@@ -25,7 +25,7 @@ const TOOL_DATA = [
   {
     id: 'quote', number: '02', name: 'Quote Generator',
     headline: 'Professional quotes in 30 seconds',
-    description: 'Describe the job. AI writes a complete quote with scope, line items, GST, payment terms. Copy or email directly to your client.',
+    description: 'Enter your business name, client, and job description. In about 15 seconds, AI generates a complete quote with scope, itemised pricing, GST, terms, and next steps. Copy or email it directly.',
     sampleOutput: [
       { key: 'Client', value: 'Smith & Partners' },
       { key: 'Scope', value: 'Website redesign + CMS' },
@@ -38,7 +38,7 @@ const TOOL_DATA = [
   {
     id: 'competitor', number: '03', name: 'Competitor Intel',
     headline: 'Know your competition in 15 seconds',
-    description: 'Enter a competitor name. AI analyses their positioning, strengths, weaknesses, pricing strategy, and how you can differentiate.',
+    description: 'Enter a competitor name and optional context. In about 15 seconds, AI analyses their positioning, strengths, weaknesses, pricing strategy, and where you can differentiate.',
     sampleOutput: [
       { key: 'Competitor', value: 'Sunburnt AI' },
       { key: 'Positioning', value: 'Enterprise AI consulting' },
@@ -49,7 +49,7 @@ const TOOL_DATA = [
   {
     id: 'email', number: '04', name: 'Email Drafter',
     headline: 'Dump your thoughts. Get a polished email.',
-    description: 'Brain-dump what you need to say. AI writes a clean email in your chosen tone — professional, friendly, direct, or formal.',
+    description: 'Type your rough thoughts and pick a tone. In under 10 seconds, AI writes a polished email with subject line, body, and sign-off — ready to send.',
     sampleOutput: [
       { key: 'Subject', value: 'Follow-up: Project Kickoff' },
       { key: 'Tone', value: 'Professional' },
@@ -59,7 +59,7 @@ const TOOL_DATA = [
   {
     id: 'summarise', number: '05', name: 'Document Summariser',
     headline: 'Any document. Key points in seconds.',
-    description: 'Paste any document — report, article, meeting transcript. AI extracts key points, executive summary, and compression stats.',
+    description: 'Paste any document up to 10,000 characters. Choose brief, standard, or detailed depth. AI extracts key points, executive summary, and compression stats in seconds.',
     sampleOutput: [
       { key: 'Original', value: '3,200 words' },
       { key: 'Summary', value: '340 words' },
@@ -70,7 +70,7 @@ const TOOL_DATA = [
   {
     id: 'meeting', number: '06', name: 'Meeting Notes',
     headline: 'Messy notes in. Structured actions out.',
-    description: 'Paste raw meeting notes. AI extracts action items, owners, deadlines, decisions, and follow-ups.',
+    description: 'Paste your raw meeting notes or transcript. In under 10 seconds, AI extracts action items with owners and deadlines, decisions made, and follow-ups — ready to share with the team.',
     sampleOutput: [
       { key: 'Actions', value: '3 items' },
       { key: 'Decisions', value: '2 recorded' },
@@ -81,7 +81,7 @@ const TOOL_DATA = [
   {
     id: 'jobad', number: '07', name: 'Job Ad Writer',
     headline: 'Complete job listings. Bias-checked.',
-    description: 'Enter the role details. AI writes a complete job ad with requirements, benefits, salary guidance, and an automatic bias check.',
+    description: 'Enter the job title, company, and a plain-language role description. In about 15 seconds, AI writes a complete, inclusive job ad with requirements, benefits, and an automatic bias check — ready for Seek or LinkedIn.',
     sampleOutput: [
       { key: 'Title', value: 'Senior Frontend Developer' },
       { key: 'Location', value: 'Melbourne — Hybrid' },
@@ -92,7 +92,7 @@ const TOOL_DATA = [
   {
     id: 'contract', number: '08', name: 'Contract Reviewer',
     headline: 'Understand any contract clause instantly.',
-    description: 'Paste a contract clause or full text. AI gives you a plain English translation, fairness rating, risks, and negotiation points.',
+    description: 'Paste a contract clause (up to 8,000 characters) and select your role. In about 15 seconds, AI translates the legalese, rates fairness, flags risks, and suggests negotiation points. Not legal advice.',
     sampleOutput: [
       { key: 'Type', value: 'SaaS agreement' },
       { key: 'Fairness', value: 'Somewhat one-sided' },

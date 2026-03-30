@@ -16,7 +16,7 @@ interface AiResult {
 type Step = 'challenge' | 'recommend' | 'done';
 
 const INPUT_CLASS =
-  'w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary py-3 px-4 font-display text-[0.85rem] placeholder:text-text-dim transition-colors duration-150';
+  'w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary py-3 px-4 font-display text-[0.85rem] placeholder:text-text-dim transition-colors duration-200';
 
 export default function CTA() {
   const csrfToken = useCsrf();
@@ -49,7 +49,7 @@ export default function CTA() {
       setMessage(`Hi, I'd like to explore ${data.recommendedService} for my business.\n\nMy challenge: ${challenge.trim()}`);
       setStep('recommend');
     } catch {
-      setAnalyseError('Something went wrong — please try again.');
+      setAnalyseError('Analysis failed. Refresh the page and try again.');
     } finally {
       setAnalysing(false);
     }
@@ -76,7 +76,7 @@ export default function CTA() {
       trackEvent('Lead', { content_name: 'Smart Contact' });
       setStep('done');
     } catch {
-      setSubmitError('Submission failed — please try again or email us directly.');
+      setSubmitError('Could not send your details. Try again or email us at ai@agenticconsciousness.com.au.');
     } finally {
       setSubmitting(false);
     }
@@ -128,7 +128,7 @@ export default function CTA() {
                       disabled={!challenge.trim()}
                       className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                     >
-                      ANALYSE →
+                      ANALYSE MY CHALLENGE →
                     </button>
                   )}
                 </div>
@@ -213,14 +213,14 @@ export default function CTA() {
                     )}
 
                     {submitting ? (
-                      <AiLoading text="Sending..." />
+                      <AiLoading text="Sending your details..." />
                     ) : (
                       <button
                         type="submit"
                         disabled={!name.trim() || !email.trim()}
                         className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed self-start focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                       >
-                        SEND →
+                        SEND MY DETAILS →
                       </button>
                     )}
                   </form>

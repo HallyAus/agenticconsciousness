@@ -1,3 +1,5 @@
+import Anthropic from '@anthropic-ai/sdk';
+
 /**
  * Model configuration for different task types.
  * Set via .env to swap models without code changes:
@@ -10,6 +12,13 @@ export const FAST_MODEL = process.env.AI_FAST_MODEL || 'claude-haiku-4-5-2025100
 
 // Standard model for complex analysis and creative tasks
 export const STANDARD_MODEL = process.env.AI_STANDARD_MODEL || 'claude-sonnet-4-20250514';
+
+/** Lazy-init Anthropic client with API key validation */
+export function getClient(): Anthropic {
+  const key = process.env.ANTHROPIC_API_KEY;
+  if (!key) throw new Error('ANTHROPIC_API_KEY is not configured');
+  return new Anthropic({ apiKey: key });
+}
 
 /**
  * Route model assignments:

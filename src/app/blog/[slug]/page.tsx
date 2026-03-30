@@ -70,7 +70,7 @@ export default async function BlogPost({ params }: Props) {
     description: post.description,
     url: `https://agenticconsciousness.com.au/blog/${slug}`,
     datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
+    dateModified: post.modifiedAt || post.publishedAt,
     wordCount,
     articleSection: post.tags[0] || 'AI',
     keywords: post.tags.join(', '),
@@ -128,6 +128,52 @@ export default async function BlogPost({ params }: Props) {
     ],
   };
 
+  // HowTo schema for step-by-step guide posts
+  const howToSchema = slug === 'building-your-first-ai-workflow-step-by-step-guide' ? {
+    '@context': 'https://schema.org',
+    '@type': 'HowTo',
+    name: 'How to Build Your First AI Workflow',
+    description: 'A step-by-step guide to building your first AI-powered business workflow — from choosing a process to measuring results.',
+    totalTime: 'P14D',
+    estimatedCost: {
+      '@type': 'MonetaryAmount',
+      currency: 'AUD',
+      value: '30',
+    },
+    step: [
+      {
+        '@type': 'HowToStep',
+        name: 'Choose a process worth automating',
+        text: 'Identify high-frequency, repetitive tasks with low creative judgment requirements. Write down every repetitive task your team does weekly, estimate time spent, and pick the most structured one.',
+        url: `https://agenticconsciousness.com.au/blog/${slug}#step-1`,
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Pick the right tool',
+        text: 'Match your automation need to a tool: ChatGPT for general text tasks, Claude for complex analysis, Microsoft Copilot for Office 365 integration, or Zapier/Make for connecting multiple apps.',
+        url: `https://agenticconsciousness.com.au/blog/${slug}#step-2`,
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Build the workflow',
+        text: 'Define the trigger (what starts it), the process (the AI prompt with role, task, format, and constraints), and the output (what gets produced). Start with a manual trigger.',
+        url: `https://agenticconsciousness.com.au/blog/${slug}#step-3`,
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Test before you rely on it',
+        text: 'Run 20-30 real examples through your workflow, check every output manually, calculate accuracy rate, identify failure patterns, and update your prompt. Aim for 90%+ accuracy.',
+        url: `https://agenticconsciousness.com.au/blog/${slug}#step-4`,
+      },
+      {
+        '@type': 'HowToStep',
+        name: 'Measure results and iterate',
+        text: 'Track time per task, volume handled, error rate, and staff satisfaction for four weeks. If performing well, make the workflow more autonomous and identify the next process to automate.',
+        url: `https://agenticconsciousness.com.au/blog/${slug}#step-5`,
+      },
+    ],
+  } : null;
+
   return (
     <>
       <script
@@ -138,6 +184,12 @@ export default async function BlogPost({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      {howToSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(howToSchema) }}
+        />
+      )}
       <main className="pt-[60px] min-h-screen">
         <article className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
           <div className="max-w-[720px] mx-auto">

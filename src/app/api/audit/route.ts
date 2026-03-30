@@ -24,25 +24,25 @@ export async function POST(req: NextRequest) {
 
   const csrfValid = await validateCsrf(req);
   if (!csrfValid) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 403 });
+    return NextResponse.json({ error: 'Your session has expired. Refresh the page and try again.' }, { status: 403 });
   }
 
   try {
     const { industry, businessSize, painPoint } = await req.json();
 
     if (!industry || !businessSize || !painPoint) {
-      return NextResponse.json({ error: 'All fields required' }, { status: 400 });
+      return NextResponse.json({ error: 'Select your industry, business size, and describe your pain point.' }, { status: 400 });
     }
 
     if (!VALID_INDUSTRIES.includes(industry)) {
-      return NextResponse.json({ error: 'Invalid industry' }, { status: 400 });
+      return NextResponse.json({ error: 'Select an industry from the list.' }, { status: 400 });
     }
     if (!VALID_SIZES.includes(businessSize)) {
-      return NextResponse.json({ error: 'Invalid business size' }, { status: 400 });
+      return NextResponse.json({ error: 'Select a business size from the list.' }, { status: 400 });
     }
 
     if (painPoint.length > 500) {
-      return NextResponse.json({ error: 'Pain point too long (500 char max)' }, { status: 400 });
+      return NextResponse.json({ error: 'Keep your pain point under 500 characters.' }, { status: 400 });
     }
 
     const response = await client.messages.create({
@@ -92,11 +92,11 @@ Rules:
     } catch (parseErr) {
       console.error('Failed to parse AI response:', parseErr instanceof Error ? parseErr.message : parseErr);
       console.error('Raw AI text:', text);
-      return NextResponse.json({ error: 'Invalid response format. Please try again.' }, { status: 500 });
+      return NextResponse.json({ error: 'The AI produced an unexpected response. Try again or rephrase your pain point.' }, { status: 500 });
     }
     return NextResponse.json(result);
   } catch (error) {
     console.error('Audit API error:', error instanceof Error ? error.message : 'Unknown error');
-    return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
+    return NextResponse.json({ error: 'Analysis failed. Refresh the page and try again.' }, { status: 500 });
   }
 }

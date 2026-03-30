@@ -27,7 +27,7 @@ export default function Services() {
             {SERVICES.map((service, i) => (
               <div
                 key={service.num}
-                className="bg-ac-card p-8 max-sm:p-6 relative transition-colors duration-300 hover:bg-ac-card-hover flex flex-col text-left"
+                className="bg-ac-card p-8 max-sm:p-6 relative transition-colors duration-200 hover:bg-ac-card-hover flex flex-col text-left"
                 style={{
                   borderTop: `3px solid ${
                     i === 0 ? '#ff3d00' : i === 1 ? 'rgba(255,61,0,0.6)' : 'rgba(255,61,0,0.35)'

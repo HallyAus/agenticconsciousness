@@ -4,6 +4,9 @@
 
 ## Learnings
 
+- [2026-03-28] GEO audit: llms.txt spec recommends a llms-full.txt companion with extended detail. The llms.txt file should reference it. robots.txt should reference llms.txt for AI crawler discovery.
+- [2026-03-28] Blog post JSON files should include modifiedAt field separate from publishedAt — Article schema dateModified should reflect actual content updates, not just publication date.
+- [2026-03-28] HowTo schema is valuable for step-by-step guide content — Google and AI systems can extract individual steps as structured data for rich results.
 - [2026-03-25] Docker nextjs user (UID 1001) can't write to mounted volumes unless directories are pre-created with chown in Dockerfile — caused "EACCES permission denied" on tool-stats.json
 - [2026-03-25] Haiku model JSON failures were actually permission errors, not model unreliability — the parse error masked the real fs.writeFileSync error in incrementToolStat
 - [2026-03-25] parseAiJson needs 5 extraction methods — Claude wraps JSON in markdown backticks, adds preamble text, or returns partial JSON. First-brace-to-last-brace greedy match is the most reliable fallback

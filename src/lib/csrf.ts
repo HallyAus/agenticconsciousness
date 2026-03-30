@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers';
 import { NextRequest } from 'next/server';
+import crypto from 'crypto';
 
 const CSRF_COOKIE = 'csrf-token';
 const CSRF_HEADER = 'x-csrf-token';
@@ -32,5 +33,6 @@ export async function validateCsrf(req: NextRequest): Promise<boolean> {
   const headerToken = req.headers.get(CSRF_HEADER);
 
   if (!cookieToken || !headerToken) return false;
-  return cookieToken === headerToken;
+  if (cookieToken.length !== headerToken.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(cookieToken), Buffer.from(headerToken));
 }

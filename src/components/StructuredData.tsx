@@ -33,9 +33,9 @@ export default function StructuredData() {
         'AI Implementation',
       ],
       sameAs: [
+        'https://agenticconsciousness.com.au/about',
         // Add Daniel's personal profiles here as they become available
         // 'https://www.linkedin.com/in/danielhall',
-        // 'https://twitter.com/danielhall',
       ],
     },
     contactPoint: [
@@ -69,14 +69,18 @@ export default function StructuredData() {
       'Machine Learning',
     ],
     sameAs: [
-      // CRITICAL: Add all official profiles here for cross-platform entity linking
+      // Add official profiles here as they become available for cross-platform entity linking
       // 'https://www.linkedin.com/company/agentic-consciousness',
       // 'https://www.youtube.com/@agenticconsciousness',
       // 'https://twitter.com/agenticAI',
       // 'https://github.com/agentic-consciousness',
       // 'https://www.facebook.com/agenticconsciousness',
-      // 'https://www.crunchbase.com/organization/agentic-consciousness',
     ],
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'AI Consulting Services',
+      url: 'https://agenticconsciousness.com.au/pricing',
+    },
   };
 
   const website = {

@@ -28,7 +28,7 @@ export default function CaseStudies() {
             {CASE_STUDIES.map((cs) => (
               <div
                 key={cs.title}
-                className="grid grid-cols-[200px_1fr_auto] max-sm:grid-cols-1 bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-stretch max-md:grid-cols-1"
+                className="grid grid-cols-[200px_1fr_auto] max-sm:grid-cols-1 bg-ac-card transition-colors duration-200 hover:bg-ac-card-hover items-stretch max-md:grid-cols-1"
               >
                 <div className="flex flex-col items-center justify-center p-8 border-r-2 border-ac-red font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase text-ac-red text-center max-md:border-r-0 max-md:border-b-2 max-md:p-4">
                   <span>{cs.industry}</span>

@@ -10,6 +10,7 @@ export interface BlogPost {
   content: string;
   author: string;
   publishedAt: string;
+  modifiedAt?: string;
   tags: string[];
   generatedBy: string;
 }

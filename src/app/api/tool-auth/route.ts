@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
   let email: string;
   try {
     const body = await req.json() as { email?: unknown };
-    if (typeof body.email !== 'string' || !body.email.includes('@') || body.email.length > 200) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (typeof body.email !== 'string' || !emailRegex.test(body.email) || body.email.length > 200) {
       return NextResponse.json({ error: 'Valid email required.' }, { status: 400 });
     }
     email = body.email.toLowerCase().trim();

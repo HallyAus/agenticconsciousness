@@ -42,6 +42,7 @@ export default function ToolExpander({ toolId, onClose }: ToolExpanderProps) {
       className="border-2 border-ac-red mx-10 max-md:mx-5 mb-[2px]"
       style={{
         animation: 'expandIn 0.2s ease-out forwards',
+        transformOrigin: 'top',
       }}
     >
       {/* Header */}
@@ -64,12 +65,6 @@ export default function ToolExpander({ toolId, onClose }: ToolExpanderProps) {
         </ToolGate>
       </div>
 
-      <style>{`
-        @keyframes expandIn {
-          from { opacity: 0; max-height: 0; overflow: hidden; }
-          to { opacity: 1; max-height: 3000px; overflow: visible; }
-        }
-      `}</style>
     </div>
   );
 }

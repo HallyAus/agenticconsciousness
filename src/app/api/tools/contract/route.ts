@@ -4,13 +4,14 @@ import { checkToolAccess } from '@/lib/toolAccess';
 import { validateCsrf } from '@/lib/csrf';
 import { incrementToolStat } from '@/lib/toolStats';
 import { parseAiJson } from '@/lib/parseAiJson';
-import { STANDARD_MODEL } from '@/lib/models';
-
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+import { STANDARD_MODEL, getClient } from '@/lib/models';
 
 export async function POST(req: NextRequest) {
+  const csrfValid = await validateCsrf(req);
+  if (!csrfValid) {
+    return NextResponse.json({ error: 'Your session has expired. Refresh the page and try again.' }, { status: 403 });
+  }
+
   const access = checkToolAccess(req, 'contract');
   if (access.status === 'email_gate') {
     return NextResponse.json(
@@ -23,11 +24,6 @@ export async function POST(req: NextRequest) {
       { error: 'Daily limit reached. Resets at midnight.', code: 'capped' },
       { status: 429 }
     );
-  }
-
-  const csrfValid = await validateCsrf(req);
-  if (!csrfValid) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 403 });
   }
 
   try {
@@ -86,6 +82,7 @@ Rules:
 
     const userMessage = `Role: ${role}${context ? `\nContext: ${context}` : ''}\n\nContract text:\n${text}`;
 
+    const client = getClient();
     const response = await client.messages.create({
       model: STANDARD_MODEL,
       max_tokens: 1000,
@@ -113,7 +110,7 @@ Rules:
     } catch (parseErr) {
       console.error('Failed to parse AI response:', parseErr instanceof Error ? parseErr.message : parseErr);
       console.error('Raw AI text:', rawText);
-      return NextResponse.json({ error: 'Invalid response format. Please try again.' }, { status: 500 });
+      return NextResponse.json({ error: 'The AI produced an unexpected response. Try again or simplify your input.' }, { status: 500 });
     }
     return NextResponse.json(result);
   } catch (error) {

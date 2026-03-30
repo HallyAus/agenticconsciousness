@@ -144,7 +144,10 @@ function getVerifiedEmail(req: NextRequest): string | null {
     const sig = cookie.slice(dot + 1);
 
     const expected = crypto.createHmac('sha256', secret).update(payload).digest('base64url');
-    if (expected !== sig) return null;
+    const sigBuffer = Buffer.from(sig);
+    const expectedBuffer = Buffer.from(expected);
+    if (sigBuffer.length !== expectedBuffer.length) return null;
+    if (!crypto.timingSafeEqual(sigBuffer, expectedBuffer)) return null;
 
     const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as {
       email?: string;

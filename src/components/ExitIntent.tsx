@@ -144,7 +144,7 @@ export default function ExitIntent() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || 'Something went wrong. Please try again.');
+        setError(data.error || 'Could not send your request. Check your email address and try again.');
       } else {
         sessionStorage.setItem(SESSION_SUBMITTED, 'true');
         trackEvent('Lead', { content_name: 'Exit Intent' });
@@ -157,7 +157,7 @@ export default function ExitIntent() {
         setStep(2);
       }
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError('Network error. Check your connection and try again.');
     } finally {
       setLoading(false);
     }
@@ -174,8 +174,6 @@ export default function ExitIntent() {
       style={{ background: 'rgba(0,0,0,0.85)', animation: 'fadeIn 0.2s ease' }}
       onClick={(e) => { if (e.target === e.currentTarget) close(); }}
     >
-      <style>{`@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }`}</style>
-
       <div
         className="relative max-w-[480px] w-[calc(100%-2rem)] p-10 max-sm:p-6"
         style={{ background: 'var(--bg-page)', border: '2px solid var(--red)' }}

@@ -86,7 +86,14 @@ export default function BlogPage() {
           </p>
 
           {posts.length === 0 ? (
-            <p className="text-text-ghost">No posts yet.</p>
+            <div className="bg-ac-card border-t-[3px] border-border-subtle p-8">
+              <div className="font-mono text-[0.8rem] tracking-[3px] uppercase text-text-dim mb-3">
+                COMING SOON
+              </div>
+              <p className="text-text-dim text-[0.9rem] font-light leading-[1.7]">
+                We are working on our first articles. Check back soon for practical AI insights tailored to Australian businesses.
+              </p>
+            </div>
           ) : (
             <>
               {/* Featured / Latest Post */}
@@ -96,7 +103,7 @@ export default function BlogPage() {
                 return (
                   <Link
                     href={`/blog/${featured.slug}`}
-                    className="block bg-ac-card border-t-[3px] border-ac-red p-8 transition-colors duration-300 hover:bg-ac-card-hover no-underline"
+                    className="block bg-ac-card border-t-[3px] border-ac-red p-8 transition-colors duration-200 hover:bg-ac-card-hover no-underline"
                   >
                     <span className="font-mono text-xs text-ac-red uppercase tracking-widest">
                       LATEST
@@ -141,7 +148,7 @@ export default function BlogPage() {
                     <Link
                       key={post.slug}
                       href={`/blog/${post.slug}`}
-                      className="grid grid-cols-[160px_1fr_auto] bg-ac-card transition-colors duration-300 hover:bg-ac-card-hover items-center no-underline max-md:grid-cols-1"
+                      className="grid grid-cols-[160px_1fr_auto] bg-ac-card transition-colors duration-200 hover:bg-ac-card-hover items-center no-underline max-md:grid-cols-1"
                     >
                       <div className="p-6 max-md:pb-2">
                         <div className="font-mono text-[0.7rem] max-sm:text-xs text-text-dim tracking-[1px] uppercase mb-2">

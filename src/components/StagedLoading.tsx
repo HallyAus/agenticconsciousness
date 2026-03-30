@@ -35,7 +35,7 @@ export default function StagedLoading({ steps, isComplete }: StagedLoadingProps)
       </div>
       <div className="w-full h-[3px]" style={{ background: 'var(--border-subtle)' }}>
         <div
-          className="h-full transition-all duration-500 ease-out"
+          className="h-full transition-[width] duration-200 ease-out"
           style={{ width: `${progress}%`, background: 'var(--red)' }}
         />
       </div>

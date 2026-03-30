@@ -10,7 +10,7 @@ export default function EmailCapture() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Enter a valid email.');
+      setError('Enter a valid email address.');
       return;
     }
 
@@ -22,16 +22,16 @@ export default function EmailCapture() {
       });
       setSubmitted(true);
     } catch {
-      setError('Something went wrong. Try again.');
+      setError('Could not subscribe. Check your connection and try again.');
     }
   }
 
   if (submitted) {
     return (
       <div className="bg-ac-card border-2 border-ac-red p-8 text-center">
-        <div className="text-[1rem] font-black text-text-primary mb-2">You&apos;re in.</div>
+        <div className="text-[1rem] font-black text-text-primary mb-2">You&apos;re subscribed.</div>
         <p className="text-text-dim text-[0.85rem] font-light">
-          We&apos;ll send you AI insights worth reading. No spam.
+          Check your inbox. We&apos;ll send you practical AI insights weekly. No spam.
         </p>
       </div>
     );
@@ -56,7 +56,7 @@ export default function EmailCapture() {
           type="submit"
           className="bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase px-6 py-3 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] cursor-pointer border-none"
         >
-          Subscribe
+          SUBSCRIBE →
         </button>
       </form>
       {error && <p className="text-ac-red text-[0.8rem] max-sm:text-xs font-mono mt-2">{error}</p>}

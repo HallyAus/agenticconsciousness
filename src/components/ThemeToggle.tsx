@@ -9,7 +9,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="w-9 h-9 flex items-center justify-center transition-all duration-300"
+      className="w-9 h-9 flex items-center justify-center transition-all duration-200"
       style={{
         border: '2px solid var(--border-red)',
         background: isDark ? 'transparent' : 'var(--red)',

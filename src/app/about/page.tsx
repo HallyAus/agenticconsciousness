@@ -23,6 +23,7 @@ export default function AboutPage() {
   const personSchema = {
     '@context': 'https://schema.org',
     '@type': 'Person',
+    '@id': 'https://agenticconsciousness.com.au/#founder',
     name: 'Daniel',
     jobTitle: 'Founder & AI Consultant',
     description:
