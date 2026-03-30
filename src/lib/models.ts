@@ -31,6 +31,7 @@ export function getClient(): Anthropic {
  *   - invoice scanner (extraction)
  *   - smart-contact (classification)
  *   - exit-capture (short snapshot)
+ *   - energy bill extraction (structured extraction)
  *
  * STANDARD (Sonnet) — complex reasoning, creative output:
  *   - chat (conversational AI)
@@ -41,4 +42,5 @@ export function getClient(): Anthropic {
  *   - contract reviewer (legal analysis)
  *   - blog generator (long-form content)
  *   - proposal generator (complex document)
+ *   - energy bill recommendation (personalised analysis)
  */

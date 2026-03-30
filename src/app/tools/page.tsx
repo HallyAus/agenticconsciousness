@@ -3,12 +3,12 @@ import ToolsShowcase from '@/components/tools/ToolsShowcase';
 
 
 export const metadata: Metadata = {
-  title: 'Free AI Tools — 8 Business Tools',
-  description: 'Eight free AI-powered business tools: invoice scanner, quote generator, competitor analysis, email drafter, summariser, and more. No signup.',
+  title: 'Free AI Tools — 9 Business Tools',
+  description: 'Nine free AI-powered business tools: invoice scanner, quote generator, competitor analysis, email drafter, summariser, and more. No signup.',
   alternates: { canonical: 'https://agenticconsciousness.com.au/tools' },
   openGraph: {
     title: 'Free AI Business Tools',
-    description: 'Eight free AI-powered business tools: invoice scanner, quote generator, competitor analysis, email drafter, summariser, and more. No signup.',
+    description: 'Nine free AI-powered business tools: invoice scanner, quote generator, competitor analysis, email drafter, summariser, and more. No signup.',
     url: 'https://agenticconsciousness.com.au/tools',
     type: 'website',
     images: [{ url: 'https://agenticconsciousness.com.au/opengraph-image', width: 1200, height: 630 }],
@@ -24,6 +24,7 @@ const TOOL_SEO_DATA = [
   { id: 'meeting', name: 'Meeting Notes to Actions', description: 'Paste raw meeting notes. AI extracts action items, owners, deadlines, decisions, and follow-ups.' },
   { id: 'jobad', name: 'Job Ad Writer', description: 'Enter the role details. AI writes a complete job ad with requirements, benefits, salary guidance, and an automatic bias check.' },
   { id: 'contract', name: 'Contract Reviewer', description: 'Paste a contract clause or full text. AI gives you a plain English translation, fairness rating, risks, and negotiation points.' },
+  { id: 'energy', name: 'Energy Bill Analyser', description: 'Upload your electricity bill. AI compares 200+ plans across 30+ retailers and recommends the cheapest option for your usage pattern. Covers NSW, VIC, QLD, SA, TAS, and ACT.' },
 ];
 
 export default function ToolsPage() {
@@ -50,7 +51,7 @@ export default function ToolsPage() {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: 'Agentic Consciousness Free AI Tools',
-    description: 'Eight free AI-powered business tools including invoice scanning, quote generation, competitor analysis, email drafting, document summarisation, meeting action extraction, job ad writing, and contract review.',
+    description: 'Nine free AI-powered business tools including invoice scanning, quote generation, competitor analysis, email drafting, document summarisation, meeting action extraction, job ad writing, contract review, and energy bill analysis.',
     url: 'https://agenticconsciousness.com.au/tools',
     applicationCategory: 'BusinessApplication',
     operatingSystem: 'Web',
@@ -79,7 +80,7 @@ export default function ToolsPage() {
       {/* Server-rendered SEO content — hidden visually but available to crawlers */}
       <div className="sr-only">
         <h1>Free AI Business Tools — Powered by Claude</h1>
-        <p>Eight free AI-powered tools for Australian businesses. No signup required. Scan invoices, generate quotes, analyse competitors, draft emails, summarise documents, extract meeting actions, write job ads, and review contracts.</p>
+        <p>Nine free AI-powered tools for Australian businesses. No signup required. Scan invoices, generate quotes, analyse competitors, draft emails, summarise documents, extract meeting actions, write job ads, review contracts, and analyse energy bills.</p>
         {TOOL_SEO_DATA.map((tool) => (
           <section key={tool.id}>
             <h2>{tool.name}</h2>

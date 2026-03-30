@@ -100,6 +100,18 @@ const TOOL_DATA = [
       { key: 'Missing', value: '2 protections' },
     ],
   },
+  {
+    id: 'energy', number: '09', name: 'Energy Bill Analyser',
+    headline: 'Find a cheaper energy plan in 30 seconds',
+    description: 'Upload your electricity bill. AI extracts your usage, compares 200+ plans across 30+ retailers via the government Energy Made Easy database, and tells you exactly how much you could save. Covers NSW, VIC, QLD, SA, TAS, and ACT.',
+    sampleOutput: [
+      { key: 'Current Plan', value: 'Origin Go (TOU)' },
+      { key: 'Annual Cost', value: '$3,122' },
+      { key: 'Best Plan', value: 'Alinta No Worries' },
+      { key: 'Annual Saving', value: '$482/yr' },
+      { key: 'Contract', value: 'No lock-in' },
+    ],
+  },
 ];
 
 interface Stats {

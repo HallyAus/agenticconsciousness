@@ -13,6 +13,7 @@ const toolComponents: Record<string, ComponentType> = {
   meeting: dynamic(() => import('@/components/tools/MeetingTool')),
   jobad: dynamic(() => import('@/components/tools/JobAdTool')),
   contract: dynamic(() => import('@/components/tools/ContractTool')),
+  energy: dynamic(() => import('@/components/tools/EnergyBillTool')),
 };
 
 const TOOL_LABELS: Record<string, string> = {
@@ -24,6 +25,7 @@ const TOOL_LABELS: Record<string, string> = {
   meeting: 'TOOL 06 / MEETING NOTES \u2192 ACTIONS',
   jobad: 'TOOL 07 / JOB AD WRITER',
   contract: 'TOOL 08 / CONTRACT REVIEWER',
+  energy: 'TOOL 09 / ENERGY BILL ANALYSER',
 };
 
 interface ToolExpanderProps {
