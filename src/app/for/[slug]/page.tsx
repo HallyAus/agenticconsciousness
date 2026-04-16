@@ -13,6 +13,11 @@ interface LandingPoint {
   desc: string;
 }
 
+interface DeepDiveSection {
+  heading: string;
+  body: string;
+}
+
 interface LandingPage {
   title: string;
   description: string;
@@ -21,6 +26,8 @@ interface LandingPage {
   h1: string;
   intro: string;
   points: LandingPoint[];
+  // Optional long-form SEO content rendered after the points grid.
+  deepDive?: DeepDiveSection[];
 }
 
 const LANDING_PAGES: Record<string, LandingPage> = {
@@ -73,16 +80,38 @@ const LANDING_PAGES: Record<string, LandingPage> = {
 
   perth: {
     title: 'AI Consulting Perth',
-    description: 'AI strategy and automation for Perth businesses. Mining, energy, professional services \u2014 practical AI with measurable ROI. Free consultation.',
+    description: 'AI consulting Perth — strategy, implementation, and automation for WA businesses. Mining, oil & gas, professional services, agriculture. Free consultation.',
     isCity: true,
     cityName: 'Perth',
     h1: 'AI Consulting Perth',
-    intro: 'Perth\u2019s economy runs on resources, energy, and the professional services that support them. We help Perth businesses deploy AI that handles the heavy lifting \u2014 from automated reporting in the CBD to predictive maintenance in the Pilbara.',
+    intro: 'Perth\u2019s economy runs on resources, energy, and the professional services that support them. We help Perth and Western Australian businesses deploy AI that handles the heavy lifting \u2014 from automated reporting in the CBD to predictive maintenance in the Pilbara. Two-hour time-zone offset from the east coast is an advantage, not a disadvantage: our async-first delivery model means WA teams get full AI consulting coverage without the AEDT scheduling tax.',
     points: [
-      { title: 'Mining & Energy', desc: 'Predictive maintenance, safety compliance automation, and operational analytics for WA\u2019s mining and energy giants. AI that works in harsh environments.' },
-      { title: 'Oil & Gas Services', desc: 'Automated document processing, regulatory compliance, and supply chain optimisation for Perth\u2019s oil and gas service companies.' },
-      { title: 'Professional Services', desc: 'AI-powered proposal writing, client reporting, and knowledge management for Perth\u2019s legal, accounting, and consulting firms.' },
-      { title: 'Agriculture & Food', desc: 'Yield forecasting, supply chain automation, and quality monitoring AI for WA\u2019s agricultural exporters and food processors.' },
+      { title: 'Mining & Energy', desc: 'Predictive maintenance, safety compliance automation, and operational analytics for WA\u2019s mining and energy giants. AI that works in harsh environments \u2014 Pilbara, Goldfields, Mid West.' },
+      { title: 'Oil & Gas Services', desc: 'Automated document processing, regulatory compliance, and supply chain optimisation for Perth\u2019s oil and gas service companies. NOPSEMA-aware, audit-ready.' },
+      { title: 'Professional Services', desc: 'AI-powered proposal writing, client reporting, and knowledge management for Perth\u2019s legal, accounting, and consulting firms in the CBD and West Perth.' },
+      { title: 'Agriculture & Food', desc: 'Yield forecasting, supply chain automation, and quality monitoring AI for WA\u2019s agricultural exporters and food processors \u2014 grains, livestock, wine, seafood.' },
+    ],
+    deepDive: [
+      {
+        heading: 'Why Perth businesses need a different AI consulting approach',
+        body:
+          'Perth\u2019s industry mix is unlike anywhere else in Australia. Resources and energy dominate, professional services cluster in the CBD to support them, and agriculture runs across a state the size of Western Europe. Off-the-shelf AI playbooks built for Sydney financial services or Melbourne manufacturing miss the mark here. We design AI implementations around the constraints that actually matter in WA: remote-site connectivity, FIFO rostering cycles, harsh-environment hardware, and regulatory regimes like NOPSEMA and the WA Work Health and Safety Act. Every engagement starts with a free readiness audit so the recommendation fits your operation, not a template.',
+      },
+      {
+        heading: 'AI for Perth mining and the Pilbara',
+        body:
+          'Mining operators across the Pilbara, Goldfields-Esperance, and Mid West are already running AI in production \u2014 predictive maintenance on haul trucks, drill-and-blast optimisation, vision-based safety monitoring on conveyors, and automated ore-body modelling. We help mid-tier miners and service contractors catch up without buying a $10M platform. Most of what the majors run can be replicated with off-the-shelf models (Claude, GPT-4, Gemini) wired into your existing SCADA, Pronto, or Maximo data. Our deployments target specific, measurable outcomes: a 15\u201330% reduction in unplanned downtime, faster incident reporting, and automated compliance paperwork that previously consumed an FTE.',
+      },
+      {
+        heading: 'AI for Perth professional services',
+        body:
+          'Perth\u2019s CBD and West Perth law, accounting, and consulting firms face the same billable-hour pressure as their east-coast peers \u2014 but with a smaller local talent pool. AI is the lever. We deploy document-review AI that cuts contract analysis time by 60\u201380%, proposal-generation pipelines that turn a scoping call into a formatted fee proposal in under an hour, and knowledge-management systems that make precedent files actually searchable. Tool-agnostic means we pick Claude, ChatGPT, or Copilot based on your Microsoft 365 or Google Workspace posture, not on vendor kickbacks.',
+      },
+      {
+        heading: 'How we work with Perth clients remotely (and when we come on-site)',
+        body:
+          'Most of our Perth engagements run remotely: video discovery, async Slack or Teams collaboration, and shared cloud environments for deployment. This keeps costs down and iteration fast. For workshops, change-management sessions, and on-site technical deployments in Perth, Mandurah, Bunbury, or at remote mine sites, we fly in when it materially improves the outcome \u2014 not by default. Expect a transparent breakdown of what is remote and what is on-site in every proposal, with no hidden travel loading.',
+      },
     ],
   },
 
@@ -378,6 +407,29 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
             </div>
           </ScrollReveal>
         </section>
+
+        {page.deepDive && page.deepDive.length > 0 && (
+          <>
+            <Divider />
+            <section
+              aria-label="Deep dive"
+              className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20"
+            >
+              <div className="max-w-[820px] mx-auto flex flex-col gap-14">
+                {page.deepDive.map((section) => (
+                  <ScrollReveal key={section.heading}>
+                    <h2 className="text-[clamp(1.5rem,3.5vw,2.25rem)] font-black tracking-tight leading-[1.15] text-text-primary mb-5">
+                      {section.heading}
+                    </h2>
+                    <p className="text-[1.05rem] text-text-dim font-light leading-[1.8]">
+                      {section.body}
+                    </p>
+                  </ScrollReveal>
+                ))}
+              </div>
+            </section>
+          </>
+        )}
 
         <Divider />
         <Services />

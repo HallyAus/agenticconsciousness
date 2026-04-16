@@ -125,14 +125,33 @@ const faqs: { q: string; a: React.ReactNode; plainText: string }[] = [
       'Absolutely. We work with businesses of all sizes — from sole traders and SMBs to mid-market companies and enterprise organisations. Small businesses often see the biggest proportional gains from AI because even modest automation can reclaim hours of manual work each week.',
   },
   {
+    q: 'Are you a tool-agnostic AI consultant?',
+    a: (
+      <>
+        Yes. We are a tool-agnostic AI consultant — we have no reseller agreements, no vendor
+        commissions, and no preferred-partner quotas to hit. Every recommendation starts from your
+        business problem and works backwards to the right tool, whether that is Claude, ChatGPT,
+        Microsoft Copilot, Gemini, an open-source model like Llama, or a bespoke pipeline stitched
+        together from APIs. Most AI consultants are effectively single-vendor sales channels wearing
+        a consulting hat; we are not. If the best answer for your use case is a $20 ChatGPT Team
+        subscription, that is what we will say — even though it earns us nothing.
+      </>
+    ),
+    plainText:
+      'Yes. We are a tool-agnostic AI consultant — no reseller agreements, no vendor commissions, no preferred-partner quotas. Every recommendation starts from your business problem and works backwards to the right tool, whether that is Claude, ChatGPT, Microsoft Copilot, Gemini, open-source Llama, or a bespoke API pipeline. Most AI consultants are effectively single-vendor sales channels; we are not.',
+  },
+  {
     q: 'What AI tools do you implement?',
     a: (
       <>
-        We are tool-agnostic — we deploy whatever works best for your specific use case. This includes
-        ChatGPT and GPT-4 for content and analysis, Claude for complex reasoning and document processing,
-        Microsoft Copilot for Office 365 integration, and custom AI models for specialised tasks. We also
-        build bespoke automation pipelines using APIs, webhooks, and orchestration tools. The chatbot on
-        this site runs on Claude as a live demonstration. Try our{' '}
+        Because we are tool-agnostic, we deploy whatever fits your use case best. In practice that
+        typically means ChatGPT and GPT-4 for general-purpose content and analysis, Claude for
+        long-context reasoning and document processing, Microsoft Copilot for Office 365 and Teams
+        integration, Google Gemini where Workspace is the system of record, and custom or
+        open-source models (Llama, Mistral) when data residency or fine-tuning matter. We also
+        build bespoke automation pipelines using APIs, webhooks, and orchestration tools like
+        n8n, Make, and Zapier. The chatbot on this site runs on Claude as a live demonstration.
+        Try our{' '}
         <Link href="/tools" className="text-ac-red no-underline hover:underline">
           free AI tools
         </Link>{' '}
@@ -140,7 +159,7 @@ const faqs: { q: string; a: React.ReactNode; plainText: string }[] = [
       </>
     ),
     plainText:
-      'We are tool-agnostic — we deploy whatever works best for your specific use case. This includes ChatGPT and GPT-4, Claude, Microsoft Copilot, and custom AI models. We also build bespoke automation pipelines using APIs, webhooks, and orchestration tools.',
+      'Because we are tool-agnostic, we deploy whatever fits your use case best. ChatGPT and GPT-4 for general content and analysis, Claude for long-context reasoning and document processing, Microsoft Copilot for Office 365 integration, Gemini for Workspace environments, and custom or open-source models (Llama, Mistral) where data residency or fine-tuning matter. We also build bespoke automation pipelines using APIs, webhooks, and orchestration tools.',
   },
   {
     q: 'What is an AI readiness audit?',
