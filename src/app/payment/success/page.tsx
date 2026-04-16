@@ -6,6 +6,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Payment Confirmed',
   robots: { index: false, follow: false },
+  alternates: { canonical: 'https://agenticconsciousness.com.au/payment/success' },
 };
 
 export default function PaymentSuccess() {

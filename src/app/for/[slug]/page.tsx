@@ -201,6 +201,11 @@ export function generateStaticParams() {
   return Object.keys(LANDING_PAGES).map((slug) => ({ slug }));
 }
 
+// Only the statically generated slugs render; any other slug 404s. Prevents
+// unknown /for/* URLs from rendering a generic page that Google would flag as
+// duplicate of the homepage.
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const page = LANDING_PAGES[slug];

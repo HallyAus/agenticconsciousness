@@ -4,6 +4,7 @@
 
 ## Learnings
 
+- [2026-04-17] Next.js `alternates.canonical` set in root `layout.tsx` CASCADES to every child page that doesn't override it. This causes Google Search Console to report every subpage as "Alternate page with proper canonical tag" — because their canonical all point back to the homepage. Fix: remove canonical from root layout; require each page to set its own `alternates: { canonical: '...' }`. Also set `dynamicParams = false` on catch-all `[slug]` routes so unknown slugs 404 instead of rendering a generic page with no canonical.
 - [2026-03-28] GEO audit: llms.txt spec recommends a llms-full.txt companion with extended detail. The llms.txt file should reference it. robots.txt should reference llms.txt for AI crawler discovery.
 - [2026-03-28] Blog post JSON files should include modifiedAt field separate from publishedAt — Article schema dateModified should reflect actual content updates, not just publication date.
 - [2026-03-28] HowTo schema is valuable for step-by-step guide content — Google and AI systems can extract individual steps as structured data for rich results.

@@ -78,7 +78,10 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: 'https://agenticconsciousness.com.au',
+    // NOTE: No site-wide canonical. Each page must set its own canonical in its
+    // metadata. A global canonical here cascades to every child page that doesn't
+    // override it, causing Google to report "Alternate page with proper canonical
+    // tag" on every subpage (since they would all point back to the homepage).
     types: {
       'application/rss+xml': '/feed.xml',
     },

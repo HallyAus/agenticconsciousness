@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Nav from '@/components/Nav';
 import Hero from '@/components/Hero';
 import Services from '@/components/Services';
@@ -9,6 +10,10 @@ import CTA from '@/components/CTA';
 import Footer from '@/components/Footer';
 import Divider from '@/components/Divider';
 import ChatbotWrapper from '@/components/ChatbotWrapper';
+
+export const metadata: Metadata = {
+  alternates: { canonical: 'https://agenticconsciousness.com.au' },
+};
 
 export default function Home() {
   return (

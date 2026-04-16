@@ -6,6 +6,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Unsubscribed',
   robots: { index: false },
+  alternates: { canonical: 'https://agenticconsciousness.com.au/unsubscribe' },
 };
 
 export default function UnsubscribePage() {
