@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { Be_Vietnam_Pro, Space_Mono } from 'next/font/google';
 import './globals.css';
 import StructuredData from '@/components/StructuredData';
@@ -6,6 +7,7 @@ import ThemeProvider from '@/components/ThemeProvider';
 import ScrollProgress from '@/components/ScrollProgress';
 import ExitIntent from '@/components/ExitIntent';
 import TrackingPixels from '@/components/TrackingPixels';
+import PostHogProvider from '@/components/PostHogProvider';
 import Script from 'next/script';
 
 const beVietnamPro = Be_Vietnam_Pro({
@@ -105,12 +107,9 @@ export default function RootLayout({
           <Script id="plausible-init" strategy="afterInteractive">
             {`window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()`}
           </Script>
-          <Script
-            async
-            src={`${process.env.NEXT_PUBLIC_UMAMI_URL}/script.js`}
-            data-website-id={process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID}
-            strategy="afterInteractive"
-          />
+          <Suspense fallback={null}>
+            <PostHogProvider />
+          </Suspense>
           <TrackingPixels />
           <ScrollProgress />
           <ExitIntent />
