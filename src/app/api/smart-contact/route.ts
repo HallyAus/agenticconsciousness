@@ -31,10 +31,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Describe your challenge in under 1,000 characters.' }, { status: 400 });
     }
 
-    const response = await client.messages.create({
-      model: FAST_MODEL,
-      max_tokens: 500,
-      system: `You are the intake AI for Agentic Consciousness, an Australian AI consulting company.
+    const smartContactSystemPrompt = `You are the intake AI for Agentic Consciousness, an Australian AI consulting company.
 
 A potential client has described their biggest business challenge. Analyse it and recommend which of the company's three services would help most.
 
@@ -55,7 +52,12 @@ Rules:
 - Be specific to what they described
 - The quickWin should be genuinely useful, not a sales pitch
 - Australian English spelling
-- Tone: direct, helpful, knowledgeable`,
+- Tone: direct, helpful, knowledgeable`;
+
+    const response = await client.messages.create({
+      model: FAST_MODEL,
+      max_tokens: 500,
+      system: smartContactSystemPrompt,
       messages: [
         { role: 'user', content: `Client challenge: ${challenge}` },
       ],
@@ -66,10 +68,18 @@ Rules:
       .map((block) => block.text)
       .join('');
 
+    const cacheRead = response.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = response.usage.cache_creation_input_tokens ?? 0;
+    const isHit = cacheRead > 0;
+    console.log(
+      `[CACHE${isHit ? ' HIT' : ''}] model=${FAST_MODEL} input=${response.usage.input_tokens} cache_write=${cacheWrite} cache_read=${cacheRead} output=${response.usage.output_tokens}${isHit ? ' savings=~90%' : ''}`
+    );
     console.log(
       JSON.stringify({
         tool: 'smart-contact',
         usage: response.usage,
+        cache_read_input_tokens: cacheRead,
+        cache_creation_input_tokens: cacheWrite,
         stop_reason: response.stop_reason,
         timestamp: new Date().toISOString(),
       })

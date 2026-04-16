@@ -1,8 +1,17 @@
-import fs from 'fs';
-import path from 'path';
+import { sql } from './pg';
 
-const STATS_FILE = path.join(process.cwd(), 'data', 'tool-stats.json');
-const DEFAULT_STATS = {
+export type ToolName =
+  | 'invoices'
+  | 'quotes'
+  | 'competitors'
+  | 'emails'
+  | 'summaries'
+  | 'meetings'
+  | 'jobads'
+  | 'contracts'
+  | 'energy';
+
+const DEFAULT_STATS: Record<ToolName, number> = {
   invoices: 0,
   quotes: 0,
   competitors: 0,
@@ -14,21 +23,20 @@ const DEFAULT_STATS = {
   energy: 0,
 };
 
-export function getToolStats(): Record<string, number> {
+export async function getToolStats(): Promise<Record<string, number>> {
   try {
-    if (fs.existsSync(STATS_FILE)) {
-      return JSON.parse(fs.readFileSync(STATS_FILE, 'utf-8'));
-    }
-  } catch {}
-  return { ...DEFAULT_STATS };
+    const rows = (await sql`SELECT tool, count FROM tool_stats`) as { tool: string; count: number }[];
+    const out: Record<string, number> = { ...DEFAULT_STATS };
+    for (const r of rows) out[r.tool] = r.count;
+    return out;
+  } catch {
+    return { ...DEFAULT_STATS };
+  }
 }
 
-export function incrementToolStat(
-  tool: 'invoices' | 'quotes' | 'competitors' | 'emails' | 'summaries' | 'meetings' | 'jobads' | 'contracts' | 'energy'
-) {
-  const stats = getToolStats();
-  stats[tool] = (stats[tool] || 0) + 1;
-  const dir = path.dirname(STATS_FILE);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(STATS_FILE, JSON.stringify(stats));
+export async function incrementToolStat(tool: ToolName): Promise<void> {
+  await sql`
+    INSERT INTO tool_stats (tool, count) VALUES (${tool}, 1)
+    ON CONFLICT (tool) DO UPDATE SET count = tool_stats.count + 1
+  `;
 }

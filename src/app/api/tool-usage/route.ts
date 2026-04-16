@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const status = getUsageStatus(req);
+    const status = await getUsageStatus(req);
     return NextResponse.json(status, {
       headers: {
         'Cache-Control': 'no-store',

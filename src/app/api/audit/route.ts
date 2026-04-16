@@ -45,10 +45,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Keep your pain point under 500 characters.' }, { status: 400 });
     }
 
-    const response = await client.messages.create({
-      model: STANDARD_MODEL,
-      max_tokens: 600,
-      system: `You are the AI analyst for Agentic Consciousness, an Australian AI consulting company.
+    const auditSystemPrompt = `You are the AI analyst for Agentic Consciousness, an Australian AI consulting company.
 
 Given a business profile, produce an "AI Opportunity Snapshot" — exactly 3 opportunities where AI could create measurable impact for this specific business.
 
@@ -72,7 +69,18 @@ Rules:
 - Include realistic estimates, not hype
 - Australian English spelling
 - First opportunity should always be the quickest win
-- Tone: direct, knowledgeable, zero fluff`,
+- Tone: direct, knowledgeable, zero fluff`;
+
+    const response = await client.messages.create({
+      model: STANDARD_MODEL,
+      max_tokens: 600,
+      system: [
+        {
+          type: 'text',
+          text: auditSystemPrompt,
+          cache_control: { type: 'ephemeral' },
+        },
+      ],
       messages: [
         {
           role: 'user',
@@ -80,6 +88,13 @@ Rules:
         },
       ],
     });
+
+    const cacheRead = response.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = response.usage.cache_creation_input_tokens ?? 0;
+    const isHit = cacheRead > 0;
+    console.log(
+      `[CACHE${isHit ? ' HIT' : ''}] model=${STANDARD_MODEL} input=${response.usage.input_tokens} cache_write=${cacheWrite} cache_read=${cacheRead} output=${response.usage.output_tokens}${isHit ? ' savings=~90%' : ''}`
+    );
 
     const text = response.content
       .filter((block): block is Anthropic.TextBlock => block.type === 'text')

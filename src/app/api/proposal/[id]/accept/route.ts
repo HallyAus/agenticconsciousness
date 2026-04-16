@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getProposal, saveProposal } from '@/lib/proposals';
-import fs from 'fs';
-import path from 'path';
+import { sql } from '@/lib/pg';
 import { sendEmail, notifyAdmin, emailTemplate } from '@/lib/email';
 import { checkRateLimit } from '@/lib/rate-limit';
 
@@ -23,7 +22,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: 'Signature name required' }, { status: 400 });
     }
 
-    const proposal = getProposal(id);
+    const proposal = await getProposal(id);
     if (!proposal) return NextResponse.json({ error: 'Proposal not found' }, { status: 404 });
     if (proposal.status === 'accepted') return NextResponse.json({ error: 'Already accepted' }, { status: 400 });
     if (new Date(proposal.validUntil) < new Date()) return NextResponse.json({ error: 'Proposal expired' }, { status: 400 });
@@ -35,7 +34,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     proposal.signatureName = signatureName.trim();
     proposal.signatureIP = ip;
 
-    saveProposal(proposal);
+    await saveProposal(proposal);
 
     // Log
     console.log('\n========== PROPOSAL ACCEPTED ==========');
@@ -43,9 +42,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     console.log('========================================\n');
 
     // Persist to leads
-    const dataDir = path.join(process.cwd(), 'data');
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    fs.appendFileSync(path.join(dataDir, 'leads.jsonl'), JSON.stringify({ event: 'proposal_accepted', id, email: proposal.clientEmail, company: proposal.clientCompany, total: proposal.total, timestamp: new Date().toISOString() }) + '\n');
+    await sql`
+      INSERT INTO leads (source, email, name, metadata)
+      VALUES (
+        'proposal_accepted',
+        ${proposal.clientEmail},
+        ${proposal.clientName},
+        ${JSON.stringify({ proposalId: id, company: proposal.clientCompany, total: proposal.total })}::jsonb
+      )
+    `;
 
     // Client confirmation
     await sendEmail({

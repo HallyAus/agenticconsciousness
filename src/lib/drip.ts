@@ -1,8 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const DRIP_DIR = path.join(process.cwd(), 'content', 'drip');
-const SUBSCRIBERS_FILE = path.join(DRIP_DIR, 'subscribers.json');
+import { sql } from './pg';
 
 export interface DripSubscriber {
   email: string;
@@ -10,46 +6,88 @@ export interface DripSubscriber {
   industry: string;
   source: 'quiz' | 'audit' | 'exit-intent';
   subscribedAt: string;
-  emailsSent: number[]; // Day numbers of emails sent
+  emailsSent: number[];
   unsubscribed?: boolean;
 }
 
-function ensureDir() {
-  if (!fs.existsSync(DRIP_DIR)) fs.mkdirSync(DRIP_DIR, { recursive: true });
+interface Row {
+  email: string;
+  name: string | null;
+  industry: string;
+  source: string;
+  subscribed_at: string;
+  emails_sent: number[];
+  unsubscribed: boolean;
 }
 
-export function getSubscribers(): DripSubscriber[] {
-  ensureDir();
-  try {
-    if (fs.existsSync(SUBSCRIBERS_FILE)) {
-      return JSON.parse(fs.readFileSync(SUBSCRIBERS_FILE, 'utf-8'));
-    }
-  } catch {}
-  return [];
+function rowToSubscriber(r: Row): DripSubscriber {
+  return {
+    email: r.email,
+    name: r.name ?? undefined,
+    industry: r.industry,
+    source: r.source as DripSubscriber['source'],
+    subscribedAt: new Date(r.subscribed_at).toISOString(),
+    emailsSent: r.emails_sent ?? [],
+    unsubscribed: r.unsubscribed || undefined,
+  };
 }
 
-export function saveSubscribers(subs: DripSubscriber[]) {
-  ensureDir();
-  fs.writeFileSync(SUBSCRIBERS_FILE, JSON.stringify(subs, null, 2));
+export async function getSubscribers(): Promise<DripSubscriber[]> {
+  const rows = (await sql`
+    SELECT email, name, industry, source, subscribed_at, emails_sent, unsubscribed
+    FROM drip_subscribers ORDER BY subscribed_at
+  `) as Row[];
+  return rows.map(rowToSubscriber);
 }
 
-export function addSubscriber(sub: Omit<DripSubscriber, 'subscribedAt' | 'emailsSent'>): boolean {
-  const subs = getSubscribers();
-  if (subs.some((s) => s.email.toLowerCase() === sub.email.toLowerCase() && !s.unsubscribed)) {
-    return false; // duplicate
+export async function saveSubscribers(subs: DripSubscriber[]): Promise<void> {
+  // Used by /api/drip/process to persist emails_sent updates. Upsert each row.
+  for (const s of subs) {
+    await sql`
+      INSERT INTO drip_subscribers (email, name, industry, source, subscribed_at, emails_sent, unsubscribed)
+      VALUES (
+        ${s.email.toLowerCase()},
+        ${s.name ?? null},
+        ${s.industry},
+        ${s.source},
+        ${s.subscribedAt},
+        ${s.emailsSent as unknown as string},
+        ${!!s.unsubscribed}
+      )
+      ON CONFLICT (email) DO UPDATE SET
+        emails_sent = EXCLUDED.emails_sent,
+        unsubscribed = EXCLUDED.unsubscribed
+    `;
   }
-  subs.push({ ...sub, subscribedAt: new Date().toISOString(), emailsSent: [] });
-  saveSubscribers(subs);
-  return true;
 }
 
-export function unsubscribeEmail(email: string): boolean {
-  const subs = getSubscribers();
-  const sub = subs.find((s) => s.email.toLowerCase() === email.toLowerCase());
-  if (!sub) return false;
-  sub.unsubscribed = true;
-  saveSubscribers(subs);
-  return true;
+export async function addSubscriber(
+  sub: Omit<DripSubscriber, 'subscribedAt' | 'emailsSent'>
+): Promise<boolean> {
+  const rows = (await sql`
+    INSERT INTO drip_subscribers (email, name, industry, source, subscribed_at, emails_sent, unsubscribed)
+    VALUES (
+      ${sub.email.toLowerCase()},
+      ${sub.name ?? null},
+      ${sub.industry},
+      ${sub.source},
+      NOW(),
+      '{}',
+      FALSE
+    )
+    ON CONFLICT (email) DO NOTHING
+    RETURNING email
+  `) as { email: string }[];
+  return rows.length > 0;
+}
+
+export async function unsubscribeEmail(email: string): Promise<boolean> {
+  const rows = (await sql`
+    UPDATE drip_subscribers SET unsubscribed = TRUE
+    WHERE email = ${email.toLowerCase()}
+    RETURNING email
+  `) as { email: string }[];
+  return rows.length > 0;
 }
 
 export const DRIP_SCHEDULE = [

@@ -1,7 +1,6 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { Octokit } from '@octokit/rest';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { parseAiJson } from '@/lib/parseAiJson';
 import { STANDARD_MODEL } from '@/lib/models';
@@ -63,6 +62,13 @@ Respond in valid JSON only, no markdown wrapping:
       .map((block) => block.text)
       .join('');
 
+    const cacheRead = response.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = response.usage.cache_creation_input_tokens ?? 0;
+    const isHit = cacheRead > 0;
+    console.log(
+      `[CACHE${isHit ? ' HIT' : ''}] model=${STANDARD_MODEL} input=${response.usage.input_tokens} cache_write=${cacheWrite} cache_read=${cacheRead} output=${response.usage.output_tokens}${isHit ? ' savings=~90%' : ''}`
+    );
+
     let parsed;
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -92,12 +98,37 @@ Respond in valid JSON only, no markdown wrapping:
       generatedBy: STANDARD_MODEL,
     };
 
-    const blogDir = path.join(process.cwd(), 'content', 'blog');
-    if (!fs.existsSync(blogDir)) fs.mkdirSync(blogDir, { recursive: true });
-    fs.writeFileSync(
-      path.join(blogDir, `${slug}.json`),
-      JSON.stringify(post, null, 2)
-    );
+    // Commit the generated post to GitHub — Vercel auto-deploys on push
+    const githubToken = process.env.GITHUB_TOKEN;
+    const repo = process.env.GITHUB_REPO; // e.g. "HallyAus/agenticconsciousness"
+    const branch = process.env.GITHUB_BRANCH || 'master';
+
+    if (!githubToken || !repo) {
+      return NextResponse.json(
+        { error: 'Blog publishing disabled — GITHUB_TOKEN and GITHUB_REPO required' },
+        { status: 503 }
+      );
+    }
+
+    const [owner, repoName] = repo.split('/');
+    const octokit = new Octokit({ auth: githubToken });
+    const filePath = `content/blog/${slug}.json`;
+    const contentBase64 = Buffer.from(JSON.stringify(post, null, 2)).toString('base64');
+
+    try {
+      await octokit.repos.createOrUpdateFileContents({
+        owner,
+        repo: repoName,
+        path: filePath,
+        message: `feat(blog): add ${slug}`,
+        content: contentBase64,
+        branch,
+        committer: { name: 'Agentic Consciousness Bot', email: 'ai@agenticconsciousness.com.au' },
+      });
+    } catch (err) {
+      console.error('[blog] GitHub commit failed:', err instanceof Error ? err.message : err);
+      return NextResponse.json({ error: 'Failed to publish blog post' }, { status: 500 });
+    }
 
     return NextResponse.json(post);
   } catch (error) {

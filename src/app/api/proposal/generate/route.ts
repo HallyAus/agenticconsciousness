@@ -64,6 +64,13 @@ Rules:
       .map((block) => block.text)
       .join('');
 
+    const cacheRead = response.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = response.usage.cache_creation_input_tokens ?? 0;
+    const isHit = cacheRead > 0;
+    console.log(
+      `[CACHE${isHit ? ' HIT' : ''}] model=${STANDARD_MODEL} input=${response.usage.input_tokens} cache_write=${cacheWrite} cache_read=${cacheRead} output=${response.usage.output_tokens}${isHit ? ' savings=~90%' : ''}`
+    );
+
     let parsed;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     try { parsed = parseAiJson<any>(text); } catch (parseErr) {
@@ -94,7 +101,7 @@ Rules:
       createdAt: new Date().toISOString(),
     };
 
-    saveProposal(proposal);
+    await saveProposal(proposal);
 
     console.log(JSON.stringify({ event: 'proposal_generated', id, client: clientCompany, total, timestamp: new Date().toISOString() }));
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { sql } from '@/lib/pg';
 import { makeVerifiedCookie, VERIFIED_COOKIE_NAME, VERIFIED_COOKIE_MAX_AGE } from '@/lib/toolAccess';
 
 interface TokenRow {
@@ -18,10 +18,8 @@ export async function GET(req: NextRequest) {
     return buildRedirect(`${siteUrl}/tools?verified=error`);
   }
 
-  const db = getDb();
-  const row = db.prepare('SELECT * FROM verification_tokens WHERE token = ?').get(token) as
-    | TokenRow
-    | undefined;
+  const rows = (await sql`SELECT * FROM verification_tokens WHERE token = ${token}`) as TokenRow[];
+  const row = rows[0];
 
   if (!row) {
     return buildRedirect(`${siteUrl}/tools?verified=invalid`);
@@ -36,10 +34,12 @@ export async function GET(req: NextRequest) {
   }
 
   // Mark token as used and record verified email
-  db.prepare('UPDATE verification_tokens SET used = 1 WHERE token = ?').run(token);
-  db.prepare(
-    'INSERT OR REPLACE INTO verified_emails (email, verified_at) VALUES (?, ?)'
-  ).run(row.email, Date.now());
+  await sql`UPDATE verification_tokens SET used = 1 WHERE token = ${token}`;
+  await sql`
+    INSERT INTO verified_emails (email, verified_at)
+    VALUES (${row.email}, ${Date.now()})
+    ON CONFLICT (email) DO UPDATE SET verified_at = EXCLUDED.verified_at
+  `;
 
   let cookieValue: string;
   try {

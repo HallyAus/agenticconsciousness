@@ -62,3 +62,6 @@ docker-compose*.yml
 *.pfx
 *.cert
 *.crt
+
+# GSC Manager SEO reports
+_seo/

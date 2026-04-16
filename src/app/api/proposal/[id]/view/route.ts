@@ -15,13 +15,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   try {
     const { id } = await params;
-    const proposal = getProposal(id);
+    const proposal = await getProposal(id);
     if (!proposal) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
     if (proposal.status === 'sent') {
       proposal.status = 'viewed';
       proposal.viewedAt = new Date().toISOString();
-      saveProposal(proposal);
+      await saveProposal(proposal);
 
       console.log(JSON.stringify({ event: 'proposal_viewed', id, client: proposal.clientCompany, timestamp: new Date().toISOString() }));
 

@@ -12,5 +12,5 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  return NextResponse.json(getToolStats());
+  return NextResponse.json(await getToolStats());
 }

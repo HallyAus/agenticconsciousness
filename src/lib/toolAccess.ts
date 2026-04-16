@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import crypto from 'crypto';
-import { getDb } from './db';
+import { sql } from './pg';
 
 const ANON_DAILY_LIMIT = 3;
 const EMAIL_DAILY_LIMIT = 20;
@@ -21,70 +21,72 @@ export type UsageStatus =
   | { status: 'capped'; remaining: number; used: number; limit: number; email: string };
 
 // Called by API tool routes — checks access AND atomically logs the use
-export function checkToolAccess(req: NextRequest, toolId: string): AccessStatus {
+export async function checkToolAccess(req: NextRequest, toolId: string): Promise<AccessStatus> {
   const fingerprint = getFingerprint(req);
   const verifiedEmail = getVerifiedEmail(req);
-  const db = getDb();
   const dayStart = Date.now() - DAY_MS;
 
   if (verifiedEmail) {
-    const row = db
-      .prepare('SELECT COUNT(*) as cnt FROM tool_access_logs WHERE email = ? AND used_at > ?')
-      .get(verifiedEmail, dayStart) as { cnt: number };
+    const rows = (await sql`
+      SELECT COUNT(*)::int AS cnt FROM tool_access_logs
+      WHERE email = ${verifiedEmail} AND used_at > ${dayStart}
+    `) as { cnt: number }[];
+    const cnt = rows[0]?.cnt ?? 0;
 
-    if (row.cnt >= EMAIL_DAILY_LIMIT) {
-      return { status: 'capped', email: verifiedEmail, used: row.cnt, limit: EMAIL_DAILY_LIMIT };
+    if (cnt >= EMAIL_DAILY_LIMIT) {
+      return { status: 'capped', email: verifiedEmail, used: cnt, limit: EMAIL_DAILY_LIMIT };
     }
 
-    db.prepare(
-      'INSERT INTO tool_access_logs (fingerprint, email, used_at, tool_id) VALUES (?, ?, ?, ?)'
-    ).run(fingerprint, verifiedEmail, Date.now(), toolId);
+    await sql`
+      INSERT INTO tool_access_logs (fingerprint, email, used_at, tool_id)
+      VALUES (${fingerprint}, ${verifiedEmail}, ${Date.now()}, ${toolId})
+    `;
 
     return {
       status: 'ok',
-      remaining: EMAIL_DAILY_LIMIT - row.cnt - 1,
-      used: row.cnt + 1,
+      remaining: EMAIL_DAILY_LIMIT - cnt - 1,
+      used: cnt + 1,
       limit: EMAIL_DAILY_LIMIT,
       email: verifiedEmail,
     };
   }
 
   // Anonymous
-  const row = db
-    .prepare(
-      'SELECT COUNT(*) as cnt FROM tool_access_logs WHERE fingerprint = ? AND email IS NULL AND used_at > ?'
-    )
-    .get(fingerprint, dayStart) as { cnt: number };
+  const rows = (await sql`
+    SELECT COUNT(*)::int AS cnt FROM tool_access_logs
+    WHERE fingerprint = ${fingerprint} AND email IS NULL AND used_at > ${dayStart}
+  `) as { cnt: number }[];
+  const cnt = rows[0]?.cnt ?? 0;
 
-  if (row.cnt >= ANON_DAILY_LIMIT) {
-    return { status: 'email_gate', used: row.cnt, limit: ANON_DAILY_LIMIT };
+  if (cnt >= ANON_DAILY_LIMIT) {
+    return { status: 'email_gate', used: cnt, limit: ANON_DAILY_LIMIT };
   }
 
-  db.prepare(
-    'INSERT INTO tool_access_logs (fingerprint, email, used_at, tool_id) VALUES (?, NULL, ?, ?)'
-  ).run(fingerprint, Date.now(), toolId);
+  await sql`
+    INSERT INTO tool_access_logs (fingerprint, email, used_at, tool_id)
+    VALUES (${fingerprint}, NULL, ${Date.now()}, ${toolId})
+  `;
 
   return {
     status: 'ok',
-    remaining: ANON_DAILY_LIMIT - row.cnt - 1,
-    used: row.cnt + 1,
+    remaining: ANON_DAILY_LIMIT - cnt - 1,
+    used: cnt + 1,
     limit: ANON_DAILY_LIMIT,
   };
 }
 
 // Called by /api/tool-usage — read-only, no logging
-export function getUsageStatus(req: NextRequest): UsageStatus {
+export async function getUsageStatus(req: NextRequest): Promise<UsageStatus> {
   const fingerprint = getFingerprint(req);
   const verifiedEmail = getVerifiedEmail(req);
-  const db = getDb();
   const dayStart = Date.now() - DAY_MS;
 
   if (verifiedEmail) {
-    const row = db
-      .prepare('SELECT COUNT(*) as cnt FROM tool_access_logs WHERE email = ? AND used_at > ?')
-      .get(verifiedEmail, dayStart) as { cnt: number };
-
-    const used = row.cnt;
+    const rows = (await sql`
+      SELECT COUNT(*)::int AS cnt FROM tool_access_logs
+      WHERE email = ${verifiedEmail} AND used_at > ${dayStart}
+    `) as { cnt: number }[];
+    const used = rows[0]?.cnt ?? 0;
     const remaining = Math.max(0, EMAIL_DAILY_LIMIT - used);
 
     return used >= EMAIL_DAILY_LIMIT
@@ -92,13 +94,11 @@ export function getUsageStatus(req: NextRequest): UsageStatus {
       : { status: 'verified_ok', used, remaining, limit: EMAIL_DAILY_LIMIT, email: verifiedEmail };
   }
 
-  const row = db
-    .prepare(
-      'SELECT COUNT(*) as cnt FROM tool_access_logs WHERE fingerprint = ? AND email IS NULL AND used_at > ?'
-    )
-    .get(fingerprint, dayStart) as { cnt: number };
-
-  const used = row.cnt;
+  const rows = (await sql`
+    SELECT COUNT(*)::int AS cnt FROM tool_access_logs
+    WHERE fingerprint = ${fingerprint} AND email IS NULL AND used_at > ${dayStart}
+  `) as { cnt: number }[];
+  const used = rows[0]?.cnt ?? 0;
   const remaining = Math.max(0, ANON_DAILY_LIMIT - used);
 
   return used >= ANON_DAILY_LIMIT

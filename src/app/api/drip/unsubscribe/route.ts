@@ -19,6 +19,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(new URL('/unsubscribe', req.url));
   }
 
-  unsubscribeEmail(email);
+  await unsubscribeEmail(email);
   return NextResponse.redirect(new URL('/unsubscribe', req.url));
 }

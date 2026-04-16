@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Industry and valid source required' }, { status: 400 });
     }
 
-    const added = addSubscriber({ email, name, industry, source: source as 'quiz' | 'audit' | 'exit-intent' });
+    const added = await addSubscriber({ email, name, industry, source: source as 'quiz' | 'audit' | 'exit-intent' });
 
     if (!added) {
       return NextResponse.json({ success: true, message: 'Already subscribed' });

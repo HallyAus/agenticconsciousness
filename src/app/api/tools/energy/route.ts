@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const access = checkToolAccess(req, 'energy');
+  const access = await checkToolAccess(req, 'energy');
   if (access.status === 'email_gate') {
     return NextResponse.json(
       { error: 'Daily limit reached. Verify your email for 20 uses per day.', code: 'email_gate' },
@@ -146,6 +146,13 @@ Rules:
       messages: [{ role: 'user', content: userContent }],
     });
 
+    const p1CacheRead = phase1Response.usage.cache_read_input_tokens ?? 0;
+    const p1CacheWrite = phase1Response.usage.cache_creation_input_tokens ?? 0;
+    const p1Hit = p1CacheRead > 0;
+    console.log(
+      `[CACHE${p1Hit ? ' HIT' : ''}] model=${FAST_MODEL} input=${phase1Response.usage.input_tokens} cache_write=${p1CacheWrite} cache_read=${p1CacheRead} output=${phase1Response.usage.output_tokens}${p1Hit ? ' savings=~90%' : ''}`
+    );
+
     const phase1Text = phase1Response.content
       .filter((block): block is Anthropic.TextBlock => block.type === 'text')
       .map((block) => block.text)
@@ -176,7 +183,7 @@ Rules:
         postcode: null,
         timestamp: new Date().toISOString(),
       }));
-      incrementToolStat('energy');
+      await incrementToolStat('energy');
       return NextResponse.json({
         extracted,
         unsupported: true,
@@ -192,7 +199,7 @@ Rules:
         postcode: extracted.postcode,
         timestamp: new Date().toISOString(),
       }));
-      incrementToolStat('energy');
+      await incrementToolStat('energy');
       return NextResponse.json({
         extracted,
         unsupported: true,
@@ -241,9 +248,22 @@ Be direct and practical. No marketing fluff. Use $ amounts.`;
         phase2Response = await client.messages.create({
           model: STANDARD_MODEL,
           max_tokens: 1000,
-          system: phase2bSystem,
+          system: [
+            {
+              type: 'text',
+              text: phase2bSystem,
+              cache_control: { type: 'ephemeral' },
+            },
+          ],
           messages: [{ role: 'user', content: phase2bUserMessage }],
         });
+
+        const p2CacheRead = phase2Response.usage.cache_read_input_tokens ?? 0;
+        const p2CacheWrite = phase2Response.usage.cache_creation_input_tokens ?? 0;
+        const p2Hit = p2CacheRead > 0;
+        console.log(
+          `[CACHE${p2Hit ? ' HIT' : ''}] model=${STANDARD_MODEL} input=${phase2Response.usage.input_tokens} cache_write=${p2CacheWrite} cache_read=${p2CacheRead} output=${phase2Response.usage.output_tokens}${p2Hit ? ' savings=~90%' : ''}`
+        );
 
         recommendation = phase2Response.content
           .filter((block): block is Anthropic.TextBlock => block.type === 'text')
@@ -267,7 +287,7 @@ Be direct and practical. No marketing fluff. Use $ amounts.`;
       timestamp: new Date().toISOString(),
     }));
 
-    incrementToolStat('energy');
+    await incrementToolStat('energy');
 
     return NextResponse.json({
       extracted,

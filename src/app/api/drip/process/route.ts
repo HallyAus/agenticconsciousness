@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSubscribers, saveSubscribers, DRIP_SCHEDULE } from '@/lib/drip';
-import fs from 'fs';
-import path from 'path';
 
 export async function GET(req: NextRequest) {
   const authKey = req.headers.get('Authorization');
@@ -10,7 +8,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const subscribers = getSubscribers();
+    const subscribers = await getSubscribers();
     const now = Date.now();
     let emailsSent = 0;
 
@@ -33,21 +31,14 @@ export async function GET(req: NextRequest) {
             timestamp: new Date().toISOString(),
           }));
 
-          // Log to file
-          const dataDir = path.join(process.cwd(), 'data');
-          if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-          fs.appendFileSync(
-            path.join(dataDir, 'drip-log.jsonl'),
-            JSON.stringify({ email: sub.email, day: step.day, subject, sentAt: new Date().toISOString() }) + '\n'
-          );
-
+          // Emitted via stdout — captured by Vercel Logs / observability
           sub.emailsSent.push(step.day);
           emailsSent++;
         }
       }
     }
 
-    saveSubscribers(subscribers);
+    await saveSubscribers(subscribers);
 
     return NextResponse.json({ processed: subscribers.length, emailsSent });
   } catch (error) {

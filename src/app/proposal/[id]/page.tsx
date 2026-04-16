@@ -10,16 +10,17 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const proposal = getProposal(id);
+  const proposal = await getProposal(id);
   return {
     title: proposal ? `Proposal: ${proposal.title}` : 'Proposal Not Found',
     robots: { index: false, follow: false },
+    alternates: { canonical: `https://agenticconsciousness.com.au/proposal/${id}` },
   };
 }
 
 export default async function ProposalPage({ params }: Props) {
   const { id } = await params;
-  const proposal = getProposal(id);
+  const proposal = await getProposal(id);
 
   if (!proposal) notFound();
 

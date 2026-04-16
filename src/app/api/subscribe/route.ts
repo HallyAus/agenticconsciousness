@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { sql } from '@/lib/pg';
 import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
@@ -16,13 +15,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid email' }, { status: 400 });
     }
 
-    const dataDir = path.join(process.cwd(), 'data');
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-
-    fs.appendFileSync(
-      path.join(dataDir, 'subscribers.jsonl'),
-      JSON.stringify({ email, subscribedAt: new Date().toISOString() }) + '\n'
-    );
+    await sql`
+      INSERT INTO leads (source, email) VALUES ('newsletter', ${email})
+    `;
 
     console.log(JSON.stringify({ event: 'new_subscriber', email, timestamp: new Date().toISOString() }));
 

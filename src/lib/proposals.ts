@@ -1,7 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const PROPOSALS_DIR = path.join(process.cwd(), 'content', 'proposals');
+import { sql } from './pg';
 
 function isValidId(id: string): boolean {
   return /^[a-f0-9-]{36}$/.test(id);
@@ -32,23 +29,17 @@ export interface Proposal {
   signatureIP?: string;
 }
 
-export function getProposal(id: string): Proposal | null {
+export async function getProposal(id: string): Promise<Proposal | null> {
   if (!isValidId(id)) return null;
-  const filePath = path.join(PROPOSALS_DIR, `${id}.json`);
-  if (!filePath.startsWith(PROPOSALS_DIR)) return null; // path traversal guard
-  try {
-    if (!fs.existsSync(filePath)) return null;
-    return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-  } catch {
-    return null;
-  }
+  const rows = (await sql`SELECT data FROM proposals WHERE id = ${id}`) as { data: Proposal }[];
+  return rows[0]?.data ?? null;
 }
 
-export function saveProposal(proposal: Proposal): void {
+export async function saveProposal(proposal: Proposal): Promise<void> {
   if (!isValidId(proposal.id)) throw new Error('Invalid proposal ID');
-  if (!fs.existsSync(PROPOSALS_DIR)) fs.mkdirSync(PROPOSALS_DIR, { recursive: true });
-  fs.writeFileSync(
-    path.join(PROPOSALS_DIR, `${proposal.id}.json`),
-    JSON.stringify(proposal, null, 2)
-  );
+  await sql`
+    INSERT INTO proposals (id, data, created_at, updated_at)
+    VALUES (${proposal.id}, ${JSON.stringify(proposal)}::jsonb, NOW(), NOW())
+    ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data, updated_at = NOW()
+  `;
 }

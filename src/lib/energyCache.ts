@@ -1,85 +1,38 @@
-import Database from 'better-sqlite3';
-import path from 'path';
-import fs from 'fs';
+import { sql } from './pg';
 
-const DB_PATH =
-  process.env.NODE_ENV === 'production'
-    ? '/app/data/energy-cache.db'
-    : path.join(process.cwd(), 'data', 'energy-cache.db');
-
-declare const globalThis: { __energyCacheDb?: Database.Database };
-
-export function getEnergyDb(): Database.Database {
-  if (globalThis.__energyCacheDb) return globalThis.__energyCacheDb;
-
-  // Ensure data directory exists in dev
-  if (process.env.NODE_ENV !== 'production') {
-    const dir = path.dirname(DB_PATH);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-  }
-
-  const db = new Database(DB_PATH);
-  db.pragma('journal_mode = WAL');
-  db.pragma('busy_timeout = 5000');
-
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS plans_cache (
-      retailer_code TEXT PRIMARY KEY,
-      plan_data TEXT NOT NULL,
-      fetched_at TEXT DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS endpoints_cache (
-      id INTEGER PRIMARY KEY CHECK (id = 1),
-      data TEXT NOT NULL,
-      fetched_at TEXT DEFAULT (datetime('now'))
-    );
-  `);
-
-  globalThis.__energyCacheDb = db;
-  return db;
+export async function getCachedPlans(retailerCode: string): Promise<unknown[] | null> {
+  const rows = (await sql`
+    SELECT plan_data FROM energy_plans_cache
+    WHERE retailer_code = ${retailerCode}
+      AND fetched_at > NOW() - INTERVAL '24 hours'
+  `) as { plan_data: unknown[] }[];
+  return rows[0]?.plan_data ?? null;
 }
 
-export function getCachedPlans(retailerCode: string): unknown[] | null {
-  const db = getEnergyDb();
-  const row = db
-    .prepare(
-      `SELECT plan_data FROM plans_cache
-       WHERE retailer_code = ? AND fetched_at > datetime('now', '-24 hours')`
-    )
-    .get(retailerCode) as { plan_data: string } | undefined;
-
-  if (!row) return null;
-  return JSON.parse(row.plan_data) as unknown[];
+export async function setCachedPlans(retailerCode: string, plans: unknown[]): Promise<void> {
+  await sql`
+    INSERT INTO energy_plans_cache (retailer_code, plan_data, fetched_at)
+    VALUES (${retailerCode}, ${JSON.stringify(plans)}::jsonb, NOW())
+    ON CONFLICT (retailer_code) DO UPDATE SET
+      plan_data = EXCLUDED.plan_data,
+      fetched_at = NOW()
+  `;
 }
 
-export function setCachedPlans(retailerCode: string, plans: unknown[]): void {
-  const db = getEnergyDb();
-  db.prepare(
-    `INSERT OR REPLACE INTO plans_cache (retailer_code, plan_data, fetched_at)
-     VALUES (?, ?, datetime('now'))`
-  ).run(retailerCode, JSON.stringify(plans));
+export async function getCachedEndpoints(): Promise<unknown | null> {
+  const rows = (await sql`
+    SELECT data FROM energy_endpoints_cache
+    WHERE id = 1 AND fetched_at > NOW() - INTERVAL '24 hours'
+  `) as { data: unknown }[];
+  return rows[0]?.data ?? null;
 }
 
-export function getCachedEndpoints(): unknown | null {
-  const db = getEnergyDb();
-  const row = db
-    .prepare(
-      `SELECT data FROM endpoints_cache
-       WHERE id = 1 AND fetched_at > datetime('now', '-24 hours')`
-    )
-    .get() as { data: string } | undefined;
-
-  if (!row) return null;
-  return JSON.parse(row.data) as unknown;
-}
-
-export function setCachedEndpoints(data: unknown): void {
-  const db = getEnergyDb();
-  db.prepare(
-    `INSERT OR REPLACE INTO endpoints_cache (id, data, fetched_at)
-     VALUES (1, ?, datetime('now'))`
-  ).run(JSON.stringify(data));
+export async function setCachedEndpoints(data: unknown): Promise<void> {
+  await sql`
+    INSERT INTO energy_endpoints_cache (id, data, fetched_at)
+    VALUES (1, ${JSON.stringify(data)}::jsonb, NOW())
+    ON CONFLICT (id) DO UPDATE SET
+      data = EXCLUDED.data,
+      fetched_at = NOW()
+  `;
 }

@@ -2,8 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { validateCsrf } from '@/lib/csrf';
-import fs from 'fs';
-import path from 'path';
+import { sql } from '@/lib/pg';
 import { sendEmail, notifyAdmin, emailTemplate } from '@/lib/email';
 import { FAST_MODEL } from '@/lib/models';
 
@@ -68,10 +67,18 @@ export async function POST(req: NextRequest) {
       .map((block) => block.text)
       .join('');
 
+    const cacheRead = response.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = response.usage.cache_creation_input_tokens ?? 0;
+    const isHit = cacheRead > 0;
+    console.log(
+      `[CACHE${isHit ? ' HIT' : ''}] model=${FAST_MODEL} input=${response.usage.input_tokens} cache_write=${cacheWrite} cache_read=${cacheRead} output=${response.usage.output_tokens}${isHit ? ' savings=~90%' : ''}`
+    );
     console.log(
       JSON.stringify({
         tool: 'exit-capture',
         usage: response.usage,
+        cache_read_input_tokens: cacheRead,
+        cache_creation_input_tokens: cacheWrite,
         stop_reason: response.stop_reason,
         timestamp: new Date().toISOString(),
       })
@@ -90,13 +97,11 @@ export async function POST(req: NextRequest) {
     console.log(JSON.stringify(lead, null, 2));
     console.log('=======================================\n');
 
-    // Persist to file
-    const dataDir = path.join(process.cwd(), 'data');
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    fs.appendFileSync(
-      path.join(dataDir, 'leads.jsonl'),
-      JSON.stringify({ ...lead, snapshot }) + '\n'
-    );
+    // Persist to Postgres
+    await sql`
+      INSERT INTO leads (source, email, industry, snapshot, metadata)
+      VALUES ('exit-intent', ${email}, ${industry}, ${snapshot}, ${JSON.stringify({ preview: snapshot.slice(0, 200) })}::jsonb)
+    `;
 
     // Send snapshot to visitor
     await sendEmail({

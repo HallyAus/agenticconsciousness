@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Your session has expired. Refresh the page and try again.' }, { status: 403 });
   }
 
-  const access = checkToolAccess(req, 'jobad');
+  const access = await checkToolAccess(req, 'jobad');
   if (access.status === 'email_gate') {
     return NextResponse.json(
       { error: 'Daily limit reached. Verify your email for 20 uses per day.', code: 'email_gate' },
@@ -90,7 +90,13 @@ ${description}`;
     const response = await client.messages.create({
       model: STANDARD_MODEL,
       max_tokens: 1000,
-      system: systemPrompt,
+      system: [
+        {
+          type: 'text',
+          text: systemPrompt,
+          cache_control: { type: 'ephemeral' },
+        },
+      ],
       messages: [{ role: 'user', content: userMessage }],
     });
 
@@ -99,10 +105,18 @@ ${description}`;
       .map((block) => block.text)
       .join('');
 
+    const cacheRead = response.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = response.usage.cache_creation_input_tokens ?? 0;
+    const isHit = cacheRead > 0;
+    console.log(
+      `[CACHE${isHit ? ' HIT' : ''}] model=${STANDARD_MODEL} input=${response.usage.input_tokens} cache_write=${cacheWrite} cache_read=${cacheRead} output=${response.usage.output_tokens}${isHit ? ' savings=~90%' : ''}`
+    );
     console.log(
       JSON.stringify({
         tool: 'jobad',
         usage: response.usage,
+        cache_read_input_tokens: cacheRead,
+        cache_creation_input_tokens: cacheWrite,
         timestamp: new Date().toISOString(),
       })
     );
@@ -110,7 +124,7 @@ ${description}`;
     let result;
     try {
       result = parseAiJson(rawText);
-      incrementToolStat('jobads');
+      await incrementToolStat('jobads');
     } catch (parseErr) {
       console.error('Failed to parse AI response:', parseErr instanceof Error ? parseErr.message : parseErr);
       console.error('Raw AI text:', rawText);

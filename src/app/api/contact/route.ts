@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { validateCsrf } from '@/lib/csrf';
 import { notifyAdmin } from '@/lib/email';
+import { sql } from '@/lib/pg';
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
@@ -24,31 +23,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Name and email required' }, { status: 400 });
     }
 
-    // Basic email validation
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
     }
 
-    const submission = {
-      timestamp: new Date().toISOString(),
-      name,
-      email,
-      phone: phone || null,
-      recommendedService: recommendedService || null,
-      message: message || null,
-    };
+    await sql`
+      INSERT INTO leads (source, email, name, phone, message, recommended_service)
+      VALUES ('contact', ${email}, ${name}, ${phone ?? null}, ${message ?? null}, ${recommendedService ?? null})
+    `;
 
-    // Log to console (visible in docker logs)
-    console.log('\n========== NEW LEAD ==========');
-    console.log(JSON.stringify(submission, null, 2));
-    console.log('==============================\n');
-
-    // Also append to a leads file for persistence
-    const leadsDir = path.join(process.cwd(), 'data');
-    if (!fs.existsSync(leadsDir)) fs.mkdirSync(leadsDir, { recursive: true });
-
-    const leadsFile = path.join(leadsDir, 'leads.jsonl');
-    fs.appendFileSync(leadsFile, JSON.stringify(submission) + '\n');
+    console.log('[contact] new lead:', { name, email, recommendedService });
 
     await notifyAdmin(
       `New Lead: ${name} — ${email}`,

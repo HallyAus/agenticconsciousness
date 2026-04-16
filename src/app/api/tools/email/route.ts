@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Your session has expired. Refresh the page and try again.' }, { status: 403 });
   }
 
-  const access = checkToolAccess(req, 'email');
+  const access = await checkToolAccess(req, 'email');
   if (access.status === 'email_gate') {
     return NextResponse.json(
       { error: 'Daily limit reached. Verify your email for 20 uses per day.', code: 'email_gate' },
@@ -85,10 +85,18 @@ Rules:
       .map((block) => block.text)
       .join('');
 
+    const cacheRead = response.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = response.usage.cache_creation_input_tokens ?? 0;
+    const isHit = cacheRead > 0;
+    console.log(
+      `[CACHE${isHit ? ' HIT' : ''}] model=${FAST_MODEL} input=${response.usage.input_tokens} cache_write=${cacheWrite} cache_read=${cacheRead} output=${response.usage.output_tokens}${isHit ? ' savings=~90%' : ''}`
+    );
     console.log(
       JSON.stringify({
         tool: 'email',
         usage: response.usage,
+        cache_read_input_tokens: cacheRead,
+        cache_creation_input_tokens: cacheWrite,
         stop_reason: response.stop_reason,
         timestamp: new Date().toISOString(),
       })
@@ -97,7 +105,7 @@ Rules:
     let result;
     try {
       result = parseAiJson(rawText);
-      incrementToolStat('emails');
+      await incrementToolStat('emails');
     } catch (parseErr) {
       console.error('Failed to parse AI response:', parseErr instanceof Error ? parseErr.message : parseErr);
       console.error('Raw AI text:', rawText);

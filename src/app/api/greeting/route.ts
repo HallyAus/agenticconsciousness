@@ -104,10 +104,18 @@ Rules:
       .join('')
       .replace(/^["']|["']$/g, '');
 
+    const cacheRead = response.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = response.usage.cache_creation_input_tokens ?? 0;
+    const isHit = cacheRead > 0;
+    console.log(
+      `[CACHE${isHit ? ' HIT' : ''}] model=${FAST_MODEL} input=${response.usage.input_tokens} cache_write=${cacheWrite} cache_read=${cacheRead} output=${response.usage.output_tokens}${isHit ? ' savings=~90%' : ''}`
+    );
     console.log(
       JSON.stringify({
         tool: 'greeting',
         usage: response.usage,
+        cache_read_input_tokens: cacheRead,
+        cache_creation_input_tokens: cacheWrite,
         stop_reason: response.stop_reason,
         timestamp: new Date().toISOString(),
       })

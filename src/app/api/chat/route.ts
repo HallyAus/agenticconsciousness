@@ -97,7 +97,13 @@ export async function POST(req: NextRequest) {
     const response = await client.messages.create({
       model: STANDARD_MODEL,
       max_tokens: 1024,
-      system: SYSTEM_PROMPT,
+      system: [
+        {
+          type: 'text',
+          text: SYSTEM_PROMPT,
+          cache_control: { type: 'ephemeral' },
+        },
+      ],
       messages: trimmedMessages,
     });
 
@@ -108,11 +114,19 @@ export async function POST(req: NextRequest) {
 
     const reply = atLimit ? text + CONVERSATION_LIMIT_SUFFIX : text;
 
+    const cacheRead = response.usage.cache_read_input_tokens ?? 0;
+    const cacheWrite = response.usage.cache_creation_input_tokens ?? 0;
+    const isHit = cacheRead > 0;
+    console.log(
+      `[CACHE${isHit ? ' HIT' : ''}] model=${STANDARD_MODEL} input=${response.usage.input_tokens} cache_write=${cacheWrite} cache_read=${cacheRead} output=${response.usage.output_tokens}${isHit ? ' savings=~90%' : ''}`
+    );
     console.log(
       JSON.stringify({
         event: 'chat_request',
         ip,
         input_tokens: response.usage.input_tokens,
+        cache_read_input_tokens: cacheRead,
+        cache_creation_input_tokens: cacheWrite,
         output_tokens: response.usage.output_tokens,
         model: STANDARD_MODEL,
         timestamp: new Date().toISOString(),

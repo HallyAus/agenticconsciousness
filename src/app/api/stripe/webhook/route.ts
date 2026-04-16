@@ -1,7 +1,6 @@
 import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { sql } from '@/lib/pg';
 import { notifyAdmin } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
@@ -46,12 +45,14 @@ export async function POST(req: NextRequest) {
       console.log(JSON.stringify(payment, null, 2));
       console.log('======================================\n');
 
-      const dataDir = path.join(process.cwd(), 'data');
-      if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-      fs.appendFileSync(
-        path.join(dataDir, 'payments.jsonl'),
-        JSON.stringify(payment) + '\n'
-      );
+      await sql`
+        INSERT INTO leads (source, email, metadata)
+        VALUES (
+          'stripe_payment',
+          ${session.customer_details?.email ?? 'unknown'},
+          ${JSON.stringify(payment)}::jsonb
+        )
+      `;
 
       await notifyAdmin(
         `Payment Received: ${session.metadata?.packageId} — $${((session.amount_total || 0) / 100).toLocaleString()}`,

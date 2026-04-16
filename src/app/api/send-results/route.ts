@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { sql } from '@/lib/pg';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { sendEmail, emailTemplate } from '@/lib/email';
 
@@ -33,13 +32,11 @@ export async function POST(req: NextRequest) {
     console.log(JSON.stringify(submission, null, 2));
     console.log('========================================\n');
 
-    // Save to leads file
-    const dataDir = path.join(process.cwd(), 'data');
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    fs.appendFileSync(
-      path.join(dataDir, 'leads.jsonl'),
-      JSON.stringify({ ...submission, source: 'tool-email', results }) + '\n'
-    );
+    // Persist to leads
+    await sql`
+      INSERT INTO leads (source, email, metadata)
+      VALUES ('tool-email', ${email}, ${JSON.stringify({ toolName, results })}::jsonb)
+    `;
 
     await sendEmail({
       to: email,

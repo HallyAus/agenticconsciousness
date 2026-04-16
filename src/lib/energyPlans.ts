@@ -195,7 +195,7 @@ function sanitiseRetailerCode(name: string): string {
 
 export async function getRetailerEndpoints(): Promise<Record<string, string>> {
   // 1. Check cache
-  const cached = getCachedEndpoints() as Record<string, string> | null;
+  const cached = (await getCachedEndpoints()) as Record<string, string> | null;
   if (cached && Object.keys(cached).length > 0) {
     return cached;
   }
@@ -229,7 +229,7 @@ export async function getRetailerEndpoints(): Promise<Record<string, string>> {
   }
 
   // 4. Cache
-  setCachedEndpoints(map);
+  await setCachedEndpoints(map);
   return map;
 }
 
@@ -245,7 +245,7 @@ export async function getPlansForZone(zone: string): Promise<CDRPlan[]> {
     const retailerCode = sanitiseRetailerCode(retailerName);
 
     // Check cache first
-    const cached = getCachedPlans(retailerCode);
+    const cached = await getCachedPlans(retailerCode);
     if (cached) {
       const typed = cached as CDRPlan[];
       const filtered = filterPlansForZone(typed, zone);
@@ -256,7 +256,7 @@ export async function getPlansForZone(zone: string): Promise<CDRPlan[]> {
     // Fetch from CDR API
     try {
       const plans = await fetchRetailerPlans(baseUri, retailerName);
-      setCachedPlans(retailerCode, plans);
+      await setCachedPlans(retailerCode, plans);
       const filtered = filterPlansForZone(plans, zone);
       allPlans.push(...filtered);
     } catch (err) {

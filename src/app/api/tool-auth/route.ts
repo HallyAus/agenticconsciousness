@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { validateCsrf } from '@/lib/csrf';
-import { getDb } from '@/lib/db';
+import { sql } from '@/lib/pg';
 import { sendEmail, emailTemplate } from '@/lib/email';
 
 export async function POST(req: NextRequest) {
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
   let email: string;
   try {
-    const body = await req.json() as { email?: unknown };
+    const body = (await req.json()) as { email?: unknown };
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (typeof body.email !== 'string' || !emailRegex.test(body.email) || body.email.length > 200) {
       return NextResponse.json({ error: 'Valid email required.' }, { status: 400 });
@@ -26,10 +26,10 @@ export async function POST(req: NextRequest) {
   const now = Date.now();
   const expiresAt = now + 24 * 60 * 60 * 1000; // 24 hours
 
-  const db = getDb();
-  db.prepare(
-    'INSERT INTO verification_tokens (token, email, created_at, expires_at) VALUES (?, ?, ?, ?)'
-  ).run(token, email, now, expiresAt);
+  await sql`
+    INSERT INTO verification_tokens (token, email, created_at, expires_at)
+    VALUES (${token}, ${email}, ${now}, ${expiresAt})
+  `;
 
   const siteUrl = process.env.SITE_URL || 'https://agenticconsciousness.com.au';
   const verifyUrl = `${siteUrl}/api/verify?token=${token}`;
