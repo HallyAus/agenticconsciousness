@@ -4,6 +4,7 @@ import Hero from '@/components/Hero';
 import Services from '@/components/Services';
 import Process from '@/components/Process';
 import CaseStudies from '@/components/CaseStudies';
+import Portfolio from '@/components/Portfolio';
 import About from '@/components/About';
 import AiAudit from '@/components/AiAudit';
 import CTA from '@/components/CTA';
@@ -25,6 +26,8 @@ export default function Home() {
         <Services />
         <Divider />
         <Process />
+        <Divider />
+        <Portfolio />
         <Divider />
         <CaseStudies />
         <Divider />

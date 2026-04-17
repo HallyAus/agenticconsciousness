@@ -29,13 +29,12 @@ export const INITIAL_BOT_MESSAGE =
 
 export const NAV_LINKS = [
   { label: 'Services', href: '/#services' },
-  { label: 'Method', href: '/#process' },
-  { label: 'Work', href: '/#cases' },
+  { label: 'Portfolio', href: '/#portfolio' },
+  { label: 'Results', href: '/#cases' },
   { label: 'AI Audit', href: '/#ai-audit' },
-  { label: 'Insights', href: '/blog' },
   { label: 'Tools', href: '/tools' },
   { label: 'Pricing', href: '/pricing' },
-  { label: 'About', href: '/#about' },
+  { label: 'Insights', href: '/blog' },
   { label: 'FAQ', href: '/faq' },
 ] as const;
 

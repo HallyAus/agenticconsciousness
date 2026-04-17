@@ -46,6 +46,28 @@ const LANDING_PAGES: Record<string, LandingPage> = {
       { title: 'Retail & Hospitality', desc: 'Smart inventory management, automated customer service, and demand forecasting for Sydney\u2019s competitive retail and hospitality sectors.' },
       { title: 'Tech & Startups', desc: 'Integrate AI into your product stack or internal operations. From Surry Hills to North Sydney, we help tech companies ship faster with AI-augmented workflows.' },
     ],
+    deepDive: [
+      {
+        heading: 'AI consulting for Sydney\u2019s financial services sector',
+        body:
+          'Sydney is home to more than 60% of Australia\u2019s financial services industry \u2014 every major bank, the RBA, most super funds, and a dense cluster of fintech and insurance players from Barangaroo through to Chatswood and Parramatta. That concentration means the AI use-cases we deploy here are unusually mature: KYC document processing, real-time transaction monitoring, automated regulatory reporting (APRA, AUSTRAC), client onboarding pipelines, and natural-language querying of risk data. Unlike generic consultancies, we design around APRA CPS 234 and the Consumer Data Right from day one, so nothing needs to be rebuilt when compliance gets involved.',
+      },
+      {
+        heading: 'AI for Sydney CBD law, accounting, and consulting firms',
+        body:
+          'Sydney\u2019s CBD and North Sydney house some of the country\u2019s most sophisticated professional services firms, and they all have the same bottleneck: billable-hour capacity. We help mid-tier and boutique firms close that gap with AI-assisted document review (cutting contract analysis from hours to minutes), proposal-generation pipelines that turn a scoping call into a formatted fee proposal the same day, and knowledge-management systems that make precedent files genuinely searchable. Because we are tool-agnostic, we match the stack to your existing Microsoft 365 or Google Workspace posture rather than forcing a rip-and-replace.',
+      },
+      {
+        heading: 'AI for Sydney tech startups and scaleups',
+        body:
+          'The Surry Hills, Pyrmont, and Chippendale tech corridor is where most of Sydney\u2019s product innovation happens. Startups here typically do not need a "data science team" \u2014 they need senior engineering help wiring Claude, GPT-4, or Gemini into a product that has to ship this quarter. We deliver exactly that: retrieval pipelines, agent workflows, evaluation harnesses, and the prompt-engineering craft that separates a demo from a production feature. Most engagements are fixed-scope sprints so teams can plan around them without burning runway.',
+      },
+      {
+        heading: 'How we work with Sydney clients',
+        body:
+          'Most Sydney engagements blend remote async collaboration with occasional on-site workshops in the CBD, North Sydney, or Parramatta. We come on-site when change management benefits from being in the room; everything else is faster and cheaper remote. Expect a free 30-minute discovery call, a written scope in 48 hours, and first working output inside the first two weeks. No junior account managers, no 50-page strategy decks \u2014 you work directly with the engineer building your solution.',
+      },
+    ],
   },
 
   melbourne: {
@@ -61,6 +83,28 @@ const LANDING_PAGES: Record<string, LandingPage> = {
       { title: 'Education & Research', desc: 'Automated admin, student communications, and research data processing for Melbourne\u2019s world-class universities and training providers.' },
       { title: 'Property & Construction', desc: 'AI-powered project scheduling, cost estimation, and compliance tracking for Melbourne\u2019s booming property development market.' },
     ],
+    deepDive: [
+      {
+        heading: 'AI consulting for Melbourne\u2019s manufacturing corridor',
+        body:
+          'Melbourne\u2019s south-east manufacturing belt \u2014 Dandenong, Clayton, Bayswater, through to Geelong \u2014 is Australia\u2019s largest advanced manufacturing cluster. The AI that actually moves the needle here is not flashy: vision-based quality inspection on production lines, predictive maintenance on CNC and injection-moulding equipment, demand forecasting tied into ERP data (SAP, NetSuite, Pronto), and automated compliance paperwork for ISO 9001 audits. We specialise in low-friction deployments that run on your existing PLC/SCADA infrastructure without ripping out what already works.',
+      },
+      {
+        heading: 'AI for Melbourne\u2019s creative, media, and marketing industry',
+        body:
+          'The Southbank and Cremorne agencies, production houses, and in-house marketing teams face the same pressure: more output, same team, tighter margins. Our creative-industry engagements cover AI-assisted copy pipelines tuned to brand voice, campaign-performance analysis across Meta and Google, image and video generation workflows, and agent-based research assistants that cut pitch-prep from days to hours. Tool-agnostic means we pick Claude for long-form, Midjourney or Flux for image, Runway or Veo for video \u2014 whatever delivers the best output for your brief.',
+      },
+      {
+        heading: 'AI for Melbourne universities, TAFEs, and research institutes',
+        body:
+          'Melbourne has more top-tier universities and research institutes than any other Australian city. Our education-sector work covers automated student communications (enrolment triage, assessment feedback, support ticket routing), research-data processing pipelines, and admin automation that reclaims academic time for teaching. We are explicit about where AI is appropriate (admin, triage, summarisation) and where it is not (grading, academic integrity, clinical decisions).',
+      },
+      {
+        heading: 'How we engage with Melbourne clients',
+        body:
+          'Most Melbourne engagements run primarily remote with occasional on-site days in the CBD, Southbank, or out to the eastern manufacturing suburbs when hands-on system access is required. We are happy to work from your office for workshops, training, and integration sprints \u2014 but we do not bill travel time on remote weeks. Discovery call is always free, scopes are fixed-price wherever possible, and you work directly with the engineer shipping the work.',
+      },
+    ],
   },
 
   brisbane: {
@@ -75,6 +119,28 @@ const LANDING_PAGES: Record<string, LandingPage> = {
       { title: 'Tourism & Events', desc: 'Smart booking systems, demand forecasting, and automated guest communications \u2014 built for Brisbane\u2019s growing tourism and events industry ahead of 2032.' },
       { title: 'Trades & Services', desc: 'AI quoting, scheduling, and customer follow-ups for Brisbane tradies. Reclaim hours of admin every week without hiring extra staff.' },
       { title: 'Government & Infrastructure', desc: 'Document processing, citizen services automation, and project management AI for Brisbane\u2019s expanding public sector and infrastructure pipeline.' },
+    ],
+    deepDive: [
+      {
+        heading: 'AI consulting for Brisbane\u2019s tech and startup scene',
+        body:
+          'Fortitude Valley and Newstead have become Queensland\u2019s answer to Sydney\u2019s Surry Hills \u2014 a dense cluster of SaaS, fintech, and medtech startups that need to ship AI features without hiring an ML team. Our Brisbane tech engagements typically cover retrieval-augmented generation for product search, agent pipelines for customer success workflows, evaluation harnesses for prompt changes, and cost-control layering so AI spend stays predictable as traffic grows. Fixed-scope sprints so your runway planning stays intact.',
+      },
+      {
+        heading: 'AI for Queensland mining and resources operators',
+        body:
+          'Brisbane is the head-office capital for Queensland\u2019s coal, gas, and critical minerals sectors \u2014 even though the extraction happens up in the Bowen Basin, Surat, and Galilee. We help operators close the gap between head-office data and mine-site reality with AI that processes shift reports, safety incidents, production logs, and compliance submissions at scale. Predictive maintenance on haul trucks and conveyors, automated incident triage, and natural-language interfaces over Pronto or Maximo are all common scope items.',
+      },
+      {
+        heading: 'AI for Brisbane tradies and service businesses',
+        body:
+          'Brisbane\u2019s tradie economy runs on small, owner-operated businesses where the bottleneck is almost always admin \u2014 quoting, scheduling, invoicing, customer follow-ups. We help electricians, plumbers, HVAC specialists, and landscapers across the greater Brisbane metro deploy AI that handles those admin layers automatically. Voice-AI phone handling, SMS/WhatsApp quote-to-cash pipelines, and automated follow-ups that re-engage cold leads are all one-to-two-week sprints with immediate payback.',
+      },
+      {
+        heading: 'Why Brisbane businesses choose us',
+        body:
+          'Most Brisbane businesses we talk to have been quoted $40K+ by a big-four consultancy for a "strategy assessment" that produces a PDF. That is not what we do. Our Brisbane engagements are engineering-led, fixed-scope, and ship working code. Remote-first with on-site days in the Valley, CBD, or out to industrial precincts when it genuinely helps. Free discovery call, written scope within 48 hours, first output in two weeks.',
+      },
     ],
   },
 
