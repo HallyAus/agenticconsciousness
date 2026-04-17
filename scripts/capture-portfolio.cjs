@@ -24,6 +24,9 @@ const SHOTS = [
   { slug: 'plantplanner', url: 'https://plantplanner.com.au' },
   { slug: 'aimarketwire', url: 'https://aimarketwire.ai' },
   { slug: 'printforge', url: 'https://www.printforge.com.au' },
+  { slug: 'printforge-crm', url: 'https://crm.printforge.com.au' },
+  { slug: 'sellmyownhome', url: 'https://sellmyownhome.ai' },
+  { slug: 'flatwhiteindex', url: 'https://flatwhiteindex.com.au' },
 ];
 
 const W = 1440;

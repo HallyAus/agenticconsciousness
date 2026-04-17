@@ -37,6 +37,17 @@ const PROJECTS: Project[] = [
     year: '2026',
   },
   {
+    name: 'SellMyOwnHome',
+    slug: 'sellmyownhome',
+    url: 'https://sellmyownhome.ai',
+    displayUrl: 'sellmyownhome.ai',
+    tagline: 'AI For-Sale-By-Owner Platform for Australia',
+    description:
+      'Private property sales without the agent commission. AI generates listings, analyses photos, drafts floorplans, and handles state-specific compliance paperwork. Built for Australian homeowners who want to run their own sale.',
+    stack: ['Next.js', 'Claude', 'Vision AI', 'Stripe'],
+    year: '2025',
+  },
+  {
     name: 'AIMarketWire',
     slug: 'aimarketwire',
     url: 'https://aimarketwire.ai',
@@ -45,6 +56,17 @@ const PROJECTS: Project[] = [
     description:
       'Real-time market analysis with AI-generated commentary and signal detection. Streaming financial data ingested, summarised, and delivered as actionable briefings. High-volume production pipeline.',
     stack: ['Next.js', 'Claude', 'Streaming'],
+    year: '2026',
+  },
+  {
+    name: 'Flat White Index',
+    slug: 'flatwhiteindex',
+    url: 'https://flatwhiteindex.com.au',
+    displayUrl: 'flatwhiteindex.com.au',
+    tagline: 'AI-Tracked Flat White Prices Across Sydney',
+    description:
+      'An economic indicator with a sense of humour. An AI voice agent named Mia actually rings Sydney cafes to collect live flat white prices, then maps the data. Real AI voice calls, real caffeine inflation.',
+    stack: ['Next.js', 'AI Voice', 'Google Places'],
     year: '2026',
   },
   {
@@ -57,6 +79,17 @@ const PROJECTS: Project[] = [
       'AI-powered planting calendar for every Australian climate zone. Proof that AI can solve highly specific local problems without a trillion-dollar lab. Free forever, no signup.',
     stack: ['Next.js', 'Claude', 'BOM data'],
     year: '2026',
+  },
+  {
+    name: 'Printforge CRM',
+    slug: 'printforge-crm',
+    url: 'https://crm.printforge.com.au',
+    displayUrl: 'crm.printforge.com.au',
+    tagline: 'Business Management Platform for 3D Print Shops',
+    description:
+      'Cloud CRM built for 3D printing businesses. Handles quoting, cost calculation, job tracking, and invoicing with Claude drafting descriptions and pricing automation. Integrates Shopify, Xero, and Google Drive.',
+    stack: ['Next.js', 'Claude', 'Shopify', 'Xero'],
+    year: '2025',
   },
   {
     name: 'Printforge',
@@ -97,24 +130,26 @@ export default function Portfolio() {
           </div>
 
           <div className="grid grid-cols-2 gap-[2px] bg-border-subtle max-md:grid-cols-1">
-            {PROJECTS.map((p, i) => (
+            {PROJECTS.map((p, i) => {
+              const isHero = i === 0 || i === PROJECTS.length - 1;
+              return (
               <a
                 key={p.slug}
                 href={p.url}
                 target="_blank"
                 rel="noopener"
                 className="group bg-ac-card transition-colors duration-200 hover:bg-ac-card-hover no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-ac-red"
-                style={i === 0 ? { gridColumn: 'span 2' } : undefined}
+                style={isHero ? { gridColumn: 'span 2' } : undefined}
               >
                 <div
                   className="relative overflow-hidden border-b-2 border-ac-red"
-                  style={{ aspectRatio: i === 0 ? '16 / 7' : '16 / 10' }}
+                  style={{ aspectRatio: isHero ? '16 / 7' : '16 / 10' }}
                 >
                   <Image
                     src={`/portfolio/${p.slug}.webp`}
                     alt={`${p.name} \u2014 ${p.tagline}`}
                     fill
-                    sizes={i === 0 ? '(min-width: 768px) 1200px, 100vw' : '(min-width: 768px) 600px, 100vw'}
+                    sizes={isHero ? '(min-width: 768px) 1200px, 100vw' : '(min-width: 768px) 600px, 100vw'}
                     priority={i === 0}
                     className="object-cover object-top transition-transform duration-[600ms] ease-out group-hover:scale-[1.02]"
                   />
@@ -152,7 +187,8 @@ export default function Portfolio() {
                   </div>
                 </div>
               </a>
-            ))}
+              );
+            })}
           </div>
 
           <div className="mt-10 text-center">
