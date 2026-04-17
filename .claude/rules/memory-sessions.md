@@ -6,6 +6,7 @@
 
 ## Recent Sessions
 
+- [2026-04-17] Platform migration Proxmox → Vercel + Neon Postgres, Umami → PostHog (project 385449), custom domain cutover + Vercel redirect-loop fix via API, homepage Portfolio with 5 live projects, 5 new pricing offers ($300-$1,500), deepDive content for Sydney/Melbourne/Brisbane/Perth, SEO canonical cascade fix, CI stabilisation. 11 commits, 154 files changed.
 - [2026-03-30] Massive audit session — squirrel 62→82, Umami analytics (VM 700), SQLite rate limiting + email gate, 200 marketing assets, mobile UI fixes (touch/fonts/breakpoints), light mode fix, double footer cleanup. 13 commits, 288 files changed.
 - [2026-03-25] Full site complete — 53 pages, 75 commits, 8 AI tools, Stripe payments, proposal builder, dark/light theme, email drip, 12 landing pages, 8 blog posts. Live at agenticconsciousness.com.au.
 - [2026-03-24] Phase 1 complete — built entire Agentic Consciousness site. 11 commits, all components, chatbot with Claude API, rate limiting. Next.js 16.2.1. Ready to push to GitHub.
