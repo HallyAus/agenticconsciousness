@@ -129,7 +129,7 @@ export default function Portfolio() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-[2px] bg-border-subtle max-md:grid-cols-1">
+          <div className="grid grid-cols-3 gap-[2px] bg-border-subtle max-md:grid-cols-2 max-sm:grid-cols-1">
             {PROJECTS.map((p, i) => {
               const isHero = i === 0 || i === PROJECTS.length - 1;
               return (
@@ -138,48 +138,54 @@ export default function Portfolio() {
                 href={p.url}
                 target="_blank"
                 rel="noopener"
-                className="group bg-ac-card transition-colors duration-200 hover:bg-ac-card-hover no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-ac-red"
-                style={isHero ? { gridColumn: 'span 2' } : undefined}
+                className={`group flex flex-col bg-ac-card transition-colors duration-200 hover:bg-ac-card-hover no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-ac-red ${isHero ? 'col-span-full' : ''}`}
               >
                 <div
-                  className="relative overflow-hidden border-b-2 border-ac-red"
-                  style={{ aspectRatio: isHero ? '16 / 7' : '16 / 10' }}
+                  className={`relative overflow-hidden border-b-2 border-ac-red ${
+                    isHero
+                      ? 'aspect-[21/9] max-sm:aspect-[16/10]'
+                      : 'aspect-[4/3] max-sm:aspect-[16/10]'
+                  }`}
                 >
                   <Image
                     src={`/portfolio/${p.slug}.webp`}
                     alt={`${p.name} \u2014 ${p.tagline}`}
                     fill
-                    sizes={isHero ? '(min-width: 768px) 1200px, 100vw' : '(min-width: 768px) 600px, 100vw'}
+                    sizes={
+                      isHero
+                        ? '(min-width: 1024px) 1200px, 100vw'
+                        : '(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw'
+                    }
                     priority={i === 0}
                     className="object-cover object-top transition-transform duration-[600ms] ease-out group-hover:scale-[1.02]"
                   />
-                  <div className="absolute top-4 left-4 font-mono text-[0.7rem] tracking-[2px] uppercase text-white bg-ac-red py-1 px-2">
+                  <div className="absolute top-3 left-3 font-mono text-[0.65rem] tracking-[2px] uppercase text-white bg-ac-red py-[2px] px-[6px]">
                     LIVE
                   </div>
-                  <div className="absolute top-4 right-4 font-mono text-[0.7rem] tracking-[2px] uppercase text-white/80 bg-black/60 py-1 px-2">
+                  <div className="absolute top-3 right-3 font-mono text-[0.65rem] tracking-[2px] uppercase text-white/80 bg-black/60 py-[2px] px-[6px]">
                     {p.year}
                   </div>
                 </div>
-                <div className="p-8 max-sm:p-5">
-                  <div className="flex justify-between items-start gap-4 mb-3 max-sm:flex-col max-sm:gap-1">
-                    <h3 className="text-[1.25rem] font-black text-text-primary tracking-snug">
+                <div className="p-5 max-sm:p-4 flex flex-col flex-1">
+                  <div className="flex justify-between items-baseline gap-3 mb-1 max-sm:flex-col max-sm:items-start max-sm:gap-[2px]">
+                    <h3 className="text-[1.05rem] font-black text-text-primary tracking-snug leading-tight">
                       {p.name}
                     </h3>
-                    <span className="font-mono text-[0.78rem] tracking-[1.5px] text-text-dim">
+                    <span className="font-mono text-[0.7rem] tracking-[1.5px] text-text-dim shrink-0">
                       {p.displayUrl} &rarr;
                     </span>
                   </div>
-                  <div className="font-mono text-[0.75rem] max-sm:text-xs tracking-[2px] uppercase text-ac-red mb-3">
+                  <div className="font-mono text-[0.68rem] tracking-[2px] uppercase text-ac-red mb-2">
                     {p.tagline}
                   </div>
-                  <p className="text-[0.88rem] text-text-dim font-light leading-[1.7] mb-4">
+                  <p className="text-[0.82rem] text-text-dim font-light leading-[1.6] mb-3 line-clamp-3 flex-1">
                     {p.description}
                   </p>
-                  <div className="flex gap-2 flex-wrap">
+                  <div className="flex gap-[4px] flex-wrap">
                     {p.stack.map((s) => (
                       <span
                         key={s}
-                        className="font-mono text-[0.7rem] tracking-[1.5px] uppercase text-text-dim border border-border-subtle py-1 px-2"
+                        className="font-mono text-[0.62rem] tracking-[1.5px] uppercase text-text-dim border border-border-subtle py-[2px] px-[5px]"
                       >
                         {s}
                       </span>
