@@ -182,32 +182,39 @@ export default function PricingPage() {
               Fixed-scope quick-start offers from $300 for targeted outcomes, plus full engagements from $3,000 for scoped projects with ongoing support. No hidden fees. Every full engagement starts with a complimentary discovery call.
             </p>
 
-            {/* ── 3-step process ── */}
+            {/* ── 3-step process — editorial index, no cards ── */}
             <div className="mb-20">
               <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
                 HOW IT WORKS
               </div>
-              <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-8">
+              <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-12">
                 Three steps. No fluff.
               </h2>
-              <div className="grid grid-cols-3 gap-[2px] max-md:grid-cols-1" style={{ background: 'var(--bg-gap)' }}>
-                {processSteps.map((step) => (
+
+              <div className="flex flex-col">
+                {processSteps.map((step, i) => (
                   <div
                     key={step.num}
-                    className="p-8 max-sm:p-6 flex flex-col"
-                    style={{ background: 'var(--bg-card)', borderTop: '3px solid var(--red)' }}
+                    className={`grid grid-cols-[auto_1fr] gap-x-8 gap-y-4 items-baseline py-10 max-sm:py-8 max-sm:grid-cols-1 max-sm:gap-y-2 ${i > 0 ? 'border-t-2' : ''}`}
+                    style={i > 0 ? { borderColor: 'var(--red)' } : undefined}
                   >
-                    <div className="text-[3rem] font-black leading-none mb-4" style={{ color: 'var(--ghost-number)' }}>
+                    <div
+                      className="font-black leading-[0.85] tracking-tight text-[clamp(4.5rem,12vw,9rem)] max-sm:text-[5rem]"
+                      style={{ color: 'var(--ghost-number)' }}
+                      aria-hidden="true"
+                    >
                       {step.num}
                     </div>
-                    <h3 className="text-[1.1rem] font-black text-text-primary tracking-snug mb-3">
-                      {step.title}
-                    </h3>
-                    <p className="text-[0.88rem] text-text-dim font-light leading-[1.7] flex-1 mb-4">
-                      {step.body}
-                    </p>
-                    <div className="font-mono text-[0.72rem] text-text-dim tracking-[2px] uppercase" style={{ color: 'var(--red-text)' }}>
-                      {step.meta}
+                    <div className="max-w-[640px]">
+                      <h3 className="text-[clamp(1.25rem,2.5vw,1.8rem)] font-black text-text-primary tracking-tight leading-[1.1] mb-4">
+                        {step.title}
+                      </h3>
+                      <p className="text-[0.98rem] text-text-dim font-light leading-[1.75] mb-4">
+                        {step.body}
+                      </p>
+                      <div className="font-mono text-[0.72rem] tracking-[2px] uppercase" style={{ color: 'var(--red-text)' }}>
+                        {step.meta}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -217,25 +224,25 @@ export default function PricingPage() {
             {/* ── Pricing cards ── */}
             <PricingCards />
 
-            {/* ── Trust / payment details ── */}
+            {/* ── Trust / payment — typographic index, no cards ── */}
             <div className="mt-20 mb-20">
               <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
                 THE FINE PRINT
               </div>
-              <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-8">
+              <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-10">
                 Details most consultancies hide.
               </h2>
-              <div className="grid grid-cols-3 gap-[2px] max-md:grid-cols-2 max-sm:grid-cols-1" style={{ background: 'var(--bg-gap)' }}>
+              <div className="grid grid-cols-2 gap-x-16 gap-y-10 max-md:grid-cols-1 max-md:gap-y-8">
                 {trustPoints.map((t) => (
                   <div
                     key={t.label}
-                    className="p-6 flex flex-col"
-                    style={{ background: 'var(--bg-card)' }}
+                    className="pl-6 max-sm:pl-5"
+                    style={{ borderLeft: '2px solid var(--red)' }}
                   >
                     <div className="font-mono text-[0.72rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red-text)' }}>
                       {t.label}
                     </div>
-                    <p className="text-[0.88rem] text-text-dim font-light leading-[1.7]">
+                    <p className="text-[0.95rem] text-text-dim font-light leading-[1.75]">
                       {t.body}
                     </p>
                   </div>
