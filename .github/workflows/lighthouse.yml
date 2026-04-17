@@ -25,12 +25,16 @@ jobs:
         env:
           ANTHROPIC_API_KEY: build-placeholder
           STRIPE_SECRET_KEY: build-placeholder
+          COOKIE_SECRET: build-placeholder
+          NEXT_PUBLIC_POSTHOG_KEY: build-placeholder
 
       - name: Start server
         run: npm run start &
         env:
           ANTHROPIC_API_KEY: test-placeholder
           STRIPE_SECRET_KEY: test-placeholder
+          COOKIE_SECRET: test-placeholder
+          NEXT_PUBLIC_POSTHOG_KEY: test-placeholder
 
       - name: Wait for server
         run: npx wait-on http://localhost:3000 --timeout 30000
@@ -40,10 +44,10 @@ jobs:
         with:
           urls: |
             http://localhost:3000
-            http://localhost:3000/services
             http://localhost:3000/tools
+            http://localhost:3000/pricing
             http://localhost:3000/about
-            http://localhost:3000/contact
+            http://localhost:3000/faq
           budgetPath: .github/lighthouse/budget.json
           uploadArtifacts: true
           temporaryPublicStorage: true
