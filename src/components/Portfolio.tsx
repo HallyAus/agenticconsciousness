@@ -61,7 +61,7 @@ const PROJECTS: Project[] = [
   {
     name: 'Printforge',
     slug: 'printforge',
-    url: 'https://printforge.com.au',
+    url: 'https://www.printforge.com.au',
     displayUrl: 'printforge.com.au',
     tagline: 'Custom 3D Printing for Australian Makers & Tradies',
     description:

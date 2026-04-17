@@ -15,7 +15,7 @@ const SHOTS = [
   { slug: 'saasvalidatr', url: 'https://saasvalidatr.com' },
   { slug: 'plantplanner', url: 'https://plantplanner.com.au' },
   { slug: 'aimarketwire', url: 'https://aimarketwire.ai' },
-  { slug: 'printforge', url: 'https://printforge.com.au' },
+  { slug: 'printforge', url: 'https://www.printforge.com.au' },
 ];
 
 function screenshot(url, outPng, w, h) {
