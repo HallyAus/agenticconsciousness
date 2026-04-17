@@ -190,20 +190,16 @@ export default function PricingCards() {
   return (
     <>
       {/* ── Starter offers ── */}
-      <div className="mb-16">
-        <div className="flex items-end justify-between mb-6 flex-wrap gap-4">
-          <div>
-            <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
-              QUICK-START OFFERS
-            </div>
-            <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary">
-              Pay in full. Book today. Start this week.
-            </h2>
-          </div>
-          <p className="text-text-dim text-[0.85rem] max-w-[360px] font-light leading-[1.6]">
-            Focused, fixed-scope engagements. Ideal if you want a specific outcome without committing to a full project.
-          </p>
+      <div className="mb-20">
+        <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
+          QUICK-START OFFERS
         </div>
+        <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-2">
+          Pay in full. Book today. Start this week.
+        </h2>
+        <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[640px] mb-8">
+          Focused, fixed-scope engagements. Ideal if you want a specific outcome without committing to a full project.
+        </p>
 
         <div className="grid grid-cols-5 gap-[2px] max-[1200px]:grid-cols-3 max-md:grid-cols-2 max-sm:grid-cols-1" style={{ background: 'var(--bg-gap)' }}>
           {starters.map((offer) => (
@@ -220,7 +216,7 @@ export default function PricingCards() {
                 {offer.title}
               </h3>
 
-              <p className="text-[0.78rem] text-text-dim font-light leading-[1.5] mb-4 italic">
+              <p className="text-[0.78rem] text-text-dim font-light leading-[1.5] mb-4">
                 {offer.bestFor}
               </p>
 
@@ -257,19 +253,15 @@ export default function PricingCards() {
 
       {/* ── Full engagements ── */}
       <div>
-        <div className="flex items-end justify-between mb-6 flex-wrap gap-4">
-          <div>
-            <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
-              FULL ENGAGEMENTS
-            </div>
-            <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary">
-              Scoped projects with ongoing support.
-            </h2>
-          </div>
-          <p className="text-text-dim text-[0.85rem] max-w-[360px] font-light leading-[1.6]">
-            Pay a deposit to reserve your slot. Balance due on delivery. Every engagement starts with a free discovery call.
-          </p>
+        <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
+          FULL ENGAGEMENTS
         </div>
+        <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-2">
+          Scoped projects with ongoing support.
+        </h2>
+        <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[640px] mb-8">
+          Pay a deposit to reserve your slot. Balance due on delivery. Every engagement starts with a free discovery call.
+        </p>
 
         <div className="grid grid-cols-3 gap-[2px] max-md:grid-cols-1" style={{ background: 'var(--bg-gap)' }}>
           {tiers.map((tier) => (

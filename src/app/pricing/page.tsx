@@ -38,17 +38,6 @@ const processSteps = [
   },
 ];
 
-const pickYourPath = [
-  { want: 'Understand what Claude can do for my role', pick: 'Claude Workshop — $300' },
-  { want: 'Get Claude Code wired into my actual codebase', pick: 'Claude Code Setup — $450' },
-  { want: 'A prioritised map of which AI tools to adopt', pick: 'AI Stack Audit — $500' },
-  { want: 'A reusable Claude Project for a repeatable task', pick: 'Custom Claude Project — $750' },
-  { want: 'Kill off one painful manual process end-to-end', pick: 'Automation Sprint — $1,500' },
-  { want: 'A strategy + team workshop for AI adoption', pick: 'Strategy & Workshops — from $3,000' },
-  { want: 'Roll AI out across a team with training + support', pick: 'Tool Implementation — from $5,000' },
-  { want: 'A custom agent pipeline running my operation', pick: 'Automation & Agents — from $10,000' },
-];
-
 const trustPoints = [
   {
     label: 'Invoicing',
@@ -168,16 +157,6 @@ export default function PricingPage() {
     ],
   };
 
-  const faqSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: pricingFaq.map((f) => ({
-      '@type': 'Question',
-      name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a },
-    })),
-  };
-
   return (
     <>
       <script
@@ -187,10 +166,6 @@ export default function PricingPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <main className="pt-[60px] min-h-screen">
         <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
@@ -239,47 +214,11 @@ export default function PricingPage() {
               </div>
             </div>
 
-            {/* ── Pick your path ── */}
-            <div className="mb-20">
-              <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
-                PICK YOUR PATH
-              </div>
-              <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-2">
-                If you want this, book that.
-              </h2>
-              <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[640px] mb-8">
-                Eight offers is a lot. Here is the fastest way to find yours. If you are between options, the discovery call is the right answer — and it is free.
-              </p>
-              <div className="grid grid-cols-1 gap-[2px]" style={{ background: 'var(--bg-gap)' }}>
-                <div
-                  className="grid grid-cols-[1fr_auto] gap-6 p-5 max-sm:grid-cols-1 max-sm:gap-2"
-                  style={{ background: 'var(--bg-card)', borderTop: '3px solid var(--red)' }}
-                >
-                  <div className="font-mono text-[0.72rem] tracking-[2px] uppercase text-text-dim">I want to&hellip;</div>
-                  <div className="font-mono text-[0.72rem] tracking-[2px] uppercase text-text-dim text-right max-sm:text-left" style={{ color: 'var(--red-text)' }}>Book this</div>
-                </div>
-                {pickYourPath.map((row) => (
-                  <div
-                    key={row.want}
-                    className="grid grid-cols-[1fr_auto] gap-6 p-5 items-center max-sm:grid-cols-1 max-sm:gap-1"
-                    style={{ background: 'var(--bg-card)' }}
-                  >
-                    <div className="text-[0.92rem] text-text-primary font-light leading-[1.5]">
-                      {row.want}
-                    </div>
-                    <div className="text-[0.88rem] font-black tracking-snug text-right max-sm:text-left" style={{ color: 'var(--red-text)' }}>
-                      {row.pick}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             {/* ── Pricing cards ── */}
             <PricingCards />
 
             {/* ── Trust / payment details ── */}
-            <div className="mt-24">
+            <div className="mt-20 mb-20">
               <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
                 THE FINE PRINT
               </div>
@@ -305,7 +244,7 @@ export default function PricingPage() {
             </div>
 
             {/* ── Pricing FAQ ── */}
-            <div className="mt-24">
+            <div className="mb-20">
               <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
                 PRICING FAQ
               </div>
@@ -340,13 +279,13 @@ export default function PricingPage() {
             </div>
 
             {/* ── Closing ── */}
-            <div className="mt-20 pt-10 border-t border-border-subtle text-center">
-              <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[560px] mx-auto mb-4">
+            <div className="pt-10 border-t border-border-subtle text-center">
+              <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[560px] mx-auto mb-6">
                 All prices in AUD, plus GST. Every engagement includes a complimentary discovery call with Daniel.
               </p>
               <EmailLink
-                className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-8 no-underline transition-colors duration-200"
-                style={{ border: '2px solid var(--red)', color: 'var(--red-text)', background: 'transparent' }}
+                className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-10 text-white no-underline transition-colors duration-200"
+                style={{ background: 'var(--red)' }}
               >
                 Book discovery call &rarr;
               </EmailLink>
