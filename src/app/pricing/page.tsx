@@ -17,6 +17,100 @@ export const metadata: Metadata = {
   },
 };
 
+const processSteps = [
+  {
+    num: '01',
+    title: 'Free discovery call',
+    body: '30 minutes direct with Daniel. We pressure-test the problem, rule out the wrong fits, and give you an honest read on whether AI will actually help. No slide deck, no junior AM.',
+    meta: 'No cost, no commitment',
+  },
+  {
+    num: '02',
+    title: 'Written proposal',
+    body: 'Fixed scope, fixed price, clear deliverables. One or two pages, plain language. You have it in your inbox within 48 hours of the call. Walk away or book it — no follow-up pressure.',
+    meta: 'Within 48 hours',
+  },
+  {
+    num: '03',
+    title: 'Delivery and handover',
+    body: 'Daniel does the work personally. You get weekly updates, a recorded handover, written docs, and a post-delivery support window. Tools and outputs are yours to keep.',
+    meta: '90 min to 8 weeks',
+  },
+];
+
+const pickYourPath = [
+  { want: 'Understand what Claude can do for my role', pick: 'Claude Workshop — $300' },
+  { want: 'Get Claude Code wired into my actual codebase', pick: 'Claude Code Setup — $450' },
+  { want: 'A prioritised map of which AI tools to adopt', pick: 'AI Stack Audit — $500' },
+  { want: 'A reusable Claude Project for a repeatable task', pick: 'Custom Claude Project — $750' },
+  { want: 'Kill off one painful manual process end-to-end', pick: 'Automation Sprint — $1,500' },
+  { want: 'A strategy + team workshop for AI adoption', pick: 'Strategy & Workshops — from $3,000' },
+  { want: 'Roll AI out across a team with training + support', pick: 'Tool Implementation — from $5,000' },
+  { want: 'A custom agent pipeline running my operation', pick: 'Automation & Agents — from $10,000' },
+];
+
+const trustPoints = [
+  {
+    label: 'Invoicing',
+    body: 'Tax invoices with GST and ABN for every engagement. Issued immediately on payment. Registered AU business.',
+  },
+  {
+    label: 'Payment methods',
+    body: 'Card via Stripe by default. EFT, purchase order, or split-pay on request for engagements over $1,000. No surcharges.',
+  },
+  {
+    label: 'NDA and IP',
+    body: 'Happy to sign your NDA before the discovery call. You own all deliverables — code, prompts, docs, configs. No lock-in licensing.',
+  },
+  {
+    label: 'Guarantee',
+    body: 'If the free discovery call does not give you something useful to walk away with, it costs you nothing — because it already did.',
+  },
+  {
+    label: 'Rescheduling',
+    body: 'Reschedule workshops or calls up to 48 hours ahead, no charge. Inside 48 hours we will move it once, then the session is billed.',
+  },
+  {
+    label: 'Team seats',
+    body: 'Workshops include up to 4 attendees. Sessions are recorded, so the rest of the team can watch later. Larger rooms by arrangement.',
+  },
+];
+
+const pricingFaq = [
+  {
+    q: 'Are prices including GST?',
+    a: 'No — all prices are in AUD and exclude GST. GST is added at checkout and shown separately on your tax invoice, so you can claim it back.',
+  },
+  {
+    q: 'What if my needs sit between two tiers?',
+    a: 'That is what the free discovery call is for. Most engagements need minor scope tweaks — we will write a custom proposal that matches your brief, not one of the boxed tiers.',
+  },
+  {
+    q: 'Can I pay by EFT, bank transfer, or PO?',
+    a: 'Yes, for any engagement over $1,000. Email ai@agenticconsciousness.com.au and we will send an invoice with payment details. Quick-start offers under $1,000 are card-only to keep them same-week.',
+  },
+  {
+    q: 'Will you sign an NDA?',
+    a: 'Yes. Send yours before the discovery call and we will sign it, or use our standard mutual NDA. Nothing you share stays in our hands beyond what the engagement needs.',
+  },
+  {
+    q: 'Who owns the output — prompts, code, documentation?',
+    a: 'You do. Once the engagement is delivered and paid, every artefact is yours with no licensing strings. We keep our own internal methodology; you keep your implementation.',
+  },
+  {
+    q: 'How fast can you start?',
+    a: 'Quick-start offers (under $1,500) typically start the same week you book. Full engagements begin inside two weeks of signed proposal. Emergency timelines — add 25% and we will talk.',
+  },
+  {
+    q: 'Do you offer refunds?',
+    a: 'The discovery call is free. For paid work, if a workshop or audit genuinely delivers no value, tell us before the closing email — we will refund or rework at our cost. We have never had to.',
+  },
+  {
+    q: 'Can I combine multiple quick-start offers?',
+    a: 'Yes, and you often should. The Audit + one Sprint is a common combo. Bundle two or more starters and we will cut 10% off the total — just mention it in the discovery call.',
+  },
+];
+
 export default function PricingPage() {
   const offerCatalog = {
     '@context': 'https://schema.org',
@@ -74,6 +168,16 @@ export default function PricingPage() {
     ],
   };
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: pricingFaq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  };
+
   return (
     <>
       <script
@@ -84,44 +188,170 @@ export default function PricingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <main className="pt-[60px] min-h-screen">
         <section className="py-28 px-10 max-md:px-5 max-sm:px-4 max-sm:py-20">
           <div className="max-w-[1200px] mx-auto">
+
+            {/* Hero */}
             <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-3" style={{ color: 'var(--red-text)' }}>
               PRICING
             </div>
             <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-4 text-text-primary">
-              AI Consulting pricing.
+              AI consulting pricing.
             </h1>
-            <p className="text-text-dim text-[0.95rem] font-light leading-[1.7] max-w-[640px] mb-8">
+            <p className="text-text-dim text-[0.95rem] font-light leading-[1.7] max-w-[640px] mb-16">
               Fixed-scope quick-start offers from $300 for targeted outcomes, plus full engagements from $3,000 for scoped projects with ongoing support. No hidden fees. Every full engagement starts with a complimentary discovery call.
             </p>
 
-            <div className="max-w-[700px] mb-14">
-              <h2 className="text-[1.3rem] font-black tracking-tight leading-none mb-4 text-text-primary">
-                How it works.
+            {/* ── 3-step process ── */}
+            <div className="mb-20">
+              <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
+                HOW IT WORKS
+              </div>
+              <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-8">
+                Three steps. No fluff.
               </h2>
-              <p className="text-text-dim text-[0.9rem] font-light leading-[1.8] mb-4">
-                Every project begins with a no-obligation intro call — typically 30 minutes over video or phone. Daniel, our founder with 21+ years of industry experience, personally reviews your current workflows, identifies where intelligent automation can deliver the highest impact, and maps out a realistic path forward. No generic slide decks, no junior account managers — just a direct conversation with the person who&apos;ll lead the work.
-              </p>
-              <p className="text-text-dim text-[0.9rem] font-light leading-[1.8] mb-4">
-                We believe in upfront, honest pricing because opaque quotes erode trust. The tiers below reflect real project scopes we&apos;ve delivered for AU businesses — from half-day strategy workshops through to fully autonomous agent pipelines. If your needs sit between tiers, or you&apos;re unsure which fits, that&apos;s exactly what the discovery call is for. We&apos;ll scope it together and you&apos;ll receive a written proposal before any commitment.
-              </p>
-              <p className="text-text-dim text-[0.9rem] font-light leading-[1.8]">
-                Whether you&apos;re a solo operator exploring your first AI tool or an enterprise team ready to deploy agentic workflows at scale, the process is the same: understand the problem, design the solution, build it right. Reach out at{' '}
-                <EmailLink className="no-underline hover:underline" style={{ color: 'var(--red-text)' }} />{' '}
-                to book your intro session.
-              </p>
+              <div className="grid grid-cols-3 gap-[2px] max-md:grid-cols-1" style={{ background: 'var(--bg-gap)' }}>
+                {processSteps.map((step) => (
+                  <div
+                    key={step.num}
+                    className="p-8 max-sm:p-6 flex flex-col"
+                    style={{ background: 'var(--bg-card)', borderTop: '3px solid var(--red)' }}
+                  >
+                    <div className="text-[3rem] font-black leading-none mb-4" style={{ color: 'var(--ghost-number)' }}>
+                      {step.num}
+                    </div>
+                    <h3 className="text-[1.1rem] font-black text-text-primary tracking-snug mb-3">
+                      {step.title}
+                    </h3>
+                    <p className="text-[0.88rem] text-text-dim font-light leading-[1.7] flex-1 mb-4">
+                      {step.body}
+                    </p>
+                    <div className="font-mono text-[0.72rem] text-text-dim tracking-[2px] uppercase" style={{ color: 'var(--red-text)' }}>
+                      {step.meta}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
+            {/* ── Pick your path ── */}
+            <div className="mb-20">
+              <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
+                PICK YOUR PATH
+              </div>
+              <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-2">
+                If you want this, book that.
+              </h2>
+              <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[640px] mb-8">
+                Eight offers is a lot. Here is the fastest way to find yours. If you are between options, the discovery call is the right answer — and it is free.
+              </p>
+              <div className="grid grid-cols-1 gap-[2px]" style={{ background: 'var(--bg-gap)' }}>
+                <div
+                  className="grid grid-cols-[1fr_auto] gap-6 p-5 max-sm:grid-cols-1 max-sm:gap-2"
+                  style={{ background: 'var(--bg-card)', borderTop: '3px solid var(--red)' }}
+                >
+                  <div className="font-mono text-[0.72rem] tracking-[2px] uppercase text-text-dim">I want to&hellip;</div>
+                  <div className="font-mono text-[0.72rem] tracking-[2px] uppercase text-text-dim text-right max-sm:text-left" style={{ color: 'var(--red-text)' }}>Book this</div>
+                </div>
+                {pickYourPath.map((row) => (
+                  <div
+                    key={row.want}
+                    className="grid grid-cols-[1fr_auto] gap-6 p-5 items-center max-sm:grid-cols-1 max-sm:gap-1"
+                    style={{ background: 'var(--bg-card)' }}
+                  >
+                    <div className="text-[0.92rem] text-text-primary font-light leading-[1.5]">
+                      {row.want}
+                    </div>
+                    <div className="text-[0.88rem] font-black tracking-snug text-right max-sm:text-left" style={{ color: 'var(--red-text)' }}>
+                      {row.pick}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Pricing cards ── */}
             <PricingCards />
 
-            <p className="text-text-dim text-[0.8rem] font-light text-center mt-10">
-              All prices in AUD + GST. Every engagement includes a complimentary discovery call.{' '}
-              <EmailLink className="no-underline hover:underline" style={{ color: 'var(--red-text)' }}>
-                Need something custom? Let&apos;s talk.
+            {/* ── Trust / payment details ── */}
+            <div className="mt-24">
+              <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
+                THE FINE PRINT
+              </div>
+              <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-8">
+                Details most consultancies hide.
+              </h2>
+              <div className="grid grid-cols-3 gap-[2px] max-md:grid-cols-2 max-sm:grid-cols-1" style={{ background: 'var(--bg-gap)' }}>
+                {trustPoints.map((t) => (
+                  <div
+                    key={t.label}
+                    className="p-6 flex flex-col"
+                    style={{ background: 'var(--bg-card)' }}
+                  >
+                    <div className="font-mono text-[0.72rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red-text)' }}>
+                      {t.label}
+                    </div>
+                    <p className="text-[0.88rem] text-text-dim font-light leading-[1.7]">
+                      {t.body}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Pricing FAQ ── */}
+            <div className="mt-24">
+              <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
+                PRICING FAQ
+              </div>
+              <h2 className="text-[1.5rem] font-black tracking-tight text-text-primary mb-8">
+                Questions people actually ask.
+              </h2>
+              <div className="flex flex-col gap-[2px]" style={{ background: 'var(--bg-gap)' }}>
+                {pricingFaq.map((f) => (
+                  <details
+                    key={f.q}
+                    className="group p-6 max-sm:p-5"
+                    style={{ background: 'var(--bg-card)' }}
+                  >
+                    <summary className="flex justify-between items-center gap-6 cursor-pointer list-none">
+                      <h3 className="text-[1rem] max-sm:text-[0.95rem] font-black tracking-snug text-text-primary">
+                        {f.q}
+                      </h3>
+                      <span
+                        className="font-mono text-[1.2rem] leading-none shrink-0 transition-transform duration-200 group-open:rotate-45"
+                        style={{ color: 'var(--red-text)' }}
+                        aria-hidden="true"
+                      >
+                        +
+                      </span>
+                    </summary>
+                    <p className="text-[0.9rem] text-text-dim font-light leading-[1.8] mt-4">
+                      {f.a}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
+
+            {/* ── Closing ── */}
+            <div className="mt-20 pt-10 border-t border-border-subtle text-center">
+              <p className="text-text-dim text-[0.9rem] font-light leading-[1.7] max-w-[560px] mx-auto mb-4">
+                All prices in AUD, plus GST. Every engagement includes a complimentary discovery call with Daniel.
+              </p>
+              <EmailLink
+                className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-8 no-underline transition-colors duration-200"
+                style={{ border: '2px solid var(--red)', color: 'var(--red-text)', background: 'transparent' }}
+              >
+                Book discovery call &rarr;
               </EmailLink>
-            </p>
+            </div>
+
           </div>
         </section>
       </main>

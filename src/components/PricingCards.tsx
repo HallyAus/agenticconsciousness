@@ -7,6 +7,7 @@ import EmailLink from '@/components/EmailLink';
 interface StarterOffer {
   num: string;
   title: string;
+  bestFor: string;
   price: string;
   priceValue: number;
   packageId: string;
@@ -29,6 +30,7 @@ const starters: StarterOffer[] = [
   {
     num: 'S1',
     title: 'Claude Workshop',
+    bestFor: 'Teams new to Claude who want a fast-start without reading 200 pages of docs.',
     price: '$300',
     priceValue: 300,
     packageId: 'claude-workshop',
@@ -44,6 +46,7 @@ const starters: StarterOffer[] = [
   {
     num: 'S2',
     title: 'Claude Code Setup',
+    bestFor: 'Developers who want Claude Code actually wired into their repo, not a demo.',
     price: '$450',
     priceValue: 450,
     packageId: 'claude-code-setup',
@@ -59,6 +62,7 @@ const starters: StarterOffer[] = [
   {
     num: 'S3',
     title: 'AI Stack Audit',
+    bestFor: 'Ops and team leads who want a prioritised map of what AI to use, and what to skip.',
     price: '$500',
     priceValue: 500,
     packageId: 'ai-stack-audit',
@@ -74,6 +78,7 @@ const starters: StarterOffer[] = [
   {
     num: 'S4',
     title: 'Custom Claude Project',
+    bestFor: 'You have a repeatable task (support, research, drafting) you want Claude to own.',
     price: '$750',
     priceValue: 750,
     packageId: 'claude-project-build',
@@ -89,6 +94,7 @@ const starters: StarterOffer[] = [
   {
     num: 'S5',
     title: 'Automation Sprint',
+    bestFor: 'One painful manual process you want killed off end-to-end in a fortnight.',
     price: '$1,500',
     priceValue: 1500,
     packageId: 'automation-sprint',
@@ -210,9 +216,13 @@ export default function PricingCards() {
                 {offer.num}
               </div>
 
-              <h3 className="text-[1rem] font-black text-text-primary tracking-snug mb-3 leading-[1.2]">
+              <h3 className="text-[1rem] font-black text-text-primary tracking-snug mb-2 leading-[1.2]">
                 {offer.title}
               </h3>
+
+              <p className="text-[0.78rem] text-text-dim font-light leading-[1.5] mb-4 italic">
+                {offer.bestFor}
+              </p>
 
               <div className="text-[1.6rem] font-black mb-1" style={{ color: 'var(--red-text)' }}>
                 {offer.price}
