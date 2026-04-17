@@ -3,6 +3,33 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 
 const packages: Record<string, { name: string; amount: number; description: string }> = {
+  // Quick-start offers — pay in full
+  'claude-workshop': {
+    name: 'Claude Workshop',
+    amount: 30000,
+    description: '90-minute 1:1 Claude onboarding — Projects, Artifacts, Computer Use, role-specific prompts. Includes recording and 14-day follow-up support.',
+  },
+  'claude-code-setup': {
+    name: 'Claude Code Setup',
+    amount: 45000,
+    description: 'Install and configure Claude Code with IDE integration, custom slash commands, CLAUDE.md tailored to your repo, 30-day tuning support.',
+  },
+  'ai-stack-audit': {
+    name: 'AI Stack Audit',
+    amount: 50000,
+    description: '2-hour workflow review plus written report with prioritised quick wins and a 12-month AI roadmap. Includes 30-minute findings walkthrough.',
+  },
+  'claude-project-build': {
+    name: 'Custom Claude Project Build',
+    amount: 75000,
+    description: 'Bespoke Claude Project with context files, instructions, knowledge base, and prompt evaluation against real tasks. Includes admin guide.',
+  },
+  'automation-sprint': {
+    name: 'Automation Sprint',
+    amount: 150000,
+    description: 'One production-ready automation built end-to-end — n8n, Make, Zapier, or custom API. Deployed, documented, 14-day post-launch support.',
+  },
+  // Full engagement deposits
   'strategy-deposit': {
     name: 'Strategy & Workshops — Deposit',
     amount: 150000,

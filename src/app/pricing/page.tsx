@@ -6,11 +6,11 @@ import EmailLink from '@/components/EmailLink';
 
 export const metadata: Metadata = {
   title: 'Pricing — AI Consulting Packages',
-  description: 'Transparent pricing for AI consulting. Strategy from $3,000, Implementation from $5,000, Automation from $10,000. Free consultation included.',
+  description: 'Transparent AI consulting pricing. Claude Workshop $300, Claude Code Setup $450, AI Audit $500, Automation Sprint $1,500, full engagements from $3,000.',
   alternates: { canonical: 'https://agenticconsciousness.com.au/pricing' },
   openGraph: {
     title: 'AI Consulting Pricing',
-    description: 'Transparent pricing for AI consulting. Strategy from $3,000, Implementation from $5,000, Automation from $10,000. Free consultation included.',
+    description: 'Claude Workshop $300, Claude Code Setup $450, AI Audit $500, Custom Claude Project $750, Automation Sprint $1,500, full engagements from $3,000.',
     url: 'https://agenticconsciousness.com.au/pricing',
     type: 'website',
     images: [{ url: 'https://agenticconsciousness.com.au/opengraph-image', width: 1200, height: 630 }],
@@ -29,62 +29,30 @@ export default function PricingPage() {
       '@id': 'https://agenticconsciousness.com.au/#organization',
       name: 'Agentic Consciousness',
     },
-    itemListElement: [
-      {
-        '@type': 'Offer',
-        name: 'AI Strategy & Workshops',
-        description: 'AI opportunity assessment, half-day workshop, written roadmap, 30-day support, tool recommendations.',
-        price: '3000',
+    itemListElement: ([
+      { name: 'Claude Workshop', price: '300', description: '90-minute 1:1 Claude onboarding — Projects, Artifacts, Computer Use. Includes recording and 14-day follow-up.' },
+      { name: 'Claude Code Setup', price: '450', description: 'Install and configure Claude Code with IDE integration, custom slash commands, CLAUDE.md for your repo, 30-day support.' },
+      { name: 'AI Stack Audit', price: '500', description: '2-hour workflow review plus written report with prioritised quick wins and a 12-month AI roadmap.' },
+      { name: 'Custom Claude Project Build', price: '750', description: 'Bespoke Claude Project with context files, instructions, knowledge base, and prompt evaluation against real tasks.' },
+      { name: 'Automation Sprint', price: '1500', description: 'One production-ready automation built end-to-end — n8n, Make, Zapier, or custom API. Deployed and documented.' },
+      { name: 'AI Strategy & Workshops', price: '3000', description: 'AI opportunity assessment, half-day workshop, written roadmap, 30-day support, tool recommendations.' },
+      { name: 'AI Tool Implementation', price: '5000', description: 'Strategy plus AI tool deployment, system integration, team training for up to 10 people, 60-day support.' },
+      { name: 'AI Automation & Agents', price: '10000', description: 'Full implementation plus custom AI pipeline development, autonomous workflow design, API integrations, 90-day support.' },
+    ]).map((o) => ({
+      '@type': 'Offer',
+      name: o.name,
+      description: o.description,
+      price: o.price,
+      priceCurrency: 'AUD',
+      priceSpecification: {
+        '@type': 'PriceSpecification',
+        price: o.price,
         priceCurrency: 'AUD',
-        priceSpecification: {
-          '@type': 'PriceSpecification',
-          price: '3000',
-          priceCurrency: 'AUD',
-          valueAddedTaxIncluded: false,
-        },
-        availability: 'https://schema.org/InStock',
-        seller: {
-          '@type': 'Organization',
-          name: 'Agentic Consciousness',
-        },
+        valueAddedTaxIncluded: false,
       },
-      {
-        '@type': 'Offer',
-        name: 'AI Tool Implementation',
-        description: 'Strategy plus AI tool deployment, system integration, team training for up to 10 people, 60-day support.',
-        price: '5000',
-        priceCurrency: 'AUD',
-        priceSpecification: {
-          '@type': 'PriceSpecification',
-          price: '5000',
-          priceCurrency: 'AUD',
-          valueAddedTaxIncluded: false,
-        },
-        availability: 'https://schema.org/InStock',
-        seller: {
-          '@type': 'Organization',
-          name: 'Agentic Consciousness',
-        },
-      },
-      {
-        '@type': 'Offer',
-        name: 'AI Automation & Agents',
-        description: 'Full implementation plus custom AI pipeline development, autonomous workflow design, API integrations, 90-day support.',
-        price: '10000',
-        priceCurrency: 'AUD',
-        priceSpecification: {
-          '@type': 'PriceSpecification',
-          price: '10000',
-          priceCurrency: 'AUD',
-          valueAddedTaxIncluded: false,
-        },
-        availability: 'https://schema.org/InStock',
-        seller: {
-          '@type': 'Organization',
-          name: 'Agentic Consciousness',
-        },
-      },
-    ],
+      availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Organization', name: 'Agentic Consciousness' },
+    })),
   };
 
   const breadcrumbSchema = {
@@ -125,8 +93,8 @@ export default function PricingPage() {
             <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-4 text-text-primary">
               AI Consulting pricing.
             </h1>
-            <p className="text-text-dim text-[0.95rem] font-light leading-[1.7] max-w-[500px] mb-8">
-              Three packages. No hidden fees. Every engagement starts with a complimentary discovery call.
+            <p className="text-text-dim text-[0.95rem] font-light leading-[1.7] max-w-[640px] mb-8">
+              Fixed-scope quick-start offers from $300 for targeted outcomes, plus full engagements from $3,000 for scoped projects with ongoing support. No hidden fees. Every full engagement starts with a complimentary discovery call.
             </p>
 
             <div className="max-w-[700px] mb-14">
