@@ -1,7 +1,4 @@
-'use client';
-
-import { useState } from 'react';
-import { trackEvent } from '@/lib/tracking';
+import CheckoutButton from '@/components/CheckoutButton';
 import EmailLink from '@/components/EmailLink';
 
 interface StarterOffer {
@@ -70,7 +67,7 @@ const starters: StarterOffer[] = [
     items: [
       '2-hour discovery of current workflows',
       'Tool-by-tool review (AI and non-AI)',
-      'Written report — quick wins + roadmap',
+      'Written report \u2014 quick wins + roadmap',
       'Prioritised by ROI and effort',
       '30-minute walkthrough of findings',
     ],
@@ -160,33 +157,13 @@ const tiers: Tier[] = [
   },
 ];
 
+const starterButtonClass =
+  'block w-full text-center font-display text-[0.75rem] font-black tracking-[2px] uppercase py-3 max-sm:py-4 transition-colors duration-200 cursor-pointer border-none text-white disabled:opacity-40 hover:bg-[color:var(--red-hover,var(--red))]';
+
+const tierButtonClass =
+  'block w-full text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 max-sm:py-4 transition-colors duration-200 cursor-pointer border-none text-white disabled:opacity-40';
+
 export default function PricingCards() {
-  const [loading, setLoading] = useState<string | null>(null);
-
-  async function handleCheckout(packageId: string) {
-    setLoading(packageId);
-    trackEvent('InitiateCheckout', { content_name: packageId });
-
-    try {
-      const res = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ packageId }),
-      });
-
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error || 'Checkout unavailable. Contact ai@agenticconsciousness.com.au');
-        setLoading(null);
-      }
-    } catch {
-      alert('Network error. Please try again.');
-      setLoading(null);
-    }
-  }
-
   return (
     <>
       {/* ── Starter offers ── */}
@@ -228,8 +205,8 @@ export default function PricingCards() {
               <ul className="flex flex-col gap-2 mb-5 flex-1">
                 {offer.items.map((item) => (
                   <li key={item} className="flex gap-2 text-[0.78rem] text-text-dim font-light leading-[1.5]">
-                    <span style={{ color: 'var(--red-text)' }}>&#9632;</span>
-                    {item}
+                    <span aria-hidden="true" style={{ color: 'var(--red-text)' }}>&#9632;</span>
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
@@ -238,14 +215,13 @@ export default function PricingCards() {
                 {offer.timeline}
               </div>
 
-              <button
-                onClick={() => handleCheckout(offer.packageId)}
-                disabled={loading === offer.packageId}
-                className="block w-full text-center font-display text-[0.75rem] font-black tracking-[2px] uppercase py-3 max-sm:py-4 transition-all duration-200 cursor-pointer border-none text-white disabled:opacity-40"
+              <CheckoutButton
+                packageId={offer.packageId}
+                className={starterButtonClass}
                 style={{ background: 'var(--red)' }}
               >
-                {loading === offer.packageId ? 'Processing...' : `Pay ${offer.price} \u2192`}
-              </button>
+                Pay {offer.price} &rarr;
+              </CheckoutButton>
             </div>
           ))}
         </div>
@@ -283,7 +259,7 @@ export default function PricingCards() {
                 </div>
               )}
 
-              <div className="text-[3rem] font-black leading-none mb-3" style={{ color: 'var(--ghost-number)' }}>
+              <div className="text-[3rem] font-black leading-none mb-3" style={{ color: 'var(--ghost-number)' }} aria-hidden="true">
                 {tier.num}
               </div>
 
@@ -299,8 +275,8 @@ export default function PricingCards() {
               <ul className="flex flex-col gap-2 mb-6">
                 {tier.items.map((item) => (
                   <li key={item} className="flex gap-2 text-[0.82rem] text-text-dim font-light leading-[1.5]">
-                    <span style={{ color: 'var(--red-text)' }}>&#9632;</span>
-                    {item}
+                    <span aria-hidden="true" style={{ color: 'var(--red-text)' }}>&#9632;</span>
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
@@ -311,7 +287,7 @@ export default function PricingCards() {
 
               <div className="flex flex-col gap-2">
                 <EmailLink
-                  className="block text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 max-sm:py-4 no-underline transition-all duration-200"
+                  className="block text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 max-sm:py-4 no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
                   style={{
                     border: '2px solid var(--red)',
                     color: 'var(--red-text)',
@@ -320,14 +296,13 @@ export default function PricingCards() {
                 >
                   Book consultation &rarr;
                 </EmailLink>
-                <button
-                  onClick={() => handleCheckout(tier.packageId)}
-                  disabled={loading === tier.packageId}
-                  className="block w-full text-center font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 max-sm:py-4 transition-all duration-200 cursor-pointer border-none text-white disabled:opacity-40"
+                <CheckoutButton
+                  packageId={tier.packageId}
+                  className={tierButtonClass}
                   style={{ background: 'var(--red)' }}
                 >
-                  {loading === tier.packageId ? 'Processing...' : `Pay deposit (${tier.deposit}) \u2192`}
-                </button>
+                  Pay deposit ({tier.deposit}) &rarr;
+                </CheckoutButton>
               </div>
             </div>
           ))}

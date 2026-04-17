@@ -137,8 +137,8 @@ export default function Portfolio() {
                 key={p.slug}
                 href={p.url}
                 target="_blank"
-                rel="noopener"
-                className={`group flex flex-col bg-ac-card transition-colors duration-200 hover:bg-ac-card-hover no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-ac-red ${isHero ? 'col-span-full' : ''}`}
+                rel="noopener noreferrer"
+                className={`group flex flex-col bg-ac-card transition-colors duration-200 hover:bg-ac-card-hover no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ac-red ${isHero ? 'col-span-full' : ''}`}
               >
                 <div
                   className={`relative overflow-hidden border-b-2 border-ac-red ${
@@ -157,7 +157,7 @@ export default function Portfolio() {
                         : '(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw'
                     }
                     priority={i === 0}
-                    className="object-cover object-top transition-transform duration-[600ms] ease-out group-hover:scale-[1.02]"
+                    className="object-cover object-top transition-transform duration-[600ms] ease-out group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:transform-none"
                   />
                   <div className="absolute top-3 left-3 font-mono text-[0.65rem] tracking-[2px] uppercase text-white bg-ac-red py-[2px] px-[6px]">
                     LIVE
@@ -172,7 +172,8 @@ export default function Portfolio() {
                       {p.name}
                     </h3>
                     <span className="font-mono text-[0.7rem] tracking-[1.5px] text-text-dim shrink-0">
-                      {p.displayUrl} &rarr;
+                      {p.displayUrl}
+                      <span aria-hidden="true"> &rarr;</span>
                     </span>
                   </div>
                   <div className="font-mono text-[0.68rem] tracking-[2px] uppercase text-ac-red mb-2">

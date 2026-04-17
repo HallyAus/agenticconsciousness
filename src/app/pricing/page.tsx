@@ -291,7 +291,7 @@ export default function PricingPage() {
                 All prices in AUD, plus GST. Every engagement includes a complimentary discovery call with Daniel.
               </p>
               <EmailLink
-                className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-10 text-white no-underline transition-colors duration-200"
+                className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-10 text-white no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
                 style={{ background: 'var(--red)' }}
               >
                 Book discovery call &rarr;

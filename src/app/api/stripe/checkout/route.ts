@@ -20,6 +20,10 @@ const packages: Record<string, Pkg> = {
 
 const GST_RATE = 0.1;
 
+const stripe = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-02-25.clover' })
+  : null;
+
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   const { allowed, retryAfter } = checkRateLimit(ip);
@@ -27,14 +31,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Rate limit exceeded. Try again in ${retryAfter}s.` }, { status: 429 });
   }
 
-  try {
-    if (!process.env.STRIPE_SECRET_KEY) {
-      return NextResponse.json({ error: 'Payments not configured' }, { status: 503 });
-    }
+  if (!stripe) {
+    return NextResponse.json({ error: 'Payments not configured' }, { status: 503 });
+  }
 
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: '2026-02-25.clover',
-    });
+  try {
 
     const { packageId, proposalId } = await req.json();
 
