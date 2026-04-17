@@ -2,49 +2,15 @@ import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit } from '@/lib/rate-limit';
 
-const packages: Record<string, { name: string; amount: number; description: string }> = {
-  // Quick-start offers — pay in full
-  'claude-workshop': {
-    name: 'Claude Workshop',
-    amount: 30000,
-    description: '90-minute 1:1 Claude onboarding — Projects, Artifacts, Computer Use, role-specific prompts. Includes recording and 14-day follow-up support.',
-  },
-  'claude-code-setup': {
-    name: 'Claude Code Setup',
-    amount: 45000,
-    description: 'Install and configure Claude Code with IDE integration, custom slash commands, CLAUDE.md tailored to your repo, 30-day tuning support.',
-  },
-  'ai-stack-audit': {
-    name: 'AI Stack Audit',
-    amount: 50000,
-    description: '2-hour workflow review plus written report with prioritised quick wins and a 12-month AI roadmap. Includes 30-minute findings walkthrough.',
-  },
-  'claude-project-build': {
-    name: 'Custom Claude Project Build',
-    amount: 75000,
-    description: 'Bespoke Claude Project with context files, instructions, knowledge base, and prompt evaluation against real tasks. Includes admin guide.',
-  },
-  'automation-sprint': {
-    name: 'Automation Sprint',
-    amount: 150000,
-    description: 'One production-ready automation built end-to-end — n8n, Make, Zapier, or custom API. Deployed, documented, 14-day post-launch support.',
-  },
-  // Full engagement deposits
-  'strategy-deposit': {
-    name: 'Strategy & Workshops — Deposit',
-    amount: 150000,
-    description: 'Deposit for AI Strategy & Workshops package. Balance due on delivery.',
-  },
-  'implementation-deposit': {
-    name: 'Tool Implementation — Deposit',
-    amount: 250000,
-    description: 'Deposit for AI Tool Implementation package. Balance due on delivery.',
-  },
-  'automation-deposit': {
-    name: 'Automation & Agents — Deposit',
-    amount: 500000,
-    description: 'Deposit for AI Automation & Agents package. Balance due on delivery.',
-  },
+const priceIds: Record<string, string> = {
+  'claude-workshop': 'price_1TN2frPTv8VxN1HBYRWqlFNG',
+  'claude-code-setup': 'price_1TN2fsPTv8VxN1HB4Lf70QAI',
+  'ai-stack-audit': 'price_1TN2fxPTv8VxN1HBKqdq3lRa',
+  'claude-project-build': 'price_1TN2fyPTv8VxN1HBlMMGkmKM',
+  'automation-sprint': 'price_1TN2fyPTv8VxN1HB2pxyAvDL',
+  'strategy-deposit': 'price_1TN2fzPTv8VxN1HBIKPTW8YK',
+  'implementation-deposit': 'price_1TN2g0PTv8VxN1HBCTqIiDg8',
+  'automation-deposit': 'price_1TN2g1PTv8VxN1HBbOfOKGtx',
 };
 
 export async function POST(req: NextRequest) {
@@ -65,8 +31,8 @@ export async function POST(req: NextRequest) {
 
     const { packageId, proposalId } = await req.json();
 
-    const selected = packages[packageId];
-    if (!selected) {
+    const price = priceIds[packageId];
+    if (!price) {
       return NextResponse.json({ error: 'Invalid package' }, { status: 400 });
     }
 
@@ -75,17 +41,7 @@ export async function POST(req: NextRequest) {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
-      line_items: [{
-        price_data: {
-          currency: 'aud',
-          product_data: {
-            name: selected.name,
-            description: selected.description,
-          },
-          unit_amount: selected.amount,
-        },
-        quantity: 1,
-      }],
+      line_items: [{ price, quantity: 1 }],
       metadata: {
         packageId,
         proposalId: proposalId || '',
