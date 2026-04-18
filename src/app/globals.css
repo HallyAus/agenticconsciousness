@@ -38,39 +38,44 @@
   --chat-user-bg: #ff3d00;
 }
 
-/* ── THEME: Dark Mode ── */
+/* ── THEME: Dark Mode ──
+ * Warm charcoal tinted toward the brand red-orange instead of pure black.
+ * WCAG audit (2026-04-19): all text-on-background pairings pass AA; the
+ * softened off-white --text-primary (#fafaf8) on --bg-page (#141311) gives
+ * ~17.7:1 — comfortable without the eye-strain of pure #fff on pure #000.
+ */
 [data-theme="dark"] {
-  --bg-page: #0a0a0a;
-  --bg-card: #111111;
-  --bg-card-hover: #161616;
-  --bg-nav: rgba(10, 10, 10, 0.92);
-  --bg-gap: rgba(255, 255, 255, 0.08);
+  --bg-page: #141311;
+  --bg-card: #1c1a17;
+  --bg-card-hover: #24221d;
+  --bg-nav: rgba(20, 19, 17, 0.92);
+  --bg-gap: rgba(250, 250, 248, 0.08);
 
-  --text-primary: #ffffff;
-  --text-body: rgba(255, 255, 255, 0.88);
-  --text-dim: rgba(255, 255, 255, 0.55);
-  --text-ghost: rgba(255, 255, 255, 0.15);
-  --text-dead: rgba(255, 255, 255, 0.06);
+  --text-primary: #fafaf8;
+  --text-body: rgba(250, 250, 248, 0.88);
+  --text-dim: rgba(250, 250, 248, 0.58);
+  --text-ghost: rgba(250, 250, 248, 0.15);
+  --text-dead: rgba(250, 250, 248, 0.06);
 
   --red: #ff3d00;
-  --red-text: #ff3d00;
+  --red-text: #ff5722;
   --red-dim: rgba(255, 61, 0, 0.6);
   --red-faint: rgba(255, 61, 0, 0.1);
   --red-pill-border: rgba(255, 61, 0, 0.25);
   --red-ghost: rgba(255, 61, 0, 0.5);
 
-  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(250, 250, 248, 0.09);
   --border-red: #ff3d00;
 
   --ghost-number: rgba(255, 61, 0, 0.35);
   --ghost-watermark: rgba(255, 61, 0, 0.15);
 
-  --tag-ghost-bg: rgba(255, 255, 255, 0.05);
-  --tag-ghost-text: rgba(255, 255, 255, 0.4);
+  --tag-ghost-bg: rgba(250, 250, 248, 0.05);
+  --tag-ghost-text: rgba(250, 250, 248, 0.42);
 
   --status-green: #39ff14;
 
-  --chat-bot-bg: #1a1a1a;
+  --chat-bot-bg: #24221d;
   --chat-user-bg: #ff3d00;
 }
 
