@@ -10,6 +10,7 @@ interface StarterOffer {
   packageId: string;
   timeline: string;
   items: string[];
+  featured?: boolean;
 }
 
 interface Tier {
@@ -27,7 +28,7 @@ const starters: StarterOffer[] = [
   {
     num: 'S1',
     title: 'Claude Workshop',
-    bestFor: 'Teams new to Claude who want a fast-start without reading 200 pages of docs.',
+    bestFor: 'Walk out knowing exactly which 3 tasks your team will hand to Claude this quarter.',
     price: '$300',
     priceValue: 300,
     packageId: 'claude-workshop',
@@ -43,7 +44,7 @@ const starters: StarterOffer[] = [
   {
     num: 'S2',
     title: 'Claude Code Setup',
-    bestFor: 'Developers who want Claude Code actually wired into their repo, not a demo.',
+    bestFor: 'Leave the session with Claude Code writing usable PRs against your real repo, same day.',
     price: '$450',
     priceValue: 450,
     packageId: 'claude-code-setup',
@@ -59,11 +60,12 @@ const starters: StarterOffer[] = [
   {
     num: 'S3',
     title: 'AI Stack Audit',
-    bestFor: 'Ops and team leads who want a prioritised map of what AI to use, and what to skip.',
+    bestFor: 'Replace 12-tabs-of-confusion with a one-page AI roadmap ranked by ROI and effort.',
     price: '$500',
     priceValue: 500,
     packageId: 'ai-stack-audit',
     timeline: '1 week',
+    featured: true,
     items: [
       '2-hour discovery of current workflows',
       'Tool-by-tool review (AI and non-AI)',
@@ -75,7 +77,7 @@ const starters: StarterOffer[] = [
   {
     num: 'S4',
     title: 'Custom Claude Project',
-    bestFor: 'You have a repeatable task (support, research, drafting) you want Claude to own.',
+    bestFor: 'Own a production-ready Claude Project that handles a repeatable task without you.',
     price: '$750',
     priceValue: 750,
     packageId: 'claude-project-build',
@@ -91,7 +93,7 @@ const starters: StarterOffer[] = [
   {
     num: 'S5',
     title: 'Automation Sprint',
-    bestFor: 'One painful manual process you want killed off end-to-end in a fortnight.',
+    bestFor: 'One painful manual process killed off end-to-end and deployed into your stack in a fortnight.',
     price: '$1,500',
     priceValue: 1500,
     packageId: 'automation-sprint',
@@ -182,9 +184,17 @@ export default function PricingCards() {
           {starters.map((offer) => (
             <div
               key={offer.num}
-              className="p-6 flex flex-col"
+              className="p-6 flex flex-col relative"
               style={{ background: 'var(--bg-card)', borderTop: '3px solid var(--red)' }}
             >
+              {offer.featured && (
+                <div
+                  className="font-mono text-[0.62rem] tracking-[2px] uppercase py-1 px-2 absolute top-0 right-0"
+                  style={{ background: 'var(--red)', color: '#fff' }}
+                >
+                  MOST BOOKED
+                </div>
+              )}
               <div className="font-mono text-[0.7rem] tracking-[2px] uppercase mb-4" style={{ color: 'var(--red-text)' }}>
                 {offer.num}
               </div>

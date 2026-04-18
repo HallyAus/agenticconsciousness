@@ -11,6 +11,7 @@ interface Project {
   description: string;
   stack: string[];
   year: string;
+  outcome: string;
 }
 
 const PROJECTS: Project[] = [
@@ -24,6 +25,7 @@ const PROJECTS: Project[] = [
       'Multi-platform AI marketing SaaS. One AI writes posts in your brand voice, schedules them across 9 platforms, and learns what converts. Built end-to-end — Next.js, Claude, Stripe, Postgres.',
     stack: ['Next.js', 'Claude', 'Stripe', 'Postgres'],
     year: '2026',
+    outcome: 'Shipped Q1 2026. One AI writes across 9 platforms.',
   },
   {
     name: 'SaaSValidatr',
@@ -35,6 +37,7 @@ const PROJECTS: Project[] = [
       'Anonymous team voting plus AI scoring for SaaS ideas in under 30 seconds. Kills groupthink and cargo-cult prioritisation. Production: Vercel, Neon Postgres, Claude for scoring.',
     stack: ['Next.js', 'Claude', 'Neon', 'Vercel'],
     year: '2026',
+    outcome: 'Team vote + AI score in under 30 seconds.',
   },
   {
     name: 'SellMyOwnHome',
@@ -46,6 +49,7 @@ const PROJECTS: Project[] = [
       'Private property sales without the agent commission. AI generates listings, analyses photos, drafts floorplans, and handles state-specific compliance paperwork. Built for Australian homeowners who want to run their own sale.',
     stack: ['Next.js', 'Claude', 'Vision AI', 'Stripe'],
     year: '2025',
+    outcome: 'Live 2025. FSBO compliance across every AU state.',
   },
   {
     name: 'AIMarketWire',
@@ -57,6 +61,7 @@ const PROJECTS: Project[] = [
       'Real-time market analysis with AI-generated commentary and signal detection. Streaming financial data ingested, summarised, and delivered as actionable briefings. High-volume production pipeline.',
     stack: ['Next.js', 'Claude', 'Streaming'],
     year: '2026',
+    outcome: 'Real-time market briefings, zero human delay.',
   },
   {
     name: 'Flat White Index',
@@ -68,6 +73,7 @@ const PROJECTS: Project[] = [
       'An economic indicator with a sense of humour. An AI voice agent named Mia actually rings Sydney cafes to collect live flat white prices, then maps the data. Real AI voice calls, real caffeine inflation.',
     stack: ['Next.js', 'AI Voice', 'Google Places'],
     year: '2026',
+    outcome: 'AI voice agent actually rings Sydney cafes.',
   },
   {
     name: 'Plant Planner',
@@ -79,6 +85,7 @@ const PROJECTS: Project[] = [
       'AI-powered planting calendar for every Australian climate zone. Proof that AI can solve highly specific local problems without a trillion-dollar lab. Free forever, no signup.',
     stack: ['Next.js', 'Claude', 'BOM data'],
     year: '2026',
+    outcome: 'Free forever, no signup. Every AU climate zone.',
   },
   {
     name: 'Printforge CRM',
@@ -90,6 +97,7 @@ const PROJECTS: Project[] = [
       'Cloud CRM built for 3D printing businesses. Handles quoting, cost calculation, job tracking, and invoicing with Claude drafting descriptions and pricing automation. Integrates Shopify, Xero, and Google Drive.',
     stack: ['Next.js', 'Claude', 'Shopify', 'Xero'],
     year: '2025',
+    outcome: 'Idea to live in 6 weeks. Runs Printforge daily.',
   },
   {
     name: 'Printforge',
@@ -101,6 +109,7 @@ const PROJECTS: Project[] = [
       'Daniel\u2019s 3D printing studio. Not AI-built end-to-end but fully AI-operated \u2014 automation handles inventory, pricing, customer comms, and design iteration. The lab where we test everything.',
     stack: ['Shopify', 'Bambu Lab', 'Home Assistant'],
     year: '2024',
+    outcome: 'Fully AI-operated studio. Our live R&D lab.',
   },
 ];
 
@@ -182,6 +191,12 @@ export default function Portfolio() {
                   <p className="text-[0.82rem] text-text-dim font-light leading-[1.6] mb-3 line-clamp-3 flex-1">
                     {p.description}
                   </p>
+                  <div
+                    className="pl-3 mb-3 text-[0.75rem] font-mono tracking-[1.5px] uppercase leading-[1.5]"
+                    style={{ borderLeft: '2px solid var(--red)', color: 'var(--red-text)' }}
+                  >
+                    {p.outcome}
+                  </div>
                   <div className="flex gap-[4px] flex-wrap">
                     {p.stack.map((s) => (
                       <span

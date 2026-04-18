@@ -178,12 +178,15 @@ export default function PricingPage() {
             <h1 className="text-[clamp(2rem,5vw,3.5rem)] font-black tracking-tight leading-none mb-4 text-text-primary">
               AI consulting pricing.
             </h1>
-            <p className="text-text-dim text-[0.95rem] font-light leading-[1.7] max-w-[640px] mb-16">
+            <p className="text-text-dim text-[0.95rem] font-light leading-[1.7] max-w-[640px] mb-12">
               Fixed-scope quick-start offers from $300 for targeted outcomes, plus full engagements from $3,000 for scoped projects with ongoing support. No hidden fees. Every full engagement starts with a complimentary discovery call.
             </p>
 
+            {/* ── Pricing cards FIRST — show the prices, then justify ── */}
+            <PricingCards />
+
             {/* ── 3-step process — editorial index, no cards ── */}
-            <div className="mb-20">
+            <div className="mt-20 mb-20">
               <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
                 HOW IT WORKS
               </div>
@@ -221,11 +224,8 @@ export default function PricingPage() {
               </div>
             </div>
 
-            {/* ── Pricing cards ── */}
-            <PricingCards />
-
             {/* ── Trust / payment — typographic index, no cards ── */}
-            <div className="mt-20 mb-20">
+            <div className="mb-20">
               <div className="font-mono text-[0.8rem] max-sm:text-xs tracking-[3px] uppercase mb-2" style={{ color: 'var(--red-text)' }}>
                 THE FINE PRINT
               </div>
