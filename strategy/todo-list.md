@@ -4,33 +4,40 @@
 
 ## In Progress
 
-- [ ] Stripe keys — populate empty Vercel env vars (live `sk_live_/pk_live_/whsec_`)
-- [ ] `GITHUB_TOKEN` + `BLOG_ADMIN_KEY` for `/api/blog/generate` GitHub-API publishing path
+- [ ] Nothing actively — wrap-up clean
 
 ## Up Next
 
+- [ ] Confirm Stripe webhook URL in dashboard matches `https://agenticconsciousness.com.au/api/stripe/webhook` and `STRIPE_WEBHOOK_SECRET` in Vercel
+- [ ] Run PageSpeed Insights on deployed site post hero/pricing/portfolio refresh — Glitch + font loading first suspects if mobile < 75
+- [ ] Define PostHog funnel: Pageview → PricingCardView → InitiateCheckout → PurchaseComplete
+- [ ] Switch to Stripe Tax `automatic_tax: { enabled: true }` once origin + AU GST registration configured in dashboard
+- [ ] Collect 3-5 real client testimonials with quote + outcome + title
 - [ ] Decommission Proxmox (docker compose down, remove Tunnel routes, shut VM 700)
-- [ ] Update Stripe webhook URL to `https://agenticconsciousness.com.au/api/stripe/webhook` once live keys land
 - [ ] Disable Cloudflare Email Obfuscation (67 broken `/cdn-cgi/` links)
 - [ ] Content depth parity: add deepDive to `/for/{adelaide,gold-coast,manufacturing,professional-services,trades,healthcare,retail,finance}`
+- [ ] `GITHUB_TOKEN` + `BLOG_ADMIN_KEY` for `/api/blog/generate` GitHub-API publishing path
 - [ ] Stripe Payment Element inline checkout (replace redirect)
 - [ ] Exit-intent memory cookie so returning visitors skip the popup
-- [ ] Simplify pricing — 8 cards is dense, consider collapse/toggle
-- [ ] PostHog funnel analysis after ~1 week of data
+- [ ] Sticky book-a-call bar on scroll (design call needed — breaks brutalist no-chrome rule)
 - [ ] Mobile testing on physical devices (iPhone, Android at 320/375/iPad)
 - [ ] Generate more blog content (target: 20 posts for SEO)
-- [ ] Add real client testimonials
 - [ ] Set up Meta Pixel + Google Ads IDs
 - [ ] Flag Printforge apex DNS issue to Daniel (printforge.com.au unreachable, only www)
 
 ## Blocked
 
-- [ ] Stripe payments — blocked by: live API keys empty in Vercel
 - [ ] Blog auto-publish via GitHub API — blocked by: `GITHUB_TOKEN` + `BLOG_ADMIN_KEY` empty
 - [ ] Retargeting ads — blocked by: Meta/Google account setup
 
 ## Done (Recent)
 
+- [x] Dark-mode colour refresh — warm charcoal + off-white, WCAG AA audited — 2026-04-19
+- [x] CRO audit + execution — hero value prop, pricing reorder, MOST BOOKED flag, outcome copy, PostHog event wiring — 2026-04-19
+- [x] Vercel a11y/composition/web-guidelines audit fixes — focus-visible rings, aria-hidden glyphs, role=alert on checkout errors, PricingCards as server component, Stripe client module-scope — 2026-04-19
+- [x] Stripe: 8 live products + prices created, checkout refactored to price IDs, GST line item added (was undercharging) — 2026-04-19
+- [x] Pricing page: process grid + trust index + FAQ + 3 refactor passes (feature / tidy / impeccable) — 2026-04-19
+- [x] Portfolio: +3 projects (SellMyOwnHome, Flat White Index, Printforge CRM), puppeteer capture pipeline, 3-col dense grid, outcome lines — 2026-04-19
 - [x] Migrate Proxmox → Vercel + Neon Postgres — 2026-04-17
 - [x] Replace Umami analytics with PostHog (project 385449) — 2026-04-17
 - [x] Custom domain cutover + redirect-loop fix via Vercel API — 2026-04-17
