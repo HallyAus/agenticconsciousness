@@ -1,4 +1,5 @@
 import ScrollReveal from '@/components/ScrollReveal';
+import CheckoutButton from '@/components/CheckoutButton';
 import Link from 'next/link';
 
 const OFFER_ENDS = '04 May 2026';
@@ -106,15 +107,13 @@ export default function LaunchOffer() {
               </div>
 
               <div className="flex items-center gap-3 flex-wrap">
-                {/* Primary CTA temporarily points to #contact while Stripe product is
-                    re-created on the correct (Agentic Consciousness) account. */}
-                <a
-                  href="#contact"
-                  className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-10 text-white no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
+                <CheckoutButton
+                  packageId="website-sprint"
+                  className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-10 text-white border-none cursor-pointer transition-colors duration-200 disabled:opacity-40"
                   style={{ background: 'var(--red)' }}
                 >
-                  Book the $999 sprint &rarr;
-                </a>
+                  Pay $999 now &rarr;
+                </CheckoutButton>
                 <Link
                   href="/extras"
                   className="font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-8 no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
@@ -123,7 +122,7 @@ export default function LaunchOffer() {
                   See extras &rarr;
                 </Link>
                 <div className="font-mono text-[0.72rem] tracking-[2px] uppercase text-text-dim leading-[1.5]">
-                  Pay in full &middot; Fixed scope &middot; Same-week start
+                  Pay in full &middot; Fixed scope &middot; 48h delivery
                 </div>
               </div>
             </div>
