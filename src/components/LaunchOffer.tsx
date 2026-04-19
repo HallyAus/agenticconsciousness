@@ -1,19 +1,17 @@
 import ScrollReveal from '@/components/ScrollReveal';
-import CheckoutButton from '@/components/CheckoutButton';
+import Link from 'next/link';
 
 const OFFER_ENDS = '04 May 2026';
 
 const INCLUDES = [
-  'Custom-designed 5-page website built to your brand',
+  'Custom-designed 3-page website built to your brand',
   'Mobile-first. Lighthouse 95+ across every device class',
   'Core Web Vitals tuned \u2014 LCP under 2.5s, INP under 200ms, CLS near zero',
   'WCAG 2.1 AA accessibility baked in from first paint',
   'SEO-ready: schema markup, sitemap, llms.txt, OG images',
   'Claude-powered AI chatbot embedded and trained on your content',
-  'Stripe or payment gateway integration if you need it',
   'Deployed to Vercel + Cloudflare. Yours to keep forever',
   'Copywriting included \u2014 no \u201csend us your 2,000 words\u201d homework',
-  '14-day delivery from signed brief, or your deposit back',
 ];
 
 export default function LaunchOffer() {
@@ -34,7 +32,7 @@ export default function LaunchOffer() {
           >
             {/* Top ribbon */}
             <div
-              className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-[6px] font-mono text-[0.7rem] max-sm:text-[0.6rem] tracking-[2.5px] uppercase text-white"
+              className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 py-[6px] font-mono text-[0.7rem] max-sm:text-[0.6rem] tracking-[2.5px] uppercase text-white gap-3"
               style={{ background: 'var(--red)' }}
             >
               <span>Limited offer &middot; 14 days only</span>
@@ -58,14 +56,23 @@ export default function LaunchOffer() {
               <h2 className="text-[clamp(2.2rem,5.5vw,3.8rem)] font-black tracking-tight leading-[0.95] text-text-primary mb-4">
                 Your whole website.
                 <br />
-                <span style={{ color: 'var(--red-text)' }}>Shipped in 14 days.</span>
+                <span style={{ color: 'var(--red-text)' }}>Shipped in 48 hours.</span>
               </h2>
 
-              <p className="text-text-dim text-[clamp(0.95rem,1.4vw,1.1rem)] font-light leading-[1.7] max-w-[640px] mb-8">
+              <p className="text-text-dim text-[clamp(0.95rem,1.4vw,1.1rem)] font-light leading-[1.7] max-w-[680px] mb-4">
                 Mobile-first, AI-optimised, accessibility-baked, SEO-ready, Claude chatbot embedded.
-                Designed, written, coded, and deployed by Daniel personally. No agency markup, no junior
-                designers, no &ldquo;scope creep&rdquo; conversation in week 3. Two weeks from brief to live.
+                Designed, written, coded, and deployed by Daniel personally. No agency markup, no
+                junior designers, no &ldquo;scope creep&rdquo; conversation in week 3.
               </p>
+
+              {/* Guarantee — prominent */}
+              <div
+                className="inline-flex items-center gap-3 py-2 px-3 mb-8 font-mono text-[0.78rem] max-sm:text-xs tracking-[2px] uppercase"
+                style={{ background: 'var(--red)', color: '#fff' }}
+              >
+                <span aria-hidden="true">&#9632;</span>
+                <span>Live in 48 hours from signed brief. Or your money back. 100%.</span>
+              </div>
 
               <div className="grid grid-cols-[auto_1fr] gap-8 items-start max-md:grid-cols-1 max-md:gap-6 mb-8">
                 <div>
@@ -83,6 +90,9 @@ export default function LaunchOffer() {
                   <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-text-dim line-through mt-2">
                     Usually from $2,500
                   </div>
+                  <div className="font-mono text-[0.7rem] tracking-[2px] uppercase mt-2" style={{ color: 'var(--red-text)' }}>
+                    Integrations billed separately
+                  </div>
                 </div>
 
                 <ul className="grid grid-cols-2 gap-x-6 gap-y-2 max-sm:grid-cols-1">
@@ -95,21 +105,23 @@ export default function LaunchOffer() {
                 </ul>
               </div>
 
-              <div className="flex items-center gap-6 flex-wrap">
-                <CheckoutButton
-                  packageId="website-sprint"
-                  className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-10 text-white border-none cursor-pointer transition-colors duration-200 disabled:opacity-40"
-                  style={{ background: 'var(--red)' }}
-                >
-                  Pay $999 now &rarr;
-                </CheckoutButton>
+              <div className="flex items-center gap-3 flex-wrap">
+                {/* Primary CTA temporarily points to #contact while Stripe product is
+                    re-created on the correct (Agentic Consciousness) account. */}
                 <a
                   href="#contact"
-                  className="font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-8 no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ac-red"
+                  className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-10 text-white no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
+                  style={{ background: 'var(--red)' }}
+                >
+                  Book the $999 sprint &rarr;
+                </a>
+                <Link
+                  href="/extras"
+                  className="font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-8 no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
                   style={{ border: '2px solid var(--red)', color: 'var(--red-text)' }}
                 >
-                  Ask first &rarr;
-                </a>
+                  See extras &rarr;
+                </Link>
                 <div className="font-mono text-[0.72rem] tracking-[2px] uppercase text-text-dim leading-[1.5]">
                   Pay in full &middot; Fixed scope &middot; Same-week start
                 </div>
