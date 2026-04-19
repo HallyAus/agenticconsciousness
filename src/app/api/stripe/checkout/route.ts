@@ -23,21 +23,21 @@ const packages: Record<string, Pkg> = {
   // ── Website Sprint base (dashboard product) ──
   'website-sprint':         { priceId: 'price_1TO4woPTv8VxN1HBlY6cCy8z', baseCents: 99900 },
 
-  // ── Website Sprint extras (inline price_data at checkout) ──
-  'extra-page':         { baseCents: 10000, name: 'Extra page',               description: 'Additional page beyond the 3 included in the sprint.' },
-  'blog-cms':           { baseCents: 40000, name: 'Blog / CMS',               description: 'Admin UI, draft/publish workflow, Article schema, RSS.' },
-  'multi-language':     { baseCents: 30000, name: 'Multi-language',           description: 'English plus one additional language with hreflang + translated copy.' },
-  'stripe-integration': { baseCents: 30000, name: 'Stripe checkout',          description: 'Live Stripe integration with GST line item and tax-invoice emails.' },
-  'ecommerce-catalog':  { baseCents: 50000, name: 'E-commerce catalog',       description: 'Up to 20 products, Stripe checkout, inventory, order emails.' },
-  'booking-integration':{ baseCents: 20000, name: 'Booking / calendar',       description: 'Cal.com or Calendly embed with timezone-aware confirmations.' },
-  'auth-integration':   { baseCents: 50000, name: 'User accounts + auth',     description: 'Email/password or magic-link auth, protected pages, password reset.' },
-  'contact-form':       { baseCents: 15000, name: 'Contact form + auto-reply',description: 'Validated form, anti-spam, auto-reply, stored in Neon Postgres.' },
-  'extra-copywriting':  { baseCents: 10000, name: 'Extra copywriting',        description: 'Per-page bespoke copy \u2014 researched, drafted, on-brand.' },
-  'chatbot-training':   { baseCents: 30000, name: 'AI chatbot deep training', description: 'Claude Project trained on your docs, FAQs, product catalogue, policies.' },
-  'ga4-gtm':            { baseCents: 15000, name: 'Google Analytics 4 + GTM', description: 'GA4 install, GTM container, conversion events, e-commerce tracking.' },
-  'posthog-setup':      { baseCents: 15000, name: 'PostHog product analytics',description: 'Session replay, autocapture, funnels, pre-built dashboard.' },
-  'seo-deep':           { baseCents: 25000, name: 'SEO deep optimisation',    description: 'Keyword research, on-page tuning, internal linking, llms.txt.' },
-  'design-polish':      { baseCents: 40000, name: 'Advanced design polish',   description: 'Custom animations, scroll interactions, bespoke icons, Lottie.' },
+  // ── Website Sprint extras (dashboard products) ──
+  'extra-page':           { priceId: 'price_1TO58lPTv8VxN1HB4aDSAuLX', baseCents: 10000 },
+  'blog-cms':             { priceId: 'price_1TO58mPTv8VxN1HBlPYS3HBb', baseCents: 40000 },
+  'multi-language':       { priceId: 'price_1TO58nPTv8VxN1HBt5lWNTKl', baseCents: 30000 },
+  'stripe-integration':   { priceId: 'price_1TO58oPTv8VxN1HBFcxPwbro', baseCents: 30000 },
+  'ecommerce-catalog':    { priceId: 'price_1TO58pPTv8VxN1HBFSVzZKsZ', baseCents: 50000 },
+  'booking-integration':  { priceId: 'price_1TO58qPTv8VxN1HBg3lmFk9c', baseCents: 20000 },
+  'auth-integration':     { priceId: 'price_1TO58rPTv8VxN1HBHdsyJwLB', baseCents: 50000 },
+  'contact-form':         { priceId: 'price_1TO58sPTv8VxN1HB9Plitw4K', baseCents: 15000 },
+  'extra-copywriting':    { priceId: 'price_1TO58tPTv8VxN1HB2lD7y5Ym', baseCents: 10000 },
+  'chatbot-training':     { priceId: 'price_1TO58uPTv8VxN1HBHvPSTa5D', baseCents: 30000 },
+  'ga4-gtm':              { priceId: 'price_1TO58vPTv8VxN1HBN1mVVBs2', baseCents: 15000 },
+  'posthog-setup':        { priceId: 'price_1TO58wPTv8VxN1HB6psjvWsr', baseCents: 15000 },
+  'seo-deep':             { priceId: 'price_1TO58xPTv8VxN1HBGAyAMbSX', baseCents: 25000 },
+  'design-polish':        { priceId: 'price_1TO58yPTv8VxN1HB79V1hVRy', baseCents: 40000 },
 };
 
 const GST_RATE = 0.1;
