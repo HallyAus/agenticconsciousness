@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Nav from '@/components/Nav';
 import Hero from '@/components/Hero';
+import LaunchOffer from '@/components/LaunchOffer';
 import Services from '@/components/Services';
 import Process from '@/components/Process';
 import CaseStudies from '@/components/CaseStudies';
@@ -22,6 +23,7 @@ export default function Home() {
       <Nav />
       <main id="main-content">
         <Hero />
+        <LaunchOffer />
         <Divider />
         <Services />
         <Divider />

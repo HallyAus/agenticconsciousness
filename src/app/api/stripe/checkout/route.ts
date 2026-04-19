@@ -16,6 +16,7 @@ const packages: Record<string, Pkg> = {
   'strategy-deposit':     { priceId: 'price_1TN2fzPTv8VxN1HBIKPTW8YK', baseCents: 150000 },
   'implementation-deposit': { priceId: 'price_1TN2g0PTv8VxN1HBCTqIiDg8', baseCents: 250000 },
   'automation-deposit':   { priceId: 'price_1TN2g1PTv8VxN1HBbOfOKGtx', baseCents: 500000 },
+  'website-sprint':       { priceId: 'price_1TO4irAjrO0YwNgAbVImH6hi', baseCents: 99900 },
 };
 
 const GST_RATE = 0.1;
