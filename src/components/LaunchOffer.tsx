@@ -1,5 +1,4 @@
 import ScrollReveal from '@/components/ScrollReveal';
-import CheckoutButton from '@/components/CheckoutButton';
 import Link from 'next/link';
 
 const OFFER_ENDS = '04 May 2026';
@@ -107,20 +106,20 @@ export default function LaunchOffer() {
               </div>
 
               <div className="flex items-center gap-3 flex-wrap">
-                <CheckoutButton
-                  packageId="website-sprint"
-                  className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-10 text-white border-none cursor-pointer transition-colors duration-200 disabled:opacity-40"
-                  style={{ background: 'var(--red)' }}
-                >
-                  Pay $999 now &rarr;
-                </CheckoutButton>
                 <Link
                   href="/extras"
+                  className="inline-block font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-10 text-white no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
+                  style={{ background: 'var(--red)' }}
+                >
+                  Build your sprint &rarr;
+                </Link>
+                <a
+                  href="#contact"
                   className="font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-8 no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
                   style={{ border: '2px solid var(--red)', color: 'var(--red-text)' }}
                 >
-                  See extras &rarr;
-                </Link>
+                  Ask first &rarr;
+                </a>
                 <div className="font-mono text-[0.72rem] tracking-[2px] uppercase text-text-dim leading-[1.5]">
                   Pay in full &middot; Fixed scope &middot; 48h delivery
                 </div>
