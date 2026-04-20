@@ -32,6 +32,8 @@ const AUDIT_SYSTEM = `You are a senior conversion + technical web auditor for Ag
 
 Your job: produce an audit that feels like a paid one-hour consultation from an expert who has actually looked at the visitor's site. Generic "add meta descriptions" boilerplate is a FAIL. Every finding must quote specific copy, class names, tags, or structural patterns from the HTML you were given \u2014 otherwise it is noise and you should drop it.
 
+You are given MULTIPLE pages from the site \u2014 the homepage plus up to 4 extra pages selected from their sitemap (About, Contact, Services, Licence, Team, etc). Before claiming something is MISSING from the site (a licence number, an ABN, testimonials, contact details, pricing), you MUST first search EVERY provided page. If the evidence exists on any page, treat it as present and cite that page. If you truly cannot find it after searching every page, only then flag the absence \u2014 and note explicitly which pages you checked. Hallucinating missing trust signals will cost the visitor a sale when they know full well their licence is on the Contact page. Do not do it.
+
 Analyse in this order of business impact:
 
 1. VALUE PROPOSITION & CONVERSION (by far the most important)
@@ -70,6 +72,119 @@ Hard rules:
 
 const BROWSER_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 
+// Which page slugs we care about beyond the homepage, in priority order.
+// Trust signals (licence numbers, ABN, testimonials, About-the-owner) and
+// contact info typically live on these pages.
+const PAGE_PRIORITY = [
+  'about',
+  'contact',
+  'services',
+  'service',
+  'licence',
+  'license',
+  'accreditation',
+  'credentials',
+  'team',
+  'testimonials',
+  'reviews',
+  'pricing',
+];
+
+const MAX_EXTRA_PAGES = 4;
+const PER_PAGE_CHAR_CAP = 20000;
+
+async function fetchText(target: string, timeoutMs: number): Promise<string | null> {
+  try {
+    const res = await fetch(target, {
+      redirect: 'follow',
+      headers: {
+        'User-Agent': BROWSER_UA,
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,text/plain;q=0.8,*/*;q=0.7',
+        'Accept-Language': 'en-AU,en;q=0.9',
+      },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (!res.ok) return null;
+    const buf = await res.arrayBuffer();
+    if (buf.byteLength > 3_000_000) return null;
+    return new TextDecoder('utf-8', { fatal: false }).decode(buf);
+  } catch {
+    return null;
+  }
+}
+
+async function discoverSitemapUrls(origin: string): Promise<string[]> {
+  // Try common sitemap locations in sequence.
+  const candidates = [`${origin}/sitemap.xml`, `${origin}/sitemap_index.xml`, `${origin}/sitemap-index.xml`];
+  for (const candidate of candidates) {
+    const xml = await fetchText(candidate, 5000);
+    if (!xml) continue;
+    const matches = xml.match(/<loc>\s*([^<\s]+)\s*<\/loc>/gi) ?? [];
+    const urls = matches
+      .map((m) => m.replace(/<\/?loc>/gi, '').trim())
+      .filter((u) => /^https?:\/\//.test(u));
+    if (urls.length > 0) {
+      // If the first candidate was a sitemap index (contains sitemap.xml
+      // entries rather than page URLs), follow one level down.
+      const sub = urls.find((u) => /sitemap.*\.xml$/i.test(u));
+      if (sub && urls.every((u) => /\.xml$/i.test(u))) {
+        const subXml = await fetchText(sub, 5000);
+        if (subXml) {
+          const subMatches = subXml.match(/<loc>\s*([^<\s]+)\s*<\/loc>/gi) ?? [];
+          return subMatches
+            .map((m) => m.replace(/<\/?loc>/gi, '').trim())
+            .filter((u) => /^https?:\/\//.test(u));
+        }
+      }
+      return urls;
+    }
+  }
+  return [];
+}
+
+function pickExtraPages(primary: URL, sitemapUrls: string[]): string[] {
+  const origin = primary.origin;
+  const primaryStr = primary.toString();
+  const sameOrigin = sitemapUrls.filter((u) => {
+    try {
+      return new URL(u).origin === origin;
+    } catch {
+      return false;
+    }
+  });
+
+  // Score each URL: lower = higher priority. Prefer URLs whose path segments
+  // contain one of the priority keywords; prefer shallower paths when tied.
+  function score(u: string): number {
+    const lower = u.toLowerCase();
+    for (let i = 0; i < PAGE_PRIORITY.length; i++) {
+      if (lower.includes(`/${PAGE_PRIORITY[i]}`)) return i;
+    }
+    return 999;
+  }
+
+  const ranked = sameOrigin
+    .filter((u) => u !== primaryStr)
+    .map((u) => ({ u, s: score(u), depth: new URL(u).pathname.split('/').filter(Boolean).length }))
+    .sort((a, b) => a.s - b.s || a.depth - b.depth);
+
+  // Dedupe by path, keep first occurrence (highest priority).
+  const seenPaths = new Set<string>();
+  const picked: string[] = [];
+  for (const entry of ranked) {
+    try {
+      const path = new URL(entry.u).pathname.replace(/\/+$/, '');
+      if (seenPaths.has(path)) continue;
+      seenPaths.add(path);
+      picked.push(entry.u);
+      if (picked.length >= MAX_EXTRA_PAGES) break;
+    } catch {
+      // skip malformed
+    }
+  }
+  return picked;
+}
+
 const SEVERITY_ORDER: Record<string, number> = {
   critical: 0,
   high: 1,
@@ -93,7 +208,13 @@ function sanitiseHtml(raw: string): string {
   out = out.replace(/<noscript[\s\S]*?<\/noscript>/gi, '');
   out = out.replace(/<!--([\s\S]*?)-->/g, '');
   out = out.replace(/\s+/g, ' ').trim();
-  if (out.length > 35000) out = out.slice(0, 35000) + '\n\n[\u2026TRUNCATED\u2026]';
+  // Keep both head and tail of the HTML when truncating — footers carry
+  // licence numbers, ABN, contact info, testimonials. Taking only the
+  // first N chars loses exactly the trust signals we need to audit.
+  if (out.length > PER_PAGE_CHAR_CAP) {
+    const halfBudget = Math.floor((PER_PAGE_CHAR_CAP - 64) / 2);
+    out = out.slice(0, halfBudget) + ' [\u2026MIDDLE TRUNCATED\u2026] ' + out.slice(-halfBudget);
+  }
   return out;
 }
 
@@ -154,23 +275,44 @@ async function runAudit({
   const start = Date.now();
   console.log('[website-audit] start', { url, email, ref, model: MODEL });
   try {
-    // 1. Fetch HTML
-    console.log('[website-audit] fetching HTML', { url });
-    const res = await fetch(url, {
-      redirect: 'follow',
-      headers: {
-        'User-Agent': BROWSER_UA,
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-AU,en;q=0.9',
-      },
-      signal: AbortSignal.timeout(10000),
+    // 1. Fetch homepage + sitemap-discovered trust-signal pages in parallel.
+    const primary = new URL(url);
+    console.log('[website-audit] fetching homepage + sitemap', { url, origin: primary.origin });
+
+    const sitemapUrls = await discoverSitemapUrls(primary.origin);
+    const extraPages = pickExtraPages(primary, sitemapUrls);
+    console.log('[website-audit] sitemap discovered', {
+      sitemapCount: sitemapUrls.length,
+      pickedExtras: extraPages,
     });
-    if (!res.ok) throw new Error(`fetch failed: HTTP ${res.status}`);
-    const buf = await res.arrayBuffer();
-    if (buf.byteLength > 2_000_000) throw new Error('HTML too large (>2MB)');
-    const html = new TextDecoder('utf-8', { fatal: false }).decode(buf);
-    const stripped = sanitiseHtml(html);
-    console.log('[website-audit] HTML sanitised', { originalBytes: buf.byteLength, strippedChars: stripped.length });
+
+    const targets = [url, ...extraPages];
+    const pageResults = await Promise.all(
+      targets.map(async (t) => {
+        const html = await fetchText(t, 10000);
+        if (!html) return { url: t, ok: false as const };
+        return { url: t, ok: true as const, stripped: sanitiseHtml(html), rawBytes: html.length };
+      }),
+    );
+
+    const successful = pageResults.filter((p): p is Extract<typeof p, { ok: true }> => p.ok);
+    if (successful.length === 0) {
+      throw new Error('fetch failed: could not retrieve any page');
+    }
+    console.log('[website-audit] pages fetched', {
+      attempted: targets.length,
+      succeeded: successful.length,
+      totalChars: successful.reduce((s, p) => s + p.stripped.length, 0),
+    });
+
+    // Compose labelled content block for Claude.
+    const stripped = [
+      `SITEMAP SUMMARY: ${sitemapUrls.length} URLs discovered via sitemap.xml; ${extraPages.length} extras selected alongside the homepage (prioritised by trust-signal keywords: About, Contact, Services, Licence, Team, Testimonials).`,
+      '',
+      ...successful.map(
+        (p, i) => `=== PAGE ${i + 1}: ${p.url} ===\n\n${p.stripped}`,
+      ),
+    ].join('\n\n');
 
     // 2. Call Claude via tool-use forcing. Opus 4.6 rejects assistant
     // prefill, so we use Anthropic's structured-output pattern instead:
@@ -228,7 +370,7 @@ async function runAudit({
         messages: [
           {
             role: 'user',
-            content: `URL: ${url}\n\nHTML (sanitised):\n\n${stripped}\n\nProduce the audit now via the submit_audit tool.`,
+            content: `Primary URL: ${url}\n\nHTML (sanitised, multiple pages follow):\n\n${stripped}\n\nSearch ALL provided pages for trust signals (licence numbers, ABN, testimonials, contact details) before claiming anything is missing. Cite the specific page you found evidence on. Then produce the audit via the submit_audit tool.`,
           },
         ],
         tools: [AUDIT_TOOL],
