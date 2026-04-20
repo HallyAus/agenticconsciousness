@@ -173,7 +173,9 @@ async function runAudit({
     const stripped = sanitiseHtml(html);
     console.log('[website-audit] HTML sanitised', { originalBytes: buf.byteLength, strippedChars: stripped.length });
 
-    // 2. Call Claude
+    // 2. Call Claude. We prefill the assistant turn with `{` so Opus is
+    // forced to continue as pure JSON — no preamble, no markdown fences,
+    // nothing to trip the parser.
     console.log('[website-audit] calling Claude', { model: MODEL, maxTokens: 2500 });
     const response = await client.messages.create(
       {
@@ -185,7 +187,12 @@ async function runAudit({
             role: 'user',
             content: `URL: ${url}\n\nHTML (sanitised):\n\n${stripped}`,
           },
+          {
+            role: 'assistant',
+            content: '{',
+          },
         ],
+        stop_sequences: ['\n}\n\n'],
       },
       { signal: AbortSignal.timeout(120000) },
     );
@@ -196,18 +203,30 @@ async function runAudit({
       stopReason: response.stop_reason,
     });
 
-    const text = response.content
+    const continuation = response.content
       .filter((b): b is Anthropic.TextBlock => b.type === 'text')
       .map((b) => b.text)
       .join('');
 
+    // Reconstruct the full JSON: prefill `{` + continuation + closing `}` if
+    // we hit the stop sequence. If the model finished naturally (stop_reason
+    // = end_turn) the `}` is already in the continuation.
+    let fullJson = '{' + continuation;
+    if (response.stop_reason === 'stop_sequence') {
+      fullJson = fullJson.trimEnd();
+      if (!fullJson.endsWith('}')) fullJson += '\n}';
+    }
+
     let rawParsed: unknown;
     try {
-      rawParsed = parseAiJson(text);
+      rawParsed = parseAiJson(fullJson);
     } catch (err) {
       console.error('[website-audit] parseAiJson threw', err instanceof Error ? err.message : err);
-      console.error('[website-audit] raw text was:', text.slice(0, 2000));
-      throw new Error('AI produced invalid JSON');
+      console.error('[website-audit] reconstructed JSON was:', fullJson.slice(0, 4000));
+      // Surface a preview of the raw response in the thrown error so the
+      // admin-failure email shows us exactly what Opus returned.
+      const preview = fullJson.slice(0, 1500);
+      throw new Error(`AI produced invalid JSON. Preview: ${preview}`);
     }
     if (!rawParsed || typeof rawParsed !== 'object') throw new Error('AI returned non-object');
     const parsed = rawParsed as {
