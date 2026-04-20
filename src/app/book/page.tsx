@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import ExtrasCart from '@/components/ExtrasCart';
+import WebsiteAuditor from '@/components/WebsiteAuditor';
 
 export const metadata: Metadata = {
   title: 'Book the Website Sprint — $999, Shipped in 48 Hours',
@@ -157,6 +158,9 @@ export default function BookPage() {
 
       {/* Interactive cart */}
       <ExtrasCart />
+
+      {/* Free audit — secondary lead magnet for visitors not ready to buy */}
+      <WebsiteAuditor />
 
       </main>
     </>
