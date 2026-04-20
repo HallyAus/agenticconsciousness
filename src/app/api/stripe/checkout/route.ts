@@ -132,6 +132,8 @@ export async function POST(req: NextRequest) {
       payment_method_types: ['card'],
       mode: 'payment',
       line_items: lineItems,
+      billing_address_collection: 'required',
+      phone_number_collection: { enabled: true },
       metadata: {
         packageIds: found.map((f) => f.id).join(','),
         proposalId: proposalId || '',
@@ -140,7 +142,7 @@ export async function POST(req: NextRequest) {
         ref,
       },
       success_url: `${siteUrl}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/extras`,
+      cancel_url: `${siteUrl}/book`,
     });
 
     return NextResponse.json({ url: session.url });

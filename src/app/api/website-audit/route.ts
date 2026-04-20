@@ -1,9 +1,26 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { NextRequest, NextResponse } from 'next/server';
+import { after } from 'next/server';
+import { sql } from '@/lib/pg';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { parseAiJson } from '@/lib/parseAiJson';
+import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
+
+/**
+ * Email-only audit flow.
+ *
+ * Visitor submits URL + email. We acknowledge immediately and run the
+ * Claude audit + email delivery in the background via Vercel's after()
+ * hook so the UI never blocks. Result: instant "check your inbox"
+ * confirmation; audit arrives async.
+ *
+ * The raw HTML fetch, AI call, lead insert, and user email all happen
+ * inside after(). If any step fails the admin gets notified so we can
+ * manually follow up.
+ */
 
 const MODEL = 'claude-sonnet-4-6';
+const INTERNAL_LEAD_EMAIL = 'ai@agenticconsciousness.com.au';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
@@ -40,22 +57,35 @@ Return valid JSON only, no markdown:
 
 Rules:
 - Be specific to the HTML you see. Quote actual tag names, class names, or copy where relevant.
-- Australian English spelling.
-- No generic advice. Every finding must tie to something you saw.
-- Direct, confident tone. No hedging.
-- If the site is genuinely great, return fewer issues with honest severity \u2014 do not invent problems.`;
+- Australian English spelling. Direct tone. No hedging.
+- If the site is genuinely great, return fewer issues with honest severity.`;
+
+const BROWSER_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
+
+const SEVERITY_ORDER: Record<string, number> = {
+  critical: 0,
+  high: 1,
+  medium: 2,
+  low: 3,
+};
+
+interface Issue {
+  category: string;
+  severity: 'critical' | 'high' | 'medium' | 'low';
+  title: string;
+  detail: string;
+  fix: string;
+}
 
 function sanitiseHtml(raw: string): string {
-  // Drop scripts, styles, and SVG bodies \u2014 not useful for audit, wastes tokens.
   let out = raw;
   out = out.replace(/<script[\s\S]*?<\/script>/gi, '');
   out = out.replace(/<style[\s\S]*?<\/style>/gi, '');
   out = out.replace(/<svg[\s\S]*?<\/svg>/gi, '<svg/>');
+  out = out.replace(/<noscript[\s\S]*?<\/noscript>/gi, '');
   out = out.replace(/<!--([\s\S]*?)-->/g, '');
-  // Collapse whitespace
   out = out.replace(/\s+/g, ' ').trim();
-  // Cap at 30k chars (~7.5k tokens) so we stay well within budget.
-  if (out.length > 30000) out = out.slice(0, 30000) + '\n\n[\u2026TRUNCATED\u2026]';
+  if (out.length > 18000) out = out.slice(0, 18000) + '\n\n[\u2026TRUNCATED\u2026]';
   return out;
 }
 
@@ -64,7 +94,6 @@ function normaliseUrl(input: string): URL | null {
     const withScheme = /^https?:\/\//i.test(input) ? input : `https://${input}`;
     const u = new URL(withScheme);
     if (!['http:', 'https:'].includes(u.protocol)) return null;
-    // Block internal / loopback hosts.
     const host = u.hostname.toLowerCase();
     if (['localhost', '127.0.0.1', '0.0.0.0', '::1'].includes(host)) return null;
     if (/^10\./.test(host) || /^192\.168\./.test(host) || /^172\.(1[6-9]|2\d|3[01])\./.test(host)) return null;
@@ -72,6 +101,180 @@ function normaliseUrl(input: string): URL | null {
     return u;
   } catch {
     return null;
+  }
+}
+
+function esc(s: string): string {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderIssueCard(issue: Issue): string {
+  const sev = esc((issue.severity || 'medium').toUpperCase());
+  const cat = esc(issue.category || 'General');
+  return `
+    <div style="border-left:3px solid #ff3d00;padding:14px 16px;margin-bottom:14px;background:#141311">
+      <div style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#ff5722;margin-bottom:6px">
+        ${sev} &middot; ${cat}
+      </div>
+      <div style="font-weight:900;color:#fafaf8;font-size:15px;margin-bottom:8px;line-height:1.3">
+        ${esc(issue.title)}
+      </div>
+      <div style="color:#e0e0de;font-size:13px;line-height:1.6;margin-bottom:8px">
+        ${esc(issue.detail)}
+      </div>
+      <div style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#ff5722">
+        FIX &rarr; <span style="color:#e0e0de;text-transform:none;letter-spacing:0;font-size:12px">${esc(issue.fix)}</span>
+      </div>
+    </div>`;
+}
+
+async function runAudit({
+  url,
+  email,
+  ref,
+  ip,
+}: {
+  url: string;
+  email: string;
+  ref: string;
+  ip: string;
+}): Promise<void> {
+  const start = Date.now();
+  try {
+    // 1. Fetch HTML
+    const res = await fetch(url, {
+      redirect: 'follow',
+      headers: {
+        'User-Agent': BROWSER_UA,
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-AU,en;q=0.9',
+      },
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!res.ok) throw new Error(`fetch failed: HTTP ${res.status}`);
+    const buf = await res.arrayBuffer();
+    if (buf.byteLength > 2_000_000) throw new Error('HTML too large (>2MB)');
+    const html = new TextDecoder('utf-8', { fatal: false }).decode(buf);
+    const stripped = sanitiseHtml(html);
+
+    // 2. Call Claude
+    const response = await client.messages.create(
+      {
+        model: MODEL,
+        max_tokens: 1400,
+        system: [{ type: 'text', text: AUDIT_SYSTEM, cache_control: { type: 'ephemeral' } }],
+        messages: [
+          {
+            role: 'user',
+            content: `URL: ${url}\n\nHTML (sanitised):\n\n${stripped}`,
+          },
+        ],
+      },
+      { signal: AbortSignal.timeout(60000) },
+    );
+
+    const text = response.content
+      .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+      .map((b) => b.text)
+      .join('');
+
+    const rawParsed = parseAiJson(text);
+    if (!rawParsed || typeof rawParsed !== 'object') throw new Error('AI returned non-object');
+    const parsed = rawParsed as {
+      summary?: string;
+      score?: number;
+      issues?: Issue[];
+    };
+    const summary = typeof parsed.summary === 'string' ? parsed.summary : '';
+    const score = typeof parsed.score === 'number' ? parsed.score : 0;
+    const issues = Array.isArray(parsed.issues) ? parsed.issues : [];
+    const sorted = [...issues].sort(
+      (a, b) => (SEVERITY_ORDER[a.severity] ?? 9) - (SEVERITY_ORDER[b.severity] ?? 9),
+    );
+
+    // 3. Store lead (with full payload for future reference)
+    await sql`
+      INSERT INTO leads (source, email, metadata)
+      VALUES (
+        'website-audit',
+        ${email},
+        ${JSON.stringify({
+          url,
+          summary,
+          score,
+          issues: sorted,
+          ref,
+          ip,
+          tookMs: Date.now() - start,
+        })}::jsonb
+      )
+    `;
+
+    // 4. Email the user
+    const issuesHtml = sorted.map(renderIssueCard).join('');
+    const scoreBadge = `<div style="display:inline-block;padding:6px 12px;background:#ff3d00;color:#fff;font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">Score ${score} / 100</div>`;
+
+    await sendEmail({
+      to: email,
+      subject: `Your website audit \u2014 ${url}`,
+      html: emailTemplate(`
+        <h2 style="color:#fafaf8;font-size:22px;margin:0 0 10px;line-height:1.2">Website audit</h2>
+        <div style="font-family:ui-monospace,monospace;font-size:12px;letter-spacing:1.5px;color:#ff5722;margin-bottom:16px;word-break:break-all">${esc(url)}</div>
+        ${scoreBadge}
+        ${summary ? `<p style="color:#e0e0de;font-size:14px;line-height:1.7;margin:0 0 20px">${esc(summary)}</p>` : ''}
+        <div style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#ff5722;margin-bottom:10px">
+          ${sorted.length} issues found
+        </div>
+        ${issuesHtml}
+        <div style="margin-top:24px;padding:16px;border:2px solid #ff3d00;background:#1c1a17">
+          <div style="color:#fafaf8;font-weight:900;font-size:15px;margin-bottom:6px">Want this fixed?</div>
+          <p style="color:#e0e0de;font-size:13px;line-height:1.6;margin:0 0 12px">
+            We build mobile-first AI-optimised websites in 48 hours. $999 launch offer, integrations billed separately. Every issue in this audit is covered by the Sprint.
+          </p>
+          <a href="https://agenticconsciousness.com.au/book" style="display:inline-block;background:#ff3d00;color:#fff;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:12px 20px">
+            Book the $999 Sprint &rarr;
+          </a>
+        </div>
+      `),
+    });
+
+    // 5. Notify Daniel internally
+    await notifyAdmin(
+      `Website audit delivered: ${email}`,
+      `URL: ${url}\nEmail: ${email}\nScore: ${score}/100\nIssues: ${sorted.length}\nRef: ${ref || '-'}\nTook: ${Date.now() - start}ms`,
+    ).catch((err) => {
+      console.error('[website-audit] admin notify failed', err instanceof Error ? err.message : err);
+    });
+
+    console.log('[website-audit] success', { url, email, score, issues: sorted.length, tookMs: Date.now() - start });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : 'Unknown error';
+    console.error('[website-audit] background job failed', { url, email, msg });
+
+    // Try to tell the user politely, and also tell us.
+    await sendEmail({
+      to: email,
+      subject: `Your website audit had a hiccup \u2014 ${url}`,
+      html: emailTemplate(`
+        <h2 style="color:#fafaf8;font-size:20px;margin:0 0 12px">We couldn't finish your audit</h2>
+        <p style="color:#e0e0de;font-size:14px;line-height:1.7">
+          Something went wrong running the audit against <strong style="color:#ff5722">${esc(url)}</strong>.
+          Our team has been notified and will run it manually within 24 hours.
+        </p>
+        <p style="color:#e0e0de;font-size:14px;line-height:1.7">
+          Reply to this email if you want to chat sooner or try a different URL.
+        </p>
+      `),
+    }).catch(() => {});
+
+    await notifyAdmin(
+      `FAILED: Website audit for ${email}`,
+      `URL: ${url}\nEmail: ${email}\nRef: ${ref || '-'}\nError: ${msg}\nTook: ${Date.now() - start}ms`,
+    ).catch(() => {});
   }
 }
 
@@ -83,72 +286,30 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { url } = await req.json();
-    if (!url || typeof url !== 'string') {
-      return NextResponse.json({ error: 'Enter your website URL.' }, { status: 400 });
-    }
-    const u = normaliseUrl(url);
+    const body = await req.json();
+    const rawUrl = typeof body.url === 'string' ? body.url : '';
+    const rawEmail = typeof body.email === 'string' ? body.email : '';
+    const rawRef = typeof body.ref === 'string' ? body.ref : '';
+
+    const u = normaliseUrl(rawUrl);
     if (!u) {
-      return NextResponse.json({ error: 'That URL does not look valid. Try https://yourdomain.com.' }, { status: 400 });
+      return NextResponse.json({ error: 'Enter a valid website URL.' }, { status: 400 });
     }
-
-    // Fetch the page with a hard timeout + size cap.
-    let html: string;
-    try {
-      const res = await fetch(u.toString(), {
-        redirect: 'follow',
-        headers: {
-          'User-Agent': 'AgenticConsciousnessAuditBot/1.0 (+https://agenticconsciousness.com.au)',
-          Accept: 'text/html,application/xhtml+xml',
-        },
-        signal: AbortSignal.timeout(8000),
-      });
-      if (!res.ok) {
-        return NextResponse.json({ error: `Could not fetch the site (HTTP ${res.status}).` }, { status: 400 });
-      }
-      const buf = await res.arrayBuffer();
-      if (buf.byteLength > 2_000_000) {
-        return NextResponse.json({ error: 'Site HTML too large to analyse (>2MB).' }, { status: 400 });
-      }
-      html = new TextDecoder('utf-8', { fatal: false }).decode(buf);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Unknown error';
-      return NextResponse.json({ error: `Could not reach the site: ${msg}` }, { status: 400 });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(rawEmail)) {
+      return NextResponse.json({ error: 'Enter a valid email.' }, { status: 400 });
     }
+    const ref = /^[A-Za-z0-9._-]{1,64}$/.test(rawRef) ? rawRef : '';
 
-    const stripped = sanitiseHtml(html);
+    // Ack immediately; run the heavy work in the background so the user
+    // isn't sitting on a 30-second spinner.
+    after(() => runAudit({ url: u.toString(), email: rawEmail, ref, ip }));
 
-    const response = await client.messages.create({
-      model: MODEL,
-      max_tokens: 2000,
-      system: [{ type: 'text', text: AUDIT_SYSTEM, cache_control: { type: 'ephemeral' } }],
-      messages: [
-        {
-          role: 'user',
-          content: `URL: ${u.toString()}\n\nHTML (sanitised):\n\n${stripped}`,
-        },
-      ],
+    return NextResponse.json({
+      success: true,
+      message: `On it. Your audit for ${u.toString()} will arrive at ${rawEmail} within a couple of minutes.`,
     });
-
-    const text = response.content
-      .filter((b): b is Anthropic.TextBlock => b.type === 'text')
-      .map((b) => b.text)
-      .join('');
-
-    let parsed: Record<string, unknown>;
-    try {
-      const raw = parseAiJson(text);
-      if (!raw || typeof raw !== 'object') throw new Error('not an object');
-      parsed = raw as Record<string, unknown>;
-    } catch (err) {
-      console.error('Website audit parse error:', err instanceof Error ? err.message : err);
-      console.error('Raw text:', text);
-      return NextResponse.json({ error: 'The AI produced an unexpected response. Try again.' }, { status: 500 });
-    }
-
-    return NextResponse.json({ url: u.toString(), ...parsed });
   } catch (error) {
-    console.error('Website audit error:', error instanceof Error ? error.message : 'Unknown error');
-    return NextResponse.json({ error: 'Audit failed. Try again.' }, { status: 500 });
+    console.error('[website-audit] handler error', error instanceof Error ? error.message : 'Unknown error');
+    return NextResponse.json({ error: 'Could not start the audit. Try again.' }, { status: 500 });
   }
 }
