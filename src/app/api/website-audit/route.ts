@@ -19,12 +19,12 @@ import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
  * manually follow up.
  */
 
-// Opus 4.7 — top-of-lineup reasoning model. Deliberately NOT using the
-// codebase-wide STANDARD_MODEL (Sonnet 4) because the audit is the front-
-// door lead magnet: a visitor hands us their URL + email specifically to
-// be impressed, so we pay the extra tokens for depth. Audit volume is
-// one-per-lead, not high-throughput.
-const MODEL = 'claude-opus-4-7';
+// Opus 4.6 — deliberately NOT the codebase-wide STANDARD_MODEL (Sonnet 4)
+// because the audit is the front-door lead magnet: a visitor hands us
+// their URL + email specifically to be impressed, so we pay the extra
+// tokens for depth. Audit volume is one-per-lead, not high-throughput.
+// If this alias ever fails in prod the per-step logs will say so.
+const MODEL = 'claude-opus-4-6';
 const INTERNAL_LEAD_EMAIL = 'ai@agenticconsciousness.com.au';
 
 const client = new Anthropic({
