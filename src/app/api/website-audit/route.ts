@@ -5,6 +5,7 @@ import { sql } from '@/lib/pg';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { parseAiJson } from '@/lib/parseAiJson';
 import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
+import { STANDARD_MODEL } from '@/lib/models';
 
 /**
  * Email-only audit flow.
@@ -19,7 +20,10 @@ import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
  * manually follow up.
  */
 
-const MODEL = 'claude-sonnet-4-6';
+// Use the same Sonnet model every other Claude route in this codebase uses,
+// via the env-overridable STANDARD_MODEL constant. Previously hard-coded to
+// 'claude-sonnet-4-6' which was rejected in production.
+const MODEL = STANDARD_MODEL;
 const INTERNAL_LEAD_EMAIL = 'ai@agenticconsciousness.com.au';
 
 const client = new Anthropic({
@@ -144,8 +148,10 @@ async function runAudit({
   ip: string;
 }): Promise<void> {
   const start = Date.now();
+  console.log('[website-audit] start', { url, email, ref, model: MODEL });
   try {
     // 1. Fetch HTML
+    console.log('[website-audit] fetching HTML', { url });
     const res = await fetch(url, {
       redirect: 'follow',
       headers: {
@@ -160,8 +166,10 @@ async function runAudit({
     if (buf.byteLength > 2_000_000) throw new Error('HTML too large (>2MB)');
     const html = new TextDecoder('utf-8', { fatal: false }).decode(buf);
     const stripped = sanitiseHtml(html);
+    console.log('[website-audit] HTML sanitised', { originalBytes: buf.byteLength, strippedChars: stripped.length });
 
     // 2. Call Claude
+    console.log('[website-audit] calling Claude', { model: MODEL, maxTokens: 1400 });
     const response = await client.messages.create(
       {
         model: MODEL,
@@ -177,12 +185,25 @@ async function runAudit({
       { signal: AbortSignal.timeout(60000) },
     );
 
+    console.log('[website-audit] Claude responded', {
+      inputTokens: response.usage.input_tokens,
+      outputTokens: response.usage.output_tokens,
+      stopReason: response.stop_reason,
+    });
+
     const text = response.content
       .filter((b): b is Anthropic.TextBlock => b.type === 'text')
       .map((b) => b.text)
       .join('');
 
-    const rawParsed = parseAiJson(text);
+    let rawParsed: unknown;
+    try {
+      rawParsed = parseAiJson(text);
+    } catch (err) {
+      console.error('[website-audit] parseAiJson threw', err instanceof Error ? err.message : err);
+      console.error('[website-audit] raw text was:', text.slice(0, 2000));
+      throw new Error('AI produced invalid JSON');
+    }
     if (!rawParsed || typeof rawParsed !== 'object') throw new Error('AI returned non-object');
     const parsed = rawParsed as {
       summary?: string;
@@ -197,6 +218,7 @@ async function runAudit({
     );
 
     // 3. Store lead (with full payload for future reference)
+    console.log('[website-audit] storing lead', { email, score, issues: sorted.length });
     await sql`
       INSERT INTO leads (source, email, metadata)
       VALUES (
@@ -215,6 +237,7 @@ async function runAudit({
     `;
 
     // 4. Email the user
+    console.log('[website-audit] sending user email', { to: email });
     const issuesHtml = sorted.map(renderIssueCard).join('');
     const scoreBadge = `<div style="display:inline-block;padding:6px 12px;background:#ff3d00;color:#fff;font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">Score ${score} / 100</div>`;
 
