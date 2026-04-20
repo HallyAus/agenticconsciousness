@@ -156,11 +156,12 @@ export default function BookPage() {
         </div>
       </section>
 
+      {/* Free audit — sits between sprint pitch and cart so visitors
+          can get an AI read on their current site before picking extras */}
+      <WebsiteAuditor />
+
       {/* Interactive cart */}
       <ExtrasCart />
-
-      {/* Free audit — secondary lead magnet for visitors not ready to buy */}
-      <WebsiteAuditor />
 
       </main>
     </>
