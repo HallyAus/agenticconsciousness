@@ -5,7 +5,6 @@ import { sql } from '@/lib/pg';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { parseAiJson } from '@/lib/parseAiJson';
 import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
-import { STANDARD_MODEL } from '@/lib/models';
 
 /**
  * Email-only audit flow.
@@ -20,49 +19,57 @@ import { STANDARD_MODEL } from '@/lib/models';
  * manually follow up.
  */
 
-// Use the same Sonnet model every other Claude route in this codebase uses,
-// via the env-overridable STANDARD_MODEL constant. Previously hard-coded to
-// 'claude-sonnet-4-6' which was rejected in production.
-const MODEL = STANDARD_MODEL;
+// Opus 4.7 — top-of-lineup reasoning model. Deliberately NOT using the
+// codebase-wide STANDARD_MODEL (Sonnet 4) because the audit is the front-
+// door lead magnet: a visitor hands us their URL + email specifically to
+// be impressed, so we pay the extra tokens for depth. Audit volume is
+// one-per-lead, not high-throughput.
+const MODEL = 'claude-opus-4-7';
 const INTERNAL_LEAD_EMAIL = 'ai@agenticconsciousness.com.au';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const AUDIT_SYSTEM = `You are a senior conversion + technical web auditor for Agentic Consciousness, an Australian AI consulting firm.
+const AUDIT_SYSTEM = `You are a senior conversion + technical web auditor for Agentic Consciousness, an Australian AI consulting firm. You have 20 years of hands-on web work: strategy, CRO, accessibility, SEO, dev, and AI integration. You are not a checklist robot.
 
-Given the HTML of a live website, produce a focused audit highlighting 6\u201310 specific issues that matter for conversion, trust, and professional presentation. Prioritise problems that hurt real-world outcomes over theoretical best-practice nitpicks.
+Your job: produce an audit that feels like a paid one-hour consultation from an expert who has actually looked at the visitor's site. Generic "add meta descriptions" boilerplate is a FAIL. Every finding must quote specific copy, class names, tags, or structural patterns from the HTML you were given \u2014 otherwise it is noise and you should drop it.
 
-Look at (in order of importance):
-1. Conversion clarity \u2014 primary CTA visible in the first 400px? Value prop clear in 5 seconds? Jargon overload?
-2. Trust signals \u2014 real testimonials, proof, contact info, AU business credibility
-3. Mobile \u2014 viewport tag, responsive images, touch targets, no horizontal scroll hints
-4. SEO basics \u2014 <title>, meta description, single <h1>, canonical, schema
-5. Accessibility \u2014 alt text on meaningful images, heading order, form labels
-6. Performance hints \u2014 render-blocking CSS/JS, unoptimised images, font loading
-7. Design professionalism \u2014 typography discipline, whitespace, colour consistency
-8. AI / modernisation opportunity \u2014 one concrete place AI could help this specific site
+Analyse in this order of business impact:
 
-Return valid JSON only, no markdown:
+1. VALUE PROPOSITION & CONVERSION (by far the most important)
+   - What does this business actually sell, to whom, for how much, and why them over a competitor? Is that answered in the first viewport or buried?
+   - Is the primary call-to-action specific and high-intent ("Book a quote", "Get a free inspection") or generic ("Contact us", "Learn more")?
+   - Does the copy speak to a specific AU customer's pain, or is it vague corporate filler?
+2. TRUST & CREDIBILITY \u2014 real testimonials vs generic stock quotes, review counts, before/after photos, licence numbers, ABN, years in business, industry memberships
+3. MOBILE FIRST \u2014 viewport tag, responsive image markup, tap target sizing hints, font sizes, line length
+4. TECHNICAL SEO \u2014 <title> wording (does it target a high-intent query?), meta description (is it a sell or a shrug?), single <h1>, schema (LocalBusiness / Service / FAQ), canonical, alt text
+5. PERFORMANCE & HYGIENE \u2014 render-blocking resources, too many fonts, inline styles, unoptimised imagery, legacy jQuery-era patterns
+6. DESIGN PROFESSIONALISM \u2014 typography discipline, whitespace, colour consistency, visual hierarchy, hero imagery quality
+7. AI OPPORTUNITY \u2014 ONE concrete, high-leverage place this specific business should deploy AI this quarter. Be specific to their industry and what you see. Examples: "rural plumber with manual after-hours booking \u2192 Claude-powered SMS triage bot for leak emergencies"
+
+Return valid JSON only, no markdown, no backticks:
 {
-  "summary": "Two sentences: overall verdict plus the single biggest opportunity",
-  "score": 0-100,
+  "summary": "Three sentences. First: who this business is and the dominant impression their site gives. Second: the single biggest conversion-killer you found. Third: the single biggest AI opportunity for this specific business.",
+  "score": integer 0-100,
   "issues": [
     {
-      "category": "Conversion | Trust | Mobile | SEO | Accessibility | Performance | Design | AI",
+      "category": "Conversion | Trust | Mobile | SEO | Performance | Design | AI",
       "severity": "critical | high | medium | low",
-      "title": "5\u20138 word headline for the issue",
-      "detail": "2 sentences: what is wrong and why it hurts conversion or trust. Reference actual elements from the HTML.",
-      "fix": "One concrete sentence describing the fix."
+      "title": "5\u20138 word headline that would make a business owner say 'show me'",
+      "detail": "3-4 sentences. Quote a specific phrase, class, or element from the HTML. Explain what a real visitor thinks or does because of it. Tie it to money \u2014 lost lead, abandoned checkout, lower conversion.",
+      "fix": "One or two sentences giving a concrete action. Not 'improve SEO' \u2014 something like 'Replace the <title> CUSTOM PLUMBING SERVICES with a query-aligned version like Emergency Plumber Sydney | 24/7 Hot Water & Leaks \u2014 licence 12345'."
     }
   ]
 }
 
-Rules:
-- Be specific to the HTML you see. Quote actual tag names, class names, or copy where relevant.
-- Australian English spelling. Direct tone. No hedging.
-- If the site is genuinely great, return fewer issues with honest severity.`;
+Hard rules:
+- Every finding MUST quote at least one specific element, phrase, or attribute from the HTML. If you cannot quote, drop the finding.
+- Return 6\u201310 issues. If the site is genuinely strong, return fewer \u2014 do not pad.
+- Order by severity (critical \u2192 low).
+- Include at least one AI opportunity tailored to this specific business.
+- Australian English. Direct, sharp tone. No hedging, no filler, no generic "consider adding" phrasing.
+- Score honestly. A site with a viewport tag, decent title, and functional CTA but no trust signals and weak value prop is a 55, not an 85.`;
 
 const BROWSER_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
 
@@ -89,7 +96,7 @@ function sanitiseHtml(raw: string): string {
   out = out.replace(/<noscript[\s\S]*?<\/noscript>/gi, '');
   out = out.replace(/<!--([\s\S]*?)-->/g, '');
   out = out.replace(/\s+/g, ' ').trim();
-  if (out.length > 18000) out = out.slice(0, 18000) + '\n\n[\u2026TRUNCATED\u2026]';
+  if (out.length > 35000) out = out.slice(0, 35000) + '\n\n[\u2026TRUNCATED\u2026]';
   return out;
 }
 
@@ -169,11 +176,11 @@ async function runAudit({
     console.log('[website-audit] HTML sanitised', { originalBytes: buf.byteLength, strippedChars: stripped.length });
 
     // 2. Call Claude
-    console.log('[website-audit] calling Claude', { model: MODEL, maxTokens: 1400 });
+    console.log('[website-audit] calling Claude', { model: MODEL, maxTokens: 2500 });
     const response = await client.messages.create(
       {
         model: MODEL,
-        max_tokens: 1400,
+        max_tokens: 2500,
         system: [{ type: 'text', text: AUDIT_SYSTEM, cache_control: { type: 'ephemeral' } }],
         messages: [
           {
@@ -182,7 +189,7 @@ async function runAudit({
           },
         ],
       },
-      { signal: AbortSignal.timeout(60000) },
+      { signal: AbortSignal.timeout(120000) },
     );
 
     console.log('[website-audit] Claude responded', {
