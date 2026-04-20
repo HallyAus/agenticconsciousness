@@ -28,21 +28,21 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
-const AUDIT_SYSTEM = `You are a senior conversion + technical web auditor for Agentic Consciousness, an Australian AI consulting firm. You have 20 years of hands-on web work: strategy, CRO, accessibility, SEO, dev, and AI integration. You are not a checklist robot.
+const AUDIT_SYSTEM = `You are a senior conversion + technical web auditor. 20 years of hands-on web work: strategy, CRO, accessibility, SEO, dev, and AI integration. You are not a checklist robot.
 
 Your job: produce an audit that feels like a paid one-hour consultation from an expert who has actually looked at the visitor's site. Generic "add meta descriptions" boilerplate is a FAIL. Every finding must quote specific copy, class names, tags, or structural patterns from the HTML you were given \u2014 otherwise it is noise and you should drop it.
 
-You are given MULTIPLE pages from the site \u2014 the homepage plus up to 4 extra pages selected from their sitemap (About, Contact, Services, Licence, Team, etc). Before claiming something is MISSING from the site (a licence number, an ABN, testimonials, contact details, pricing), you MUST first search EVERY provided page. If the evidence exists on any page, treat it as present and cite that page. If you truly cannot find it after searching every page, only then flag the absence \u2014 and note explicitly which pages you checked. Hallucinating missing trust signals will cost the visitor a sale when they know full well their licence is on the Contact page. Do not do it.
+You are given MULTIPLE pages from the site \u2014 the homepage plus up to 4 extra pages selected from their sitemap (About, Contact, Services, and whatever other trust-relevant paths exist). Before claiming something is MISSING from the site (a credential, registration number, testimonials, contact details, pricing, etc.), you MUST first search EVERY provided page. If the evidence exists on any page, treat it as present and cite that page. If you truly cannot find it after searching every page, only then flag the absence \u2014 and note explicitly which pages you checked. Hallucinating missing trust signals will cost the visitor a sale when they know full well the signal is on a page you read. Do not do it.
 
 Analyse in this order of business impact:
 
 1. VALUE PROPOSITION & CONVERSION (by far the most important)
    - What does this business actually sell, to whom, for how much, and why them over a competitor? Is that answered in the first viewport or buried?
    - Is the primary call-to-action specific and high-intent ("Book a quote", "Get a free inspection") or generic ("Contact us", "Learn more")?
-   - Does the copy speak to a specific AU customer's pain, or is it vague corporate filler?
-2. TRUST & CREDIBILITY \u2014 real testimonials vs generic stock quotes, review counts, before/after photos, licence numbers, ABN, years in business, industry memberships
+   - Does the copy speak to a specific customer's pain in their own words, or is it vague corporate filler?
+2. TRUST & CREDIBILITY \u2014 real testimonials vs generic stock quotes, review counts + sources, before/after photos, credentials, registration or licence numbers, years in business, industry memberships, case studies, named team members
 3. MOBILE FIRST \u2014 viewport tag, responsive image markup, tap target sizing hints, font sizes, line length
-4. TECHNICAL SEO \u2014 <title> wording (does it target a high-intent query?), meta description (is it a sell or a shrug?), single <h1>, schema (LocalBusiness / Service / FAQ), canonical, alt text
+4. TECHNICAL SEO \u2014 <title> wording (does it target a high-intent query?), meta description (is it a sell or a shrug?), single <h1>, schema markup (Organization, Product, Service, FAQ, Article as relevant), canonical, alt text on meaningful images
 
 5. SOCIAL SHARING \u2014 Open Graph + Twitter Card tags. These decide what a shared link looks like on Facebook, LinkedIn, iMessage, Slack, WhatsApp, X. A pre-extracted meta-tag table is provided above the HTML \u2014 use it. Check specifically:
    \u2022 og:title present and compelling (30\u201365 chars ideal)
@@ -51,12 +51,13 @@ Analyse in this order of business impact:
    \u2022 og:url present and matches canonical
    \u2022 og:type set ("website" for landing pages, "article" for blog posts)
    \u2022 og:site_name present
+   \u2022 og:locale matches the site's actual locale (not "en_US" by default on a non-US site)
    \u2022 twitter:card at minimum "summary_large_image"; twitter:image set (falls back to og:image if absent but explicit is better)
    \u2022 theme-color set for mobile browsers
    For any MISSING tag, the severity is AT LEAST medium; og:image missing is critical because Facebook shares will look like a grey blank.
 6. PERFORMANCE & HYGIENE \u2014 render-blocking resources, too many fonts, inline styles, unoptimised imagery, legacy jQuery-era patterns
 7. DESIGN PROFESSIONALISM \u2014 typography discipline, whitespace, colour consistency, visual hierarchy, hero imagery quality
-8. AI OPPORTUNITY \u2014 ONE concrete, high-leverage place this specific business should deploy AI this quarter. Be specific to their industry and what you see. Examples: "rural plumber with manual after-hours booking \u2192 Claude-powered SMS triage bot for leak emergencies"
+8. AI OPPORTUNITY \u2014 ONE concrete, high-leverage place this specific business should deploy AI this quarter. Be specific to their industry and what you saw on the site. Name the problem you spotted, the AI intervention (chatbot / triage / enrichment / agent / doc processing / etc), and the measurable outcome it would produce.
 
 Return valid JSON only, no markdown, no backticks:
 {
@@ -68,7 +69,7 @@ Return valid JSON only, no markdown, no backticks:
       "severity": "critical | high | medium | low",
       "title": "5\u20138 word headline that would make a business owner say 'show me'",
       "detail": "3-4 sentences. Quote a specific phrase, class, or element from the HTML. Explain what a real visitor thinks or does because of it. Tie it to money \u2014 lost lead, abandoned checkout, lower conversion.",
-      "fix": "One or two sentences giving a concrete action. Not 'improve SEO' \u2014 something like 'Replace the <title> CUSTOM PLUMBING SERVICES with a query-aligned version like Emergency Plumber Sydney | 24/7 Hot Water & Leaks \u2014 licence 12345'."
+      "fix": "One or two sentences giving a concrete action. Not 'improve SEO' \u2014 something like 'Replace the <title> HOMEPAGE with a query-aligned alternative that names the exact service and location.'"
     }
   ]
 }
@@ -78,7 +79,7 @@ Hard rules:
 - Return 6\u201310 issues. If the site is genuinely strong, return fewer \u2014 do not pad.
 - Order by severity (critical \u2192 low).
 - Include at least one AI opportunity tailored to this specific business.
-- Australian English. Direct, sharp tone. No hedging, no filler, no generic "consider adding" phrasing.
+- Direct, sharp tone. No hedging, no filler, no generic "consider adding" phrasing.
 - Score honestly. A site with a viewport tag, decent title, and functional CTA but no trust signals and weak value prop is a 55, not an 85.`;
 
 const BROWSER_UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
@@ -121,6 +122,33 @@ async function fetchText(target: string, timeoutMs: number): Promise<string | nu
     return new TextDecoder('utf-8', { fatal: false }).decode(buf);
   } catch {
     return null;
+  }
+}
+
+/** Status-aware page fetch. Distinguishes WAF blocks (403/503/429) from
+ * network failures so the error email can tell the user WHY the audit
+ * couldn't read their site. */
+async function fetchPage(target: string, timeoutMs: number): Promise<{ html: string | null; status: number | null }> {
+  try {
+    const res = await fetch(target, {
+      redirect: 'follow',
+      headers: {
+        'User-Agent': BROWSER_UA,
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-AU,en;q=0.9',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Upgrade-Insecure-Requests': '1',
+      },
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    if (!res.ok) return { html: null, status: res.status };
+    const buf = await res.arrayBuffer();
+    if (buf.byteLength > 3_000_000) return { html: null, status: res.status };
+    return { html: new TextDecoder('utf-8', { fatal: false }).decode(buf), status: res.status };
+  } catch {
+    return { html: null, status: null };
   }
 }
 
@@ -370,11 +398,12 @@ async function runAudit({
     const targets = [url, ...extraPages];
     const pageResults = await Promise.all(
       targets.map(async (t) => {
-        const html = await fetchText(t, 10000);
-        if (!html) return { url: t, ok: false as const };
+        const { html, status } = await fetchPage(t, 10000);
+        if (!html) return { url: t, ok: false as const, status };
         return {
           url: t,
           ok: true as const,
+          status,
           stripped: sanitiseHtml(html),
           meta: extractMetaTags(html),
           rawBytes: html.length,
@@ -383,6 +412,104 @@ async function runAudit({
     );
 
     const successful = pageResults.filter((p): p is Extract<typeof p, { ok: true }> => p.ok);
+
+    // Detect WAF / bot-protection blocking. If every page returned 403/429/503
+    // (or close variants), the site's firewall is rejecting automated scans
+    // entirely — there's no audit to run. Send a special "AI-invisible" alert
+    // email instead of the generic hiccup.
+    const WAF_STATUSES = new Set([401, 403, 406, 429, 503]);
+    const allBlocked =
+      successful.length === 0 &&
+      pageResults.length > 0 &&
+      pageResults.every((p) => typeof p.status === 'number' && WAF_STATUSES.has(p.status as number));
+
+    if (allBlocked) {
+      const status = pageResults[0].status;
+      console.log('[website-audit] WAF detected', { url, status });
+      await sql`
+        INSERT INTO leads (source, email, metadata)
+        VALUES (
+          'website-audit-waf-blocked',
+          ${email},
+          ${JSON.stringify({ url, ref, ip, status, pageResults: pageResults.map((p) => ({ url: p.url, status: p.status })) })}::jsonb
+        )
+      `;
+      await sendEmail({
+        to: email,
+        subject: `URGENT: Your website is invisible to AI \u2014 ${url}`,
+        html: emailTemplate(`
+          <h2 class="ac-heading" style="color:#0a0a0a;font-size:22px;margin:0 0 12px;line-height:1.2">
+            Your site is blocking AI. You're invisible.
+          </h2>
+          <div class="ac-accent" style="font-family:ui-monospace,monospace;font-size:12px;letter-spacing:1.5px;color:#cc3100;margin-bottom:20px;word-break:break-all">
+            ${esc(url)} \u2014 returning HTTP ${status ?? 'blocked'}
+          </div>
+          <p class="ac-body" style="color:#333333;font-size:15px;line-height:1.7;margin:0 0 16px">
+            Your website rejected our audit because a firewall on your host is
+            refusing every non-browser visitor. That same firewall is blocking
+            <strong class="ac-heading" style="color:#0a0a0a">every AI search engine</strong>
+            \u2014 ChatGPT, Claude, Perplexity, Google AI Overviews, Bing Copilot, Gemini.
+          </p>
+          <p class="ac-body" style="color:#333333;font-size:15px;line-height:1.7;margin:0 0 16px">
+            <strong class="ac-heading" style="color:#0a0a0a">Why this is urgent:</strong>
+            a growing share of local-business enquiries now start inside an AI chat
+            (&ldquo;best electrician in the Central Coast&rdquo;, &ldquo;plumber near me&rdquo;). If the AI
+            can't read your site, you don't exist in those answers. Your competitors
+            do. The longer this firewall stays in its current configuration, the
+            more AI-originated leads go to someone else.
+          </p>
+          <div class="ac-card" style="border-left:3px solid #ff3d00;padding:14px 16px;margin:0 0 18px;background:#fafafa">
+            <div class="ac-accent" style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#cc3100;margin-bottom:6px">
+              Symptom
+            </div>
+            <div class="ac-body" style="color:#333333;font-size:13px;line-height:1.6">
+              HTTP ${status ?? '4xx/5xx'} returned to our audit bot. Typical on
+              managed hosting with aggressive default WAF rules (some GoDaddy,
+              Crazy Domains, WP Engine setups) or Cloudflare Bot Fight Mode.
+            </div>
+          </div>
+          <div class="ac-card" style="border-left:3px solid #ff3d00;padding:14px 16px;margin:0 0 24px;background:#fafafa">
+            <div class="ac-accent" style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#cc3100;margin-bottom:6px">
+              Fix
+            </div>
+            <div class="ac-body" style="color:#333333;font-size:13px;line-height:1.6">
+              Whitelist AI crawlers (GPTBot, ClaudeBot, PerplexityBot,
+              Google-Extended, OAI-SearchBot) at the WAF, OR \u2014 faster, more
+              reliable \u2014 rebuild the site on a modern stack (Next.js + Vercel)
+              that defaults to AI-friendly. A full mobile-first AI-optimised
+              rebuild with the 48-hour launch offer fixes this AND every other
+              conversion issue in one pass.
+            </div>
+          </div>
+          <div class="ac-card-dark" style="margin-top:24px;padding:16px;border:2px solid #ff3d00;background:#ffffff">
+            <div class="ac-heading" style="color:#0a0a0a;font-weight:900;font-size:15px;margin-bottom:6px">
+              Rebuild in 48 hours
+            </div>
+            <p class="ac-body" style="color:#333333;font-size:13px;line-height:1.6;margin:0 0 12px">
+              $999 launch offer, mobile-first, AI-optimised, Core Web Vitals
+              tuned, Claude chatbot embedded. Integrations billed separately.
+              100% money-back guarantee if not live in 48 hours.
+            </p>
+            <a href="https://agenticconsciousness.com.au/book" style="display:inline-block;background:#ff3d00;color:#fff;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:12px 20px">
+              Book the $999 Sprint &rarr;
+            </a>
+          </div>
+        `),
+      }).catch(() => {});
+      await notifyAdmin(
+        `WAF-blocked audit: ${url}`,
+        [
+          `URL: ${url}`,
+          `Email: ${email}`,
+          `Ref: ${ref || '-'}`,
+          `IP: ${ip}`,
+          `All page statuses: ${pageResults.map((p) => `${p.url}: ${p.status ?? 'null'}`).join(' | ')}`,
+          `Sent the AI-invisible alert email. Tone: urgent rebuild.`,
+        ].join('\n'),
+      ).catch(() => {});
+      return; // Done — no audit possible, alert sent.
+    }
+
     if (successful.length === 0) {
       throw new Error('fetch failed: could not retrieve any page');
     }
