@@ -326,18 +326,18 @@ function renderIssueCard(issue: Issue): string {
   const sev = esc((issue.severity || 'medium').toUpperCase());
   const cat = esc(issue.category || 'General');
   return `
-    <div style="border-left:3px solid #ff3d00;padding:14px 16px;margin-bottom:14px;background:#141311">
-      <div style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#ff5722;margin-bottom:6px">
+    <div class="ac-card" style="border-left:3px solid #ff3d00;padding:14px 16px;margin-bottom:14px;background:#fafafa">
+      <div class="ac-accent" style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#cc3100;margin-bottom:6px">
         ${sev} &middot; ${cat}
       </div>
-      <div style="font-weight:900;color:#fafaf8;font-size:15px;margin-bottom:8px;line-height:1.3">
+      <div class="ac-heading" style="font-weight:900;color:#0a0a0a;font-size:15px;margin-bottom:8px;line-height:1.3">
         ${esc(issue.title)}
       </div>
-      <div style="color:#e0e0de;font-size:13px;line-height:1.6;margin-bottom:8px">
+      <div class="ac-body" style="color:#333333;font-size:13px;line-height:1.6;margin-bottom:8px">
         ${esc(issue.detail)}
       </div>
-      <div style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#ff5722">
-        FIX &rarr; <span style="color:#e0e0de;text-transform:none;letter-spacing:0;font-size:12px">${esc(issue.fix)}</span>
+      <div class="ac-accent" style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#cc3100">
+        FIX &rarr; <span class="ac-body" style="color:#333333;text-transform:none;letter-spacing:0;font-size:12px">${esc(issue.fix)}</span>
       </div>
     </div>`;
 }
@@ -537,17 +537,17 @@ async function runAudit({
       to: email,
       subject: `Your website audit \u2014 ${url}`,
       html: emailTemplate(`
-        <h2 style="color:#fafaf8;font-size:22px;margin:0 0 10px;line-height:1.2">Website audit</h2>
-        <div style="font-family:ui-monospace,monospace;font-size:12px;letter-spacing:1.5px;color:#ff5722;margin-bottom:16px;word-break:break-all">${esc(url)}</div>
+        <h2 class="ac-heading" style="color:#0a0a0a;font-size:22px;margin:0 0 10px;line-height:1.2">Website audit</h2>
+        <div class="ac-accent" style="font-family:ui-monospace,monospace;font-size:12px;letter-spacing:1.5px;color:#cc3100;margin-bottom:16px;word-break:break-all">${esc(url)}</div>
         ${scoreBadge}
-        ${summary ? `<p style="color:#e0e0de;font-size:14px;line-height:1.7;margin:0 0 20px">${esc(summary)}</p>` : ''}
-        <div style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#ff5722;margin-bottom:10px">
+        ${summary ? `<p class="ac-body" style="color:#333333;font-size:14px;line-height:1.7;margin:0 0 20px">${esc(summary)}</p>` : ''}
+        <div class="ac-accent" style="font-family:ui-monospace,monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#cc3100;margin-bottom:10px">
           ${sorted.length} issues found
         </div>
         ${issuesHtml}
-        <div style="margin-top:24px;padding:16px;border:2px solid #ff3d00;background:#1c1a17">
-          <div style="color:#fafaf8;font-weight:900;font-size:15px;margin-bottom:6px">Want this fixed?</div>
-          <p style="color:#e0e0de;font-size:13px;line-height:1.6;margin:0 0 12px">
+        <div class="ac-card-dark" style="margin-top:24px;padding:16px;border:2px solid #ff3d00;background:#ffffff">
+          <div class="ac-heading" style="color:#0a0a0a;font-weight:900;font-size:15px;margin-bottom:6px">Want this fixed?</div>
+          <p class="ac-body" style="color:#333333;font-size:13px;line-height:1.6;margin:0 0 12px">
             We build mobile-first AI-optimised websites in 48 hours. $999 launch offer, integrations billed separately. Every issue in this audit is covered by the Sprint.
           </p>
           <a href="https://agenticconsciousness.com.au/book" style="display:inline-block;background:#ff3d00;color:#fff;text-decoration:none;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:12px 20px">
@@ -585,12 +585,12 @@ async function runAudit({
       to: email,
       subject: `Your website audit had a hiccup \u2014 ${url}`,
       html: emailTemplate(`
-        <h2 style="color:#fafaf8;font-size:20px;margin:0 0 12px">We couldn't finish your audit</h2>
-        <p style="color:#e0e0de;font-size:14px;line-height:1.7">
-          Something went wrong running the audit against <strong style="color:#ff5722">${esc(url)}</strong>.
+        <h2 class="ac-heading" style="color:#0a0a0a;font-size:20px;margin:0 0 12px">We couldn't finish your audit</h2>
+        <p class="ac-body" style="color:#333333;font-size:14px;line-height:1.7">
+          Something went wrong running the audit against <strong class="ac-accent" style="color:#cc3100">${esc(url)}</strong>.
           Our team has been notified and will run it manually within 24 hours.
         </p>
-        <p style="color:#e0e0de;font-size:14px;line-height:1.7">
+        <p class="ac-body" style="color:#333333;font-size:14px;line-height:1.7">
           Reply to this email if you want to chat sooner or try a different URL.
         </p>
       `),

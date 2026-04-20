@@ -51,23 +51,61 @@ export async function notifyAdmin(subject: string, body: string): Promise<void> 
   await sendEmail({
     to: 'ai@agenticconsciousness.com.au',
     subject,
-    html: `<pre style="font-family:monospace;font-size:14px;line-height:1.6">${escapeHtml(body)}</pre>`,
+    html: `<pre style="font-family:monospace;font-size:14px;line-height:1.6;color:#222">${escapeHtml(body)}</pre>`,
   });
 }
 
-// Brutalist email template
+/**
+ * Brutalist-branded email template with light/dark auto-adaptation.
+ *
+ * Defaults to LIGHT mode (white bg, dark text) because most mobile mail
+ * clients are light-biased and dark-mode inverted emails often render
+ * poorly without explicit support. Dark-mode-capable clients (Apple Mail,
+ * Gmail, Outlook iOS, Spark) honour the `@media (prefers-color-scheme:
+ * dark)` override below via the .ac-* class hooks.
+ *
+ * Brand red #ff3d00 works on both modes so buttons/borders stay
+ * consistent. Body colours swap via class overrides.
+ */
 export function emailTemplate(content: string): string {
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
-<body style="margin:0;padding:40px 20px;background:#0a0a0a;color:#e0e0e0;font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.7">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
+  <title>Agentic Consciousness</title>
+  <style>
+    :root { color-scheme: light dark; supported-color-schemes: light dark; }
+    body { margin: 0; }
+    .ac-logo-text { color: #0a0a0a; }
+    .ac-heading { color: #0a0a0a; }
+    .ac-body { color: #333333; }
+    .ac-dim { color: #666666; }
+    .ac-accent { color: #cc3100; }
+    .ac-card { background: #fafafa; }
+    .ac-card-dark { background: #ffffff; }
+    .ac-page { background: #ffffff; color: #333333; }
+    @media (prefers-color-scheme: dark) {
+      .ac-page { background: #141311 !important; color: #e0e0de !important; }
+      .ac-logo-text, .ac-heading { color: #fafaf8 !important; }
+      .ac-body { color: #e0e0de !important; }
+      .ac-dim { color: #999997 !important; }
+      .ac-accent { color: #ff5722 !important; }
+      .ac-card { background: #1c1a17 !important; }
+      .ac-card-dark { background: #24221d !important; }
+    }
+  </style>
+</head>
+<body class="ac-page" style="margin:0;padding:40px 20px;background:#ffffff;color:#333333;font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.7">
   <div style="max-width:560px;margin:0 auto">
     <div style="border-bottom:2px solid #ff3d00;padding-bottom:16px;margin-bottom:24px">
-      <strong style="color:#fff;font-size:18px;letter-spacing:-1px">AC</strong><span style="color:#ff3d00;font-size:18px;font-weight:900">_</span>
+      <strong class="ac-logo-text" style="color:#0a0a0a;font-size:18px;letter-spacing:-1px">AC</strong><span style="color:#ff3d00;font-size:18px;font-weight:900">_</span>
     </div>
     ${content}
-    <div style="border-top:2px solid #ff3d00;margin-top:32px;padding-top:16px;font-size:12px;color:#666">
-      <strong style="color:#fff">Agentic Consciousness</strong><br>
+    <div class="ac-dim" style="border-top:2px solid #ff3d00;margin-top:32px;padding-top:16px;font-size:12px;color:#666666">
+      <strong class="ac-heading" style="color:#0a0a0a">Agentic Consciousness</strong><br>
       ai@agenticconsciousness.com.au<br>
       Australia
     </div>
