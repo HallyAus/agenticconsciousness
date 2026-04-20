@@ -5,7 +5,6 @@ import { sql } from '@/lib/pg';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { parseAiJson } from '@/lib/parseAiJson';
 import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
-import { STANDARD_MODEL } from '@/lib/models';
 
 /**
  * Email-only audit flow.
@@ -20,13 +19,10 @@ import { STANDARD_MODEL } from '@/lib/models';
  * manually follow up.
  */
 
-// Audit model. Override via env AI_AUDIT_MODEL (e.g. "claude-opus-4-6-20260101"
-// or whatever dated Opus your Anthropic console accepts). Falls back to the
-// codebase-wide STANDARD_MODEL (Sonnet 4) — known to work, slightly less
-// rigorous. Opus aliases like "claude-opus-4-6" and "claude-opus-4-7" were
-// rejected against Daniel's account in production on 2026-04-20; set the
-// env var to a full dated ID once confirmed.
-const MODEL = process.env.AI_AUDIT_MODEL || STANDARD_MODEL;
+// Audit model. Opus 4.6 per Anthropic's docs (claude-opus-4-6, legacy but
+// still supported). Override via AI_AUDIT_MODEL env var if you ever want
+// to switch to Opus 4.7 or a dated snapshot without a deploy.
+const MODEL = process.env.AI_AUDIT_MODEL || 'claude-opus-4-6';
 const INTERNAL_LEAD_EMAIL = 'ai@agenticconsciousness.com.au';
 
 const client = new Anthropic({
@@ -285,9 +281,19 @@ async function runAudit({
     console.log('[website-audit] success', { url, email, score, issues: sorted.length, tookMs: Date.now() - start });
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error';
-    console.error('[website-audit] background job failed', { url, email, msg });
+    const name = err instanceof Error ? err.name : 'Unknown';
+    const stack = err instanceof Error && err.stack ? err.stack.split('\n').slice(0, 12).join('\n') : '(no stack)';
+    // Anthropic SDK errors often carry extra context on err.status / err.error
+    const extra: Record<string, unknown> = {};
+    if (err && typeof err === 'object') {
+      for (const k of ['status', 'error', 'type', 'headers'] as const) {
+        const v = (err as Record<string, unknown>)[k];
+        if (v !== undefined) extra[k] = v;
+      }
+    }
+    console.error('[website-audit] background job failed', { url, email, name, msg, extra });
 
-    // Try to tell the user politely, and also tell us.
+    // Visitor gets a polite note, no internals.
     await sendEmail({
       to: email,
       subject: `Your website audit had a hiccup \u2014 ${url}`,
@@ -303,9 +309,23 @@ async function runAudit({
       `),
     }).catch(() => {});
 
+    // Admin email surfaces everything useful for diagnosis.
     await notifyAdmin(
-      `FAILED: Website audit for ${email}`,
-      `URL: ${url}\nEmail: ${email}\nRef: ${ref || '-'}\nError: ${msg}\nTook: ${Date.now() - start}ms`,
+      `FAILED: Website audit \u2014 ${name}: ${msg.slice(0, 80)}`,
+      [
+        `URL: ${url}`,
+        `Email: ${email}`,
+        `Ref: ${ref || '-'}`,
+        `IP: ${ip}`,
+        `Model: ${MODEL}`,
+        `Error name: ${name}`,
+        `Error message: ${msg}`,
+        `Extra context: ${JSON.stringify(extra, null, 2)}`,
+        `Took: ${Date.now() - start}ms`,
+        ``,
+        `Stack (top 12 lines):`,
+        stack,
+      ].join('\n'),
     ).catch(() => {});
   }
 }
