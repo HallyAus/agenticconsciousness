@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import posthog from 'posthog-js';
 import { trackEvent } from '@/lib/tracking';
 import { captureRefFromUrl, getStoredRef } from '@/lib/referral';
 
@@ -94,10 +95,15 @@ export default function ExtrasCart() {
 
     try {
       const ref = getStoredRef();
+      // Thread the PostHog distinct_id through Stripe metadata so the
+      // server-side Purchase event stitches to the client-side funnel.
+      const phDistinctId = (() => {
+        try { return posthog?.get_distinct_id?.() ?? ''; } catch { return ''; }
+      })();
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ packageIds: Array.from(selected), ref }),
+        body: JSON.stringify({ packageIds: Array.from(selected), ref, phDistinctId }),
       });
       const data = await res.json();
       if (data.url) {

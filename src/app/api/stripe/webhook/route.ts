@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/pg';
 import { notifyAdmin } from '@/lib/email';
+import { capturePostHogEvent } from '@/lib/posthog-server';
 
 const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2026-02-25.clover' })
@@ -122,6 +123,24 @@ export async function POST(req: NextRequest) {
         ].join('\n'),
       ).catch((err) => {
         console.error('[webhook] notifyAdmin failed', err instanceof Error ? err.message : err);
+      });
+
+      // Close the PostHog funnel. Reuse the client's distinct_id so this
+      // Purchase stitches to the same user as their earlier $pageview and
+      // InitiateCheckout events. Falls back to email when the id is missing.
+      const phDistinctId = session.metadata?.phDistinctId || email;
+      await capturePostHogEvent({
+        distinctId: phDistinctId,
+        event: 'Purchase',
+        properties: {
+          value: (session.amount_total ?? 0) / 100,
+          currency: (session.currency ?? 'aud').toUpperCase(),
+          content_name: packageIds || 'unknown',
+          num_items: lineItems.length,
+          ref: ref || undefined,
+          session_id: session.id,
+          email,
+        },
       });
     }
 
