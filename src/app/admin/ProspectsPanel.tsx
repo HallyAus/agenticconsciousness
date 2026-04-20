@@ -102,6 +102,32 @@ export default function ProspectsPanel() {
     refresh();
   }
 
+  async function handleSend(id: string, email: string) {
+    if (!confirm(`Send touch #1 (audit PDF) to ${email}?`)) return;
+    const res = await fetch(`/api/admin/prospects/${id}/send`, { method: 'POST' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert(`Send failed: ${data.error ?? res.status}`);
+    }
+    refresh();
+  }
+
+  async function handleEditEmail(id: string, current: string | null) {
+    const next = prompt('Update email address:', current ?? '');
+    if (next === null) return;
+    const trimmed = next.trim().toLowerCase();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      alert('Not a valid email');
+      return;
+    }
+    await fetch(`/api/admin/prospects/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: trimmed }),
+    });
+    refresh();
+  }
+
   return (
     <div>
       <section style={{ border: '2px solid #ff3d00', padding: 20, marginBottom: 28, background: '#111' }}>
@@ -209,31 +235,68 @@ export default function ProspectsPanel() {
                     <Td>
                       {p.email ? (
                         <div>
-                          <div>{p.email}</div>
+                          <div>
+                            {p.email}{' '}
+                            <button
+                              onClick={() => handleEditEmail(p.id, p.email)}
+                              style={{ background: 'transparent', border: 'none', color: '#666', cursor: 'pointer', fontSize: 10 }}
+                              title="Edit email"
+                            >
+                              ✎
+                            </button>
+                          </div>
                           <div style={{ color: '#666', fontSize: 10 }}>{p.email_confidence}</div>
                         </div>
-                      ) : '—'}
+                      ) : (
+                        <button
+                          onClick={() => handleEditEmail(p.id, null)}
+                          style={{ background: 'transparent', border: '1px dashed #444', color: '#999', padding: '2px 6px', fontSize: 10, fontFamily: 'var(--font-mono), monospace', cursor: 'pointer' }}
+                        >
+                          + add
+                        </button>
+                      )}
                     </Td>
                     <Td>{p.touch_count}</Td>
                     <Td>{fmtDate(p.last_outbound_at)}</Td>
                     <Td>{fmtDate(p.updated_at)}</Td>
                     <Td>
-                      <button
-                        onClick={() => handleDelete(p.id)}
-                        style={{
-                          background: 'transparent',
-                          color: '#666',
-                          border: '1px solid #333',
-                          padding: '4px 8px',
-                          fontSize: 10,
-                          fontFamily: 'var(--font-mono), monospace',
-                          letterSpacing: 1,
-                          textTransform: 'uppercase',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        Del
-                      </button>
+                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                        {p.status === 'audited' && p.email && (
+                          <button
+                            onClick={() => handleSend(p.id, p.email!)}
+                            style={actionBtn('#ff3d00')}
+                            title="Send touch #1"
+                          >
+                            Send
+                          </button>
+                        )}
+                        {p.audit_score !== null && (
+                          <a
+                            href={`/api/admin/prospects/${p.id}/pdf`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ ...actionBtn('#3b82f6'), textDecoration: 'none', display: 'inline-block' }}
+                          >
+                            PDF
+                          </a>
+                        )}
+                        <button
+                          onClick={() => handleDelete(p.id)}
+                          style={{
+                            background: 'transparent',
+                            color: '#666',
+                            border: '1px solid #333',
+                            padding: '4px 8px',
+                            fontSize: 10,
+                            fontFamily: 'var(--font-mono), monospace',
+                            letterSpacing: 1,
+                            textTransform: 'uppercase',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Del
+                        </button>
+                      </div>
                     </Td>
                   </tr>
                 ))}
@@ -282,6 +345,21 @@ function Th({ children }: { children?: React.ReactNode }) {
   );
 }
 
-function Td({ children }: { children: React.ReactNode }) {
+function Td({ children }: { children?: React.ReactNode }) {
   return <td style={{ padding: '10px 8px', verticalAlign: 'top' }}>{children}</td>;
+}
+
+function actionBtn(color: string): React.CSSProperties {
+  return {
+    background: color,
+    color: '#fff',
+    border: 'none',
+    padding: '5px 10px',
+    fontSize: 10,
+    fontFamily: 'var(--font-mono), monospace',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    cursor: 'pointer',
+    fontWeight: 700,
+  };
 }

@@ -12,6 +12,7 @@
     "@anthropic-ai/sdk": "^0.90.0",
     "@neondatabase/serverless": "^1.0.2",
     "@octokit/rest": "^22.0.1",
+    "@react-pdf/renderer": "^4.5.1",
     "framer-motion": "^12.38.0",
     "isomorphic-dompurify": "^3.7.1",
     "lucide-react": "^0.475.0",
