@@ -43,9 +43,20 @@ Analyse in this order of business impact:
 2. TRUST & CREDIBILITY \u2014 real testimonials vs generic stock quotes, review counts, before/after photos, licence numbers, ABN, years in business, industry memberships
 3. MOBILE FIRST \u2014 viewport tag, responsive image markup, tap target sizing hints, font sizes, line length
 4. TECHNICAL SEO \u2014 <title> wording (does it target a high-intent query?), meta description (is it a sell or a shrug?), single <h1>, schema (LocalBusiness / Service / FAQ), canonical, alt text
-5. PERFORMANCE & HYGIENE \u2014 render-blocking resources, too many fonts, inline styles, unoptimised imagery, legacy jQuery-era patterns
-6. DESIGN PROFESSIONALISM \u2014 typography discipline, whitespace, colour consistency, visual hierarchy, hero imagery quality
-7. AI OPPORTUNITY \u2014 ONE concrete, high-leverage place this specific business should deploy AI this quarter. Be specific to their industry and what you see. Examples: "rural plumber with manual after-hours booking \u2192 Claude-powered SMS triage bot for leak emergencies"
+
+5. SOCIAL SHARING \u2014 Open Graph + Twitter Card tags. These decide what a shared link looks like on Facebook, LinkedIn, iMessage, Slack, WhatsApp, X. A pre-extracted meta-tag table is provided above the HTML \u2014 use it. Check specifically:
+   \u2022 og:title present and compelling (30\u201365 chars ideal)
+   \u2022 og:description present (60\u2013160 chars ideal, pitch not shrug)
+   \u2022 og:image present, served over HTTPS, and ideally absolute (http(s)://) not relative. Recommended dimensions 1200\u00d7630 \u2014 flag if you can't tell from the URL (we can't verify dimensions ourselves, so phrase as "verify dimensions are 1200\u00d7630").
+   \u2022 og:url present and matches canonical
+   \u2022 og:type set ("website" for landing pages, "article" for blog posts)
+   \u2022 og:site_name present
+   \u2022 twitter:card at minimum "summary_large_image"; twitter:image set (falls back to og:image if absent but explicit is better)
+   \u2022 theme-color set for mobile browsers
+   For any MISSING tag, the severity is AT LEAST medium; og:image missing is critical because Facebook shares will look like a grey blank.
+6. PERFORMANCE & HYGIENE \u2014 render-blocking resources, too many fonts, inline styles, unoptimised imagery, legacy jQuery-era patterns
+7. DESIGN PROFESSIONALISM \u2014 typography discipline, whitespace, colour consistency, visual hierarchy, hero imagery quality
+8. AI OPPORTUNITY \u2014 ONE concrete, high-leverage place this specific business should deploy AI this quarter. Be specific to their industry and what you see. Examples: "rural plumber with manual after-hours booking \u2192 Claude-powered SMS triage bot for leak emergencies"
 
 Return valid JSON only, no markdown, no backticks:
 {
@@ -53,7 +64,7 @@ Return valid JSON only, no markdown, no backticks:
   "score": integer 0-100,
   "issues": [
     {
-      "category": "Conversion | Trust | Mobile | SEO | Performance | Design | AI",
+      "category": "Conversion | Trust | Mobile | SEO | Social | Performance | Design | AI",
       "severity": "critical | high | medium | low",
       "title": "5\u20138 word headline that would make a business owner say 'show me'",
       "detail": "3-4 sentences. Quote a specific phrase, class, or element from the HTML. Explain what a real visitor thinks or does because of it. Tie it to money \u2014 lost lead, abandoned checkout, lower conversion.",
@@ -140,6 +151,76 @@ async function discoverSitemapUrls(origin: string): Promise<string[]> {
     }
   }
   return [];
+}
+
+interface MetaTags {
+  title: string | null;
+  description: string | null;
+  canonical: string | null;
+  themeColor: string | null;
+  og: Record<string, string>;
+  twitter: Record<string, string>;
+}
+
+/**
+ * Regex-extract the meta tags that drive link-preview cards on
+ * Facebook / LinkedIn / Slack / iMessage / WhatsApp / X. More reliable
+ * than asking Claude to hunt through raw HTML for <meta property="og:*">.
+ */
+function extractMetaTags(html: string): MetaTags {
+  const og: Record<string, string> = {};
+  const twitter: Record<string, string> = {};
+
+  const metaRe = /<meta\s+([^>]*?)\/?>/gi;
+  let m: RegExpExecArray | null;
+  while ((m = metaRe.exec(html)) !== null) {
+    const attrs = m[1];
+    const propMatch = /(?:property|name)\s*=\s*["']([^"']+)["']/i.exec(attrs);
+    const contentMatch = /content\s*=\s*["']([^"']*)["']/i.exec(attrs);
+    if (!propMatch || !contentMatch) continue;
+    const key = propMatch[1].toLowerCase();
+    const value = contentMatch[1];
+    if (key.startsWith('og:')) og[key.slice(3)] = value;
+    else if (key.startsWith('twitter:')) twitter[key.slice(8)] = value;
+  }
+
+  const titleMatch = /<title[^>]*>([\s\S]*?)<\/title>/i.exec(html);
+  const title = titleMatch ? titleMatch[1].replace(/\s+/g, ' ').trim() : null;
+
+  const descRe1 = /<meta\s+[^>]*?(?:name|property)\s*=\s*["']description["'][^>]*?content\s*=\s*["']([^"']*)["'][^>]*?\/?>/i;
+  const descRe2 = /<meta\s+[^>]*?content\s*=\s*["']([^"']*)["'][^>]*?(?:name|property)\s*=\s*["']description["'][^>]*?\/?>/i;
+  const descMatch = descRe1.exec(html) ?? descRe2.exec(html);
+  const description = descMatch ? descMatch[1].trim() : null;
+
+  const canonRe1 = /<link\s+[^>]*?rel\s*=\s*["']canonical["'][^>]*?href\s*=\s*["']([^"']*)["'][^>]*?\/?>/i;
+  const canonRe2 = /<link\s+[^>]*?href\s*=\s*["']([^"']*)["'][^>]*?rel\s*=\s*["']canonical["'][^>]*?\/?>/i;
+  const canonMatch = canonRe1.exec(html) ?? canonRe2.exec(html);
+  const canonical = canonMatch ? canonMatch[1].trim() : null;
+
+  const themeMatch = /<meta\s+[^>]*?name\s*=\s*["']theme-color["'][^>]*?content\s*=\s*["']([^"']*)["']/i.exec(html);
+  const themeColor = themeMatch ? themeMatch[1].trim() : null;
+
+  return { title, description, canonical, themeColor, og, twitter };
+}
+
+function formatMetaTagReport(url: string, meta: MetaTags): string {
+  const ogLines = Object.entries(meta.og).length
+    ? Object.entries(meta.og).map(([k, v]) => `  og:${k} = ${v}`).join('\n')
+    : '  (no og:* tags found)';
+  const twLines = Object.entries(meta.twitter).length
+    ? Object.entries(meta.twitter).map(([k, v]) => `  twitter:${k} = ${v}`).join('\n')
+    : '  (no twitter:* tags found)';
+  return [
+    `Page: ${url}`,
+    `  <title>: ${meta.title ?? '(missing)'}`,
+    `  meta description: ${meta.description ?? '(missing)'}`,
+    `  canonical: ${meta.canonical ?? '(missing)'}`,
+    `  theme-color: ${meta.themeColor ?? '(missing)'}`,
+    `  Open Graph:`,
+    ogLines,
+    `  Twitter Card:`,
+    twLines,
+  ].join('\n');
 }
 
 function pickExtraPages(primary: URL, sitemapUrls: string[]): string[] {
@@ -291,7 +372,13 @@ async function runAudit({
       targets.map(async (t) => {
         const html = await fetchText(t, 10000);
         if (!html) return { url: t, ok: false as const };
-        return { url: t, ok: true as const, stripped: sanitiseHtml(html), rawBytes: html.length };
+        return {
+          url: t,
+          ok: true as const,
+          stripped: sanitiseHtml(html),
+          meta: extractMetaTags(html),
+          rawBytes: html.length,
+        };
       }),
     );
 
@@ -305,9 +392,22 @@ async function runAudit({
       totalChars: successful.reduce((s, p) => s + p.stripped.length, 0),
     });
 
-    // Compose labelled content block for Claude.
+    // Compose labelled content block for Claude:
+    //   1. Sitemap summary
+    //   2. Pre-parsed meta tag table per page (title, description,
+    //      canonical, og:*, twitter:*). Pre-parsing these avoids the
+    //      model missing tags buried in raw HTML.
+    //   3. Full sanitised HTML per page.
+    const metaReport = successful
+      .map((p) => formatMetaTagReport(p.url, p.meta))
+      .join('\n\n');
+
     const stripped = [
       `SITEMAP SUMMARY: ${sitemapUrls.length} URLs discovered via sitemap.xml; ${extraPages.length} extras selected alongside the homepage (prioritised by trust-signal keywords: About, Contact, Services, Licence, Team, Testimonials).`,
+      '',
+      `=== SOCIAL PREVIEW / META TAGS (pre-extracted) ===`,
+      '',
+      metaReport,
       '',
       ...successful.map(
         (p, i) => `=== PAGE ${i + 1}: ${p.url} ===\n\n${p.stripped}`,
@@ -343,7 +443,7 @@ async function runAudit({
               properties: {
                 category: {
                   type: 'string',
-                  enum: ['Conversion', 'Trust', 'Mobile', 'SEO', 'Performance', 'Design', 'AI'],
+                  enum: ['Conversion', 'Trust', 'Mobile', 'SEO', 'Social', 'Performance', 'Design', 'AI'],
                 },
                 severity: {
                   type: 'string',
