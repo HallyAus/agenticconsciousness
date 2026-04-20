@@ -123,11 +123,14 @@ export default function WebsiteAuditor() {
           {step === 'url' && (
             <form onSubmit={handleUrlSubmit} className="flex gap-[2px] max-sm:flex-col">
               <input
-                type="url"
+                type="text"
                 inputMode="url"
                 required
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
                 autoComplete="url"
-                placeholder="https://yourdomain.com"
+                placeholder="yourdomain.com"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 disabled={submitting}
