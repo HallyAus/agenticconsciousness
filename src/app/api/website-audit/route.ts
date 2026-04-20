@@ -5,6 +5,7 @@ import { sql } from '@/lib/pg';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { parseAiJson } from '@/lib/parseAiJson';
 import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
+import { STANDARD_MODEL } from '@/lib/models';
 
 /**
  * Email-only audit flow.
@@ -19,12 +20,13 @@ import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
  * manually follow up.
  */
 
-// Opus 4.6 — deliberately NOT the codebase-wide STANDARD_MODEL (Sonnet 4)
-// because the audit is the front-door lead magnet: a visitor hands us
-// their URL + email specifically to be impressed, so we pay the extra
-// tokens for depth. Audit volume is one-per-lead, not high-throughput.
-// If this alias ever fails in prod the per-step logs will say so.
-const MODEL = 'claude-opus-4-6';
+// Audit model. Override via env AI_AUDIT_MODEL (e.g. "claude-opus-4-6-20260101"
+// or whatever dated Opus your Anthropic console accepts). Falls back to the
+// codebase-wide STANDARD_MODEL (Sonnet 4) — known to work, slightly less
+// rigorous. Opus aliases like "claude-opus-4-6" and "claude-opus-4-7" were
+// rejected against Daniel's account in production on 2026-04-20; set the
+// env var to a full dated ID once confirmed.
+const MODEL = process.env.AI_AUDIT_MODEL || STANDARD_MODEL;
 const INTERNAL_LEAD_EMAIL = 'ai@agenticconsciousness.com.au';
 
 const client = new Anthropic({
