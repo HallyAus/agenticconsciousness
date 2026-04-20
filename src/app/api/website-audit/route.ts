@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { after } from 'next/server';
 import { sql } from '@/lib/pg';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { parseAiJson } from '@/lib/parseAiJson';
 import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
 
 /**
@@ -173,26 +172,67 @@ async function runAudit({
     const stripped = sanitiseHtml(html);
     console.log('[website-audit] HTML sanitised', { originalBytes: buf.byteLength, strippedChars: stripped.length });
 
-    // 2. Call Claude. We prefill the assistant turn with `{` so Opus is
-    // forced to continue as pure JSON — no preamble, no markdown fences,
-    // nothing to trip the parser.
-    console.log('[website-audit] calling Claude', { model: MODEL, maxTokens: 2500 });
+    // 2. Call Claude via tool-use forcing. Opus 4.6 rejects assistant
+    // prefill, so we use Anthropic's structured-output pattern instead:
+    // define the audit schema as a tool and require Claude to call it.
+    // Response lands as a tool_use block with already-parsed JSON input.
+    const AUDIT_TOOL: Anthropic.Tool = {
+      name: 'submit_audit',
+      description: 'Submit the website audit findings in a strict structured format.',
+      input_schema: {
+        type: 'object',
+        properties: {
+          summary: {
+            type: 'string',
+            description: 'Three sentences: who the business is, the biggest conversion-killer, and the biggest AI opportunity.',
+          },
+          score: {
+            type: 'integer',
+            minimum: 0,
+            maximum: 100,
+            description: 'Overall site score out of 100. Be honest.',
+          },
+          issues: {
+            type: 'array',
+            minItems: 4,
+            maxItems: 12,
+            items: {
+              type: 'object',
+              properties: {
+                category: {
+                  type: 'string',
+                  enum: ['Conversion', 'Trust', 'Mobile', 'SEO', 'Performance', 'Design', 'AI'],
+                },
+                severity: {
+                  type: 'string',
+                  enum: ['critical', 'high', 'medium', 'low'],
+                },
+                title: { type: 'string', description: '5-8 word headline for the issue.' },
+                detail: { type: 'string', description: '3-4 sentences quoting a specific element from the HTML.' },
+                fix: { type: 'string', description: 'One or two sentences with a concrete action.' },
+              },
+              required: ['category', 'severity', 'title', 'detail', 'fix'],
+            },
+          },
+        },
+        required: ['summary', 'score', 'issues'],
+      },
+    };
+
+    console.log('[website-audit] calling Claude', { model: MODEL, maxTokens: 3000, tool: 'submit_audit' });
     const response = await client.messages.create(
       {
         model: MODEL,
-        max_tokens: 2500,
+        max_tokens: 3000,
         system: [{ type: 'text', text: AUDIT_SYSTEM, cache_control: { type: 'ephemeral' } }],
         messages: [
           {
             role: 'user',
-            content: `URL: ${url}\n\nHTML (sanitised):\n\n${stripped}`,
-          },
-          {
-            role: 'assistant',
-            content: '{',
+            content: `URL: ${url}\n\nHTML (sanitised):\n\n${stripped}\n\nProduce the audit now via the submit_audit tool.`,
           },
         ],
-        stop_sequences: ['\n}\n\n'],
+        tools: [AUDIT_TOOL],
+        tool_choice: { type: 'tool', name: 'submit_audit' },
       },
       { signal: AbortSignal.timeout(120000) },
     );
@@ -203,32 +243,18 @@ async function runAudit({
       stopReason: response.stop_reason,
     });
 
-    const continuation = response.content
-      .filter((b): b is Anthropic.TextBlock => b.type === 'text')
-      .map((b) => b.text)
-      .join('');
-
-    // Reconstruct the full JSON: prefill `{` + continuation + closing `}` if
-    // we hit the stop sequence. If the model finished naturally (stop_reason
-    // = end_turn) the `}` is already in the continuation.
-    let fullJson = '{' + continuation;
-    if (response.stop_reason === 'stop_sequence') {
-      fullJson = fullJson.trimEnd();
-      if (!fullJson.endsWith('}')) fullJson += '\n}';
+    const toolUse = response.content.find(
+      (b): b is Anthropic.ToolUseBlock => b.type === 'tool_use' && b.name === 'submit_audit',
+    );
+    if (!toolUse || !toolUse.input || typeof toolUse.input !== 'object') {
+      const fallbackText = response.content
+        .filter((b): b is Anthropic.TextBlock => b.type === 'text')
+        .map((b) => b.text)
+        .join('');
+      throw new Error(`Claude did not call submit_audit tool. Fallback text preview: ${fallbackText.slice(0, 800) || '(empty)'}`);
     }
 
-    let rawParsed: unknown;
-    try {
-      rawParsed = parseAiJson(fullJson);
-    } catch (err) {
-      console.error('[website-audit] parseAiJson threw', err instanceof Error ? err.message : err);
-      console.error('[website-audit] reconstructed JSON was:', fullJson.slice(0, 4000));
-      // Surface a preview of the raw response in the thrown error so the
-      // admin-failure email shows us exactly what Opus returned.
-      const preview = fullJson.slice(0, 1500);
-      throw new Error(`AI produced invalid JSON. Preview: ${preview}`);
-    }
-    if (!rawParsed || typeof rawParsed !== 'object') throw new Error('AI returned non-object');
+    const rawParsed = toolUse.input;
     const parsed = rawParsed as {
       summary?: string;
       score?: number;
