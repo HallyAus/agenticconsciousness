@@ -4,191 +4,149 @@
 
 ## Last Updated
 
-- **Date:** 2026-04-19
+- **Date:** 2026-04-20
 - **Branch:** master
-- **Focus:** Stripe live products + GST fix, pricing-page redesign (3 passes), portfolio expansion + density, a11y audit, CRO audit + execution, dark-mode colour refresh
+- **Focus:** Website-Sprint launch offer ($999), /book cart + checkout, 14 Stripe extras, website audit tool (Opus 4.6 + sitemap + multi-page + tool-use + email delivery), WAF detection + AI-invisible alert, referral tracking, light/dark email template
 
 ## Accomplished
 
-### This Session (2026-04-19)
+### This Session (2026-04-20)
 
-**11 commits, 37 files changed (~1,550 inserts / ~280 deletes).** Full
-detail in `memory/sessions/2026-04-19.md`; summary below.
+**34 commits on master. Working tree clean (only `launch.cmd` untracked, pre-existing).**
 
-**Stripe:**
-- Created 8 live products + AUD prices in Stripe via MCP. Mapping lives
-  in `src/app/api/stripe/checkout/route.ts`.
-- Checkout route now uses `price: priceId` (dashboard products), adds a
-  10% GST line item (the site advertised `+ GST` but the session was
-  only billing the base — bug fix). Stripe client hoisted to module
-  scope for Fluid Compute instance reuse.
+**Launch Offer & booking flow:**
+- New Stripe product `Lightning Website Sprint` ($999 AUD live) + 14 extras as real dashboard products on acct_1TN2MmPTv8VxN1HB. All 23 products live.
+- `/book` page: hero pitch + interactive `ExtrasCart` (sprint preselected, 14 extras as tickboxes, sticky Subtotal/GST/Total bar, single Checkout button).
+- `/extras` still works as an alias of the same cart.
+- Checkout route accepts `packageIds[]` array; sprint uses dashboard price ID, extras use inline `price_data` where needed but every extra also has a real `prod_UMom*` product + `price_1TO58*` price.
+- Home-page `LaunchOffer` primary CTA points at `/book`.
+- Nav: `Book` link inserted; dropped old `AI Audit` anchor.
+- Checkout now collects name, phone, billing address via Stripe; webhook expands line items + products into lead metadata.
+- Website Sprint Stripe webhook emails a detailed admin alert per order.
+- `Lightning Website Sprint - Launch Offer` + 14 extras created on the correct AC account after a Plant Planner MCP auth mix-up (Daniel generated an `rk_live_` restricted key; used via REST; Daniel should rotate).
 
-**Pricing page — three passes:**
-- Added process grid, trust block (fine print), 8-question FAQ with
-  FAQPage JSON-LD, bestFor microcopy per starter, closing CTA.
-- Tidied — dropped redundant Pick-your-path, unified headers/spacing,
-  removed duplicate FAQ schema (kept on `/faq`).
-- Impeccable-lens break — process section rendered as an editorial
-  numeric index (huge ghost-red numerals, 2px red rules), trust block
-  as 2-col typographic index with red left-rules. Kills 9 cards off
-  the page.
-- **Reordered so prices render first**, process below.
-- `MOST BOOKED` flag on AI Stack Audit ($500).
+**Website audit tool (`/api/website-audit`):**
+- Two-step client UX: URL intent → email → fire-and-forget confirmation.
+- `/api/website-audit/intent` logs URL before email is captured (source `website-audit-intent`).
+- Main route uses Vercel `after()` so visitor never waits — ack returns in ~50ms; audit runs async.
+- Sitemap discovery (`sitemap.xml`, falls back to `_index`, `-index`). Follows sitemap-of-sitemaps one level.
+- Pick up to 4 trust-signal pages from sitemap (priority keywords: about, contact, services, licence, team, testimonials, reviews, pricing).
+- Parallel fetch with browser UA + Sec-Fetch headers.
+- Per-page HTML sanitised + middle-truncate at 20k chars (keeps head + footer).
+- Meta-tag pre-extraction: `<title>`, meta description, canonical, theme-color, every `og:*` and `twitter:*`. Labelled table prepended to the HTML given to Claude.
+- Claude Opus 4.6 (`claude-opus-4-6`) via **tool-use forcing** (`tool_choice: {type:'tool', name:'submit_audit'}`) for structured output. No prefill (Opus 4.6 rejects it). Tool schema: summary, score 0-100, 4-12 issues with category/severity/title/detail/fix.
+- Categories: Conversion, Trust, Mobile, SEO, **Social**, Performance, Design, AI.
+- Generic prompt (no AC branding, no AU-specific phrasing, no plumbing examples — portable).
+- Delivery: audit email (light-default, dark-mode media-query adaptation), lead INSERT, admin heads-up.
+- Failure path: visitor gets soft "we hit a hiccup, manual in 24h", admin gets full diagnostic with error name/message/Anthropic SDK extra context/stack top 12 lines.
+- **WAF detection:** if all page fetches return 401/403/406/429/503, skip the audit and send a special **"URGENT: Your website is invisible to AI"** email framing the firewall as a commercial threat (ChatGPT, Claude, Perplexity, Google AI Overviews, Bing Copilot all blocked same as us). Lead stored with source `website-audit-waf-blocked`.
+- URL input now accepts bare hostnames (`type=text`, `inputMode=url`) — `coastcompleteelectricalsolutions.com.au` without scheme works.
 
-**Portfolio:**
-- Capture script rewritten on puppeteer-core — emulates reduced motion,
-  injects animation-kill CSS, waits for networkidle2, scrolls to trigger
-  IntersectionObserver reveals, then snaps back. All 5 original captures
-  regenerated clean.
-- 3 new projects added: SellMyOwnHome.ai, Flat White Index, Printforge
-  CRM. Grid is now 1 hero + 3 pairs + 1 hero (8 cards).
-- Denser 3-col grid on desktop (was 2-col), 4:3 aspect (was 16:10),
-  `p-5` (was `p-8`), line-clamp-3 descriptions.
-- Outcome line added per card (2px red left rule).
+**Referral tracking:**
+- `src/lib/referral.ts`: captures `?ref=` or `?utm_source=` on landing, stores in localStorage 30 days.
+- `ExtrasCart`, `CheckoutButton`, `WebsiteAuditor` all attach the stored ref to their API calls.
+- Route stores ref in Stripe Checkout Session metadata + leads metadata.
+- Recommended convention: `?ref=fb`, `?ref=fb-ad-apr26`, `?ref=partner-joe`, etc.
 
-**A11y + audit pass (Vercel's three rulesets):**
-- `CheckoutButton` extracted as client leaf; `PricingCards` is now a
-  pure server component.
-- `alert()` replaced with inline `role="alert" aria-live="polite"`.
-- Focus-visible rings on every paid CTA.
-- `aria-hidden` on decorative bullets, arrows, tier numerals.
-- `rel="noopener noreferrer"` on external portfolio links.
-- `motion-reduce` escape on portfolio hover zoom.
-- `Processing...` → `Processing…`.
-- `transition-all` → `transition-colors`.
+**Email template:**
+- `emailTemplate()` now defaults to **light mode** (white bg, `#333` text, `#0a0a0a` headings) with `@media (prefers-color-scheme: dark)` overrides via `.ac-*` class hooks that flip to the brutalist warm-charcoal palette for dark-mode clients.
+- `<meta name="color-scheme" content="light dark">` + `supported-color-schemes`.
+- All audit email bodies + issue cards use the light-default + class-hook pattern.
 
-**CRO audit + execution:**
-- Hero H1 swapped to `AI THAT / SHIPS.` with brand demoted to mono
-  kicker. Location variants now `AI FOR / {CITY}.` Description renders
-  as a real subhead (was held in state but never shown before). Counter
-  fluff replaced with concrete facts. CTA copy: "Free consultation" →
-  "Book a 30-min discovery call".
-- `trackEvent` dispatches to PostHog alongside Meta Pixel + Google Ads.
-- `EmailLink` fires `ContactIntent` on click with a `source` prop.
-
-**Dark mode refresh:**
-- WCAG 2.1 audit of every text/bg pair — all AA-compliant. Moved pure
-  near-black to warm charcoal (`#0a0a0a` → `#141311`), pure white to
-  off-white (`#ffffff` → `#fafaf8`). Neutrals now subtly tinted toward
-  brand red-orange. Primary text ratio drops 19.8:1 → 17.7:1.
+**SDK & model:**
+- `@anthropic-ai/sdk` 0.39 → 0.90 (14 months of updates, Claude 4 family support).
+- `AI_AUDIT_MODEL` env var overrides the default `claude-opus-4-6` without a deploy.
 
 ## In Progress
 
-- Nothing actively in progress.
+- Nothing mid-flight.
 
 ## Blocked
 
-- **Cloudflare Email Obfuscation** — still returning 67 broken `/cdn-cgi/`
-  links. Disable in Cloudflare dashboard (Security → Settings). Site
-  improvement pending Daniel's action.
-- **`GITHUB_TOKEN` + `BLOG_ADMIN_KEY`** empty in Vercel env → `/api/blog/generate`
-  returns 503. Fine-grained PAT (`contents:write` on HallyAus/agenticconsciousness)
-  + any random `BLOG_ADMIN_KEY` needed.
-- **Proxmox decommission** — `docker compose down` at `/opt/agenticconsciousness/`,
-  remove Cloudflare Tunnel routes, shut VM 700. Keep one week as rollback.
+- **Cloudflare Email Obfuscation** still returning 67 broken `/cdn-cgi/` links — needs disabling in CF dashboard.
+- **`GITHUB_TOKEN` + `BLOG_ADMIN_KEY`** still empty in Vercel env — `/api/blog/generate` returns 503.
+- **Proxmox decommission** outstanding (low priority).
 
 ## Next Steps
 
-1. **Confirm Stripe webhook URL** — Daniel set Stripe keys in Vercel
-   directly. Verify webhook endpoint in Stripe dashboard points at
-   `https://agenticconsciousness.com.au/api/stripe/webhook` and that the
-   signing secret matches Vercel env `STRIPE_WEBHOOK_SECRET`.
-2. **Run PageSpeed Insights** on the deployed site post all the hero /
-   pricing / portfolio changes. Glitch component + font loading are the
-   first suspects if mobile perf < 75.
-3. **Define PostHog funnel** in the dashboard (code is ready): Pageview →
-   PricingCardView → InitiateCheckout → PurchaseComplete. `ContactIntent`
-   already fires on mailto clicks.
-4. **Stripe Tax** — once Tax Settings (origin + AU GST registration) are
-   configured in Stripe dashboard, swap the manual GST line item for
-   `automatic_tax: { enabled: true }` in `src/app/api/stripe/checkout/route.ts`.
-5. **Real client testimonials** — the pricing + hero both lack them. Ask
-   3–5 clients for a quote + outcome + title for the new social-proof
-   band.
-6. **Content depth parity** — Adelaide, Gold Coast + 6 industry pages
-   (Manufacturing, Professional Services, Trades, Healthcare, Retail,
-   Finance) still need deepDive sections like Perth/Sydney/Melbourne/Brisbane.
-7. **Conversion polish v2**: Stripe Payment Element inline checkout
-   (replace redirect), exit-intent memory cookie, sticky book-a-call bar
-   on scroll (deliberately skipped this session — breaks the brutalist
-   no-chrome rule, needs a design call).
-8. **Mobile testing on physical devices** (iPhone, Android at 320/375/iPad).
-9. **Flag to Daniel:** `printforge.com.au` apex DNS is still dead (only
-   www resolves).
+1. **Verify WAF-blocked email lands** — have someone try a Wix/Squarespace/GoDaddy-hosted site that 403s, confirm "URGENT: Your website is invisible to AI" arrives.
+2. **Rotate the `rk_live_51TN2Mm…` restricted Stripe key** (was pasted in chat for product creation; all 23 products live; key no longer needed).
+3. **Verify the Stripe webhook endpoint** in Stripe dashboard points at `https://agenticconsciousness.com.au/api/stripe/webhook` and `STRIPE_WEBHOOK_SECRET` in Vercel matches.
+4. **Consider Firecrawl or Browserless fallback** for WAF-blocked sites so we can audit them instead of just alerting. Paid service, adds latency + cost.
+5. **Delete unused `ToolGate` lint warning** (`toolId` unused — pre-existing, low priority).
+6. **PostHog funnel** not yet defined in the dashboard (events firing, just need to wire the funnel: Pageview → WebsiteAuditRequested → InitiateCheckout → Stripe purchase).
+7. **Stripe Tax** once origin + AU GST registration configured → swap manual GST line for `automatic_tax: { enabled: true }`.
+8. **Collect real client testimonials** for homepage + pricing trust.
+9. **Content parity**: Adelaide, Gold Coast + 6 industry pages still need deepDive.
 
 ## Context
 
-### Platform
-- **Frontend/API:** Vercel project `agenticconsciousness` under team
-  `danieljhall-mecoms-projects` (`prj_buiBKqIjBMim4VNehiwl9p6HaVAH`).
-- **Database:** Neon project `sweet-salad-59526830` (us-east-1).
-- **Analytics:** PostHog project `385449`
-  (`phc_Aq7QRuBcVJWbjJhXiFvnV8AFrky5xtUFGQ5Gf3pTAJS4`), host
-  `https://us.i.posthog.com`.
-- **Stripe:** account `acct_1TN2MmPTv8VxN1HB` ("Agentic Consciousness"),
-  live mode. 8 products created 2026-04-17.
-- **DNS:** Cloudflare grey-cloud → `cname.vercel-dns.com`. Apex serves;
-  www 301s to apex.
+### Stripe live products on Agentic Consciousness (acct_1TN2MmPTv8VxN1HB)
 
-### Stripe product / price IDs (live)
+8 consulting packages + Sprint + 14 extras = 23 products. All livemode.
 
-| packageId | Product ID | Price ID | A$ |
-|---|---|---|---|
-| claude-workshop | prod_ULk9nAFdNphocE | price_1TN2frPTv8VxN1HBYRWqlFNG | 300 |
-| claude-code-setup | prod_ULk950lOZ32FWh | price_1TN2fsPTv8VxN1HB4Lf70QAI | 450 |
-| ai-stack-audit | prod_ULk9YEk2hR5NHL | price_1TN2fxPTv8VxN1HBKqdq3lRa | 500 |
-| claude-project-build | prod_ULk9F52kIdr2f6 | price_1TN2fyPTv8VxN1HBlMMGkmKM | 750 |
-| automation-sprint | prod_ULk9edLkANFYOB | price_1TN2fyPTv8VxN1HB2pxyAvDL | 1,500 |
-| strategy-deposit | prod_ULkAdWJOIWa64a | price_1TN2fzPTv8VxN1HBIKPTW8YK | 1,500 |
-| implementation-deposit | prod_ULkANjMeI4yBEY | price_1TN2g0PTv8VxN1HBCTqIiDg8 | 2,500 |
-| automation-deposit | prod_ULkAwGmB1ew1VG | price_1TN2g1PTv8VxN1HBbOfOKGtx | 5,000 |
+| packageId | Price ID | A$ |
+|---|---|---|
+| claude-workshop | price_1TN2frPTv8VxN1HBYRWqlFNG | 300 |
+| claude-code-setup | price_1TN2fsPTv8VxN1HB4Lf70QAI | 450 |
+| ai-stack-audit | price_1TN2fxPTv8VxN1HBKqdq3lRa | 500 |
+| claude-project-build | price_1TN2fyPTv8VxN1HBlMMGkmKM | 750 |
+| automation-sprint | price_1TN2fyPTv8VxN1HB2pxyAvDL | 1,500 |
+| strategy-deposit | price_1TN2fzPTv8VxN1HBIKPTW8YK | 1,500 |
+| implementation-deposit | price_1TN2g0PTv8VxN1HBCTqIiDg8 | 2,500 |
+| automation-deposit | price_1TN2g1PTv8VxN1HBbOfOKGtx | 5,000 |
+| website-sprint | price_1TO4woPTv8VxN1HBlY6cCy8z | 999 |
+| extra-page | price_1TO58lPTv8VxN1HB4aDSAuLX | 100 |
+| blog-cms | price_1TO58mPTv8VxN1HBlPYS3HBb | 400 |
+| multi-language | price_1TO58nPTv8VxN1HBt5lWNTKl | 300 |
+| stripe-integration | price_1TO58oPTv8VxN1HBFcxPwbro | 300 |
+| ecommerce-catalog | price_1TO58pPTv8VxN1HBFSVzZKsZ | 500 |
+| booking-integration | price_1TO58qPTv8VxN1HBg3lmFk9c | 200 |
+| auth-integration | price_1TO58rPTv8VxN1HBHdsyJwLB | 500 |
+| contact-form | price_1TO58sPTv8VxN1HB9Plitw4K | 150 |
+| extra-copywriting | price_1TO58tPTv8VxN1HB2lD7y5Ym | 100 |
+| chatbot-training | price_1TO58uPTv8VxN1HBHvPSTa5D | 300 |
+| ga4-gtm | price_1TO58vPTv8VxN1HBN1mVVBs2 | 150 |
+| posthog-setup | price_1TO58wPTv8VxN1HB6psjvWsr | 150 |
+| seo-deep | price_1TO58xPTv8VxN1HBGAyAMbSX | 250 |
+| design-polish | price_1TO58yPTv8VxN1HB79V1hVRy | 400 |
 
 ### Gotchas discovered this session
-- **Stripe inline `price_data` bypasses dashboard products** — reporting
-  and Stripe Tax can't match an inline price to a Product record. Always
-  use `price: priceId` for production commerce.
-- **`+ GST` marketing copy requires an explicit line item** if Stripe
-  Tax isn't configured — otherwise customers are literally undercharged
-  by 10%. Current workaround is a manual GST line item computed as
-  `Math.round(baseCents * 0.1)`.
-- **`'use client'` was applied to components that didn't need it** —
-  `PricingCards` had 350 lines of data arrays crossing the client
-  boundary for a single loading-state hook. Extract the stateful leaf,
-  keep the rest on the server.
-- **Chrome headless `--screenshot` can't emulate `prefers-reduced-motion`**
-  or inject CSS pre-load. Puppeteer-core + system Chrome is the right
-  tool for capturing sites with framer-motion reveals.
-- **Pricing pages should show prices first, then justify** — the
-  opposite (process → prices) made visitors scroll past an editorial
-  before seeing what things cost. Reverse on commerce pages.
-- **Brand-wordmark-as-H1** optimises for recall but kills first-paint
-  comprehension. Demote wordmark to a mono kicker, use the H1 for a
-  value prop. SEO also prefers this.
-- **WCAG 2.1 AA** isn't the ceiling — primary text at 19.8:1 causes
-  eye strain on dark themes. Target 15–18:1 with off-white + warm
-  charcoal, not pure `#fff` on pure `#000`.
+- **`claude-opus-4-6` and `claude-opus-4-7` aliases** both work with SDK 0.90. With 0.39 the API rejected them. Upgrading the SDK was a required fix, not optional.
+- **Opus 4.6 does NOT support assistant-message prefill.** API returns `"This model does not support assistant message prefill. The conversation must end with a user message."` Use tool-use forcing for structured output instead.
+- **Sonnet 4 gives checklist-slop audits.** Opus 4.6 is worth the 5x token cost on a one-per-lead audit tool.
+- **Email clients default dark-mode-invert **HTML emails unless you explicitly signal `color-scheme: light dark` via meta + CSS. Hardcoded `background:#0a0a0a` renders even when client is in light mode.
+- **`type="url"` on HTML inputs** rejects bare hostnames (`coastcompleteelectricalsolutions.com.au` without scheme) at the browser level before JS runs. Use `type="text"` + `inputMode="url"` + client-side normalise.
+- **Stripe MCP auth** can silently switch accounts between sessions. Always verify with `get_stripe_account_info` before creating products.
+- **WAF-protected sites** (managed AU hosting, Cloudflare Bot Fight Mode) return 403 to every non-interactive fetch regardless of browser UA or Sec-Fetch headers. Need real-browser automation (Firecrawl / Browserless / ScrapingBee) to bypass. Currently we detect + alert rather than bypass.
+- **Next.js `after()` import:** stable in Next 16, no `unstable_` prefix needed.
+- **Sitemap scoring tiebreaker:** path-depth matters. A plumber site's `/our-services/hot-water-repairs-central-coast/` scores below `/our-services/` because the latter has shallower depth + matches the service keyword.
 
 ### Key files this session
 ```
 New:
-  src/components/CheckoutButton.tsx
-  memory/sessions/2026-04-19.md
-
-Rewrote:
-  scripts/capture-portfolio.cjs (puppeteer-core + motion-reduce)
-  src/components/PricingCards.tsx (server component + CheckoutButton)
-  src/components/EmailLink.tsx (tracking wrapper)
+  src/app/api/website-audit/route.ts
+  src/app/api/website-audit/intent/route.ts
+  src/app/api/website-audit/email/route.ts (deprecated 410 stub)
+  src/app/book/page.tsx, src/app/book/layout.tsx
+  src/app/extras/page.tsx, src/app/extras/layout.tsx
+  src/components/WebsiteAuditor.tsx
+  src/components/ExtrasCart.tsx
+  src/components/LaunchOffer.tsx
+  src/lib/referral.ts
 
 Modified:
-  src/app/api/stripe/checkout/route.ts (price IDs + GST line + module-scope Stripe)
-  src/app/pricing/page.tsx (3 passes: feature / tidy / impeccable + reorder)
-  src/app/globals.css (dark-mode tokens)
-  src/components/Portfolio.tsx (3 new projects + 3-col + outcome lines)
-  src/components/Hero.tsx (value-prop H1 + real description + new metrics)
-  src/lib/personalisation.ts (all location headlines + descriptions rewritten)
-  src/lib/tracking.ts (PostHog dispatch)
-
-Asset churn:
-  +9 new portfolio images (sellmyownhome/flatwhiteindex/printforge-crm x3 formats)
-  All 8 portfolio images regenerated via the new capture pipeline
+  src/lib/email.ts (light-default template + dark-mode CSS)
+  src/app/api/stripe/checkout/route.ts (cart + 14 extras + ref + billing collection)
+  src/app/api/stripe/webhook/route.ts (line items + full customer capture)
+  src/components/CheckoutButton.tsx (ref passthrough)
+  src/components/Nav.tsx via src/lib/constants.ts (Book link)
+  package.json (Anthropic SDK 0.39 -> 0.90)
 ```
+
+## Learnings (condensed)
+- Checklist-slop vs consultation-grade audit is 80% prompt + 20% model. Opus 4.6 + tool-use + evidence-quoting rule = different product.
+- Email dark-mode is a CSS media-query problem, not a brand-palette problem. Default light, let clients opt-into dark via `@media (prefers-color-scheme: dark)`.
+- Users type bare hostnames. Design for it from the start.
+- WAF-blocked sites are hot leads, not dead ends — frame the block as a commercial threat and the alert email IS the sales pitch.
+- Track everything in `leads.metadata` JSON. One table, `source` column, richly-typed metadata per source. Query across signals by email.
