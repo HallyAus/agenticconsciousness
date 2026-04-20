@@ -22,7 +22,6 @@ import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
 // still supported). Override via AI_AUDIT_MODEL env var if you ever want
 // to switch to Opus 4.7 or a dated snapshot without a deploy.
 const MODEL = process.env.AI_AUDIT_MODEL || 'claude-opus-4-6';
-const INTERNAL_LEAD_EMAIL = 'ai@agenticconsciousness.com.au';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
