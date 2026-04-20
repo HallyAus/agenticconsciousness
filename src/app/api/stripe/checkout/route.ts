@@ -71,6 +71,8 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const proposalId: string | undefined = body.proposalId;
+    const rawRef: unknown = body.ref;
+    const ref = typeof rawRef === 'string' && /^[A-Za-z0-9._-]{1,64}$/.test(rawRef) ? rawRef : '';
 
     // Accept either a single packageId or an array of packageIds.
     const rawIds: string[] = Array.isArray(body.packageIds)
@@ -135,6 +137,7 @@ export async function POST(req: NextRequest) {
         proposalId: proposalId || '',
         subtotalCents: String(subtotalCents),
         gstCents: String(gstCents),
+        ref,
       },
       success_url: `${siteUrl}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/extras`,

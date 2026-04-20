@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { trackEvent } from '@/lib/tracking';
+import { captureRefFromUrl, getStoredRef } from '@/lib/referral';
 
 interface Item {
   id: string;
@@ -58,6 +59,13 @@ export default function ExtrasCart() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    const ref = captureRefFromUrl();
+    if (ref) {
+      trackEvent('ReferralVisit', { ref, page: 'extras_cart' });
+    }
+  }, []);
+
   function toggle(id: string) {
     setSelected((prev) => {
       const next = new Set(prev);
@@ -85,10 +93,11 @@ export default function ExtrasCart() {
     });
 
     try {
+      const ref = getStoredRef();
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ packageIds: Array.from(selected) }),
+        body: JSON.stringify({ packageIds: Array.from(selected), ref }),
       });
       const data = await res.json();
       if (data.url) {
@@ -104,7 +113,7 @@ export default function ExtrasCart() {
   }
 
   return (
-    <main className="pt-[60px] min-h-screen pb-36">
+    <div className="pb-36">
       <section className="py-20 px-10 max-md:px-5 max-sm:px-4 max-sm:py-14">
         <div className="max-w-[1200px] mx-auto">
 
@@ -233,7 +242,7 @@ export default function ExtrasCart() {
           )}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { trackEvent } from '@/lib/tracking';
+import { getStoredRef } from '@/lib/referral';
 
 interface Props {
   packageId: string;
@@ -27,10 +28,11 @@ export default function CheckoutButton({
     trackEvent('InitiateCheckout', { content_name: packageId });
 
     try {
+      const ref = getStoredRef();
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ packageId }),
+        body: JSON.stringify({ packageId, ref }),
       });
       const data = await res.json();
       if (data.url) {

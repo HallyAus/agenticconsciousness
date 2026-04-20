@@ -30,7 +30,9 @@ export default function ExtrasPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <ExtrasCart />
+      <main id="main-content" className="pt-[60px] min-h-screen">
+        <ExtrasCart />
+      </main>
     </>
   );
 }
