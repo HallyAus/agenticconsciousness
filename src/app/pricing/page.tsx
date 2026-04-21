@@ -107,6 +107,7 @@ export default function PricingPage() {
     name: 'AI Consulting Packages',
     description: 'Transparent pricing for AI consulting services by Agentic Consciousness.',
     url: 'https://agenticconsciousness.com.au/pricing',
+    isPartOf: { '@id': 'https://agenticconsciousness.com.au/#website' },
     provider: {
       '@type': 'Organization',
       '@id': 'https://agenticconsciousness.com.au/#organization',

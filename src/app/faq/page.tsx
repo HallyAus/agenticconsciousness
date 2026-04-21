@@ -445,6 +445,9 @@ export default function FAQPage() {
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
+    url: 'https://agenticconsciousness.com.au/faq',
+    isPartOf: { '@id': 'https://agenticconsciousness.com.au/#website' },
+    about: { '@id': 'https://agenticconsciousness.com.au/#organization' },
     mainEntity: faqs.map((faq) => ({
       '@type': 'Question',
       name: faq.q,

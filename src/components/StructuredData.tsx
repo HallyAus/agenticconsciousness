@@ -5,6 +5,11 @@ export default function StructuredData() {
     '@id': 'https://agenticconsciousness.com.au/#organization',
     name: 'Agentic Consciousness',
     url: 'https://agenticconsciousness.com.au',
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': 'https://agenticconsciousness.com.au/#webpage',
+      url: 'https://agenticconsciousness.com.au',
+    },
     logo: 'https://agenticconsciousness.com.au/og-image.png',
     image: 'https://agenticconsciousness.com.au/og-image.png',
     description:
