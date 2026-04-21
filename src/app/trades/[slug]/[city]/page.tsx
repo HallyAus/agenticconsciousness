@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import TradeLanding from '@/components/TradeLanding';
+import TradeBreadcrumb from '@/components/TradeBreadcrumb';
 import { TRADES, TRADE_MAP } from '@/data/trades';
 import { TRADE_CITIES, CITY_MAP } from '@/data/trade-cities';
 
@@ -102,6 +103,7 @@ export default async function TradeCityPage({ params }: Params) {
   return (
     <>
       <Nav />
+      <TradeBreadcrumb trade={trade} city={tradeCity} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(service) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqPage) }} />

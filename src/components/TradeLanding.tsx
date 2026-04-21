@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type { Trade } from '@/data/trades';
 import type { TradeCity } from '@/data/trade-cities';
-import { TRADE_MAP } from '@/data/trades';
+import { TRADES, TRADE_MAP } from '@/data/trades';
 import { TRADE_CITIES } from '@/data/trade-cities';
 import TradeLeadMagnet from '@/components/TradeLeadMagnet';
 
@@ -45,7 +45,7 @@ export default function TradeLanding({ trade, city }: TradeLandingProps) {
     : `${trade.plural} — ${locationLabel}`;
 
   return (
-    <main id="main-content" className="pt-[60px]">
+    <main id="main-content">
       {/* HERO */}
       <section className="relative px-10 max-md:px-5 max-sm:px-4 pt-20 pb-16 max-md:pt-16 max-md:pb-12">
         <div className="max-w-[1200px] mx-auto">
@@ -261,93 +261,105 @@ export default function TradeLanding({ trade, city }: TradeLandingProps) {
         </div>
       </section>
 
-      {/* RELATED TRADES */}
+      {/* EXPLORE MORE — up / sideways / down, with clear escape routes */}
       <section className="px-10 max-md:px-5 max-sm:px-4 py-20 bg-ac-card">
         <div className="max-w-[1200px] mx-auto">
-          <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red mb-4">Other trades we build for</div>
-          <h2 className="font-display font-black text-[clamp(1.6rem,3.5vw,2.6rem)] leading-[1] mb-8 text-text-primary">
-            Adjacent trades, same $999 sprint.
+          <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red mb-4">
+            Explore more
+          </div>
+          <h2 className="font-display font-black text-[clamp(1.6rem,3.5vw,2.6rem)] leading-[1] mb-10 text-text-primary">
+            Not quite what you needed?
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-[2px]">
-            {trade.relatedSlugs.map((slug) => {
-              const related = TRADE_MAP[slug];
-              if (!related) return null;
-              const href = city ? `/trades/${slug}/${city.slug}` : `/trades/${slug}`;
-              return (
-                <Link
-                  key={slug}
-                  href={href}
-                  className="bg-ac-bg border border-border-subtle p-5 hover:border-ac-red transition-colors duration-200"
-                >
-                  <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-ac-red mb-2">Also built</div>
-                  <div className="font-display font-black text-[1.1rem] text-text-primary leading-tight">{related.plural}</div>
-                  {city ? (
-                    <div className="font-mono text-[0.7rem] tracking-[1.5px] uppercase text-text-dim mt-1">{city.name}</div>
-                  ) : null}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </section>
 
-      {/* CITY ROW (only on trade-only page) */}
-      {!city ? (
-        <section className="px-10 max-md:px-5 max-sm:px-4 py-16">
-          <div className="max-w-[1200px] mx-auto">
-            <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red mb-4">
-              {trade.plural} website — by city
-            </div>
-            <h2 className="font-display font-black text-[clamp(1.6rem,3.5vw,2.4rem)] leading-[1] mb-8 text-text-primary">
-              Pick your city — we tune the site for your local market.
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-[2px]">
-              {TRADE_CITIES.map((c) => (
-                <Link
-                  key={c.slug}
-                  href={`/trades/${trade.slug}/${c.slug}`}
-                  className="bg-ac-card border border-border-subtle p-5 hover:border-ac-red transition-colors duration-200"
-                >
-                  <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-ac-red mb-2">{c.state}</div>
-                  <div className="font-display font-black text-[1.05rem] text-text-primary leading-tight">{trade.plural}</div>
-                  <div className="font-mono text-[0.7rem] tracking-[1.5px] uppercase text-text-dim mt-1">in {c.name}</div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
-
-      {/* TOP-SUBURBS + OTHER CITIES (only on city page) */}
-      {city ? (
-        <section className="px-10 max-md:px-5 max-sm:px-4 py-16">
-          <div className="max-w-[1200px] mx-auto">
-            <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red mb-4">
-              Covering {city.name}
-            </div>
-            <h2 className="font-display font-black text-[clamp(1.6rem,3.5vw,2.4rem)] leading-[1] mb-8 text-text-primary">
-              Serving {city.topSuburbs.slice(0, 3).join(', ')}, and every suburb in between.
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-[2px] mb-10">
-              {city.topSuburbs.map((s) => (
-                <div key={s} className="bg-ac-card border border-border-subtle p-4">
-                  <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-ac-red mb-1">Suburb</div>
-                  <div className="font-display font-bold text-[1rem] text-text-primary">{s}</div>
+          {/* Row 1 — the main "get out" buttons, always present */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[2px] mb-[2px]">
+            <Link
+              href="/trades"
+              className="bg-ac-red text-white p-6 hover:bg-white hover:text-[#0a0a0a] transition-colors duration-200 group"
+            >
+              <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-white/80 group-hover:text-[#0a0a0a]/60 mb-2">
+                Back up &uarr;
+              </div>
+              <div className="font-display font-black text-[1.1rem] leading-tight">See all {TRADES.length} trades</div>
+            </Link>
+            {city ? (
+              <Link
+                href={`/trades/${trade.slug}`}
+                className="bg-ac-bg border-2 border-ac-red p-6 text-text-primary hover:bg-ac-red hover:text-white transition-colors duration-200 group"
+              >
+                <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-ac-red group-hover:text-white/80 mb-2">
+                  Back up &uarr;
                 </div>
-              ))}
-            </div>
+                <div className="font-display font-black text-[1.1rem] leading-tight">All {trade.plural.toLowerCase()}</div>
+              </Link>
+            ) : (
+              <Link
+                href="/pricing"
+                className="bg-ac-bg border-2 border-ac-red p-6 text-text-primary hover:bg-ac-red hover:text-white transition-colors duration-200 group"
+              >
+                <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-ac-red group-hover:text-white/80 mb-2">
+                  Other services &rarr;
+                </div>
+                <div className="font-display font-black text-[1.1rem] leading-tight">Full pricing</div>
+              </Link>
+            )}
+            <Link
+              href="/book"
+              className="bg-ac-bg border-2 border-ac-red p-6 text-text-primary hover:bg-ac-red hover:text-white transition-colors duration-200 group"
+            >
+              <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-ac-red group-hover:text-white/80 mb-2">
+                Book &rarr;
+              </div>
+              <div className="font-display font-black text-[1.1rem] leading-tight">Discovery call</div>
+            </Link>
+          </div>
 
-            <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red mb-4">
-              {trade.plural} — other cities
+          {/* Row 2 — sideways: similar trades */}
+          <div className="mt-10">
+            <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-text-dim mb-3">
+              Similar trades{city ? ` in ${city.name}` : ''}
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-[2px]">
-              {TRADE_CITIES.filter((c) => c.slug !== city.slug).slice(0, 4).map((c) => (
+              {trade.relatedSlugs.map((slug) => {
+                const related = TRADE_MAP[slug];
+                if (!related) return null;
+                const href = city ? `/trades/${slug}/${city.slug}` : `/trades/${slug}`;
+                return (
+                  <Link
+                    key={slug}
+                    href={href}
+                    className="bg-ac-bg border border-border-subtle p-4 hover:border-ac-red transition-colors duration-200"
+                  >
+                    <div className="font-mono text-[0.65rem] tracking-[1.5px] uppercase text-ac-red mb-1">Also built</div>
+                    <div className="font-display font-black text-[1rem] text-text-primary leading-tight">
+                      {related.plural}
+                    </div>
+                    {city ? (
+                      <div className="font-mono text-[0.65rem] tracking-[1.5px] uppercase text-text-dim mt-1">
+                        {city.name}
+                      </div>
+                    ) : null}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Row 3 — cities for this trade */}
+          <div className="mt-8">
+            <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-text-dim mb-3">
+              {city ? `${trade.plural} — other cities` : `${trade.plural} — pick your city`}
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-[2px]">
+              {TRADE_CITIES.filter((c) => !city || c.slug !== city.slug).map((c) => (
                 <Link
                   key={c.slug}
                   href={`/trades/${trade.slug}/${c.slug}`}
-                  className="bg-ac-card border border-border-subtle p-4 hover:border-ac-red transition-colors duration-200"
+                  className="bg-ac-bg border border-border-subtle p-4 hover:border-ac-red transition-colors duration-200"
                 >
-                  <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-ac-red mb-1">{c.state}</div>
+                  <div className="font-mono text-[0.65rem] tracking-[1.5px] uppercase text-ac-red mb-1">
+                    {c.state}
+                  </div>
                   <div className="font-display font-bold text-[0.95rem] text-text-primary">
                     {trade.plural} {c.name}
                   </div>
@@ -355,8 +367,27 @@ export default function TradeLanding({ trade, city }: TradeLandingProps) {
               ))}
             </div>
           </div>
-        </section>
-      ) : null}
+
+          {/* Suburbs — only on city pages, as context not navigation */}
+          {city ? (
+            <div className="mt-8">
+              <div className="font-mono text-[0.7rem] tracking-[2px] uppercase text-text-dim mb-3">
+                Serving these suburbs of {city.name}
+              </div>
+              <div className="flex flex-wrap gap-[2px]">
+                {city.topSuburbs.map((s) => (
+                  <span
+                    key={s}
+                    className="inline-block bg-ac-bg border border-border-subtle px-3 py-2 font-mono text-[0.72rem] tracking-[1.5px] uppercase text-text-primary"
+                  >
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </section>
 
       {/* FINAL CTA */}
       <section className="px-10 max-md:px-5 max-sm:px-4 py-24 border-t-2 border-ac-red">

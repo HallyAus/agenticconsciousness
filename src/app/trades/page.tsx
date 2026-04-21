@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import TradeBreadcrumb from '@/components/TradeBreadcrumb';
 import { TRADES } from '@/data/trades';
 import { TRADE_CITIES } from '@/data/trade-cities';
 
@@ -54,6 +55,7 @@ export default function TradesHub() {
   return (
     <>
       <Nav />
+      <TradeBreadcrumb />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
@@ -63,7 +65,7 @@ export default function TradesHub() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
       />
 
-      <main id="main-content" className="pt-[60px]">
+      <main id="main-content">
         <section className="px-10 max-md:px-5 max-sm:px-4 pt-20 pb-16 max-md:pt-16">
           <div className="max-w-[1200px] mx-auto">
             <div className="font-mono text-[0.75rem] tracking-[3px] uppercase text-ac-red mb-5">
