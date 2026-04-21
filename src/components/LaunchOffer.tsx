@@ -113,15 +113,15 @@ export default function LaunchOffer() {
                 >
                   Build your sprint &rarr;
                 </Link>
-                <a
-                  href="#contact"
+                <Link
+                  href="/trades"
                   className="font-display text-[0.85rem] max-sm:text-xs font-black tracking-[2px] uppercase py-4 px-8 no-underline transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
                   style={{ border: '2px solid var(--red)', color: 'var(--red-text)' }}
                 >
-                  Ask first &rarr;
-                </a>
+                  For tradies &rarr;
+                </Link>
                 <div className="font-mono text-[0.72rem] tracking-[2px] uppercase text-text-dim leading-[1.5]">
-                  Pay in full &middot; Fixed scope &middot; 48h delivery
+                  Pay in full &middot; Fixed scope &middot; 30 trades &middot; 8 cities
                 </div>
               </div>
             </div>

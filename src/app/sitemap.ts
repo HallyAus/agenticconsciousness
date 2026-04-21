@@ -1,5 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getAllPosts } from '@/lib/blog';
+import { TRADES } from '@/data/trades';
+import { TRADE_CITIES } from '@/data/trade-cities';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://agenticconsciousness.com.au';
@@ -36,5 +38,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...blogPages, ...landingPages];
+  // Trades hub + 30 trades × 8 cities = 271 pages
+  const tradesHub = {
+    url: `${baseUrl}/trades`,
+    lastModified: now,
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  };
+
+  const tradePages = TRADES.map(t => ({
+    url: `${baseUrl}/trades/${t.slug}`,
+    lastModified: now,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7,
+  }));
+
+  const tradeCityPages = TRADES.flatMap(t =>
+    TRADE_CITIES.map(c => ({
+      url: `${baseUrl}/trades/${t.slug}/${c.slug}`,
+      lastModified: now,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    }))
+  );
+
+  return [...staticPages, ...blogPages, ...landingPages, tradesHub, ...tradePages, ...tradeCityPages];
 }

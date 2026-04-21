@@ -29,8 +29,8 @@ export const INITIAL_BOT_MESSAGE =
 
 export const NAV_LINKS = [
   { label: 'Services', href: '/#services' },
+  { label: 'Trades', href: '/trades' },
   { label: 'Portfolio', href: '/#portfolio' },
-  { label: 'Results', href: '/#cases' },
   { label: 'Tools', href: '/tools' },
   { label: 'Pricing', href: '/pricing' },
   { label: 'Book', href: '/book' },
