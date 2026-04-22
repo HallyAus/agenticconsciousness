@@ -71,9 +71,14 @@ export async function GET(
           p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
           p.mockup_screenshot_url ? fetchAsNormalisedJpeg(p.mockup_screenshot_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
         ]);
-        const desktopBuf = desktopShot?.data ?? null;
-        const mobileBuf = mobileShot?.data ?? null;
-        const mockupBuf = mockupShot?.data ?? null;
+        // Convert to data URI strings. Buffer path has repeatedly caused
+        // silent native crashes in fontkit/pdfkit on Vercel. String
+        // data URIs are the shape that renders reliably.
+        const toDataUri = (b: { data: Buffer; format: 'jpg' } | null): string | null =>
+          b ? `data:image/jpeg;base64,${b.data.toString('base64')}` : null;
+        const desktopBuf = toDataUri(desktopShot);
+        const mobileBuf = toDataUri(mobileShot);
+        const mockupBuf = toDataUri(mockupShot);
 
         const basePdfArgs = {
           url: p.url,
@@ -92,9 +97,9 @@ export async function GET(
 
         console.log('[admin/pdf] render start', {
           id,
-          desk_buf_bytes: desktopBuf?.byteLength ?? null,
-          mob_buf_bytes: mobileBuf?.byteLength ?? null,
-          mockup_buf_bytes: mockupBuf?.byteLength ?? null,
+          desk_uri_len: desktopBuf?.length ?? null,
+          mob_uri_len: mobileBuf?.length ?? null,
+          mockup_uri_len: mockupBuf?.length ?? null,
         });
 
         try {

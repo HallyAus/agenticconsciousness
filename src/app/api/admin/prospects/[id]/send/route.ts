@@ -137,9 +137,11 @@ export async function POST(
         p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
         p.mockup_screenshot_url ? fetchAsNormalisedJpeg(p.mockup_screenshot_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
       ]);
-      const desktopBuf = desktopShot?.data ?? null;
-      const mobileBuf = mobileShot?.data ?? null;
-      const mockupBuf = mockupShot?.data ?? null;
+      const toDataUri = (b: { data: Buffer; format: 'jpg' } | null): string | null =>
+        b ? `data:image/jpeg;base64,${b.data.toString('base64')}` : null;
+      const desktopBuf = toDataUri(desktopShot);
+      const mobileBuf = toDataUri(mobileShot);
+      const mockupBuf = toDataUri(mockupShot);
 
       const basePdfArgs = {
         url: p.url,
@@ -158,8 +160,8 @@ export async function POST(
 
       console.log('[send] pdf render', {
         id,
-        desk_buf_bytes: desktopBuf?.byteLength ?? null,
-        mob_buf_bytes: mobileBuf?.byteLength ?? null,
+        desk_uri_len: desktopBuf?.length ?? null,
+        mob_uri_len: mobileBuf?.length ?? null,
       });
 
       try {
