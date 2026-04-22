@@ -14,6 +14,7 @@ import { captureScreenshots } from '@/lib/screenshots';
 import { generateMockup } from '@/lib/mockup';
 import { extractSiteBranding } from '@/lib/site-scrape';
 import { getPlaceDetails, type PlaceReview } from '@/lib/places';
+import { clearPdfCache } from '@/lib/pdf-cache';
 
 interface EnrichExistingRow {
   business_name: string | null;
@@ -61,6 +62,14 @@ export async function enrichProspectWithScanAndShots(args: {
       if (issues.length === 0) issues = rows[0].audit_data?.issues ?? issues;
     }
   }
+
+  // Invalidate the cached PDF before we start writing new scan / mockup
+  // data. The next /pdf, /send or /test-draft hit will re-render against
+  // the fresh state. Old blob stays in Vercel Blob storage (cheap; not
+  // worth explicit deletion).
+  await clearPdfCache(prospectId).catch((err) => {
+    console.error('[audit-enrich] clearPdfCache failed', err instanceof Error ? err.message : err);
+  });
 
   // Parallelise all independent I/O: site scan, screenshot capture,
   // branding extraction (fetches logo for colour sampling), and Google

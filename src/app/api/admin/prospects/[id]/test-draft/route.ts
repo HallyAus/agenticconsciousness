@@ -5,6 +5,7 @@ import { createDraftAuto } from '@/lib/graph-auto';
 import { isGraphConfigured } from '@/lib/graph';
 import { isDelegatedConnected } from '@/lib/graph-delegated';
 import { buildTouch1, type OutreachIssue } from '@/lib/outreach';
+import { getOrRenderPdf } from '@/lib/pdf-cache';
 
 export const maxDuration = 60;
 
@@ -90,41 +91,39 @@ export async function POST(
   const built = buildTouch1(ctx);
   const subject = `[TEST] ${built.subject}`;
 
-  const { fetchAsNormalisedJpeg } = await import('@/lib/fetch-image');
-  const [desktopShot, mobileShot] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
-  ]);
-  const desktopBuf = desktopShot?.data ?? null;
-  const mobileBuf = mobileShot?.data ?? null;
+  const cached = await getOrRenderPdf({
+    prospectId: id,
+    domain,
+    renderFn: async () => {
+      const { fetchAsNormalisedJpeg } = await import('@/lib/fetch-image');
+      const [desktopShot, mobileShot] = await Promise.all([
+        p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+        p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+      ]);
+      const desktopBuf = desktopShot?.data ?? null;
+      const mobileBuf = mobileShot?.data ?? null;
 
-  const basePdfArgs = {
-    url: p.url,
-    businessName: p.business_name,
-    score: p.audit_score,
-    summary: p.audit_summary ?? '',
-    issues: p.audit_data.issues,
-    date: new Date().toISOString().slice(0, 10),
-    brokenLinksCount: p.broken_links_count,
-    viewportMetaOk: p.viewport_meta_ok,
-    copyrightYear: p.copyright_year,
-  };
+      const basePdfArgs = {
+        url: p.url,
+        businessName: p.business_name,
+        score: p.audit_score ?? 0,
+        summary: p.audit_summary ?? '',
+        issues: p.audit_data?.issues ?? [],
+        date: new Date().toISOString().slice(0, 10),
+        brokenLinksCount: p.broken_links_count,
+        viewportMetaOk: p.viewport_meta_ok,
+        copyrightYear: p.copyright_year,
+      };
 
-  let pdfBuffer: Buffer;
-  try {
-    pdfBuffer = await renderAuditPdf({
-      ...basePdfArgs,
-      screenshotDesktop: desktopBuf,
-      screenshotMobile: mobileBuf,
-    });
-  } catch (err) {
-    console.error('[test-draft] PDF render with screenshots failed, retrying without:', err instanceof Error ? err.message : err);
-    pdfBuffer = await renderAuditPdf({
-      ...basePdfArgs,
-      screenshotDesktop: null,
-      screenshotMobile: null,
-    });
-  }
+      try {
+        return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
+      } catch (err) {
+        console.error('[test-draft] PRIMARY render FAILED, retrying without shots:', err instanceof Error ? err.message : err);
+        return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: null, screenshotMobile: null });
+      }
+    },
+  });
+  const pdfBuffer = cached.bytes;
 
   try {
     const draft = await createDraftAuto({

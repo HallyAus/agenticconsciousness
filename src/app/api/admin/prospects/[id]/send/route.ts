@@ -10,6 +10,7 @@ import { isSuppressed } from '@/lib/suppression';
 import { pickRandomActiveVariant, renderSubject } from '@/lib/subject-variants';
 import { isBlockingVerdict, validateEmail } from '@/lib/email-validate';
 import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
+import { getOrRenderPdf } from '@/lib/pdf-cache';
 
 // Allow up to 60s for send: audit is already done, but two ScreenshotOne
 // prefetches + PDF render + Graph draft creation can add up when
@@ -123,56 +124,48 @@ export async function POST(
     || (variant ? renderSubject(variant.template, { domain, businessName: p.business_name }) : built.subject);
   const html = overrides.htmlOverride?.trim() || built.html;
 
-  // Raw Buffer path — this is the shape that worked before we
-  // introduced the <View break> page-break. The break prop is what
-  // triggered the NaN border crash, not the Buffer. Shots now live on
-  // a dedicated <Page> component in pdf.tsx so the page break is
-  // structural, not layout-arithmetic.
-  const [desktopShot, mobileShot] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
-  ]);
-  const desktopBuf = desktopShot?.data ?? null;
-  const mobileBuf = mobileShot?.data ?? null;
+  // Use the blob cache — first send after an audit renders + stores;
+  // every subsequent send reuses the bytes. Cache is invalidated by
+  // audit-enrich on reaudit, so drafts always get the latest PDF.
+  const cached = await getOrRenderPdf({
+    prospectId: id,
+    domain,
+    renderFn: async () => {
+      const [desktopShot, mobileShot] = await Promise.all([
+        p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+        p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+      ]);
+      const desktopBuf = desktopShot?.data ?? null;
+      const mobileBuf = mobileShot?.data ?? null;
 
-  const basePdfArgs = {
-    url: p.url,
-    businessName: p.business_name,
-    score: p.audit_score ?? 0,
-    summary: p.audit_summary ?? '',
-    issues: p.audit_data.issues,
-    date: new Date().toISOString().slice(0, 10),
-    brokenLinksCount: p.broken_links_count,
-    viewportMetaOk: p.viewport_meta_ok,
-    copyrightYear: p.copyright_year,
-  };
+      const basePdfArgs = {
+        url: p.url,
+        businessName: p.business_name,
+        score: p.audit_score ?? 0,
+        summary: p.audit_summary ?? '',
+        issues: p.audit_data?.issues ?? [],
+        date: new Date().toISOString().slice(0, 10),
+        brokenLinksCount: p.broken_links_count,
+        viewportMetaOk: p.viewport_meta_ok,
+        copyrightYear: p.copyright_year,
+      };
 
-  console.log('[send] pdf start', {
-    id,
-    desk_url_present: !!p.screenshot_desktop_url,
-    mob_url_present: !!p.screenshot_mobile_url,
-    desk_buf_bytes: desktopBuf?.byteLength ?? null,
-    mob_buf_bytes: mobileBuf?.byteLength ?? null,
+      console.log('[send] pdf render', {
+        id,
+        desk_buf_bytes: desktopBuf?.byteLength ?? null,
+        mob_buf_bytes: mobileBuf?.byteLength ?? null,
+      });
+
+      try {
+        return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
+      } catch (err) {
+        console.error('[send] PRIMARY render FAILED, retrying without shots:', err instanceof Error ? err.stack ?? err.message : err);
+        return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: null, screenshotMobile: null });
+      }
+    },
   });
-
-  let pdfBuffer: Buffer;
-  let renderPath: 'with-shots' | 'fallback' = 'with-shots';
-  try {
-    pdfBuffer = await renderAuditPdf({
-      ...basePdfArgs,
-      screenshotDesktop: desktopBuf,
-      screenshotMobile: mobileBuf,
-    });
-  } catch (err) {
-    renderPath = 'fallback';
-    console.error('[send] PRIMARY render with screenshots FAILED:', err instanceof Error ? err.stack ?? err.message : err);
-    pdfBuffer = await renderAuditPdf({
-      ...basePdfArgs,
-      screenshotDesktop: null,
-      screenshotMobile: null,
-    });
-  }
-  console.log('[send] pdf done', { id, renderPath, pdf_bytes: pdfBuffer.byteLength });
+  const pdfBuffer = cached.bytes;
+  console.log('[send] pdf', { id, cached: cached.cached, bytes: pdfBuffer.byteLength });
 
   // Wire tracking: stamp a token, rewrite links through tracker, inject pixel.
   const trackingToken = newTrackingToken();

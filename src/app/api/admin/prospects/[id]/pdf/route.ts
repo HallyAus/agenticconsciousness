@@ -2,14 +2,26 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/pg';
 import { renderAuditPdf } from '@/lib/pdf';
 import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
+import { getOrRenderPdf } from '@/lib/pdf-cache';
 import type { OutreachIssue } from '@/lib/outreach';
 
-// Screenshot prefetch can add a few seconds when ScreenshotOne renders
-// a cold URL. Keep the cap generous so the admin preview doesn't time
-// out on a first hit.
+// Screenshot prefetch + sharp + render can add a few seconds when
+// ScreenshotOne is cold. 60s is plenty; the cached path is milliseconds.
 export const maxDuration = 60;
 
-/** Returns the audit as a downloadable PDF for preview in admin. */
+/**
+ * Returns the audit PDF for admin preview.
+ *
+ * Flow:
+ *   1. Check prospects.pdf_url — if set and the Blob is reachable,
+ *      redirect there (browser cacheable, no server work).
+ *   2. Otherwise render fresh, upload to Vercel Blob, persist the URL,
+ *      then stream the bytes back on THIS request (avoids a second
+ *      round-trip on cache miss).
+ *
+ * Invalidation is the reaudit path's job — see audit-enrich which
+ * calls clearPdfCache() before writing new scan data.
+ */
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -18,7 +30,8 @@ export async function GET(
   const rows = (await sql`
     SELECT url, business_name, audit_score, audit_summary, audit_data,
            screenshot_desktop_url, screenshot_mobile_url,
-           broken_links_count, viewport_meta_ok, copyright_year
+           broken_links_count, viewport_meta_ok, copyright_year,
+           pdf_url
     FROM prospects WHERE id = ${id} LIMIT 1
   `) as Array<{
     url: string;
@@ -31,59 +44,66 @@ export async function GET(
     broken_links_count: number | null;
     viewport_meta_ok: boolean | null;
     copyright_year: number | null;
+    pdf_url: string | null;
   }>;
   if (rows.length === 0) return new NextResponse('Not found', { status: 404 });
   const p = rows[0];
   if (!p.audit_data?.issues?.length) return new NextResponse('Audit not ready', { status: 409 });
 
-  // Raw Buffer via the canonical {data, format} wrapper — unwrap to
-  // Buffer at the Image call site. This shape worked on Vercel before
-  // we introduced the <View break> page-break in commit 36d234b; the
-  // break prop is what triggered the NaN border crash, not the Buffer
-  // shape. Shots now live on a dedicated <Page> instead.
-  const [desktopShot, mobileShot] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
-  ]);
-  const desktopBuf = desktopShot?.data ?? null;
-  const mobileBuf = mobileShot?.data ?? null;
+  const domain = new URL(p.url).hostname.replace(/^www\./, '');
 
-  const basePdfArgs = {
-    url: p.url,
-    businessName: p.business_name,
-    score: p.audit_score ?? 0,
-    summary: p.audit_summary ?? '',
-    issues: p.audit_data.issues,
-    date: new Date().toISOString().slice(0, 10),
-    brokenLinksCount: p.broken_links_count,
-    viewportMetaOk: p.viewport_meta_ok,
-    copyrightYear: p.copyright_year,
-  };
+  // Fast-path redirect if we already have a blob URL. No body work needed.
+  if (p.pdf_url) {
+    console.log('[admin/pdf] 302 cached', { id, url: p.pdf_url });
+    return NextResponse.redirect(p.pdf_url, 302);
+  }
 
-  console.log('[admin/pdf] start', {
-    id,
-    desk_url_present: !!p.screenshot_desktop_url,
-    mob_url_present: !!p.screenshot_mobile_url,
-    desk_buf_bytes: desktopBuf?.byteLength ?? null,
-    mob_buf_bytes: mobileBuf?.byteLength ?? null,
+  // Cache miss — render, upload, store. Returns bytes so we can stream
+  // on the same request rather than forcing a second round-trip.
+  const cached = await getOrRenderPdf({
+    prospectId: id,
+    domain,
+    renderFn: async () => {
+      const [desktopShot, mobileShot] = await Promise.all([
+        p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+        p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+      ]);
+      const desktopBuf = desktopShot?.data ?? null;
+      const mobileBuf = mobileShot?.data ?? null;
+
+      const basePdfArgs = {
+        url: p.url,
+        businessName: p.business_name,
+        score: p.audit_score ?? 0,
+        summary: p.audit_summary ?? '',
+        issues: p.audit_data?.issues ?? [],
+        date: new Date().toISOString().slice(0, 10),
+        brokenLinksCount: p.broken_links_count,
+        viewportMetaOk: p.viewport_meta_ok,
+        copyrightYear: p.copyright_year,
+      };
+
+      console.log('[admin/pdf] render start', {
+        id,
+        desk_buf_bytes: desktopBuf?.byteLength ?? null,
+        mob_buf_bytes: mobileBuf?.byteLength ?? null,
+      });
+
+      try {
+        return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
+      } catch (err) {
+        console.error('[admin/pdf] PRIMARY render FAILED, retrying without shots:', err instanceof Error ? err.stack ?? err.message : err);
+        return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: null, screenshotMobile: null });
+      }
+    },
   });
 
-  let buf: Buffer;
-  let renderPath: 'with-shots' | 'fallback' = 'with-shots';
-  try {
-    buf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
-  } catch (err) {
-    renderPath = 'fallback';
-    console.error('[admin/pdf] PRIMARY render with screenshots FAILED:', err instanceof Error ? err.stack ?? err.message : err);
-    buf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: null, screenshotMobile: null });
-  }
-  console.log('[admin/pdf] done', { id, renderPath, pdf_bytes: buf.byteLength });
-
-  return new NextResponse(new Uint8Array(buf), {
+  return new NextResponse(new Uint8Array(cached.bytes), {
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `inline; filename="audit-${new URL(p.url).hostname.replace(/^www\./, '')}.pdf"`,
+      'Content-Disposition': `inline; filename="audit-${domain}.pdf"`,
       'X-Robots-Tag': 'noindex, nofollow',
+      'X-Pdf-Cache': cached.cached ? 'hit' : 'miss',
     },
   });
 }
