@@ -1327,12 +1327,27 @@ function AuditDocument({
               ) : null}
 
               {(() => {
+                // Every finding renders the same bottom strip. Legal and
+                // low-severity findings show a compliance note instead of
+                // a dollar range. Skipping the block on some findings but
+                // not others triggers a pdfkit NaN when wrap=false cards
+                // of different heights paginate next to each other.
                 const est = estimateFindingLoss({ category: issue.category, severity: issue.severity, vertical });
-                if (!est) return null;
+                const sevLower = (issue.severity ?? '').toLowerCase();
+                const label = est
+                  ? 'EST. ANNUAL COST'
+                  : sevLower === 'legal'
+                    ? 'COMPLIANCE RISK'
+                    : 'IMPACT';
+                const value = est
+                  ? formatRevenueRange(est)
+                  : sevLower === 'legal'
+                    ? 'WCAG / ACCESSIBILITY'
+                    : 'NOT PRICED';
                 return (
                   <View style={styles.findingCost}>
-                    <Text style={styles.findingCostLabel}>EST. ANNUAL COST</Text>
-                    <Text style={styles.findingCostValue}>{formatRevenueRange(est)}</Text>
+                    <Text style={styles.findingCostLabel}>{label}</Text>
+                    <Text style={styles.findingCostValue}>{value}</Text>
                   </View>
                 );
               })()}
