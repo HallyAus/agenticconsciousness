@@ -1,12 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { isGraphConfigured } from '@/lib/graph';
 
 /**
- * Admin-only Graph diagnostic. Fires four progressively deeper calls against
- * the configured sender mailbox and returns the exact Graph response so we
- * can pinpoint whether the issue is auth, mailbox access, or message ops.
+ * Admin-only Graph diagnostic.
  *
- * GET /api/admin/graph-diag
+ * GET /api/admin/graph-diag                     — uses M365_SENDER_EMAIL (SMTP)
+ * GET /api/admin/graph-diag?target=<something>  — override the mailbox identity
+ *
+ * Try both SMTP (daniel@agenticconsciousness.com.au) and UPN
+ * (Daniel@NETORG17949051.onmicrosoft.com) to rule out address resolution
+ * failures in the RBAC scope filter.
  */
 
 interface Check {
@@ -16,8 +19,9 @@ interface Check {
   detail?: unknown;
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const checks: Check[] = [];
+  const override = req.nextUrl.searchParams.get('target');
 
   // Step 0 — env
   const envCheck = {
@@ -25,6 +29,7 @@ export async function GET() {
     M365_CLIENT_ID: Boolean(process.env.M365_CLIENT_ID),
     M365_CLIENT_SECRET: Boolean(process.env.M365_CLIENT_SECRET),
     M365_SENDER_EMAIL: process.env.M365_SENDER_EMAIL ?? '(not set)',
+    targetOverride: override ?? null,
     isGraphConfigured: isGraphConfigured(),
   };
   checks.push({ step: 'env', ok: envCheck.isGraphConfigured, detail: envCheck });
@@ -33,7 +38,7 @@ export async function GET() {
   const tenant = process.env.M365_TENANT_ID!;
   const clientId = process.env.M365_CLIENT_ID!;
   const clientSecret = process.env.M365_CLIENT_SECRET!;
-  const sender = process.env.M365_SENDER_EMAIL!;
+  const sender = override || process.env.M365_SENDER_EMAIL!;
 
   // Step 1 — token
   let token: string | null = null;
