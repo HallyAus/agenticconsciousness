@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useImperativeHandle, useState, forwardRef } from 'react';
 
 interface Prospect {
   id: string;
@@ -8,6 +8,10 @@ interface Prospect {
   business_name: string | null;
   email: string | null;
   email_confidence: string | null;
+  phone: string | null;
+  address: string | null;
+  postcode: string | null;
+  discovered_via: string | null;
   status: string;
   audit_score: number | null;
   audit_summary: string | null;
@@ -15,6 +19,8 @@ interface Prospect {
   last_outbound_at: string | null;
   next_touch_due_at: string | null;
   reply_detected_at: string | null;
+  draft_web_link: string | null;
+  draft_created_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -25,10 +31,8 @@ const STATUS_COLOUR: Record<string, string> = {
   audited: '#22c55e',
   waf_blocked: '#ff3d00',
   audit_failed: '#ff3d00',
-  queued: '#eab308',
+  drafted: '#eab308',
   sent: '#3b82f6',
-  followed_up_1: '#8b5cf6',
-  followed_up_2: '#8b5cf6',
   replied: '#22c55e',
   unsubscribed: '#999',
   bounced: '#ff3d00',
@@ -41,13 +45,18 @@ function fmtDate(iso: string | null): string {
   return new Date(iso).toLocaleString('en-AU', { dateStyle: 'short', timeStyle: 'short' });
 }
 
-export default function ProspectsPanel() {
+export interface ProspectsPanelHandle {
+  refresh: () => void;
+}
+
+const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(_props, ref) {
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [url, setUrl] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [drafting, setDrafting] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     try {
@@ -58,6 +67,8 @@ export default function ProspectsPanel() {
       // ignore transient network errors; next poll will retry
     }
   }, []);
+
+  useImperativeHandle(ref, () => ({ refresh }), [refresh]);
 
   useEffect(() => {
     refresh();
@@ -102,12 +113,57 @@ export default function ProspectsPanel() {
     refresh();
   }
 
-  async function handleSend(id: string, email: string) {
-    if (!confirm(`Send touch #1 (audit PDF) to ${email}?`)) return;
-    const res = await fetch(`/api/admin/prospects/${id}/send`, { method: 'POST' });
+  async function handleCreateDraft(id: string, email: string) {
+    if (!confirm(`Create an Outlook draft to ${email}?\n\nYou'll review and hit Send manually.`)) return;
+    setDrafting(id);
+    try {
+      const res = await fetch(`/api/admin/prospects/${id}/send`, { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(`Draft failed: ${data.error ?? res.status}`);
+      } else if (data.webLink) {
+        window.open(data.webLink, '_blank', 'noopener,noreferrer');
+      }
+      refresh();
+    } finally {
+      setDrafting(null);
+    }
+  }
+
+  async function handleTestDraft(id: string) {
+    const last = (typeof window !== 'undefined' && localStorage.getItem('ac-test-email')) || '';
+    const to = prompt('Send a test draft to which email?', last || 'daniel@printforge.com.au');
+    if (!to) return;
+    const trimmed = to.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      alert('Not a valid email');
+      return;
+    }
+    localStorage.setItem('ac-test-email', trimmed);
+    setDrafting(id);
+    try {
+      const res = await fetch(`/api/admin/prospects/${id}/test-draft`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: trimmed }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        alert(`Test draft failed: ${data.error ?? res.status}`);
+      } else if (data.webLink) {
+        window.open(data.webLink, '_blank', 'noopener,noreferrer');
+      }
+    } finally {
+      setDrafting(null);
+    }
+  }
+
+  async function handleMarkSent(id: string) {
+    if (!confirm('Mark this as sent? Do this after you\'ve hit Send in Outlook.')) return;
+    const res = await fetch(`/api/admin/prospects/${id}/mark-sent`, { method: 'POST' });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      alert(`Send failed: ${data.error ?? res.status}`);
+      alert(`Mark-sent failed: ${data.error ?? res.status}`);
     }
     refresh();
   }
@@ -132,7 +188,7 @@ export default function ProspectsPanel() {
     <div>
       <section style={{ border: '2px solid #ff3d00', padding: 20, marginBottom: 28, background: '#111' }}>
         <div style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#ff3d00', marginBottom: 12 }}>
-          New prospect
+          New prospect (manual URL)
         </div>
         <form onSubmit={handleAdd} style={{ display: 'grid', gap: 10 }}>
           <input
@@ -192,7 +248,7 @@ export default function ProspectsPanel() {
         </div>
         {prospects.length === 0 ? (
           <div style={{ color: '#666', fontSize: 14, padding: 40, textAlign: 'center', border: '2px dashed #333' }}>
-            No prospects yet. Paste a URL above to run your first audit.
+            No prospects yet. Search Google Places above, or paste a URL.
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
@@ -203,7 +259,7 @@ export default function ProspectsPanel() {
                   <Th>Status</Th>
                   <Th>Score</Th>
                   <Th>Email</Th>
-                  <Th>Touches</Th>
+                  <Th>Phone</Th>
                   <Th>Last touch</Th>
                   <Th>Updated</Th>
                   <Th></Th>
@@ -218,6 +274,11 @@ export default function ProspectsPanel() {
                       </a>
                       {p.business_name && (
                         <div style={{ color: '#999', fontSize: 11 }}>{p.business_name}</div>
+                      )}
+                      {p.postcode && (
+                        <div style={{ color: '#666', fontSize: 10, fontFamily: 'var(--font-mono), monospace' }}>
+                          {p.postcode}{p.discovered_via === 'google_places' ? ' · maps' : ''}
+                        </div>
                       )}
                     </Td>
                     <Td>
@@ -256,26 +317,65 @@ export default function ProspectsPanel() {
                         </button>
                       )}
                     </Td>
-                    <Td>{p.touch_count}</Td>
+                    <Td>{p.phone ?? '—'}</Td>
                     <Td>{fmtDate(p.last_outbound_at)}</Td>
                     <Td>{fmtDate(p.updated_at)}</Td>
                     <Td>
                       <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
                         {p.status === 'audited' && p.email && (
                           <button
-                            onClick={() => handleSend(p.id, p.email!)}
+                            onClick={() => handleCreateDraft(p.id, p.email!)}
+                            disabled={drafting === p.id}
                             style={actionBtn('#ff3d00')}
-                            title="Send touch #1"
+                            title="Create draft in Outlook"
                           >
-                            Send
+                            {drafting === p.id ? '…' : 'Draft'}
                           </button>
+                        )}
+                        {p.audit_score !== null && (
+                          <button
+                            onClick={() => handleTestDraft(p.id)}
+                            disabled={drafting === p.id}
+                            style={actionBtn('#8b5cf6')}
+                            title="Send a test draft to your own email"
+                          >
+                            Test
+                          </button>
+                        )}
+                        {p.status === 'drafted' && p.draft_web_link && (
+                          <>
+                            <a
+                              href={p.draft_web_link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ ...actionBtn('#3b82f6'), textDecoration: 'none', display: 'inline-block' }}
+                              title="Open draft in Outlook on the web"
+                            >
+                              Open
+                            </a>
+                            <button
+                              onClick={() => handleMarkSent(p.id)}
+                              style={actionBtn('#22c55e')}
+                              title="Mark as sent after you've hit Send in Outlook"
+                            >
+                              ✓ Sent
+                            </button>
+                            <button
+                              onClick={() => handleCreateDraft(p.id, p.email!)}
+                              disabled={drafting === p.id}
+                              style={{ ...actionBtn('#666'), fontSize: 10 }}
+                              title="Re-create draft (e.g. after edits)"
+                            >
+                              Redraft
+                            </button>
+                          </>
                         )}
                         {p.audit_score !== null && (
                           <a
                             href={`/api/admin/prospects/${p.id}/pdf`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            style={{ ...actionBtn('#3b82f6'), textDecoration: 'none', display: 'inline-block' }}
+                            style={{ ...actionBtn('#555'), textDecoration: 'none', display: 'inline-block' }}
                           >
                             PDF
                           </a>
@@ -307,7 +407,7 @@ export default function ProspectsPanel() {
       </section>
     </div>
   );
-}
+});
 
 function shortUrl(u: string): string {
   try {
@@ -363,3 +463,5 @@ function actionBtn(color: string): React.CSSProperties {
     fontWeight: 700,
   };
 }
+
+export default ProspectsPanel;

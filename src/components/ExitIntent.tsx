@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 import { trackEvent } from '@/lib/tracking';
 import { useCsrf } from '@/lib/useCsrf';
 import EmailLink from '@/components/EmailLink';
@@ -39,6 +40,7 @@ const inputFocusStyle: React.CSSProperties = {
 };
 
 export default function ExitIntent() {
+  const pathname = usePathname();
   const csrfToken = useCsrf();
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
@@ -57,13 +59,14 @@ export default function ExitIntent() {
   }, []);
 
   const shouldBlock = useCallback(() => {
+    if (pathname?.startsWith('/admin')) return true;
     if (shownRef.current) return true;
     if (sessionStorage.getItem(SESSION_SHOWN)) return true;
     if (sessionStorage.getItem(SESSION_SUBMITTED)) return true;
     if (Date.now() - loadTimeRef.current < MIN_PAGE_TIME_MS) return true;
     if (isChatOpen()) return true;
     return false;
-  }, [isChatOpen]);
+  }, [isChatOpen, pathname]);
 
   const trigger = useCallback(() => {
     if (shouldBlock()) return;

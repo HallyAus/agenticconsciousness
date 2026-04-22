@@ -5,13 +5,13 @@ import { createGraphDraft, isGraphConfigured } from '@/lib/graph';
 import { buildTouch1, type OutreachIssue } from '@/lib/outreach';
 
 /**
- * Admin-only: create a DRAFT email in the sender's mailbox with the audit
- * PDF attached. Returns a `webLink` that deep-links to the draft in Outlook
- * on the web so Daniel can review and send manually.
+ * Admin-only: create a TEST draft for a prospect — same email body + PDF,
+ * but addressed to an email supplied in the request body (typically one of
+ * Daniel's own addresses). Does NOT touch prospect status or create a
+ * prospect_sends row. Used to eyeball-test the outreach copy + PDF before
+ * actually emailing a prospect.
  *
- * Status flow:
- *   'audited' -> 'drafted' (this endpoint)
- *   'drafted' -> 'sent'    (mark-sent endpoint, manual)
+ * Body: { to: string }
  */
 
 interface ProspectRow {
@@ -19,39 +19,39 @@ interface ProspectRow {
   url: string;
   business_name: string | null;
   email: string | null;
-  status: string;
   audit_score: number | null;
   audit_summary: string | null;
   audit_data: { issues?: OutreachIssue[] } | null;
   unsub_token: string | null;
-  draft_web_link: string | null;
 }
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
 
   if (!isGraphConfigured()) {
     return NextResponse.json(
-      { error: 'Microsoft 365 not configured. Set M365_TENANT_ID / CLIENT_ID / CLIENT_SECRET / SENDER_EMAIL.' },
+      { error: 'Microsoft 365 not configured. Set M365_* env vars.' },
       { status: 503 },
     );
   }
 
+  const body = await req.json().catch(() => ({}));
+  const to = String(body.to ?? '').trim().toLowerCase();
+  if (!to || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) {
+    return NextResponse.json({ error: 'Valid `to` email required.' }, { status: 400 });
+  }
+
   const rows = (await sql`
-    SELECT id, url, business_name, email, status, audit_score, audit_summary, audit_data, unsub_token, draft_web_link
+    SELECT id, url, business_name, email, audit_score, audit_summary, audit_data, unsub_token
     FROM prospects WHERE id = ${id} LIMIT 1
   `) as ProspectRow[];
   if (rows.length === 0) return NextResponse.json({ error: 'Prospect not found' }, { status: 404 });
   const p = rows[0];
 
-  if (!p.email) return NextResponse.json({ error: 'No email on file' }, { status: 400 });
-  if (p.status === 'unsubscribed') return NextResponse.json({ error: 'Prospect has unsubscribed' }, { status: 409 });
-  if (p.status !== 'audited' && p.status !== 'drafted') {
-    return NextResponse.json({ error: `Cannot draft from status ${p.status}` }, { status: 409 });
-  }
+  if (p.audit_score === null) return NextResponse.json({ error: 'No audit yet.' }, { status: 400 });
   if (!p.audit_data?.issues?.length) return NextResponse.json({ error: 'Audit has no issues' }, { status: 400 });
   if (!p.unsub_token) return NextResponse.json({ error: 'Missing unsub token' }, { status: 500 });
 
@@ -62,20 +62,21 @@ export async function POST(
     url: p.url,
     domain,
     businessName: p.business_name,
-    score: p.audit_score ?? 0,
+    score: p.audit_score,
     summary: p.audit_summary ?? '',
     issues: p.audit_data.issues,
     unsubToken: p.unsub_token,
-    sourceLine: `You're receiving this because ${p.email} is publicly listed on ${domain}. This is a one-off audit, not a mailing list.`,
+    sourceLine: `[TEST DRAFT] Would have been sent to ${p.email ?? '(unknown)'} because they are publicly listed on ${domain}.`,
     siteBaseUrl,
   };
 
-  const { subject, html } = buildTouch1(ctx);
+  const built = buildTouch1(ctx);
+  const subject = `[TEST] ${built.subject}`;
 
   const pdfBuffer = await renderAuditPdf({
     url: p.url,
     businessName: p.business_name,
-    score: p.audit_score ?? 0,
+    score: p.audit_score,
     summary: p.audit_summary ?? '',
     issues: p.audit_data.issues,
     date: new Date().toISOString().slice(0, 10),
@@ -83,34 +84,20 @@ export async function POST(
 
   try {
     const draft = await createGraphDraft({
-      to: p.email,
+      to,
       subject,
-      html,
+      html: built.html,
       pdf: { filename: `audit-${domain}.pdf`, base64: pdfBuffer.toString('base64') },
     });
-
-    await sql`
-      UPDATE prospects
-      SET status = 'drafted',
-          graph_message_id = ${draft.messageId},
-          graph_conversation_id = ${draft.conversationId},
-          draft_web_link = ${draft.webLink},
-          draft_created_at = NOW(),
-          drafted_subject = ${subject},
-          drafted_body_html = ${html},
-          updated_at = NOW()
-      WHERE id = ${id}
-    `;
-
     return NextResponse.json({
       ok: true,
       messageId: draft.messageId,
-      conversationId: draft.conversationId,
       webLink: draft.webLink,
+      sentTo: to,
     });
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'draft failed';
-    console.error('[admin/draft] failed', { id, msg });
+    console.error('[admin/test-draft] failed', { id, msg });
     return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

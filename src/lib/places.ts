@@ -1,0 +1,119 @@
+/**
+ * Google Places API (New) — text search wrapper.
+ *
+ * Docs: https://developers.google.com/maps/documentation/places/web-service/text-search
+ *
+ * Returns up to 60 results across 3 paginated requests (Places caps at 20
+ * per page, nextPageToken for up to 3 pages). Each request billed at the
+ * Text Search SKU (~$17/1000 after free tier).
+ *
+ * Field mask is deliberately small — only the fields we store.
+ */
+
+const PLACES_URL = 'https://places.googleapis.com/v1/places:searchText';
+
+const FIELD_MASK = [
+  'places.id',
+  'places.displayName',
+  'places.formattedAddress',
+  'places.nationalPhoneNumber',
+  'places.internationalPhoneNumber',
+  'places.websiteUri',
+  'places.rating',
+  'places.userRatingCount',
+  'places.primaryType',
+  'places.types',
+  'places.location',
+  'places.businessStatus',
+  'nextPageToken',
+].join(',');
+
+export interface PlaceResult {
+  id: string;
+  displayName: string;
+  formattedAddress: string | null;
+  websiteUri: string | null;
+  phone: string | null;
+  rating: number | null;
+  userRatingCount: number | null;
+  primaryType: string | null;
+  types: string[];
+  businessStatus: string | null;
+  location: { latitude: number; longitude: number } | null;
+}
+
+interface RawPlace {
+  id: string;
+  displayName?: { text?: string };
+  formattedAddress?: string;
+  nationalPhoneNumber?: string;
+  internationalPhoneNumber?: string;
+  websiteUri?: string;
+  rating?: number;
+  userRatingCount?: number;
+  primaryType?: string;
+  types?: string[];
+  businessStatus?: string;
+  location?: { latitude: number; longitude: number };
+}
+
+export function isPlacesConfigured(): boolean {
+  return Boolean(process.env.GOOGLE_PLACES_API_KEY);
+}
+
+export async function searchPlaces(args: { postcode: string; category: string }): Promise<PlaceResult[]> {
+  const key = process.env.GOOGLE_PLACES_API_KEY;
+  if (!key) throw new Error('GOOGLE_PLACES_API_KEY not set');
+
+  const textQuery = `${args.category} in ${args.postcode} Australia`;
+  const results: PlaceResult[] = [];
+  const seen = new Set<string>();
+  let pageToken: string | undefined;
+
+  for (let page = 0; page < 3; page++) {
+    const body: Record<string, unknown> = {
+      textQuery,
+      regionCode: 'AU',
+      pageSize: 20,
+    };
+    if (pageToken) body.pageToken = pageToken;
+
+    const res = await fetch(PLACES_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Goog-Api-Key': key,
+        'X-Goog-FieldMask': FIELD_MASK,
+      },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      throw new Error(`Places search failed: ${res.status} ${text.slice(0, 400)}`);
+    }
+    const data = (await res.json()) as { places?: RawPlace[]; nextPageToken?: string };
+    for (const raw of data.places ?? []) {
+      if (seen.has(raw.id)) continue;
+      seen.add(raw.id);
+      results.push({
+        id: raw.id,
+        displayName: raw.displayName?.text ?? '',
+        formattedAddress: raw.formattedAddress ?? null,
+        websiteUri: raw.websiteUri ?? null,
+        phone: raw.nationalPhoneNumber ?? raw.internationalPhoneNumber ?? null,
+        rating: raw.rating ?? null,
+        userRatingCount: raw.userRatingCount ?? null,
+        primaryType: raw.primaryType ?? null,
+        types: raw.types ?? [],
+        businessStatus: raw.businessStatus ?? null,
+        location: raw.location ?? null,
+      });
+    }
+    if (!data.nextPageToken) break;
+    pageToken = data.nextPageToken;
+    // Places requires a short delay before a pageToken is usable.
+    await new Promise((r) => setTimeout(r, 1500));
+  }
+
+  return results;
+}

@@ -1,16 +1,21 @@
 /**
- * Microsoft Graph wrapper — client-credentials flow, single-mailbox send.
+ * Microsoft Graph wrapper — client-credentials flow, single-mailbox operations.
  *
- * Uses the application-permission path (`Mail.Send` + `Mail.ReadBasic`)
- * so we don't need a signed-in user session. Access-policy must be
- * configured tenant-side to restrict the registered app to one mailbox
- * (see checklist in the admin README).
+ * We operate against a shared mailbox using application-permission scopes
+ * (`Mail.Send` + `Mail.ReadWrite` + `Mail.ReadBasic`). An Exchange
+ * ApplicationAccessPolicy restricts the app to one mailbox tenant-side.
+ *
+ * The primary flow is DRAFT-first: `createGraphDraft` writes a draft to the
+ * sender's mailbox and returns a `webLink` that deep-links to the draft in
+ * Outlook on the web. The human reviews and sends manually.
+ *
+ * `sendGraphMail` is retained for the (rare) fully-automated case.
  *
  * Env:
  *   M365_TENANT_ID      — Entra tenant (e.g. "xxxxxxxx-xxxx-...")
  *   M365_CLIENT_ID      — app registration client ID
  *   M365_CLIENT_SECRET  — app registration client secret
- *   M365_SENDER_EMAIL   — mailbox to send from (daniel@agenticconsciousness.com.au)
+ *   M365_SENDER_EMAIL   — mailbox to operate against (e.g. daniel@agenticconsciousness.com.au)
  */
 
 const TOKEN_URL = (tenant: string) => `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`;
@@ -60,33 +65,19 @@ async function getToken(): Promise<string> {
   return data.access_token;
 }
 
-export interface SendMailArgs {
+interface MessageInput {
   to: string;
   subject: string;
   html: string;
   pdf?: { filename: string; base64: string };
-  // If set, Graph threads the send as a reply to this message id (touch #2+).
-  replyToMessageId?: string;
 }
 
-export interface SendMailResult {
-  messageId: string;
-  conversationId: string;
-}
-
-/**
- * Sends via /users/{sender}/sendMail (new message) OR
- * /users/{sender}/messages/{id}/reply (threaded follow-up).
- */
-export async function sendGraphMail(args: SendMailArgs): Promise<SendMailResult> {
-  const c = cfg();
-  const token = await getToken();
-
-  const message = {
+function buildMessagePayload(args: MessageInput, sender: string) {
+  return {
     subject: args.subject,
     body: { contentType: 'HTML', content: args.html },
     toRecipients: [{ emailAddress: { address: args.to } }],
-    from: { emailAddress: { address: c.sender } },
+    from: { emailAddress: { address: sender } },
     attachments: args.pdf
       ? [
           {
@@ -98,10 +89,55 @@ export async function sendGraphMail(args: SendMailArgs): Promise<SendMailResult>
         ]
       : [],
   };
+}
+
+export interface CreateDraftResult {
+  messageId: string;
+  conversationId: string;
+  webLink: string;
+}
+
+/**
+ * Creates a draft message in the sender's mailbox. Does NOT send.
+ * Returns the draft id + a `webLink` that opens the draft in Outlook on the web.
+ */
+export async function createGraphDraft(args: MessageInput): Promise<CreateDraftResult> {
+  const c = cfg();
+  const token = await getToken();
+
+  const url = `${GRAPH}/users/${encodeURIComponent(c.sender)}/messages`;
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(buildMessagePayload(args, c.sender)),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Graph create draft failed: ${res.status} ${text.slice(0, 400)}`);
+  }
+  const draft = (await res.json()) as { id: string; conversationId: string; webLink: string };
+  return { messageId: draft.id, conversationId: draft.conversationId, webLink: draft.webLink };
+}
+
+export interface SendMailArgs extends MessageInput {
+  replyToMessageId?: string;
+}
+
+export interface SendMailResult {
+  messageId: string;
+  conversationId: string;
+}
+
+/**
+ * Sends an email directly. Retained for edge cases where fully automated send
+ * is desired (not the default path for prospect outreach).
+ */
+export async function sendGraphMail(args: SendMailArgs): Promise<SendMailResult> {
+  const c = cfg();
+  const token = await getToken();
+  const message = buildMessagePayload(args, c.sender);
 
   if (args.replyToMessageId) {
-    // Thread as a reply. Graph's /reply endpoint takes {message,comment}
-    // and sends in one call — preserves In-Reply-To / References.
     const url = `${GRAPH}/users/${encodeURIComponent(c.sender)}/messages/${encodeURIComponent(args.replyToMessageId)}/reply`;
     const res = await fetch(url, {
       method: 'POST',
@@ -112,13 +148,9 @@ export async function sendGraphMail(args: SendMailArgs): Promise<SendMailResult>
       const text = await res.text().catch(() => '');
       throw new Error(`Graph reply failed: ${res.status} ${text.slice(0, 400)}`);
     }
-    // /reply doesn't return the new message; look up the latest message
-    // in the conversation for our records.
     return await lookupLastSentInThread(token, c.sender, args.replyToMessageId);
   }
 
-  // New thread. Use /sendMail (no draft). We still want the created
-  // message id + conversationId, so we create a draft + send instead.
   const createUrl = `${GRAPH}/users/${encodeURIComponent(c.sender)}/messages`;
   const createRes = await fetch(createUrl, {
     method: 'POST',
@@ -144,9 +176,6 @@ export async function sendGraphMail(args: SendMailArgs): Promise<SendMailResult>
 }
 
 async function lookupLastSentInThread(token: string, sender: string, anchorMessageId: string): Promise<SendMailResult> {
-  // Fetch the anchor message to get its conversationId, then return the
-  // most recent sent message in that thread (which is the one we just
-  // sent via /reply).
   const anchorRes = await fetch(
     `${GRAPH}/users/${encodeURIComponent(sender)}/messages/${encodeURIComponent(anchorMessageId)}?$select=conversationId`,
     { headers: { Authorization: `Bearer ${token}` } },
