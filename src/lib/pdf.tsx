@@ -271,25 +271,46 @@ const styles = StyleSheet.create({
     paddingBottom: 6,
     marginBottom: 10,
   },
-  shotsTitle: { fontFamily: SANS_BOLD, fontSize: 14, color: INK, letterSpacing: -0.2 },
-  shotsMeta: { fontFamily: MONO, fontSize: 9, color: DIM, letterSpacing: 1.5 },
-  shotsRow: { flexDirection: 'row', gap: 10 },
-  shotCard: {
-    flex: 1,
+  shotsTitle: { fontFamily: SANS_BOLD, fontSize: 18, color: INK, letterSpacing: -0.3 },
+  shotsMeta: { fontFamily: MONO, fontSize: 10, color: DIM, letterSpacing: 1.5 },
+  // Full-page desktop: uses the full content width, objectFit:contain so
+  // we show the whole capture without cropping.
+  shotFullDesktop: {
+    width: '100%',
+    height: 560,
+    objectFit: 'contain',
     borderWidth: 1,
     borderColor: INK,
-    padding: 4,
+    backgroundColor: '#ffffff',
+    marginBottom: 10,
+  },
+  // Mobile page: centered, narrower, tall.
+  shotFullMobileWrap: {
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 12,
+  },
+  shotFullMobile: {
+    width: 260,
+    height: 640,
+    objectFit: 'contain',
+    borderWidth: 1,
+    borderColor: INK,
     backgroundColor: '#ffffff',
   },
-  shotImg: { width: '100%', height: 160, objectFit: 'cover' },
-  shotImgMobile: { width: '100%', height: 160, objectFit: 'contain' },
   shotCaption: {
     fontFamily: MONO,
-    fontSize: 8,
+    fontSize: 9,
     color: DIM,
-    letterSpacing: 1.2,
-    marginTop: 4,
+    letterSpacing: 1.5,
+    marginTop: 6,
     textAlign: 'center',
+  },
+  shotBody: {
+    fontSize: 11,
+    color: BODY,
+    lineHeight: 1.55,
+    marginTop: 12,
   },
 
   // --- technical health ---
@@ -705,7 +726,7 @@ function AuditDocument({
         </View>
       </Page>
 
-      {hasShots ? (
+      {screenshotDesktop ? (
         <Page size="A4" style={styles.page}>
           <View style={styles.brandBar} fixed>
             <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
@@ -715,22 +736,50 @@ function AuditDocument({
           <View style={styles.shotsWrap}>
             <View style={styles.shotsHeader}>
               <Text style={styles.shotsTitle}>Your site, right now</Text>
-              <Text style={styles.shotsMeta}>DESKTOP / MOBILE</Text>
+              <Text style={styles.shotsMeta}>DESKTOP</Text>
             </View>
-            <View style={styles.shotsRow}>
-              {screenshotDesktop ? (
-                <View style={styles.shotCard}>
-                  <Image src={screenshotDesktop} style={styles.shotImg} />
-                  <Text style={styles.shotCaption}>DESKTOP 1440 x 900</Text>
-                </View>
-              ) : null}
-              {screenshotMobile ? (
-                <View style={[styles.shotCard, { maxWidth: 160 }]}>
-                  <Image src={screenshotMobile} style={styles.shotImgMobile} />
-                  <Text style={styles.shotCaption}>MOBILE</Text>
-                </View>
-              ) : null}
+            <Image src={screenshotDesktop} style={styles.shotFullDesktop} />
+            <Text style={styles.shotCaption}>DESKTOP 1440 x 900 / FULL CAPTURE, UNCROPPED</Text>
+            <Text style={styles.shotBody}>
+              This is what a new visitor sees on desktop. The findings on
+              the pages ahead map directly back to what is shown here:
+              layout, hierarchy, trust signals, calls to action, and
+              above-the-fold value proposition.
+            </Text>
+          </View>
+
+          <View style={styles.footer} fixed>
+            <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>
+            <Text
+              style={styles.pageNum}
+              render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+            />
+          </View>
+        </Page>
+      ) : null}
+
+      {screenshotMobile ? (
+        <Page size="A4" style={styles.page}>
+          <View style={styles.brandBar} fixed>
+            <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
+            <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
+          </View>
+
+          <View style={styles.shotsWrap}>
+            <View style={styles.shotsHeader}>
+              <Text style={styles.shotsTitle}>Your site, right now</Text>
+              <Text style={styles.shotsMeta}>MOBILE</Text>
             </View>
+            <View style={styles.shotFullMobileWrap}>
+              <Image src={screenshotMobile} style={styles.shotFullMobile} />
+              <Text style={styles.shotCaption}>MOBILE 393 x 852 / FULL CAPTURE, UNCROPPED</Text>
+            </View>
+            <Text style={styles.shotBody}>
+              Over 70 percent of local search traffic is mobile. If the
+              experience here is cramped, slow, or the phone number is
+              not a tap-to-call link, you are losing the majority of
+              your leads before they ever see the copy.
+            </Text>
           </View>
 
           <View style={styles.footer} fixed>
