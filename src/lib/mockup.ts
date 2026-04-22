@@ -1,5 +1,4 @@
 import Anthropic from '@anthropic-ai/sdk';
-import crypto from 'node:crypto';
 
 /**
  * Generates a "what your site could look like" mockup as a single
@@ -9,6 +8,10 @@ import crypto from 'node:crypto';
  * The output is stored as-is in prospects.mockup_html and served at
  * /preview/[token]. A ScreenshotOne URL of the rendered page lands in
  * prospects.mockup_screenshot_url for embedding in the PDF + email.
+ *
+ * Token identity: the token belongs to the PROSPECT, not the mockup —
+ * once assigned it must never rotate, or already-sent outreach emails
+ * 404. Token minting lives in the caller (audit-enrich), not here.
  */
 
 const MODEL = process.env.AI_MOCKUP_MODEL || 'claude-opus-4-6';
@@ -69,7 +72,6 @@ export interface MockupInput {
 export interface MockupResult {
   html: string;
   headline: string | null;
-  token: string;
 }
 
 const HEADLINE_RE = /<h1[^>]*>([\s\S]*?)<\/h1>/i;
@@ -147,6 +149,5 @@ Now produce the complete HTML document. Remember: single self-contained file, in
   return {
     html,
     headline: extractHeadline(html),
-    token: crypto.randomBytes(12).toString('hex'),
   };
 }

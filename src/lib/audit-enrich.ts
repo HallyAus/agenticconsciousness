@@ -5,6 +5,7 @@
  * can silently skip the scan.
  */
 
+import crypto from 'node:crypto';
 import { sql } from '@/lib/pg';
 import { runSiteScan } from '@/lib/site-scan';
 import { captureScreenshots } from '@/lib/screenshots';
@@ -22,13 +23,20 @@ export async function enrichProspectWithScanAndShots(args: {
   // If caller didn't pass them, grab from DB (reaudit / places-add paths).
   let businessName = args.businessName ?? null;
   let issues = args.issues ?? [];
-  if (businessName === null || issues.length === 0) {
+  let existingMockupToken: string | null = null;
+  {
     const rows = (await sql`
-      SELECT business_name, audit_data FROM prospects WHERE id = ${prospectId} LIMIT 1
-    `) as Array<{ business_name: string | null; audit_data: { issues?: typeof issues } | null }>;
+      SELECT business_name, audit_data, mockup_token
+      FROM prospects WHERE id = ${prospectId} LIMIT 1
+    `) as Array<{
+      business_name: string | null;
+      audit_data: { issues?: typeof issues } | null;
+      mockup_token: string | null;
+    }>;
     if (rows[0]) {
-      businessName = rows[0].business_name;
-      issues = rows[0].audit_data?.issues ?? issues;
+      existingMockupToken = rows[0].mockup_token;
+      if (businessName === null) businessName = rows[0].business_name;
+      if (issues.length === 0) issues = rows[0].audit_data?.issues ?? issues;
     }
   }
   const [siteScan, shots] = await Promise.all([
@@ -66,14 +74,19 @@ export async function enrichProspectWithScanAndShots(args: {
       seo: siteScan?.seo ?? null,
     });
 
+    // Stable per-prospect token: reuse the existing one if set, so any
+    // already-sent outreach email's /preview/<token> link keeps resolving.
+    // We only mint a token when this prospect has never had one.
+    const mockupToken = existingMockupToken ?? crypto.randomBytes(12).toString('hex');
+
     const siteBaseUrl = process.env.SITE_URL || 'https://agenticconsciousness.com.au';
-    const previewUrl = `${siteBaseUrl}/preview/${mockup.token}`;
+    const previewUrl = `${siteBaseUrl}/preview/${mockupToken}`;
 
     // Store first, THEN screenshot the preview URL so ScreenshotOne can
     // fetch it (requires the HTML to already be live in DB).
     await sql`
       UPDATE prospects
-      SET mockup_token = ${mockup.token},
+      SET mockup_token = ${mockupToken},
           mockup_html = ${mockup.html},
           mockup_headline = ${mockup.headline},
           mockup_generated_at = NOW(),
