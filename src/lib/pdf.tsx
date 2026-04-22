@@ -1496,7 +1496,7 @@ function AuditDocument({
       ) : null}
 
       {/* Google reviews page (#10 idea). Renders only when Place Details
-          returned at least one review — never fabricated. */}
+          returned at least one review. Never fabricated. */}
       {googleReviews && googleReviews.length > 0 ? (
         <Page size="A4" style={styles.page}>
           <View style={styles.brandBar} fixed>
