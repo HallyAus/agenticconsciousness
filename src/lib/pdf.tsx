@@ -696,6 +696,59 @@ function AuditDocument({
           </View>
         ) : null}
 
+        <View style={styles.footer} fixed>
+          <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>
+          <Text
+            style={styles.pageNum}
+            render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+          />
+        </View>
+      </Page>
+
+      {hasShots ? (
+        <Page size="A4" style={styles.page}>
+          <View style={styles.brandBar} fixed>
+            <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
+            <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
+          </View>
+
+          <View style={styles.shotsWrap}>
+            <View style={styles.shotsHeader}>
+              <Text style={styles.shotsTitle}>Your site, right now</Text>
+              <Text style={styles.shotsMeta}>DESKTOP / MOBILE</Text>
+            </View>
+            <View style={styles.shotsRow}>
+              {screenshotDesktop ? (
+                <View style={styles.shotCard}>
+                  <Image src={screenshotDesktop} style={styles.shotImg} />
+                  <Text style={styles.shotCaption}>DESKTOP 1440 x 900</Text>
+                </View>
+              ) : null}
+              {screenshotMobile ? (
+                <View style={[styles.shotCard, { maxWidth: 160 }]}>
+                  <Image src={screenshotMobile} style={styles.shotImgMobile} />
+                  <Text style={styles.shotCaption}>MOBILE</Text>
+                </View>
+              ) : null}
+            </View>
+          </View>
+
+          <View style={styles.footer} fixed>
+            <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>
+            <Text
+              style={styles.pageNum}
+              render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+            />
+          </View>
+        </Page>
+      ) : null}
+
+      <Page size="A4" style={styles.page}>
+        <View style={styles.brandBar} fixed>
+          <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
+          <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
+        </View>
+
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Findings</Text>
           <Text style={styles.sectionMeta}>
@@ -875,44 +928,6 @@ function AuditDocument({
           />
         </View>
       </Page>
-
-      {hasShots ? (
-        <Page size="A4" style={styles.page}>
-          <View style={styles.brandBar} fixed>
-            <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
-            <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
-          </View>
-
-          <View style={styles.shotsWrap}>
-            <View style={styles.shotsHeader}>
-              <Text style={styles.shotsTitle}>Your site, right now</Text>
-              <Text style={styles.shotsMeta}>DESKTOP / MOBILE</Text>
-            </View>
-            <View style={styles.shotsRow}>
-              {screenshotDesktop ? (
-                <View style={styles.shotCard}>
-                  <Image src={screenshotDesktop} style={styles.shotImg} />
-                  <Text style={styles.shotCaption}>DESKTOP 1440 x 900</Text>
-                </View>
-              ) : null}
-              {screenshotMobile ? (
-                <View style={[styles.shotCard, { maxWidth: 160 }]}>
-                  <Image src={screenshotMobile} style={styles.shotImgMobile} />
-                  <Text style={styles.shotCaption}>MOBILE</Text>
-                </View>
-              ) : null}
-            </View>
-          </View>
-
-          <View style={styles.footer} fixed>
-            <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>
-            <Text
-              style={styles.pageNum}
-              render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
-            />
-          </View>
-        </Page>
-      ) : null}
     </Document>
   );
 }
