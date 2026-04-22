@@ -159,6 +159,35 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
 
+  // --- cover loss hero (headline revenue loss on page 1) ---
+  coverLossHero: {
+    marginTop: 18,
+    marginBottom: 14,
+    padding: 18,
+    backgroundColor: INK,
+  },
+  coverLossKicker: {
+    fontFamily: MONO_BOLD,
+    fontSize: 10,
+    color: RED,
+    letterSpacing: 2,
+    marginBottom: 6,
+  },
+  coverLossNum: {
+    fontFamily: SANS_BOLD,
+    fontSize: 30,
+    color: '#ffffff',
+    letterSpacing: -0.8,
+    lineHeight: 1.05,
+  },
+  coverLossNote: {
+    fontFamily: MONO,
+    fontSize: 9,
+    color: '#c0c0c0',
+    letterSpacing: 1.2,
+    marginTop: 8,
+  },
+
   // --- at a glance ---
   glanceWrap: {
     flexDirection: 'row',
@@ -844,6 +873,13 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     letterSpacing: -0.5,
   },
+  ctaScarcity: {
+    fontFamily: MONO_BOLD,
+    fontSize: 10,
+    color: RED,
+    letterSpacing: 1.5,
+    marginBottom: 10,
+  },
   ctaBody: {
     fontSize: 11,
     color: BODY,
@@ -1092,6 +1128,16 @@ function AuditDocument({
         <Text style={styles.coverTitle}>{stripDashes(businessName || domain)}</Text>
         <Text style={styles.coverUrl}>{url}</Text>
 
+        {totalLoss ? (
+          <View style={styles.coverLossHero}>
+            <Text style={styles.coverLossKicker}>ESTIMATED ANNUAL REVENUE LOSS</Text>
+            <Text style={styles.coverLossNum}>{formatRevenueRange(totalLoss)}</Text>
+            <Text style={styles.coverLossNote}>
+              LEAKED TO COMPETITORS EVERY YEAR AT CURRENT STATE
+            </Text>
+          </View>
+        ) : null}
+
         <View style={styles.scoreRow}>
           <View style={styles.scoreBox}>
             <Text style={styles.scoreLabel}>OVERALL</Text>
@@ -1141,37 +1187,9 @@ function AuditDocument({
           </View>
         ) : null}
 
-        {hasHealth && !bx.skipHealthStrip ? (
-          <View style={styles.healthStrip}>
-            {brokenLinksCount !== null && brokenLinksCount !== undefined ? (
-              <View style={styles.healthBox}>
-                <Text style={styles.healthLabel}>BROKEN LINKS</Text>
-                <Text style={[styles.healthValue, { color: brokenLinksCount > 0 ? '#E53935' : INK }]}>
-                  {brokenLinksCount}
-                </Text>
-              </View>
-            ) : null}
-            {viewportMetaOk !== null && viewportMetaOk !== undefined ? (
-              <View style={styles.healthBox}>
-                <Text style={styles.healthLabel}>MOBILE VIEWPORT</Text>
-                <Text style={[styles.healthValue, { color: viewportMetaOk ? '#1b8739' : '#E53935' }]}>
-                  {viewportMetaOk ? 'OK' : 'MISSING'}
-                </Text>
-              </View>
-            ) : null}
-            {copyrightYear !== null && copyrightYear !== undefined ? (
-              <View style={styles.healthBox}>
-                <Text style={styles.healthLabel}>COPYRIGHT YEAR</Text>
-                <Text style={[
-                  styles.healthValue,
-                  { color: copyrightYear < new Date().getUTCFullYear() ? '#E53935' : INK },
-                ]}>
-                  {copyrightYear}
-                </Text>
-              </View>
-            ) : null}
-          </View>
-        ) : null}
+        {/* healthStrip removed 2026-04-23: broken links / viewport / copyright
+            year read as technical noise next to the revenue-loss headline.
+            The same signals surface as specific findings with dollar values. */}
 
         <View style={styles.footer} fixed>
           <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>
@@ -1665,6 +1683,11 @@ function AuditDocument({
             TYPICAL LOCAL AGENCY QUOTE: {audFmt.format(SPRINT_CONFIG.agencyAnchor.lowAud)} TO {audFmt.format(SPRINT_CONFIG.agencyAnchor.highAud)} / {SPRINT_CONFIG.agencyAnchor.weeksLow} TO {SPRINT_CONFIG.agencyAnchor.weeksHigh} WEEKS
           </Text>
           <Text style={styles.ctaPrice}>{audFmt.format(SPRINT_CONFIG.priceAud)}</Text>
+          {SPRINT_CONFIG.remainingThisMonth > 0 ? (
+            <Text style={styles.ctaScarcity}>
+              ONLY {SPRINT_CONFIG.remainingThisMonth} SLOTS LEFT THIS MONTH
+            </Text>
+          ) : null}
           <Text style={styles.ctaBody}>
             Lightning Website Sprint. Mobile-first rebuild, AI-optimised,
             Claude chatbot trained on your content, Core Web Vitals tuned.
