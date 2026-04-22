@@ -989,14 +989,18 @@ function splitFirstSentence(raw: string): { head: string; tail: string } {
 }
 
 interface AuditDocumentInternalProps extends AuditPdfArgs {
-  qrPngBuffer?: Buffer | null;
+  /** Data-URI string (data:image/png;base64,...) of the QR code for the
+   *  booking URL. Data URIs render reliably in react-pdf; raw Buffers
+   *  occasionally crash the fontkit/pdfkit pipeline with a silent
+   *  process exit. */
+  qrDataUri?: string | null;
 }
 
 function AuditDocument({
   url, businessName, score, summary, issues, opportunities, date,
   screenshotDesktop, screenshotMobile, mockupScreenshot,
   brokenLinksCount, viewportMetaOk, copyrightYear,
-  placeTypes, mobileSpeedScore, qrPngBuffer,
+  placeTypes, mobileSpeedScore, qrDataUri,
 }: AuditDocumentInternalProps) {
   const domain = domainFromUrl(url);
   const clampedScore = Math.max(0, Math.min(100, score));
@@ -1552,9 +1556,9 @@ function AuditDocument({
             <Text style={styles.ctaBullet}>+ HOSTING + DOMAIN MANAGEMENT</Text>
           </View>
 
-          {qrPngBuffer ? (
+          {qrDataUri ? (
             <View style={styles.ctaQrRow}>
-              <Image src={qrPngBuffer} style={styles.ctaQrImage} />
+              <Image src={qrDataUri} style={styles.ctaQrImage} />
               <View style={styles.ctaQrCopy}>
                 <Text style={styles.ctaQrLabel}>SCAN TO BOOK</Text>
                 <Text style={styles.ctaQrHint}>
@@ -1586,10 +1590,13 @@ export async function renderAuditPdf(args: AuditPdfArgs): Promise<Buffer> {
   // calling react-pdf. QRCode.toBuffer is async and react-pdf component
   // rendering is synchronous, so we can't do this inside AuditDocument.
   // Any failure is non-fatal — the PDF falls back to the plain URL link.
-  let qrPngBuffer: Buffer | null = null;
+  let qrDataUri: string | null = null;
   try {
-    qrPngBuffer = await QRCode.toBuffer(SPRINT_CONFIG.bookingUrl, {
-      type: 'png',
+    // Data URI (data:image/png;base64,...) rather than raw Buffer — the
+    // string path is the one we know renders reliably on Vercel. Buffer
+    // PNGs caused silent process crashes during render (no catchable
+    // error, just a 500 with no log trail).
+    qrDataUri = await QRCode.toDataURL(SPRINT_CONFIG.bookingUrl, {
       errorCorrectionLevel: 'M',
       margin: 1,
       width: 400,
@@ -1598,5 +1605,5 @@ export async function renderAuditPdf(args: AuditPdfArgs): Promise<Buffer> {
   } catch (err) {
     console.error('[pdf] QR generation failed, falling back to URL only:', err instanceof Error ? err.message : err);
   }
-  return await renderToBuffer(<AuditDocument {...args} qrPngBuffer={qrPngBuffer} />);
+  return await renderToBuffer(<AuditDocument {...args} qrDataUri={qrDataUri} />);
 }
