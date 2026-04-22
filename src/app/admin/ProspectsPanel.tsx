@@ -107,6 +107,16 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
     }
   }
 
+  async function handleReaudit(id: string) {
+    if (!confirm('Re-run the audit on this prospect?')) return;
+    const res = await fetch(`/api/admin/prospects/${id}/reaudit`, { method: 'POST' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert(`Reaudit failed: ${data.error ?? res.status}`);
+    }
+    refresh();
+  }
+
   async function handleDelete(id: string) {
     if (!confirm('Delete this prospect?')) return;
     await fetch(`/api/admin/prospects/${id}`, { method: 'DELETE' });
@@ -379,6 +389,15 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
                           >
                             PDF
                           </a>
+                        )}
+                        {(p.status === 'audited' || p.status === 'audit_failed' || p.status === 'waf_blocked' || p.status === 'drafted') && (
+                          <button
+                            onClick={() => handleReaudit(p.id)}
+                            style={{ ...actionBtn('#666'), fontSize: 10 }}
+                            title="Re-run the audit"
+                          >
+                            Reaudit
+                          </button>
                         )}
                         <button
                           onClick={() => handleDelete(p.id)}

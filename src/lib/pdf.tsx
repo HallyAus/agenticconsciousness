@@ -11,28 +11,30 @@ import { Document, Page, Text, View, StyleSheet, renderToBuffer } from '@react-p
  */
 
 const RED = '#ff3d00';
+const RED_TINT = '#fff4f0';
 const INK = '#0a0a0a';
 const BODY = '#1f1f1f';
-const DIM = '#666666';
-const RULE = '#dddddd';
+const DIM = '#4a4a4a';
+const RULE = '#cccccc';
 const BG_SOFT = '#f6f4f2';
 
-const SEVERITY: Record<string, { bg: string; fg: string; label: string }> = {
-  critical: { bg: '#ff3d00', fg: '#ffffff', label: 'CRITICAL' },
-  high:     { bg: '#d97706', fg: '#ffffff', label: 'HIGH' },
-  medium:   { bg: '#eab308', fg: '#0a0a0a', label: 'MEDIUM' },
-  low:      { bg: '#e5e7eb', fg: '#1f2937', label: 'LOW' },
+const SEVERITY: Record<string, { bg: string; fg: string; label: string; border: string; titleSize: number; accent: string }> = {
+  critical: { bg: '#ff3d00', fg: '#ffffff', label: 'CRITICAL', border: '#ff3d00', titleSize: 17, accent: RED_TINT },
+  high:     { bg: '#d97706', fg: '#ffffff', label: 'HIGH',     border: '#d97706', titleSize: 15, accent: '#fdf6e8' },
+  medium:   { bg: '#eab308', fg: '#0a0a0a', label: 'MEDIUM',   border: '#eab308', titleSize: 14, accent: '#fffdf2' },
+  low:      { bg: '#e5e7eb', fg: '#1f2937', label: 'LOW',      border: '#9ca3af', titleSize: 13, accent: '#ffffff' },
 };
 
 const styles = StyleSheet.create({
   page: {
     padding: 44,
     paddingBottom: 60,
-    fontSize: 11,
+    fontSize: 12,
     color: BODY,
     fontFamily: 'Helvetica',
-    lineHeight: 1.5,
+    lineHeight: 1.55,
   },
+
   // --- header bar ---
   header: {
     flexDirection: 'row',
@@ -40,74 +42,92 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 2,
     borderBottomColor: RED,
-    paddingBottom: 10,
-    marginBottom: 22,
+    paddingBottom: 12,
+    marginBottom: 24,
   },
   brand: { flexDirection: 'row', alignItems: 'baseline' },
-  brandText: { fontSize: 14, fontFamily: 'Helvetica-Bold', color: INK, letterSpacing: 0.3 },
-  brandDot: { fontSize: 14, fontFamily: 'Helvetica-Bold', color: RED },
-  kicker: { fontFamily: 'Courier', fontSize: 8, color: RED, letterSpacing: 2 },
+  brandText: { fontSize: 15, fontFamily: 'Helvetica-Bold', color: INK, letterSpacing: 0.3 },
+  brandDot: { fontSize: 15, fontFamily: 'Helvetica-Bold', color: RED },
+  kicker: { fontFamily: 'Courier', fontSize: 10, color: RED, letterSpacing: 2 },
 
   // --- cover block ---
   kickerLabel: {
     fontFamily: 'Courier',
-    fontSize: 8,
-    color: RED,
-    letterSpacing: 2,
-    marginBottom: 6,
-  },
-  title: {
-    fontSize: 26,
-    fontFamily: 'Helvetica-Bold',
-    color: INK,
-    marginBottom: 8,
-    lineHeight: 1.15,
-  },
-  url: {
-    fontFamily: 'Courier',
     fontSize: 10,
     color: RED,
-    marginBottom: 18,
+    letterSpacing: 2,
+    marginBottom: 8,
   },
-
-  scoreRow: { flexDirection: 'row', marginBottom: 18, gap: 12 },
-  scoreBox: {
-    borderWidth: 2,
-    borderColor: RED,
-    padding: 12,
-    width: 100,
-  },
-  scoreLabel: {
-    fontFamily: 'Courier',
-    fontSize: 7,
-    color: RED,
-    letterSpacing: 1.5,
-    marginBottom: 4,
-  },
-  scoreValue: {
+  title: {
     fontSize: 30,
     fontFamily: 'Helvetica-Bold',
     color: INK,
-    lineHeight: 1,
+    marginBottom: 10,
+    lineHeight: 1.1,
   },
-  scoreOutOf: { fontFamily: 'Courier', fontSize: 9, color: DIM, marginTop: 2 },
-  scoreSummary: { flex: 1, padding: 4, justifyContent: 'center' },
-  scoreSummaryText: { fontSize: 11, color: BODY, lineHeight: 1.55 },
-
-  // --- what this is ---
-  intro: {
-    padding: 12,
-    backgroundColor: BG_SOFT,
+  url: {
+    fontFamily: 'Courier',
+    fontSize: 12,
+    color: RED,
     marginBottom: 22,
   },
-  introLabel: {
+
+  // --- score block ---
+  scoreRow: { flexDirection: 'row', marginBottom: 22, gap: 16 },
+  scoreBox: {
+    borderWidth: 3,
+    borderColor: RED,
+    padding: 14,
+    width: 130,
+    alignItems: 'flex-start',
+  },
+  scoreLabel: {
     fontFamily: 'Courier',
-    fontSize: 8,
+    fontSize: 10,
     color: RED,
     letterSpacing: 2,
     marginBottom: 6,
+    fontWeight: 700,
   },
-  introBody: { fontSize: 10, color: BODY, lineHeight: 1.55 },
+  scoreValue: {
+    fontSize: 52,
+    fontFamily: 'Helvetica-Bold',
+    color: INK,
+    lineHeight: 1,
+    letterSpacing: -1,
+  },
+  scoreOutOf: {
+    fontFamily: 'Courier',
+    fontSize: 11,
+    color: DIM,
+    marginTop: 4,
+    letterSpacing: 1,
+  },
+  scoreSummary: { flex: 1, padding: 6, justifyContent: 'center' },
+  scoreSummaryText: {
+    fontSize: 14,
+    color: INK,
+    lineHeight: 1.45,
+    fontFamily: 'Helvetica-Bold',
+  },
+
+  // --- at-a-glance ---
+  intro: {
+    padding: 14,
+    backgroundColor: BG_SOFT,
+    borderLeftWidth: 3,
+    borderLeftColor: RED,
+    marginBottom: 24,
+  },
+  introLabel: {
+    fontFamily: 'Courier',
+    fontSize: 10,
+    color: RED,
+    letterSpacing: 2,
+    marginBottom: 8,
+    fontWeight: 700,
+  },
+  introBody: { fontSize: 11.5, color: BODY, lineHeight: 1.6 },
 
   // --- findings section ---
   sectionHeader: {
@@ -116,94 +136,106 @@ const styles = StyleSheet.create({
     alignItems: 'baseline',
     borderBottomWidth: 1,
     borderBottomColor: RULE,
-    paddingBottom: 6,
-    marginBottom: 14,
+    paddingBottom: 8,
+    marginBottom: 16,
   },
-  sectionTitle: { fontSize: 14, fontFamily: 'Helvetica-Bold', color: INK },
-  sectionMeta: { fontFamily: 'Courier', fontSize: 9, color: DIM, letterSpacing: 1 },
+  sectionTitle: { fontSize: 18, fontFamily: 'Helvetica-Bold', color: INK },
+  sectionMeta: { fontFamily: 'Courier', fontSize: 10, color: DIM, letterSpacing: 1 },
 
   // --- individual finding ---
   finding: {
-    marginBottom: 18,
-    paddingLeft: 28,
-    position: 'relative',
+    marginBottom: 16,
+    padding: 12,
+    paddingLeft: 16,
+    borderLeftWidth: 4,
   },
+  findingRow: { flexDirection: 'row', gap: 10 },
   findingNumber: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: 22,
     fontFamily: 'Courier',
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: 700,
-    color: RED,
+    width: 26,
   },
-  findingHeader: { flexDirection: 'row', gap: 6, marginBottom: 4, alignItems: 'center' },
+  findingBody: { flex: 1 },
+  findingHeaderRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 6,
+    alignItems: 'center',
+  },
   severityChip: {
-    paddingTop: 2,
-    paddingBottom: 2,
-    paddingLeft: 6,
-    paddingRight: 6,
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingLeft: 7,
+    paddingRight: 7,
     fontFamily: 'Courier',
-    fontSize: 7,
+    fontSize: 9,
     letterSpacing: 1.2,
+    fontWeight: 700,
   },
   categoryChip: {
     fontFamily: 'Courier',
-    fontSize: 7,
+    fontSize: 9,
     color: DIM,
     letterSpacing: 1.2,
-    paddingTop: 3,
+    paddingTop: 4,
   },
   findingTitle: {
-    fontSize: 13,
     fontFamily: 'Helvetica-Bold',
     color: INK,
-    marginBottom: 5,
-    lineHeight: 1.3,
+    marginBottom: 6,
+    lineHeight: 1.25,
   },
   findingDetail: {
-    fontSize: 10.5,
+    fontSize: 11.5,
     color: BODY,
-    lineHeight: 1.55,
-    marginBottom: 8,
+    lineHeight: 1.6,
+    marginBottom: 10,
   },
   fixBlock: {
     borderLeftWidth: 2,
     borderLeftColor: RED,
     paddingLeft: 10,
-    paddingTop: 3,
-    paddingBottom: 3,
+    paddingTop: 4,
+    paddingBottom: 4,
   },
   fixLabel: {
     fontFamily: 'Courier',
-    fontSize: 7,
+    fontSize: 9,
     color: RED,
     letterSpacing: 1.5,
-    marginBottom: 2,
+    marginBottom: 4,
+    fontWeight: 700,
   },
-  fixText: { fontSize: 10.5, color: INK, lineHeight: 1.55 },
+  fixText: { fontSize: 11.5, color: INK, lineHeight: 1.6 },
 
   // --- CTA ---
   cta: {
-    marginTop: 10,
-    padding: 16,
+    marginTop: 14,
+    padding: 18,
     borderWidth: 2,
     borderColor: RED,
     backgroundColor: BG_SOFT,
   },
   ctaKicker: {
     fontFamily: 'Courier',
-    fontSize: 8,
+    fontSize: 10,
     color: RED,
     letterSpacing: 2,
-    marginBottom: 6,
+    marginBottom: 8,
+    fontWeight: 700,
   },
-  ctaTitle: { fontSize: 16, fontFamily: 'Helvetica-Bold', color: INK, marginBottom: 6 },
-  ctaText: { fontSize: 10.5, color: BODY, lineHeight: 1.55, marginBottom: 10 },
+  ctaTitle: {
+    fontSize: 18,
+    fontFamily: 'Helvetica-Bold',
+    color: INK,
+    marginBottom: 8,
+    lineHeight: 1.2,
+  },
+  ctaText: { fontSize: 11.5, color: BODY, lineHeight: 1.6, marginBottom: 12 },
   ctaLink: {
     fontFamily: 'Helvetica-Bold',
-    fontSize: 11,
+    fontSize: 13,
     color: RED,
   },
 
@@ -216,7 +248,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: RULE,
     paddingTop: 8,
-    fontSize: 8,
+    fontSize: 9,
     color: DIM,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -246,9 +278,9 @@ function getSev(raw: string) {
 }
 
 function scoreBand(score: number): string {
-  if (score >= 85) return 'Strong — a few polish items.';
-  if (score >= 70) return 'Above average. Worth fixing the biggest items.';
-  if (score >= 55) return 'Average. The issues below are costing you leads.';
+  if (score >= 85) return 'Strong — a few polish items below.';
+  if (score >= 70) return 'Above average. Worth fixing the biggest items below.';
+  if (score >= 55) return 'Average. The issues below are costing you leads every day.';
   if (score >= 40) return 'Weak. Prospects are bouncing before they trust you.';
   return 'Critical. Most visitors will leave within seconds.';
 }
@@ -286,14 +318,14 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
           <View style={styles.scoreBox}>
             <Text style={styles.scoreLabel}>OVERALL</Text>
             <Text style={styles.scoreValue}>{score}</Text>
-            <Text style={styles.scoreOutOf}>/ 100</Text>
+            <Text style={styles.scoreOutOf}>OUT OF 100</Text>
           </View>
           <View style={styles.scoreSummary}>
             <Text style={styles.scoreSummaryText}>{scoreBand(score)}</Text>
           </View>
         </View>
 
-        {/* Intro / orientation */}
+        {/* At a glance */}
         {summary ? (
           <View style={styles.intro}>
             <Text style={styles.introLabel}>AT A GLANCE</Text>
@@ -311,27 +343,41 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
 
         {issues.map((issue, i) => {
           const sev = getSev(issue.severity);
+          const isCritical = (issue.severity || '').toLowerCase() === 'critical';
           return (
-            <View key={i} style={styles.finding} wrap={false}>
-              <Text style={styles.findingNumber}>
-                {String(i + 1).padStart(2, '0')}
-              </Text>
-              <View style={styles.findingHeader}>
-                <Text style={[styles.severityChip, { backgroundColor: sev.bg, color: sev.fg }]}>
-                  {sev.label}
+            <View
+              key={i}
+              style={[
+                styles.finding,
+                { borderLeftColor: sev.border, backgroundColor: sev.accent },
+              ]}
+              wrap={false}
+            >
+              <View style={styles.findingRow}>
+                <Text style={[styles.findingNumber, { color: sev.border }]}>
+                  {String(i + 1).padStart(2, '0')}
                 </Text>
-                <Text style={styles.categoryChip}>
-                  · {(issue.category || 'General').toUpperCase()}
-                </Text>
-              </View>
-              <Text style={styles.findingTitle}>{issue.title}</Text>
-              <Text style={styles.findingDetail}>{issue.detail}</Text>
-              {issue.fix ? (
-                <View style={styles.fixBlock}>
-                  <Text style={styles.fixLabel}>WHAT TO DO</Text>
-                  <Text style={styles.fixText}>{issue.fix}</Text>
+                <View style={styles.findingBody}>
+                  <View style={styles.findingHeaderRow}>
+                    <Text style={[styles.severityChip, { backgroundColor: sev.bg, color: sev.fg }]}>
+                      {sev.label}
+                    </Text>
+                    <Text style={styles.categoryChip}>
+                      · {(issue.category || 'General').toUpperCase()}
+                    </Text>
+                  </View>
+                  <Text style={[styles.findingTitle, { fontSize: sev.titleSize, color: isCritical ? RED : INK }]}>
+                    {issue.title}
+                  </Text>
+                  <Text style={styles.findingDetail}>{issue.detail}</Text>
+                  {issue.fix ? (
+                    <View style={styles.fixBlock}>
+                      <Text style={styles.fixLabel}>WHAT TO DO</Text>
+                      <Text style={styles.fixText}>{issue.fix}</Text>
+                    </View>
+                  ) : null}
                 </View>
-              ) : null}
+              </View>
             </View>
           );
         })}
@@ -343,8 +389,8 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
           <Text style={styles.ctaText}>
             Our Lightning Website Sprint rebuilds your site mobile-first,
             AI-optimised, with Core Web Vitals tuned and a Claude chatbot
-            embedded. $999 flat. Money-back guarantee if it&apos;s not live in
-            48 hours.
+            embedded. $999 flat. Money-back guarantee if it&apos;s not live
+            within 48 hours.
           </Text>
           <Text style={styles.ctaLink}>agenticconsciousness.com.au/book</Text>
         </View>
