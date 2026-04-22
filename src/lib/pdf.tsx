@@ -161,15 +161,18 @@ const styles = StyleSheet.create({
 
   // --- at a glance ---
   glanceWrap: {
-    padding: 14,
+    flexDirection: 'row',
     backgroundColor: PAPER_SOFT,
-    borderTopWidth: 0,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
-    borderLeftWidth: 3,
-    borderLeftColor: RED,
     marginTop: 18,
     marginBottom: 26,
+  },
+  glanceSidebar: {
+    width: 3,
+    backgroundColor: RED,
+  },
+  glanceInner: {
+    flex: 1,
+    padding: 14,
   },
   glanceKicker: {
     fontFamily: MONO_BOLD,
@@ -260,14 +263,17 @@ const styles = StyleSheet.create({
   },
   labelBlockLast: {
     marginBottom: 0,
-    borderTopWidth: 0,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
-    borderLeftWidth: 2,
-    borderLeftColor: RED,
-    paddingLeft: 10,
+    flexDirection: 'row',
     paddingTop: 3,
     paddingBottom: 3,
+  },
+  labelBlockLastSidebar: {
+    width: 2,
+    backgroundColor: RED,
+    marginRight: 8,
+  },
+  labelBlockLastInner: {
+    flex: 1,
   },
   blockLabel: {
     fontFamily: MONO_BOLD,
@@ -1097,8 +1103,11 @@ function AuditDocument({
 
         {summary ? (
           <View style={styles.glanceWrap}>
-            <Text style={styles.glanceKicker}>AT A GLANCE</Text>
-            <Text style={styles.glanceBody}>{stripDashes(summary)}</Text>
+            <View style={styles.glanceSidebar} />
+            <View style={styles.glanceInner}>
+              <Text style={styles.glanceKicker}>AT A GLANCE</Text>
+              <Text style={styles.glanceBody}>{stripDashes(summary)}</Text>
+            </View>
           </View>
         ) : null}
 
@@ -1363,8 +1372,11 @@ function AuditDocument({
 
               {issue.fix ? (
                 <View style={styles.labelBlockLast}>
-                  <Text style={styles.blockLabel}>WHAT TO DO</Text>
-                  <Text style={styles.blockBody}>{stripDashes(issue.fix)}</Text>
+                  <View style={styles.labelBlockLastSidebar} />
+                  <View style={styles.labelBlockLastInner}>
+                    <Text style={styles.blockLabel}>WHAT TO DO</Text>
+                    <Text style={styles.blockBody}>{stripDashes(issue.fix)}</Text>
+                  </View>
                 </View>
               ) : null}
 
