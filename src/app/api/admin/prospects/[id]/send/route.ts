@@ -146,7 +146,16 @@ export async function POST(
     copyrightYear: p.copyright_year,
   };
 
+  console.log('[send] pdf start', {
+    id,
+    desk_url_present: !!p.screenshot_desktop_url,
+    mob_url_present: !!p.screenshot_mobile_url,
+    desk_buf_bytes: desktopShot?.data.byteLength ?? null,
+    mob_buf_bytes: mobileShot?.data.byteLength ?? null,
+  });
+
   let pdfBuffer: Buffer;
+  let renderPath: 'with-shots' | 'fallback' = 'with-shots';
   try {
     pdfBuffer = await renderAuditPdf({
       ...basePdfArgs,
@@ -154,13 +163,15 @@ export async function POST(
       screenshotMobile: mobileShot,
     });
   } catch (err) {
-    console.error('[send] PDF render with screenshots failed, retrying without:', err instanceof Error ? err.message : err);
+    renderPath = 'fallback';
+    console.error('[send] PRIMARY render with screenshots FAILED:', err instanceof Error ? err.stack ?? err.message : err);
     pdfBuffer = await renderAuditPdf({
       ...basePdfArgs,
       screenshotDesktop: null,
       screenshotMobile: null,
     });
   }
+  console.log('[send] pdf done', { id, renderPath, pdf_bytes: pdfBuffer.byteLength });
 
   // Wire tracking: stamp a token, rewrite links through tracker, inject pixel.
   const trackingToken = newTrackingToken();

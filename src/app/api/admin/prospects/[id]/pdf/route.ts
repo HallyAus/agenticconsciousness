@@ -55,13 +55,24 @@ export async function GET(
     copyrightYear: p.copyright_year,
   };
 
+  console.log('[admin/pdf] start', {
+    id,
+    desk_url_present: !!p.screenshot_desktop_url,
+    mob_url_present: !!p.screenshot_mobile_url,
+    desk_buf_bytes: desktopShot?.data.byteLength ?? null,
+    mob_buf_bytes: mobileShot?.data.byteLength ?? null,
+  });
+
   let buf: Buffer;
+  let renderPath: 'with-shots' | 'fallback' = 'with-shots';
   try {
     buf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopShot, screenshotMobile: mobileShot });
   } catch (err) {
-    console.error('[admin/pdf] render with screenshots failed, retrying without:', err instanceof Error ? err.message : err);
+    renderPath = 'fallback';
+    console.error('[admin/pdf] PRIMARY render with screenshots FAILED:', err instanceof Error ? err.stack ?? err.message : err);
     buf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: null, screenshotMobile: null });
   }
+  console.log('[admin/pdf] done', { id, renderPath, pdf_bytes: buf.byteLength });
 
   return new NextResponse(new Uint8Array(buf), {
     headers: {
