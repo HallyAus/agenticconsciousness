@@ -754,8 +754,8 @@ function AuditDocument({
           );
         })}
 
-        {/* Selected recent work */}
-        <View style={styles.portfolioWrap}>
+        {/* Selected recent work — forced onto its own page */}
+        <View style={styles.portfolioWrap} break>
           <View style={styles.portfolioHeader}>
             <Text style={styles.portfolioTitle}>Selected recent work</Text>
             <Text style={styles.portfolioMeta}>LIVE PRODUCTS / SHIPPED BY US</Text>
