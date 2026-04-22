@@ -13,18 +13,38 @@
  * Returns a URL that can be embedded in <img> tags or PDFs.
  */
 
+import crypto from 'node:crypto';
+
 const BASE = 'https://api.screenshotone.com/take';
 
 export function isScreenshotConfigured(): boolean {
   return Boolean(process.env.SCREENSHOT_API_KEY);
 }
 
+/**
+ * Build a signed ScreenshotOne URL. When SCREENSHOT_SECRET_KEY is set,
+ * we HMAC-SHA256 the query string with the secret and append a
+ * `signature` param. Signed URLs cannot be tampered with, so the access
+ * key in the URL is useless without a matching signature.
+ *
+ * When the secret is not set, falls back to access-key-only URLs (still
+ * works, less secure).
+ */
 function buildUrl(params: Record<string, string | number | boolean>): string {
   const key = process.env.SCREENSHOT_API_KEY ?? '';
+  const secret = process.env.SCREENSHOT_SECRET_KEY ?? '';
+
   const qs = new URLSearchParams({ access_key: key });
   for (const [k, v] of Object.entries(params)) {
     qs.set(k, String(v));
   }
+
+  if (secret) {
+    const body = qs.toString();
+    const sig = crypto.createHmac('sha256', secret).update(body).digest('hex');
+    qs.set('signature', sig);
+  }
+
   return `${BASE}?${qs.toString()}`;
 }
 
