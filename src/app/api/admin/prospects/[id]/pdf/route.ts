@@ -106,14 +106,11 @@ export async function GET(
           b ? `data:image/jpeg;base64,${b.data.toString('base64')}` : null;
         const desktopBuf = toDataUri(desktopShot);
         const mobileBuf = toDataUri(mobileShot);
-        // Temporarily disabled: the mockup screenshot image is the last
-        // new input that differs from the known-working Buffer baseline,
-        // and something about it is killing the Vercel render process
-        // without a catchable JS error. Set to null so the before/after
-        // page is skipped. Re-enable with a different image path (pdf-lib
-        // post-process, or a pre-resize step) in a follow-up.
-        const mockupBuf = null;
-        void mockupShot; // silence unused
+        // Re-enabled 2026-04-22 after the wrap=false crash in findings
+        // was identified and fixed (commit 06b0789). The prior
+        // "mockupScreenshot crashes render" diagnosis was wrong. The
+        // crash was always the findings list, not this image.
+        const mockupBuf = toDataUri(mockupShot);
 
         const basePdfArgs = {
           url: p.url,
