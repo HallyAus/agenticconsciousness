@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
+    alignItems: 'flex-end',
     borderTopWidth: 0,
     borderRightWidth: 0,
     borderBottomWidth: 1,
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
   shotsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
+    alignItems: 'flex-end',
     borderTopWidth: 0,
     borderRightWidth: 0,
     borderBottomWidth: 1,
@@ -690,7 +690,7 @@ const styles = StyleSheet.create({
   portfolioHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline',
+    alignItems: 'flex-end',
     borderTopWidth: 0,
     borderRightWidth: 0,
     borderBottomWidth: 1,
