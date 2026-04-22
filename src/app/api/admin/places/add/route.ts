@@ -4,6 +4,7 @@ import { sql } from '@/lib/pg';
 import { runStructuredAudit, normaliseUrl } from '@/lib/audit-core';
 import { extractEmailFromHtml } from '@/lib/email-scrape';
 import type { PlaceResult } from '@/lib/places';
+import { enrichProspectWithScanAndShots } from '@/lib/audit-enrich';
 
 /**
  * Admin-only. Convert a Google Place into a prospect row and kick off the
@@ -127,6 +128,9 @@ async function runAndStore(prospectId: string, url: string): Promise<void> {
           updated_at = NOW()
       WHERE id = ${prospectId}
     `;
+
+    const homeHtml = result.rawHtmlByUrl[url] ?? Object.values(result.rawHtmlByUrl)[0] ?? '';
+    await enrichProspectWithScanAndShots({ prospectId, url, homeHtml });
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error';
     await sql`

@@ -3,6 +3,7 @@ import { after } from 'next/server';
 import { sql } from '@/lib/pg';
 import { runStructuredAudit } from '@/lib/audit-core';
 import { extractEmailFromHtml } from '@/lib/email-scrape';
+import { enrichProspectWithScanAndShots } from '@/lib/audit-enrich';
 
 /**
  * Admin-only: re-run the audit against an existing prospect's URL.
@@ -67,6 +68,9 @@ async function runAndStore(prospectId: string, url: string): Promise<void> {
           updated_at = NOW()
       WHERE id = ${prospectId}
     `;
+
+    const homeHtml = result.rawHtmlByUrl[url] ?? Object.values(result.rawHtmlByUrl)[0] ?? '';
+    await enrichProspectWithScanAndShots({ prospectId, url, homeHtml });
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Unknown error';
     await sql`
