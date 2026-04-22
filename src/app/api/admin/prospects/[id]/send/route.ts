@@ -141,7 +141,8 @@ export async function POST(
         b ? `data:image/jpeg;base64,${b.data.toString('base64')}` : null;
       const desktopBuf = toDataUri(desktopShot);
       const mobileBuf = toDataUri(mobileShot);
-      const mockupBuf = toDataUri(mockupShot);
+      const mockupBuf = null;
+      void mockupShot; // silence unused (emergency fallback, see /pdf route)
 
       const basePdfArgs = {
         url: p.url,

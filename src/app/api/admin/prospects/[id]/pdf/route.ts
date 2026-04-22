@@ -78,7 +78,14 @@ export async function GET(
           b ? `data:image/jpeg;base64,${b.data.toString('base64')}` : null;
         const desktopBuf = toDataUri(desktopShot);
         const mobileBuf = toDataUri(mobileShot);
-        const mockupBuf = toDataUri(mockupShot);
+        // Temporarily disabled: the mockup screenshot image is the last
+        // new input that differs from the known-working Buffer baseline,
+        // and something about it is killing the Vercel render process
+        // without a catchable JS error. Set to null so the before/after
+        // page is skipped. Re-enable with a different image path (pdf-lib
+        // post-process, or a pre-resize step) in a follow-up.
+        const mockupBuf = null;
+        void mockupShot; // silence unused
 
         const basePdfArgs = {
           url: p.url,
@@ -99,7 +106,7 @@ export async function GET(
           id,
           desk_uri_len: desktopBuf?.length ?? null,
           mob_uri_len: mobileBuf?.length ?? null,
-          mockup_uri_len: mockupBuf?.length ?? null,
+          mockup_disabled: true,
         });
 
         try {
