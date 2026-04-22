@@ -1313,16 +1313,15 @@ function AuditDocument({
   // Hard cap so the PDF can never exceed a safe number of findings.
   // 7 findings is the empirical ceiling that reliably renders on Vercel
   // without hitting the pdfkit -1.87e21 pagination NaN.
-  // Caps restored as safety net until the remaining -1.87e+21 NaN
-  // in renderChildren translate is root-caused (stack trace lives in
-  // breadcrumb meta.stack; next step is identifying the node whose
-  // box.top/left Yoga computes as NaN).
-  const PDF_MAX_FINDINGS = 7;
-  const PDF_MAX_OPPORTUNITIES = 2;
-  const renderedIssues = issues.slice(0, PDF_MAX_FINDINGS);
-  const extraFindings = issues.length - renderedIssues.length;
-  const renderedOpportunities = (opportunities ?? []).slice(0, PDF_MAX_OPPORTUNITIES);
-  const extraOpportunities = (opportunities?.length ?? 0) - renderedOpportunities.length;
+  // Caps dropped now that patches/@react-pdf+pdfkit clamps out-of-range
+  // numbers to 0 instead of throwing. Render everything the audit
+  // produces. If a layout glitch happens it reports to Vercel runtime
+  // logs as "[pdfkit-patch] clamping out-of-range number" and the PDF
+  // still ships.
+  const renderedIssues = issues;
+  const extraFindings = 0;
+  const renderedOpportunities = opportunities ?? [];
+  const extraOpportunities = 0;
   const audFmt = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
   const hasHealth = brokenLinksCount !== null && brokenLinksCount !== undefined
     || viewportMetaOk !== null && viewportMetaOk !== undefined
