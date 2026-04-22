@@ -90,10 +90,10 @@ export async function POST(
   const built = buildTouch1(ctx);
   const subject = `[TEST] ${built.subject}`;
 
-  const { fetchAsNormalisedJpeg } = await import('@/lib/fetch-image');
-  const [desktopShot, mobileShot] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+  const { fetchAsNormalisedJpegUri } = await import('@/lib/fetch-image');
+  const [desktopUri, mobileUri] = await Promise.all([
+    p.screenshot_desktop_url ? fetchAsNormalisedJpegUri(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+    p.screenshot_mobile_url ? fetchAsNormalisedJpegUri(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
   ]);
 
   const basePdfArgs = {
@@ -108,17 +108,12 @@ export async function POST(
     copyrightYear: p.copyright_year,
   };
 
-  // Raw Buffer (not the { data, format } wrapper) — the object form
-  // silently skips embedding on Vercel (Issue #2639 class).
-  const desktopBuf = desktopShot?.data ?? null;
-  const mobileBuf = mobileShot?.data ?? null;
-
   let pdfBuffer: Buffer;
   try {
     pdfBuffer = await renderAuditPdf({
       ...basePdfArgs,
-      screenshotDesktop: desktopBuf,
-      screenshotMobile: mobileBuf,
+      screenshotDesktop: desktopUri,
+      screenshotMobile: mobileUri,
     });
   } catch (err) {
     console.error('[test-draft] PDF render with screenshots failed, retrying without:', err instanceof Error ? err.message : err);

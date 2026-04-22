@@ -9,7 +9,7 @@ import { injectPixel, newTrackingToken, rewriteLinks } from '@/lib/email-trackin
 import { isSuppressed } from '@/lib/suppression';
 import { pickRandomActiveVariant, renderSubject } from '@/lib/subject-variants';
 import { isBlockingVerdict, validateEmail } from '@/lib/email-validate';
-import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
+import { fetchAsNormalisedJpegUri } from '@/lib/fetch-image';
 
 // Allow up to 60s for send: audit is already done, but two ScreenshotOne
 // prefetches + PDF render + Graph draft creation can add up when
@@ -123,15 +123,15 @@ export async function POST(
     || (variant ? renderSubject(variant.template, { domain, businessName: p.business_name }) : built.subject);
   const html = overrides.htmlOverride?.trim() || built.html;
 
-  // Prefetch screenshots as canonical `{ data, format: 'jpg' }` buffers.
-  // sharp normalises to baseline JPEG with EXIF + ICC stripped, which is
-  // what @react-pdf/renderer v4 expects server-side — data URIs trigger
-  // jpeg-exif "Unknown version" crashes on some real-world payloads.
-  // If prefetch + PDF render fails, retry without so the Draft still
-  // lands (just without the site screenshots).
-  const [desktopShot, mobileShot] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+  // Sharp-normalised baseline-JPEG data URI string. Buffers crashed
+  // react-pdf's border layout on Vercel ("unsupported number" NaN from
+  // moveTo inside clipBorderTop); the data URI string path keeps the
+  // layout math stable and strips EXIF + ICC to avoid the jpeg-exif
+  // crash class. Render fallback still retries without screenshots on
+  // any failure so the Draft always lands.
+  const [desktopUri, mobileUri] = await Promise.all([
+    p.screenshot_desktop_url ? fetchAsNormalisedJpegUri(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+    p.screenshot_mobile_url ? fetchAsNormalisedJpegUri(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
   ]);
 
   const basePdfArgs = {
@@ -146,19 +146,12 @@ export async function POST(
     copyrightYear: p.copyright_year,
   };
 
-  // Raw Buffer instead of the { data, format } wrapper — the object form
-  // silently skips embedding on Vercel (Issue #2639 class). Raw Buffer
-  // with format guessed from SOI bytes embeds reliably on both local and
-  // serverless runtimes.
-  const desktopBuf = desktopShot?.data ?? null;
-  const mobileBuf = mobileShot?.data ?? null;
-
   console.log('[send] pdf start', {
     id,
     desk_url_present: !!p.screenshot_desktop_url,
     mob_url_present: !!p.screenshot_mobile_url,
-    desk_buf_bytes: desktopBuf?.byteLength ?? null,
-    mob_buf_bytes: mobileBuf?.byteLength ?? null,
+    desk_uri_len: desktopUri?.length ?? null,
+    mob_uri_len: mobileUri?.length ?? null,
   });
 
   let pdfBuffer: Buffer;
@@ -166,8 +159,8 @@ export async function POST(
   try {
     pdfBuffer = await renderAuditPdf({
       ...basePdfArgs,
-      screenshotDesktop: desktopBuf,
-      screenshotMobile: mobileBuf,
+      screenshotDesktop: desktopUri,
+      screenshotMobile: mobileUri,
     });
   } catch (err) {
     renderPath = 'fallback';

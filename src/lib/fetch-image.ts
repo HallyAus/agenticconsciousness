@@ -5,15 +5,16 @@
  * react-pdf's internal fetch timeout is shorter than that and fails
  * silently, leaving a blank slot. We always prefetch.
  *
- * Two shapes:
- *   - `fetchAsDataUri`       : base64 data URI string (legacy callers)
- *   - `fetchAsNormalisedJpeg`: canonical `{ data: Buffer, format: 'jpg' }`
- *     ready to feed `<Image src={...}>`. sharp-normalised so EXIF + ICC
- *     are stripped and the image is baseline JPEG, which sidesteps the
- *     three most common react-pdf v4 crash modes (jpeg-exif "Unknown
- *     version", the data-URI decode path, and silent-blank CMYK).
+ * Shapes available:
+ *   - `fetchAsDataUri`            : raw base64 data URI (unused legacy).
+ *   - `fetchAsNormalisedJpegUri`  : sharp-normalised baseline JPEG as a
+ *     data URI string. This is the canonical shape for our PDF pipeline.
+ *     Data URIs keep @react-pdf's box-layout math in scalar space and
+ *     avoid both the silent-skip Buffer path (Issue #2639) and the
+ *     NaN border-render crash seen on Vercel when raw Buffers fail to
+ *     decode (unsupported number: -1.8e+21 from moveTo/clipBorderTop).
  *
- * Both return null on any failure so the caller can fall back to no image.
+ * All return null on failure so the caller can fall back to no image.
  */
 
 import sharp from 'sharp';
@@ -49,22 +50,24 @@ export async function fetchAsDataUri(url: string, timeoutMs = 25_000): Promise<s
   }
 }
 
-export interface NormalisedJpeg {
-  data: Buffer;
-  format: 'jpg';
-}
-
 /**
  * Fetch a remote image and return it as a sharp-normalised baseline JPEG
- * Buffer, shaped as `{ data, format: 'jpg' }` — the canonical @react-pdf
- * `<Image src>` form per the v4 docs. Strips EXIF + ICC, forces baseline
- * (progressive: false), and clamps width so memory stays reasonable in
- * serverless. Returns null on any failure.
+ * data URI string, ready to feed `<Image src={...}>` on @react-pdf v4.
+ *
+ * Sharp pipeline:
+ *   - rotate() bakes EXIF orientation (so pdfkit doesn't rotate twice).
+ *   - resize(maxWidth) caps the dimensions.
+ *   - jpeg() encodes as baseline (progressive: false), WITHOUT mozjpeg
+ *     or optimiseCoding, chroma 4:2:0 — produces the most compatible
+ *     marker sequence for pdfkit's JPEG parser on Vercel's sharp build.
+ *   - withMetadata({}) strips EXIF + ICC entirely.
+ *
+ * Returns null on failure (bad URL, zero bytes, sharp throw).
  */
-export async function fetchAsNormalisedJpeg(
+export async function fetchAsNormalisedJpegUri(
   url: string,
   opts: { maxWidth?: number; quality?: number; timeoutMs?: number } = {},
-): Promise<NormalisedJpeg | null> {
+): Promise<string | null> {
   const { maxWidth = 900, quality = 75, timeoutMs = 25_000 } = opts;
   if (!url) return null;
   const t0 = Date.now();
@@ -82,18 +85,17 @@ export async function fetchAsNormalisedJpeg(
       console.error('[fetch-image] normalised zero bytes', url.slice(0, 120));
       return null;
     }
-    // NOTE: mozjpeg is OFF. The optimised encoder produces marker sequences
-    // that pdfkit's JPEG parser (inside @react-pdf/renderer) silently
-    // rejects on Vercel's serverless runtime — the render returns no
-    // error but the image is not embedded. Standard JPEG encoding works.
     const data = await sharp(raw)
       .rotate()
       .resize({ width: maxWidth, withoutEnlargement: true })
       .jpeg({ quality, progressive: false, mozjpeg: false, optimiseCoding: false, chromaSubsampling: '4:2:0' })
       .withMetadata({})
       .toBuffer();
-    // Sanity-check: first two bytes must be 0xFF 0xD8 (JPEG SOI).
     const soi = data.byteLength >= 2 && data[0] === 0xff && data[1] === 0xd8;
+    if (!soi) {
+      console.error('[fetch-image] normalised missing SOI', { outBytes: data.byteLength });
+      return null;
+    }
     console.log('[fetch-image] normalised ok', {
       rawBytes: raw.byteLength,
       outBytes: data.byteLength,
@@ -103,7 +105,7 @@ export async function fetchAsNormalisedJpeg(
       ms: Date.now() - t0,
       host: (() => { try { return new URL(url).host; } catch { return '?'; } })(),
     });
-    return { data, format: 'jpg' };
+    return `data:image/jpeg;base64,${data.toString('base64')}`;
   } catch (err) {
     console.error('[fetch-image] normalised failed', err instanceof Error ? err.message : err);
     return null;
