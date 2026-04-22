@@ -72,12 +72,14 @@ interface MessageInput {
   pdf?: { filename: string; base64: string };
 }
 
-function buildMessagePayload(args: MessageInput, sender: string) {
+function buildMessagePayload(args: MessageInput, _sender: string) {
+  // We intentionally omit `from`. When POSTing to /users/{sender}/messages
+  // the sender is implicit from the URL; setting it explicitly can trigger
+  // a SendAs permission check on some tenant configurations.
   return {
     subject: args.subject,
     body: { contentType: 'HTML', content: args.html },
     toRecipients: [{ emailAddress: { address: args.to } }],
-    from: { emailAddress: { address: sender } },
     attachments: args.pdf
       ? [
           {
