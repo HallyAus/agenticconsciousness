@@ -1104,6 +1104,10 @@ const styles = StyleSheet.create({
     bottom: 22,
     left: 44,
     right: 44,
+    borderTopWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 0,
     // borderTopWidth removed 2026-04-23: the stack trace from breadcrumb
     // d9fb5011 pinned clipBorderTop (render/index.js:1816) as the source
     // of the -1.87e+21 pdfkit NaN. Footer is the only element with
@@ -1309,10 +1313,16 @@ function AuditDocument({
   // Hard cap so the PDF can never exceed a safe number of findings.
   // 7 findings is the empirical ceiling that reliably renders on Vercel
   // without hitting the pdfkit -1.87e21 pagination NaN.
-  const renderedIssues = issues;
-  const extraFindings = 0;
-  const renderedOpportunities = opportunities ?? [];
-  const extraOpportunities = 0;
+  // Caps restored as safety net until the remaining -1.87e+21 NaN
+  // in renderChildren translate is root-caused (stack trace lives in
+  // breadcrumb meta.stack; next step is identifying the node whose
+  // box.top/left Yoga computes as NaN).
+  const PDF_MAX_FINDINGS = 7;
+  const PDF_MAX_OPPORTUNITIES = 2;
+  const renderedIssues = issues.slice(0, PDF_MAX_FINDINGS);
+  const extraFindings = issues.length - renderedIssues.length;
+  const renderedOpportunities = (opportunities ?? []).slice(0, PDF_MAX_OPPORTUNITIES);
+  const extraOpportunities = (opportunities?.length ?? 0) - renderedOpportunities.length;
   const audFmt = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
   const hasHealth = brokenLinksCount !== null && brokenLinksCount !== undefined
     || viewportMetaOk !== null && viewportMetaOk !== undefined
