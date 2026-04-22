@@ -211,20 +211,13 @@ const styles = StyleSheet.create({
   },
 
   // --- individual finding ---
-  // Finding card uses a filled sidebar View instead of borderLeftWidth.
-  // react-pdf's clipBorderLeft math produces -1.87e21 NaN when a
-  // bordered card splits across a page break. Filled rectangles
-  // paginate cleanly.
+  // Simplest possible finding card: plain column with padding and
+  // a background color. No border, no sidebar, no flex-row.
+  // Every extra layout prop has been a NaN trigger at some point.
   findingWrap: {
     marginBottom: 14,
-    flexDirection: 'row',
-  },
-  findingSidebar: {
-    width: 4,
-  },
-  findingInner: {
-    flex: 1,
     padding: 12,
+    paddingLeft: 16,
   },
   findingMetaRow: {
     flexDirection: 'row',
@@ -1331,8 +1324,6 @@ function AuditDocument({
               break={forceBreak}
               style={[styles.findingWrap, { backgroundColor: sev.accent }]}
             >
-              <View style={[styles.findingSidebar, { backgroundColor: sev.border }]} />
-              <View style={styles.findingInner}>
               <View style={styles.findingMetaRow}>
                 <Text style={[styles.findingNumber, { color: sev.border }]}>
                   {String(i + 1).padStart(2, '0')}
@@ -1395,7 +1386,6 @@ function AuditDocument({
                   </View>
                 );
               })()}
-              </View>
             </View>
           );
         })}
