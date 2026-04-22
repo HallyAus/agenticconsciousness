@@ -5,6 +5,8 @@ import { runStructuredAudit, normaliseUrl } from '@/lib/audit-core';
 import { extractEmailFromHtml } from '@/lib/email-scrape';
 import { notifyAdmin } from '@/lib/email';
 import { isSuppressed } from '@/lib/suppression';
+import { runSiteScan } from '@/lib/site-scan';
+import { captureScreenshots } from '@/lib/screenshots';
 
 /**
  * Admin-only. Runs an audit against a target URL and stores the result
@@ -81,9 +83,16 @@ async function runAndStore(prospectId: string, url: string): Promise<void> {
     }
 
     const hit = extractEmailFromHtml(result.rawHtmlByUrl, new URL(url).hostname);
-    // If the extracted email is globally suppressed, flip the prospect to
-    // 'unsubscribed' immediately so it never surfaces in outreach.
     const nextStatus = hit?.email && (await isSuppressed(hit.email)) ? 'unsubscribed' : 'audited';
+
+    // Deterministic post-audit scans: broken links, viewport meta,
+    // copyright year, sitemap, SEO extract. Plus screenshots (if
+    // SCREENSHOT_API_KEY is set). All run in parallel.
+    const homeHtml = result.rawHtmlByUrl[url] ?? Object.values(result.rawHtmlByUrl)[0] ?? '';
+    const [siteScan, shots] = await Promise.all([
+      runSiteScan({ url, html: homeHtml }).catch(() => null),
+      captureScreenshots(url).catch(() => ({ desktop: null, mobile: null })),
+    ]);
 
     await sql`
       UPDATE prospects
@@ -99,7 +108,15 @@ async function runAndStore(prospectId: string, url: string): Promise<void> {
             pageResults: result.pageResults,
             pagesFetched: result.pagesFetched,
             tookMs: Date.now() - start,
+            siteScan,
           })}::jsonb,
+          screenshot_desktop_url = ${shots.desktop},
+          screenshot_mobile_url = ${shots.mobile},
+          broken_links_count = ${siteScan?.brokenLinks.length ?? null},
+          broken_links = ${siteScan ? JSON.stringify(siteScan.brokenLinks.slice(0, 20)) : null}::jsonb,
+          viewport_meta_ok = ${siteScan?.viewportMetaOk ?? null},
+          copyright_year = ${siteScan?.copyrightYear ?? null},
+          site_scan_at = NOW(),
           updated_at = NOW()
       WHERE id = ${prospectId}
     `;
