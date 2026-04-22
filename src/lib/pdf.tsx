@@ -57,8 +57,8 @@ const SANS_BOLD = 'Helvetica-Bold';
 const styles = StyleSheet.create({
   // --- page shell ---
   page: {
-    padding: 48,
-    paddingBottom: 60,
+    padding: 44,
+    paddingBottom: 56,
     fontSize: 11,
     color: BODY,
     backgroundColor: '#ffffff',
@@ -202,13 +202,14 @@ const styles = StyleSheet.create({
   },
 
   // --- individual finding ---
-  // borderLeftWidth 6 is the severity colour bar (filled from sev.border
-  // inline). Thick enough to scan as a bar, not a border.
+  // Reverted to the known-working dimensions from 1d5597c. Phase E's
+  // borderLeftWidth: 6 / padding: 14 combo triggered an
+  // "unsupported number: -1.8e+21" NaN in clipBorderTop on Vercel.
   finding: {
     marginBottom: 14,
-    padding: 14,
-    paddingLeft: 18,
-    borderLeftWidth: 6,
+    padding: 12,
+    paddingLeft: 16,
+    borderLeftWidth: 4,
   },
   findingMetaRow: {
     flexDirection: 'row',
@@ -834,9 +835,9 @@ const styles = StyleSheet.create({
   // --- footer ---
   footer: {
     position: 'absolute',
-    bottom: 24,
-    left: 48,
-    right: 48,
+    bottom: 22,
+    left: 44,
+    right: 44,
     borderTopWidth: 1,
     borderTopColor: RULE,
     paddingTop: 8,
