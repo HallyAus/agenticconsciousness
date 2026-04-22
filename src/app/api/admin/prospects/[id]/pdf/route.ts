@@ -130,19 +130,19 @@ export async function GET(
         await trail.log('doc:args_built', {
           desk_uri_len: desktopBuf?.length ?? null,
           mob_uri_len: mobileBuf?.length ?? null,
-          mockup_disabled: true,
+          mockup_uri_len: mockupBuf?.length ?? null,
           issues: basePdfArgs.issues.length,
           opportunities: basePdfArgs.opportunities.length,
         });
 
         // This is the canary. If the process SIGKILLs inside react-pdf,
-        // this will be the last row in the breadcrumbs table — and the
+        // this will be the last row in the breadcrumbs table, and the
         // memory snapshot tells OOM apart from layout-NaN kills.
         await trail.log('render:about_to_call_renderToBuffer', {
           memory: memorySnapshot(),
           has_desktop: Boolean(desktopBuf),
           has_mobile: Boolean(mobileBuf),
-          has_mockup: false,
+          has_mockup: Boolean(mockupBuf),
         });
 
         try {
