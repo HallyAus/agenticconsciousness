@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/pg';
 import { renderAuditPdf } from '@/lib/pdf';
-import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
+import { fetchNormalisedJpegDetailed } from '@/lib/fetch-image';
 import { getOrRenderPdf } from '@/lib/pdf-cache';
 import { startBreadcrumbTrail, memorySnapshot } from '@/lib/pdf-breadcrumb';
 import type { OutreachIssue } from '@/lib/outreach';
@@ -84,11 +84,29 @@ export async function GET(
       renderFn: async () => {
         await trail.log('assets:fetch_start');
 
-        const [desktopShot, mobileShot, mockupShot] = await Promise.all([
-          p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-          p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
-          p.mockup_screenshot_url ? fetchAsNormalisedJpeg(p.mockup_screenshot_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+        const [desktopRes, mobileRes, mockupRes] = await Promise.all([
+          p.screenshot_desktop_url ? fetchNormalisedJpegDetailed(p.screenshot_desktop_url, { maxWidth: 900 }) : Promise.resolve({ image: null, failure: null }),
+          p.screenshot_mobile_url ? fetchNormalisedJpegDetailed(p.screenshot_mobile_url, { maxWidth: 400 }) : Promise.resolve({ image: null, failure: null }),
+          p.mockup_screenshot_url ? fetchNormalisedJpegDetailed(p.mockup_screenshot_url, { maxWidth: 900 }) : Promise.resolve({ image: null, failure: null }),
         ]);
+
+        const desktopShot = desktopRes.image;
+        const mobileShot = mobileRes.image;
+        const mockupShot = mockupRes.image;
+
+        // Report on each image's final outcome. Log a warning
+        // breadcrumb when a URL was supplied but the fetch never
+        // produced a usable JPEG, so we can see which image dropped
+        // out and why in Neon.
+        if (p.screenshot_desktop_url && !desktopShot) {
+          await trail.fail('assets:desktop_missing', new Error(desktopRes.failure?.detail ?? 'unknown'), { failure: desktopRes.failure });
+        }
+        if (p.screenshot_mobile_url && !mobileShot) {
+          await trail.fail('assets:mobile_missing', new Error(mobileRes.failure?.detail ?? 'unknown'), { failure: mobileRes.failure });
+        }
+        if (p.mockup_screenshot_url && !mockupShot) {
+          await trail.fail('assets:mockup_missing', new Error(mockupRes.failure?.detail ?? 'unknown'), { failure: mockupRes.failure });
+        }
 
         await trail.log('assets:images_resolved', {
           desktop_bytes: desktopShot?.data.byteLength ?? null,
@@ -97,6 +115,9 @@ export async function GET(
           desktop_first4: desktopShot ? Buffer.from(desktopShot.data).subarray(0, 4).toString('hex') : null,
           mobile_first4: mobileShot ? Buffer.from(mobileShot.data).subarray(0, 4).toString('hex') : null,
           mockup_first4: mockupShot ? Buffer.from(mockupShot.data).subarray(0, 4).toString('hex') : null,
+          desktop_attempts: desktopRes.failure?.attempts ?? null,
+          mobile_attempts: mobileRes.failure?.attempts ?? null,
+          mockup_attempts: mockupRes.failure?.attempts ?? null,
         });
 
         // Convert to data URI strings. Buffer path has repeatedly caused
