@@ -1326,7 +1326,6 @@ function AuditDocument({
                 styles.finding,
                 { borderLeftColor: sev.border, backgroundColor: sev.accent },
               ]}
-              wrap={false}
             >
               <View style={styles.findingMetaRow}>
                 <Text style={[styles.findingNumber, { color: sev.border }]}>
