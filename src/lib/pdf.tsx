@@ -211,17 +211,20 @@ const styles = StyleSheet.create({
   },
 
   // --- individual finding ---
-  // Reverted to the known-working dimensions from 1d5597c. Phase E's
-  // borderLeftWidth: 6 / padding: 14 combo triggered an
-  // "unsupported number: -1.8e+21" NaN in clipBorderTop on Vercel.
-  finding: {
+  // Finding card uses a filled sidebar View instead of borderLeftWidth.
+  // react-pdf's clipBorderLeft math produces -1.87e21 NaN when a
+  // bordered card splits across a page break. Filled rectangles
+  // paginate cleanly.
+  findingWrap: {
     marginBottom: 14,
+    flexDirection: 'row',
+  },
+  findingSidebar: {
+    width: 4,
+  },
+  findingInner: {
+    flex: 1,
     padding: 12,
-    paddingLeft: 16,
-    borderTopWidth: 0,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
-    borderLeftWidth: 4,
   },
   findingMetaRow: {
     flexDirection: 'row',
@@ -1319,11 +1322,10 @@ function AuditDocument({
           return (
             <View
               key={i}
-              style={[
-                styles.finding,
-                { borderLeftColor: sev.border, backgroundColor: sev.accent },
-              ]}
+              style={[styles.findingWrap, { backgroundColor: sev.accent }]}
             >
+              <View style={[styles.findingSidebar, { backgroundColor: sev.border }]} />
+              <View style={styles.findingInner}>
               <View style={styles.findingMetaRow}>
                 <Text style={[styles.findingNumber, { color: sev.border }]}>
                   {String(i + 1).padStart(2, '0')}
@@ -1386,6 +1388,7 @@ function AuditDocument({
                   </View>
                 );
               })()}
+              </View>
             </View>
           );
         })}
