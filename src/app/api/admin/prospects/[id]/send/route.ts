@@ -5,6 +5,7 @@ import { createDraftAuto } from '@/lib/graph-auto';
 import { isGraphConfigured } from '@/lib/graph';
 import { isDelegatedConnected } from '@/lib/graph-delegated';
 import { buildTouch1, type OutreachIssue } from '@/lib/outreach';
+import { injectPixel, newTrackingToken, rewriteLinks } from '@/lib/email-tracking';
 
 /**
  * Admin-only: create a DRAFT email in the sender's mailbox with the audit
@@ -84,13 +85,37 @@ export async function POST(
     date: new Date().toISOString().slice(0, 10),
   });
 
+  // Wire tracking: stamp a token, rewrite links through tracker, inject pixel.
+  const trackingToken = newTrackingToken();
+  const trackedHtml = injectPixel(
+    rewriteLinks(html, siteBaseUrl, trackingToken),
+    siteBaseUrl,
+    trackingToken,
+  );
+
   try {
     const draft = await createDraftAuto({
       to: p.email,
       subject,
-      html,
+      html: trackedHtml,
       pdf: { filename: `audit-${domain}.pdf`, base64: pdfBuffer.toString('base64') },
     });
+
+    // Create the prospect_sends row NOW (not on mark-sent) so tracking
+    // pixels + clicks attribute correctly the moment the draft exists.
+    // The send is created with sent_at = NOW() for ordering, but
+    // touch_count on prospects stays at 0 until the human clicks
+    // "Mark as sent".
+    await sql`
+      INSERT INTO prospect_sends (
+        prospect_id, touch_num, subject, body_snapshot,
+        graph_message_id, graph_conversation_id, tracking_token
+      )
+      VALUES (
+        ${id}, 1, ${subject}, ${trackedHtml},
+        ${draft.messageId}, ${draft.conversationId}, ${trackingToken}
+      )
+    `;
 
     await sql`
       UPDATE prospects
@@ -100,7 +125,7 @@ export async function POST(
           draft_web_link = ${draft.webLink},
           draft_created_at = NOW(),
           drafted_subject = ${subject},
-          drafted_body_html = ${html},
+          drafted_body_html = ${trackedHtml},
           updated_at = NOW()
       WHERE id = ${id}
     `;

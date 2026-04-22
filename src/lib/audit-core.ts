@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk';
+import { stripDashes } from '@/lib/text-hygiene';
 
 /**
  * Reusable audit core. Extracts the pure "fetch pages → run Claude →
@@ -51,21 +52,31 @@ export interface AuditBlockedResult {
 
 export type AuditRunResult = AuditResult | AuditBlockedResult;
 
-const AUDIT_SYSTEM = `You are a senior conversion + technical web auditor. 20 years of hands-on web work: strategy, CRO, accessibility, SEO, dev, and AI integration. You are not a checklist robot.
+function buildAuditSystemPrompt(): string {
+  const today = new Date();
+  const isoDate = today.toISOString().slice(0, 10);
+  const year = today.getUTCFullYear();
+  return `You are a senior conversion + technical web auditor. 20 years of hands-on web work: strategy, CRO, accessibility, SEO, dev, and AI integration. You are not a checklist robot.
 
-Your job: produce an audit that feels like a paid one-hour consultation from an expert who has actually looked at the visitor's site. Generic "add meta descriptions" boilerplate is a FAIL. Every finding must quote specific copy, class names, tags, or structural patterns from the HTML you were given — otherwise it is noise and you should drop it.
+TODAY'S DATE: ${isoDate} (current year is ${year}). Use this whenever a finding depends on time, freshness, or date comparisons.
 
-You are given MULTIPLE pages from the site — the homepage plus up to 4 extra pages selected from their sitemap. Before claiming something is MISSING, you MUST first search EVERY provided page. Cite the page you found evidence on.
+Your job: produce an audit that feels like a paid one-hour consultation from an expert who has actually looked at the visitor's site. Generic "add meta descriptions" boilerplate is a FAIL. Every finding must quote specific copy, class names, tags, or structural patterns from the HTML you were given, otherwise it is noise and you should drop it.
+
+You are given MULTIPLE pages from the site: the homepage plus up to 4 extra pages selected from their sitemap. Before claiming something is MISSING, you MUST first search EVERY provided page. Cite the page you found evidence on.
 
 Analyse in this order: (1) VALUE PROPOSITION & CONVERSION, (2) TRUST & CREDIBILITY, (3) MOBILE FIRST, (4) TECHNICAL SEO, (5) SOCIAL SHARING (Open Graph + Twitter), (6) PERFORMANCE & HYGIENE, (7) DESIGN PROFESSIONALISM, (8) AI OPPORTUNITY (one concrete, high-leverage AI intervention tailored to this specific business).
 
 Hard rules:
 - Every finding MUST quote at least one specific element, phrase, or attribute.
-- Return 6–10 issues. Fewer if the site is genuinely strong — do not pad.
-- Order by severity (critical → low).
+- Return 6 to 10 issues. Fewer if the site is genuinely strong. Do not pad.
+- One finding per issue. Never conflate two issues into one finding. Split compound issues (e.g. weak title tag AND typos) into separate items.
+- Order by severity (critical, high, medium, low).
 - Include at least one AI opportunity.
 - Direct, sharp tone. No hedging.
-- Score honestly 0–100.`;
+- NEVER use em-dashes (U+2014) or en-dashes (U+2013) as punctuation. Use commas, colons, parentheses, or new sentences. Hyphens in compound words are fine.
+- NEVER flag a copyright year as "outdated" unless it is strictly LESS than ${year} (not equal to). A "© ${year}" footer is correct, not an error. A "© ${year + 1}" footer is a future-date bug worth flagging.
+- Score honestly 0 to 100. Calibration: 0-30 critical (site is actively harmful), 31-50 poor (major gaps), 51-65 significant gaps, 66-80 solid with room to improve, 81-100 excellent. A site that loads, captures leads, and has basic meta tags should not score below 40.`;
+}
 
 async function fetchText(target: string, timeoutMs: number): Promise<string | null> {
   try {
@@ -237,7 +248,7 @@ export async function runStructuredAudit(url: string): Promise<AuditRunResult> {
     {
       model: MODEL,
       max_tokens: 3000,
-      system: [{ type: 'text', text: AUDIT_SYSTEM, cache_control: { type: 'ephemeral' } }],
+      system: [{ type: 'text', text: buildAuditSystemPrompt(), cache_control: { type: 'ephemeral' } }],
       messages: [{
         role: 'user',
         content: `Primary URL: ${url}\n\nHTML (sanitised, multiple pages follow):\n\n${stripped}\n\nProduce the audit via the submit_audit tool.`,
@@ -254,13 +265,25 @@ export async function runStructuredAudit(url: string): Promise<AuditRunResult> {
   }
   const parsed = toolUse.input as { summary?: string; score?: number; issues?: Issue[] };
   const sevOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
-  const issues = (parsed.issues ?? []).slice().sort((a, b) => (sevOrder[a.severity] ?? 9) - (sevOrder[b.severity] ?? 9));
+  // Claude sometimes slips em/en dashes + curly quotes into the output. Strip at
+  // the audit boundary so every downstream consumer (PDF, emails) gets clean text.
+  const clean = (s: string) => stripDashes(s).trim();
+  const issues = (parsed.issues ?? [])
+    .slice()
+    .sort((a, b) => (sevOrder[a.severity] ?? 9) - (sevOrder[b.severity] ?? 9))
+    .map((i) => ({
+      category: clean(i.category),
+      severity: i.severity,
+      title: clean(i.title),
+      detail: clean(i.detail),
+      fix: clean(i.fix),
+    }));
 
   return {
     ok: true,
     url,
     score: typeof parsed.score === 'number' ? parsed.score : 0,
-    summary: typeof parsed.summary === 'string' ? parsed.summary : '',
+    summary: typeof parsed.summary === 'string' ? clean(parsed.summary) : '',
     issues,
     pageResults: summary,
     pagesFetched: successful.length,

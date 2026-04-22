@@ -2,9 +2,9 @@ import { emailTemplate } from '@/lib/email';
 
 /**
  * Cold-outreach email templates. Three touches across 7 days:
- *   #1 Day 0   — value-led soft intro, 3 top issues, PDF attached, no price
- *   #2 Day +3  — threaded reply, introduces the $999 Sprint
- *   #3 Day +7  — threaded reply, soft close, "I'll leave you alone"
+ *   #1 Day 0   , value-led soft intro, 3 top issues, PDF attached, no price
+ *   #2 Day +3  , threaded reply, introduces the $999 Sprint
+ *   #3 Day +7  , threaded reply, soft close, "I'll leave you alone"
  *
  * Every email ends with a plain-English unsubscribe line + ABN + address
  * to satisfy the Australian Spam Act 2003. Inferred-consent basis is
@@ -58,9 +58,9 @@ export function buildTouch1(ctx: OutreachContext): { subject: string; html: stri
   const issueHtml = top
     .map(
       (i) => `
-    <li style="margin-bottom:10px">
+    <li style="margin:0 0 10px 0">
       <strong style="color:#0a0a0a">${esc(i.title)}</strong>
-      <div style="font-size:13px;color:#444;margin-top:2px">${esc(i.detail)}</div>
+      <div style="font-size:14px;color:#444;margin-top:2px">${esc(i.detail)}</div>
     </li>`,
     )
     .join('');
@@ -68,26 +68,42 @@ export function buildTouch1(ctx: OutreachContext): { subject: string; html: stri
   const greeting = ctx.businessName ? `the team at ${esc(ctx.businessName)}` : 'there';
 
   const html = emailTemplate(`
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
+    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
       Hi ${greeting},
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      I'm Daniel. I build AI-optimised websites for Australian businesses and I
-      ran a proper audit across ${esc(ctx.domain)} this morning. Three things
-      jumped out that I think are genuinely costing you leads:
+    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
+      I'm Daniel , I build AI-optimised websites for Australian small businesses.
+      I ran a proper audit across ${esc(ctx.domain)} this morning. Three things
+      jumped out that I reckon are costing you leads right now:
     </p>
-    <ol style="padding-left:20px;margin:0 0 16px;color:#222;font-size:15px;line-height:1.6">
+    <ol style="padding-left:20px;margin:0 0 16px;color:#222;font-size:15px;line-height:1.55">
       ${issueHtml}
     </ol>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      I attached the full PDF — ${ctx.issues.length} findings, scored ${ctx.score}/100,
-      each with a specific fix. No login, no form, just the PDF.
+    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
+      The full report is attached , ${ctx.issues.length} findings, scored ${ctx.score}/100,
+      every one with a specific fix you can hand to your current web person.
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      If any of it is useful, just hit reply. Happy to talk through the fixes
-      you'd want to prioritise. If it's not, no worries — bin the email.
+    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 6px">
+      <strong>If you'd rather we just fix the lot:</strong>
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 4px">
+    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
+      Our Lightning Website Sprint is a flat <strong>$999</strong> , we rebuild
+      the whole site mobile-first, AI-optimised, Claude chatbot embedded, live
+      in 48 hours. <strong>Includes full 12-month maintenance</strong> (copy
+      tweaks, image swaps, security patches, uptime monitoring). Money-back
+      guarantee if it's not live in 48 hours.
+    </p>
+    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
+      <a href="${ctx.siteBaseUrl}/book" style="color:#ff3d00;font-weight:700;text-decoration:none">
+        ${ctx.siteBaseUrl}/book →
+      </a>
+    </p>
+    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
+      Or just hit reply. Happy to walk through which of the audit issues would
+      move the needle fastest for you. If it's not the right time, bin this ,
+      no follow-up, no worries.
+    </p>
+    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 4px">
       Daniel
     </p>
     ${complianceFooter(ctx)}
@@ -100,15 +116,16 @@ export function buildTouch2(ctx: OutreachContext): { subject: string; html: stri
   const subject = `Re: 3 things costing you leads on ${ctx.domain}`;
   const html = emailTemplate(`
     <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      Following up on the audit I sent — not sure if it landed in junk or you've
+      Following up on the audit I sent , not sure if it landed in junk or you've
       been slammed this week.
     </p>
     <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      If any of the issues resonated, I have something that might fit: a
-      <strong>$999 Lightning Website Sprint</strong>. 48-hour turnaround,
-      mobile-first, AI-optimised, Claude chatbot trained on your content.
-      Every issue in the audit is covered. Money-back guarantee if it's not
-      live in 48 hours.
+      If any of the issues resonated, the offer is a flat
+      <strong>$999 Lightning Website Sprint</strong>: 48-hour turnaround,
+      mobile-first, AI-optimised, Claude chatbot trained on your content,
+      plus <strong>full 12-month maintenance included</strong> (copy tweaks,
+      image swaps, security patches, uptime monitoring). Every issue in the
+      audit is covered. Money-back guarantee if it's not live in 48 hours.
     </p>
     <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
       Have a look:
@@ -117,7 +134,7 @@ export function buildTouch2(ctx: OutreachContext): { subject: string; html: stri
       </a>
     </p>
     <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      Or just reply and tell me which issue bothers you most — I'll answer
+      Or just reply and tell me which issue bothers you most , I'll answer
       straight, no pitch.
     </p>
     <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 4px">
@@ -132,7 +149,7 @@ export function buildTouch3(ctx: OutreachContext): { subject: string; html: stri
   const subject = `Re: 3 things costing you leads on ${ctx.domain}`;
   const html = emailTemplate(`
     <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      Last note from me — if now isn't the right time, all good, I'll stop
+      Last note from me , if now isn't the right time, all good, I'll stop
       emailing. I just wanted to leave you the link in case it's useful
       later:
     </p>
@@ -140,11 +157,11 @@ export function buildTouch3(ctx: OutreachContext): { subject: string; html: stri
       <a href="${ctx.siteBaseUrl}/book" style="color:#ff3d00;font-weight:700">
         ${ctx.siteBaseUrl}/book
       </a>
-      — $999, 48 hours, fixes every issue in the audit.
+      , $999 flat, 48 hours, 12 months of maintenance included, fixes every issue in the audit.
     </p>
     <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
       If there was something specific in the audit you wanted a plain-English
-      explanation of, reply and I'll write it up — no obligation either way.
+      explanation of, reply and I'll write it up , no obligation either way.
     </p>
     <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 4px">
       Daniel

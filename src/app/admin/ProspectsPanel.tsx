@@ -21,6 +21,10 @@ interface Prospect {
   reply_detected_at: string | null;
   draft_web_link: string | null;
   draft_created_at: string | null;
+  opens_count: number;
+  clicks_count: number;
+  last_opened_at: string | null;
+  last_clicked_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -124,15 +128,13 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
   }
 
   async function handleCreateDraft(id: string, email: string) {
-    if (!confirm(`Create an Outlook draft to ${email}?\n\nYou'll review and hit Send manually.`)) return;
+    if (!confirm(`Create an Outlook draft to ${email}?\n\nSaved to Drafts — review in Outlook on the web when you're ready to send.`)) return;
     setDrafting(id);
     try {
       const res = await fetch(`/api/admin/prospects/${id}/send`, { method: 'POST' });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         alert(`Draft failed: ${data.error ?? res.status}`);
-      } else if (data.webLink) {
-        window.open(data.webLink, '_blank', 'noopener,noreferrer');
       }
       refresh();
     } finally {
@@ -160,8 +162,8 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         alert(`Test draft failed: ${data.error ?? res.status}`);
-      } else if (data.webLink) {
-        window.open(data.webLink, '_blank', 'noopener,noreferrer');
+      } else {
+        alert(`Test draft saved. Check your Drafts folder in ${trimmed}.`);
       }
     } finally {
       setDrafting(null);
@@ -270,6 +272,8 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
                   <Th>Score</Th>
                   <Th>Email</Th>
                   <Th>Phone</Th>
+                  <Th>Opens</Th>
+                  <Th>Clicks</Th>
                   <Th>Last touch</Th>
                   <Th>Updated</Th>
                   <Th></Th>
@@ -328,6 +332,24 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
                       )}
                     </Td>
                     <Td>{p.phone ?? '—'}</Td>
+                    <Td>
+                      {p.opens_count > 0 ? (
+                        <span style={{ color: '#22c55e', fontWeight: 700 }} title={fmtDate(p.last_opened_at)}>
+                          {p.opens_count}
+                        </span>
+                      ) : (
+                        <span style={{ color: '#666' }}>0</span>
+                      )}
+                    </Td>
+                    <Td>
+                      {p.clicks_count > 0 ? (
+                        <span style={{ color: '#3b82f6', fontWeight: 700 }} title={fmtDate(p.last_clicked_at)}>
+                          {p.clicks_count}
+                        </span>
+                      ) : (
+                        <span style={{ color: '#666' }}>0</span>
+                      )}
+                    </Td>
                     <Td>{fmtDate(p.last_outbound_at)}</Td>
                     <Td>{fmtDate(p.updated_at)}</Td>
                     <Td>

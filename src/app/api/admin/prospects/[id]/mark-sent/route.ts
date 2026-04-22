@@ -51,9 +51,15 @@ export async function POST(
     WHERE id = ${id}
   `;
 
+  // prospect_sends row was already created when the draft was generated so
+  // the tracking token could be set. Bump its touch number + timestamp here.
+  // If no send row exists (legacy drafts), insert one.
   await sql`
-    INSERT INTO prospect_sends (prospect_id, touch_num, subject, body_snapshot, graph_message_id, graph_conversation_id)
-    VALUES (${id}, ${touch}, ${p.drafted_subject}, ${p.drafted_body_html}, ${p.graph_message_id}, ${p.graph_conversation_id})
+    UPDATE prospect_sends
+    SET touch_num = ${touch},
+        sent_at = NOW()
+    WHERE prospect_id = ${id}
+      AND graph_message_id = ${p.graph_message_id}
   `;
 
   return NextResponse.json({ ok: true });

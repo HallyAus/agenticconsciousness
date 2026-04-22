@@ -1,259 +1,307 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
+import { stripDashes } from '@/lib/text-hygiene';
 
 /**
- * Audit PDF — mirrors the email-template aesthetic (red brand accents,
- * heavy-display headlines, monospace labels) in PDF form using
- * @react-pdf/renderer. Pure JS, no Chromium.
+ * Audit PDF. Neural brutalist aesthetic: pure #000 on #fff, hard severity
+ * colours, heavy monospace kickers, score as hero on page one.
  *
- * Kept intentionally simple: no external fonts (uses built-in Helvetica
- * and Courier) so cold starts stay cheap.
+ * House rules enforced:
+ *   - No em/en dashes anywhere. Text is run through stripDashes on entry.
+ *   - No fancy arrows. "->" is used.
+ *   - No hardcoded year. scoreBand / CTA reference runtime date only.
+ *   - Score calibration: 0-30 critical, 31-50 poor, 51-65 gaps,
+ *     66-80 solid, 81-100 excellent.
  */
 
-const RED = '#ff3d00';
-const RED_TINT = '#fff4f0';
-const INK = '#0a0a0a';
-const BODY = '#1f1f1f';
-const DIM = '#4a4a4a';
-const RULE = '#cccccc';
-const BG_SOFT = '#f6f4f2';
+const BLACK = '#000000';
+const WHITE = '#ffffff';
+const DIM = '#555555';
+const RULE = '#000000';
 
-const SEVERITY: Record<string, { bg: string; fg: string; label: string; border: string; titleSize: number; accent: string }> = {
-  critical: { bg: '#ff3d00', fg: '#ffffff', label: 'CRITICAL', border: '#ff3d00', titleSize: 17, accent: RED_TINT },
-  high:     { bg: '#d97706', fg: '#ffffff', label: 'HIGH',     border: '#d97706', titleSize: 15, accent: '#fdf6e8' },
-  medium:   { bg: '#eab308', fg: '#0a0a0a', label: 'MEDIUM',   border: '#eab308', titleSize: 14, accent: '#fffdf2' },
-  low:      { bg: '#e5e7eb', fg: '#1f2937', label: 'LOW',      border: '#9ca3af', titleSize: 13, accent: '#ffffff' },
+const SEVERITY: Record<string, { bg: string; fg: string; label: string }> = {
+  critical: { bg: '#E53935', fg: '#ffffff', label: 'CRITICAL' },
+  high:     { bg: '#FB8C00', fg: '#ffffff', label: 'HIGH' },
+  medium:   { bg: '#FDD835', fg: '#000000', label: 'MEDIUM' },
+  low:      { bg: '#757575', fg: '#ffffff', label: 'LOW' },
 };
 
+const MONO = 'Courier';
+const MONO_BOLD = 'Courier-Bold';
+const SANS = 'Helvetica';
+const SANS_BOLD = 'Helvetica-Bold';
+
 const styles = StyleSheet.create({
+  // --- page shell ---
   page: {
-    padding: 44,
-    paddingBottom: 60,
-    fontSize: 12,
-    color: BODY,
-    fontFamily: 'Helvetica',
-    lineHeight: 1.55,
+    padding: 48,
+    paddingBottom: 56,
+    fontSize: 11,
+    color: BLACK,
+    backgroundColor: WHITE,
+    fontFamily: SANS,
+    lineHeight: 1.5,
   },
 
-  // --- header bar ---
-  header: {
+  // --- brand bar (every page) ---
+  brandBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 2,
-    borderBottomColor: RED,
-    paddingBottom: 12,
-    marginBottom: 24,
+    borderBottomColor: BLACK,
+    paddingBottom: 10,
+    marginBottom: 28,
   },
-  brand: { flexDirection: 'row', alignItems: 'baseline' },
-  brandText: { fontSize: 15, fontFamily: 'Helvetica-Bold', color: INK, letterSpacing: 0.3 },
-  brandDot: { fontSize: 15, fontFamily: 'Helvetica-Bold', color: RED },
-  kicker: { fontFamily: 'Courier', fontSize: 10, color: RED, letterSpacing: 2 },
-
-  // --- cover block ---
-  kickerLabel: {
-    fontFamily: 'Courier',
-    fontSize: 10,
-    color: RED,
-    letterSpacing: 2,
-    marginBottom: 8,
-  },
-  title: {
-    fontSize: 30,
-    fontFamily: 'Helvetica-Bold',
-    color: INK,
-    marginBottom: 10,
-    lineHeight: 1.1,
-  },
-  url: {
-    fontFamily: 'Courier',
-    fontSize: 12,
-    color: RED,
-    marginBottom: 22,
-  },
-
-  // --- score block ---
-  scoreRow: { flexDirection: 'row', marginBottom: 22, gap: 16 },
-  scoreBox: {
-    borderWidth: 3,
-    borderColor: RED,
-    padding: 14,
-    width: 130,
-    alignItems: 'flex-start',
-  },
-  scoreLabel: {
-    fontFamily: 'Courier',
-    fontSize: 10,
-    color: RED,
-    letterSpacing: 2,
-    marginBottom: 6,
-    fontWeight: 700,
-  },
-  scoreValue: {
-    fontSize: 52,
-    fontFamily: 'Helvetica-Bold',
-    color: INK,
-    lineHeight: 1,
-    letterSpacing: -1,
-  },
-  scoreOutOf: {
-    fontFamily: 'Courier',
+  brandMark: {
+    fontFamily: MONO_BOLD,
     fontSize: 11,
-    color: DIM,
-    marginTop: 4,
+    color: BLACK,
     letterSpacing: 1,
   },
-  scoreSummary: { flex: 1, padding: 6, justifyContent: 'center' },
-  scoreSummaryText: {
-    fontSize: 14,
-    color: INK,
-    lineHeight: 1.45,
-    fontFamily: 'Helvetica-Bold',
+  brandKicker: {
+    fontFamily: MONO,
+    fontSize: 10,
+    color: BLACK,
+    letterSpacing: 2,
   },
 
-  // --- at-a-glance ---
-  intro: {
-    padding: 14,
-    backgroundColor: BG_SOFT,
-    borderLeftWidth: 3,
-    borderLeftColor: RED,
-    marginBottom: 24,
-  },
-  introLabel: {
-    fontFamily: 'Courier',
+  // --- cover ---
+  coverKicker: {
+    fontFamily: MONO,
     fontSize: 10,
-    color: RED,
+    color: BLACK,
     letterSpacing: 2,
     marginBottom: 8,
-    fontWeight: 700,
   },
-  introBody: { fontSize: 11.5, color: BODY, lineHeight: 1.6 },
+  coverTitle: {
+    fontFamily: SANS_BOLD,
+    fontSize: 32,
+    color: BLACK,
+    lineHeight: 1.05,
+    letterSpacing: -0.5,
+    marginBottom: 6,
+  },
+  coverUrl: {
+    fontFamily: MONO,
+    fontSize: 11,
+    color: BLACK,
+    marginBottom: 28,
+  },
+
+  // --- score block (hero) ---
+  scoreWrap: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    marginBottom: 20,
+    gap: 20,
+  },
+  scoreNumber: {
+    fontFamily: SANS_BOLD,
+    fontSize: 96,
+    color: BLACK,
+    lineHeight: 0.95,
+    letterSpacing: -3,
+  },
+  scoreSuffix: {
+    fontFamily: MONO,
+    fontSize: 12,
+    color: BLACK,
+    letterSpacing: 1,
+    marginBottom: 14,
+  },
+  scoreBand: {
+    fontFamily: SANS_BOLD,
+    fontSize: 13,
+    color: BLACK,
+    letterSpacing: 0,
+    marginBottom: 22,
+    textTransform: 'uppercase',
+    lineHeight: 1.3,
+  },
+
+  // --- at a glance ---
+  glanceWrap: {
+    borderLeftWidth: 3,
+    borderLeftColor: BLACK,
+    paddingLeft: 14,
+    paddingVertical: 2,
+    marginBottom: 30,
+  },
+  glanceKicker: {
+    fontFamily: MONO,
+    fontSize: 9,
+    color: BLACK,
+    letterSpacing: 2,
+    marginBottom: 6,
+  },
+  glanceBody: {
+    fontSize: 11,
+    color: BLACK,
+    lineHeight: 1.6,
+  },
 
   // --- findings section ---
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    borderBottomWidth: 1,
-    borderBottomColor: RULE,
-    paddingBottom: 8,
-    marginBottom: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: BLACK,
+    paddingBottom: 6,
+    marginBottom: 18,
   },
-  sectionTitle: { fontSize: 18, fontFamily: 'Helvetica-Bold', color: INK },
-  sectionMeta: { fontFamily: 'Courier', fontSize: 10, color: DIM, letterSpacing: 1 },
+  sectionTitle: {
+    fontFamily: SANS_BOLD,
+    fontSize: 18,
+    color: BLACK,
+    letterSpacing: -0.3,
+  },
+  sectionMeta: {
+    fontFamily: MONO,
+    fontSize: 9,
+    color: BLACK,
+    letterSpacing: 2,
+  },
 
   // --- individual finding ---
   finding: {
-    marginBottom: 16,
-    padding: 12,
-    paddingLeft: 16,
-    borderLeftWidth: 4,
+    marginBottom: 22,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
   },
-  findingRow: { flexDirection: 'row', gap: 10 },
-  findingNumber: {
-    fontFamily: 'Courier',
-    fontSize: 14,
-    fontWeight: 700,
-    width: 26,
-  },
-  findingBody: { flex: 1 },
-  findingHeaderRow: {
+  findingMetaRow: {
     flexDirection: 'row',
-    gap: 6,
-    marginBottom: 6,
     alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
   },
-  severityChip: {
+  findingNumber: {
+    fontFamily: MONO_BOLD,
+    fontSize: 11,
+    color: BLACK,
+    letterSpacing: 1,
+  },
+  severityPill: {
     paddingTop: 3,
     paddingBottom: 3,
-    paddingLeft: 7,
-    paddingRight: 7,
-    fontFamily: 'Courier',
+    paddingLeft: 8,
+    paddingRight: 8,
+    fontFamily: MONO_BOLD,
     fontSize: 9,
     letterSpacing: 1.2,
-    fontWeight: 700,
   },
-  categoryChip: {
-    fontFamily: 'Courier',
+  categoryPill: {
+    fontFamily: MONO,
     fontSize: 9,
     color: DIM,
     letterSpacing: 1.2,
-    paddingTop: 4,
   },
   findingTitle: {
-    fontFamily: 'Helvetica-Bold',
-    color: INK,
-    marginBottom: 6,
+    fontFamily: SANS_BOLD,
+    fontSize: 14,
+    color: BLACK,
     lineHeight: 1.25,
-  },
-  findingDetail: {
-    fontSize: 11.5,
-    color: BODY,
-    lineHeight: 1.6,
     marginBottom: 10,
+    letterSpacing: -0.2,
   },
-  fixBlock: {
-    borderLeftWidth: 2,
-    borderLeftColor: RED,
-    paddingLeft: 10,
-    paddingTop: 4,
-    paddingBottom: 4,
+
+  // labelled blocks — WHAT WE FOUND / WHAT TO DO
+  labelBlock: {
+    marginBottom: 8,
   },
-  fixLabel: {
-    fontFamily: 'Courier',
+  labelBlockLast: {
+    marginBottom: 0,
+  },
+  blockLabel: {
+    fontFamily: MONO_BOLD,
     fontSize: 9,
-    color: RED,
+    color: BLACK,
     letterSpacing: 1.5,
-    marginBottom: 4,
-    fontWeight: 700,
+    marginBottom: 3,
   },
-  fixText: { fontSize: 11.5, color: INK, lineHeight: 1.6 },
+  blockBody: {
+    fontSize: 11,
+    color: BLACK,
+    lineHeight: 1.55,
+  },
+  blockBodyMono: {
+    fontSize: 10,
+    color: BLACK,
+    lineHeight: 1.55,
+    fontFamily: MONO,
+  },
 
   // --- CTA ---
-  cta: {
-    marginTop: 14,
+  ctaWrap: {
+    marginTop: 8,
     padding: 18,
     borderWidth: 2,
-    borderColor: RED,
-    backgroundColor: BG_SOFT,
+    borderColor: BLACK,
   },
   ctaKicker: {
-    fontFamily: 'Courier',
+    fontFamily: MONO,
     fontSize: 10,
-    color: RED,
+    color: BLACK,
     letterSpacing: 2,
-    marginBottom: 8,
-    fontWeight: 700,
+    marginBottom: 10,
   },
   ctaTitle: {
-    fontSize: 18,
-    fontFamily: 'Helvetica-Bold',
-    color: INK,
-    marginBottom: 8,
+    fontFamily: SANS_BOLD,
+    fontSize: 16,
+    color: BLACK,
+    marginBottom: 10,
     lineHeight: 1.2,
+    letterSpacing: -0.3,
   },
-  ctaText: { fontSize: 11.5, color: BODY, lineHeight: 1.6, marginBottom: 12 },
+  ctaBody: {
+    fontSize: 11,
+    color: BLACK,
+    lineHeight: 1.55,
+    marginBottom: 10,
+  },
+  ctaBullets: {
+    marginBottom: 12,
+  },
+  ctaBullet: {
+    fontSize: 10,
+    color: BLACK,
+    lineHeight: 1.45,
+    fontFamily: MONO,
+    marginBottom: 3,
+  },
+  ctaPrice: {
+    fontFamily: SANS_BOLD,
+    fontSize: 22,
+    color: BLACK,
+    marginBottom: 4,
+    letterSpacing: -0.5,
+  },
   ctaLink: {
-    fontFamily: 'Helvetica-Bold',
-    fontSize: 13,
-    color: RED,
+    fontFamily: MONO_BOLD,
+    fontSize: 12,
+    color: BLACK,
+    letterSpacing: 0.5,
+    marginTop: 4,
   },
 
   // --- footer ---
   footer: {
     position: 'absolute',
     bottom: 22,
-    left: 44,
-    right: 44,
+    left: 48,
+    right: 48,
     borderTopWidth: 1,
     borderTopColor: RULE,
     paddingTop: 8,
     fontSize: 9,
-    color: DIM,
+    color: BLACK,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    fontFamily: MONO,
   },
-  pageNum: { fontFamily: 'Courier' },
+  pageNum: { fontFamily: MONO },
 });
 
 export interface AuditPdfIssue {
@@ -274,129 +322,130 @@ export interface AuditPdfArgs {
 }
 
 function getSev(raw: string) {
-  return SEVERITY[raw?.toLowerCase()] ?? SEVERITY.medium;
+  return SEVERITY[(raw ?? 'medium').toLowerCase()] ?? SEVERITY.medium;
 }
 
+/**
+ * Rescaled per Daniel's brief.
+ * 0-30 critical  | 31-50 poor  | 51-65 significant gaps
+ * 66-80 solid    | 81-100 excellent
+ */
 function scoreBand(score: number): string {
-  if (score >= 85) return 'Strong — a few polish items below.';
-  if (score >= 70) return 'Above average. Worth fixing the biggest items below.';
-  if (score >= 55) return 'Average. The issues below are costing you leads every day.';
-  if (score >= 40) return 'Weak. Prospects are bouncing before they trust you.';
+  if (score >= 81) return 'Excellent. A few polish items below.';
+  if (score >= 66) return 'Solid, with room to improve.';
+  if (score >= 51) return 'Significant gaps. Worth fixing the top items below.';
+  if (score >= 31) return 'Poor. The issues below are costing you leads every day.';
   return 'Critical. Most visitors will leave within seconds.';
 }
 
+function domainFromUrl(url: string): string {
+  try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
+}
+
 function AuditDocument({ url, businessName, score, summary, issues, date }: AuditPdfArgs) {
-  const domain = (() => {
-    try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
-  })();
+  const domain = domainFromUrl(url);
+  const clampedScore = Math.max(0, Math.min(100, score));
 
   return (
     <Document
-      title={`Audit — ${businessName ?? domain}`}
+      title={`Audit ${businessName ?? domain}`}
       author="Agentic Consciousness"
       subject="Website audit"
     >
       <Page size="A4" style={styles.page}>
-        {/* Header */}
-        <View style={styles.header} fixed>
-          <View style={styles.brand}>
-            <Text style={styles.brandText}>AGENTIC CONSCIOUSNESS</Text>
-            <Text style={styles.brandDot}>_</Text>
-          </View>
-          <Text style={styles.kicker}>WEBSITE AUDIT</Text>
+        {/* Brand bar */}
+        <View style={styles.brandBar} fixed>
+          <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
+          <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
         </View>
 
-        {/* Cover */}
-        <Text style={styles.kickerLabel}>PREPARED FOR</Text>
-        <Text style={styles.title}>
-          {businessName ? businessName : domain}
+        {/* Cover block */}
+        <Text style={styles.coverKicker}>PREPARED FOR</Text>
+        <Text style={styles.coverTitle}>
+          {stripDashes(businessName || domain)}
         </Text>
-        <Text style={styles.url}>{url}</Text>
+        <Text style={styles.coverUrl}>{url}</Text>
 
-        {/* Score */}
-        <View style={styles.scoreRow}>
-          <View style={styles.scoreBox}>
-            <Text style={styles.scoreLabel}>OVERALL</Text>
-            <Text style={styles.scoreValue}>{score}</Text>
-            <Text style={styles.scoreOutOf}>OUT OF 100</Text>
-          </View>
-          <View style={styles.scoreSummary}>
-            <Text style={styles.scoreSummaryText}>{scoreBand(score)}</Text>
-          </View>
+        {/* Hero score */}
+        <View style={styles.scoreWrap}>
+          <Text style={styles.scoreNumber}>{clampedScore}</Text>
+          <Text style={styles.scoreSuffix}>OUT OF 100</Text>
         </View>
+        <Text style={styles.scoreBand}>{scoreBand(clampedScore)}</Text>
 
         {/* At a glance */}
         {summary ? (
-          <View style={styles.intro}>
-            <Text style={styles.introLabel}>AT A GLANCE</Text>
-            <Text style={styles.introBody}>{summary}</Text>
+          <View style={styles.glanceWrap}>
+            <Text style={styles.glanceKicker}>AT A GLANCE</Text>
+            <Text style={styles.glanceBody}>{stripDashes(summary)}</Text>
           </View>
         ) : null}
 
-        {/* Findings header */}
+        {/* Findings */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Findings</Text>
           <Text style={styles.sectionMeta}>
-            {issues.length} ITEM{issues.length === 1 ? '' : 'S'} · ORDERED BY SEVERITY
+            {issues.length} ITEM{issues.length === 1 ? '' : 'S'} / ORDERED BY SEVERITY
           </Text>
         </View>
 
         {issues.map((issue, i) => {
           const sev = getSev(issue.severity);
-          const isCritical = (issue.severity || '').toLowerCase() === 'critical';
           return (
-            <View
-              key={i}
-              style={[
-                styles.finding,
-                { borderLeftColor: sev.border, backgroundColor: sev.accent },
-              ]}
-              wrap={false}
-            >
-              <View style={styles.findingRow}>
-                <Text style={[styles.findingNumber, { color: sev.border }]}>
+            <View key={i} style={styles.finding} wrap={false}>
+              <View style={styles.findingMetaRow}>
+                <Text style={styles.findingNumber}>
                   {String(i + 1).padStart(2, '0')}
                 </Text>
-                <View style={styles.findingBody}>
-                  <View style={styles.findingHeaderRow}>
-                    <Text style={[styles.severityChip, { backgroundColor: sev.bg, color: sev.fg }]}>
-                      {sev.label}
-                    </Text>
-                    <Text style={styles.categoryChip}>
-                      · {(issue.category || 'General').toUpperCase()}
-                    </Text>
-                  </View>
-                  <Text style={[styles.findingTitle, { fontSize: sev.titleSize, color: isCritical ? RED : INK }]}>
-                    {issue.title}
-                  </Text>
-                  <Text style={styles.findingDetail}>{issue.detail}</Text>
-                  {issue.fix ? (
-                    <View style={styles.fixBlock}>
-                      <Text style={styles.fixLabel}>WHAT TO DO</Text>
-                      <Text style={styles.fixText}>{issue.fix}</Text>
-                    </View>
-                  ) : null}
-                </View>
+                <Text style={[styles.severityPill, { backgroundColor: sev.bg, color: sev.fg }]}>
+                  {sev.label}
+                </Text>
+                <Text style={styles.categoryPill}>
+                  / {(issue.category || 'General').toUpperCase()}
+                </Text>
               </View>
+
+              <Text style={styles.findingTitle}>{stripDashes(issue.title)}</Text>
+
+              <View style={styles.labelBlock}>
+                <Text style={styles.blockLabel}>WHAT WE FOUND</Text>
+                <Text style={styles.blockBody}>{stripDashes(issue.detail)}</Text>
+              </View>
+
+              {issue.fix ? (
+                <View style={styles.labelBlockLast}>
+                  <Text style={styles.blockLabel}>WHAT TO DO</Text>
+                  <Text style={styles.blockBody}>{stripDashes(issue.fix)}</Text>
+                </View>
+              ) : null}
             </View>
           );
         })}
 
         {/* CTA */}
-        <View style={styles.cta} wrap={false}>
+        <View style={styles.ctaWrap} wrap={false}>
           <Text style={styles.ctaKicker}>NEXT STEP</Text>
-          <Text style={styles.ctaTitle}>Want us to fix every one of these — in 48 hours?</Text>
-          <Text style={styles.ctaText}>
-            Our Lightning Website Sprint rebuilds your site mobile-first,
-            AI-optimised, with Core Web Vitals tuned and a Claude chatbot
-            embedded. $999 flat. Money-back guarantee if it&apos;s not live
-            within 48 hours.
+          <Text style={styles.ctaTitle}>Fix every one of these in 48 hours.</Text>
+          <Text style={styles.ctaPrice}>$999</Text>
+          <Text style={styles.ctaBody}>
+            Lightning Website Sprint. Mobile-first rebuild, AI-optimised,
+            Claude chatbot trained on your content, Core Web Vitals tuned.
+            Money-back guarantee if it is not live in 48 hours.
           </Text>
-          <Text style={styles.ctaLink}>agenticconsciousness.com.au/book</Text>
+          <View style={styles.ctaBullets}>
+            <Text style={styles.ctaBullet}>+ FULL 12 MONTH MAINTENANCE INCLUDED</Text>
+            <Text style={styles.ctaBullet}>+ COPY TWEAKS + IMAGE SWAPS ON REQUEST</Text>
+            <Text style={styles.ctaBullet}>+ SECURITY PATCHES + UPTIME MONITORING</Text>
+            <Text style={styles.ctaBullet}>+ HOSTING + DOMAIN MANAGEMENT</Text>
+          </View>
+          <Text style={styles.ctaLink}>AGENTICCONSCIOUSNESS.COM.AU/BOOK</Text>
         </View>
 
+        {/* Footer */}
         <View style={styles.footer} fixed>
-          <Text>Agentic Consciousness · agenticconsciousness.com.au · {date}</Text>
+          <Text>
+            Agentic Consciousness / agenticconsciousness.com.au / {date}
+          </Text>
           <Text
             style={styles.pageNum}
             render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
