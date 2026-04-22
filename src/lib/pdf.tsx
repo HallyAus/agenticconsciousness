@@ -1104,11 +1104,12 @@ const styles = StyleSheet.create({
     bottom: 22,
     left: 44,
     right: 44,
-    borderTopWidth: 1,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
-    borderLeftWidth: 0,
-    borderTopColor: RULE,
+    // borderTopWidth removed 2026-04-23: the stack trace from breadcrumb
+    // d9fb5011 pinned clipBorderTop (render/index.js:1816) as the source
+    // of the -1.87e+21 pdfkit NaN. Footer is the only element with
+    // borderTopWidth > 0, position:absolute + render callback inside a
+    // fixed footer produced a computed box coordinate that overflows
+    // pdfkit's ±1e21 guard. Using a filled divider View instead.
     paddingTop: 8,
     fontSize: 9,
     color: DIM,
