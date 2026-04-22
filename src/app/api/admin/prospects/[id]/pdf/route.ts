@@ -3,6 +3,7 @@ import { sql } from '@/lib/pg';
 import { renderAuditPdf } from '@/lib/pdf';
 import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
 import { getOrRenderPdf } from '@/lib/pdf-cache';
+import { startBreadcrumbTrail, memorySnapshot } from '@/lib/pdf-breadcrumb';
 import type { OutreachIssue } from '@/lib/outreach';
 
 // Cold renders can push past 60s now that we fetch three screenshots
@@ -13,21 +14,19 @@ export const maxDuration = 300;
 /**
  * Returns the audit PDF for admin preview.
  *
- * Flow:
- *   1. Check prospects.pdf_url — if set and the Blob is reachable,
- *      redirect there (browser cacheable, no server work).
- *   2. Otherwise render fresh, upload to Vercel Blob, persist the URL,
- *      then stream the bytes back on THIS request (avoids a second
- *      round-trip on cache miss).
- *
- * Invalidation is the reaudit path's job — see audit-enrich which
- * calls clearPdfCache() before writing new scan data.
+ * Every render step writes an awaited breadcrumb to Neon — so when
+ * react-pdf SIGKILLs the native process (stdout does not flush on
+ * Vercel before the kill lands), the last surviving row identifies
+ * the crash point. See src/lib/pdf-breadcrumb.ts for the rationale.
  */
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
+  const trail = startBreadcrumbTrail(id);
+  await trail.log('route:enter', { route: '/api/admin/prospects/[id]/pdf' });
+
   const rows = (await sql`
     SELECT url, business_name, audit_score, audit_summary, audit_data,
            screenshot_desktop_url, screenshot_mobile_url, mockup_screenshot_url,
@@ -49,9 +48,26 @@ export async function GET(
     place_data: { types?: string[]; primaryType?: string } | null;
     pdf_url: string | null;
   }>;
-  if (rows.length === 0) return new NextResponse('Not found', { status: 404 });
+  if (rows.length === 0) {
+    await trail.fail('db:prospect_not_found', new Error('no row'));
+    return new NextResponse('Not found', { status: 404 });
+  }
   const p = rows[0];
-  if (!p.audit_data?.issues?.length) return new NextResponse('Audit not ready', { status: 409 });
+  await trail.log('db:prospect_loaded', {
+    url: p.url,
+    has_audit_data: Boolean(p.audit_data?.issues?.length),
+    issues_count: p.audit_data?.issues?.length ?? 0,
+    opportunities_count: p.audit_data?.opportunities?.length ?? 0,
+    has_desktop_shot: Boolean(p.screenshot_desktop_url),
+    has_mobile_shot: Boolean(p.screenshot_mobile_url),
+    has_mockup_shot: Boolean(p.mockup_screenshot_url),
+    pdf_url_cached: Boolean(p.pdf_url),
+  });
+
+  if (!p.audit_data?.issues?.length) {
+    await trail.fail('db:audit_not_ready', new Error('no issues in audit_data'));
+    return new NextResponse('Audit not ready', { status: 409 });
+  }
 
   const domain = new URL(p.url).hostname.replace(/^www\./, '');
 
@@ -66,11 +82,23 @@ export async function GET(
       prospectId: id,
       domain,
       renderFn: async () => {
+        await trail.log('assets:fetch_start');
+
         const [desktopShot, mobileShot, mockupShot] = await Promise.all([
           p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
           p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
           p.mockup_screenshot_url ? fetchAsNormalisedJpeg(p.mockup_screenshot_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
         ]);
+
+        await trail.log('assets:images_resolved', {
+          desktop_bytes: desktopShot?.data.byteLength ?? null,
+          mobile_bytes: mobileShot?.data.byteLength ?? null,
+          mockup_bytes: mockupShot?.data.byteLength ?? null,
+          desktop_first4: desktopShot ? Buffer.from(desktopShot.data).subarray(0, 4).toString('hex') : null,
+          mobile_first4: mobileShot ? Buffer.from(mobileShot.data).subarray(0, 4).toString('hex') : null,
+          mockup_first4: mockupShot ? Buffer.from(mockupShot.data).subarray(0, 4).toString('hex') : null,
+        });
+
         // Convert to data URI strings. Buffer path has repeatedly caused
         // silent native crashes in fontkit/pdfkit on Vercel. String
         // data URIs are the shape that renders reliably.
@@ -102,32 +130,60 @@ export async function GET(
           mockupScreenshot: mockupBuf,
         };
 
-        console.log('[admin/pdf] render start', {
-          id,
+        await trail.log('doc:args_built', {
           desk_uri_len: desktopBuf?.length ?? null,
           mob_uri_len: mobileBuf?.length ?? null,
           mockup_disabled: true,
+          issues: basePdfArgs.issues.length,
+          opportunities: basePdfArgs.opportunities.length,
+        });
+
+        // This is the canary. If the process SIGKILLs inside react-pdf,
+        // this will be the last row in the breadcrumbs table — and the
+        // memory snapshot tells OOM apart from layout-NaN kills.
+        await trail.log('render:about_to_call_renderToBuffer', {
+          memory: memorySnapshot(),
+          has_desktop: Boolean(desktopBuf),
+          has_mobile: Boolean(mobileBuf),
+          has_mockup: false,
         });
 
         try {
-          return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
+          const bytes = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
+          await trail.log('render:returned', {
+            bytes: bytes.byteLength,
+            memory: memorySnapshot(),
+          });
+          return bytes;
         } catch (err) {
+          await trail.fail('render:primary_threw', err, { memory: memorySnapshot() });
           console.error('[admin/pdf] PRIMARY render FAILED, retrying without shots:', err instanceof Error ? err.stack ?? err.message : err);
-          return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: null, screenshotMobile: null, mockupScreenshot: null });
+
+          await trail.log('render:about_to_retry_no_shots', { memory: memorySnapshot() });
+          const bytes = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: null, screenshotMobile: null, mockupScreenshot: null });
+          await trail.log('render:retry_returned', {
+            bytes: bytes.byteLength,
+            memory: memorySnapshot(),
+          });
+          return bytes;
         }
       },
     });
+    await trail.log('cache:complete', { cached: cached.cached, bytes: cached.bytes.byteLength });
   } catch (err) {
+    await trail.fail('pipeline:fatal', err);
     console.error('[admin/pdf] full pipeline FAILED:', err instanceof Error ? err.stack ?? err.message : err);
-    return new NextResponse('PDF render failed, check Vercel logs', { status: 500 });
+    return new NextResponse(`PDF render failed, request_id=${trail.requestId}`, { status: 500 });
   }
 
+  await trail.log('route:exit_ok', { bytes: cached.bytes.byteLength, cached: cached.cached });
   return new NextResponse(new Uint8Array(cached.bytes), {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `inline; filename="audit-${domain}.pdf"`,
       'X-Robots-Tag': 'noindex, nofollow',
       'X-Pdf-Cache': cached.cached ? 'hit' : 'miss',
+      'X-Request-Id': trail.requestId,
     },
   });
 }

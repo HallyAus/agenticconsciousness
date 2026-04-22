@@ -16,7 +16,7 @@
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@neondatabase/serverless": "^1.0.2",
     "@octokit/rest": "^22.0.1",
-    "@react-pdf/renderer": "^4.5.1",
+    "@react-pdf/renderer": "4.1.6",
     "@types/qrcode": "^1.5.6",
     "@vercel/blob": "^2.3.3",
     "framer-motion": "^12.38.0",

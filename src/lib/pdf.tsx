@@ -1,15 +1,15 @@
 import React from 'react';
 import QRCode from 'qrcode';
-import { Document, Font, Image, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
+import { Document, Image, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
 import { stripDashes } from '@/lib/text-hygiene';
 import { SPRINT_CONFIG, AVG_JOB_VALUE_BY_VERTICAL } from '@/config/sprint';
 import { estimateFindingLoss, estimateAuditTotal, formatRevenueRange, resolveVertical } from '@/lib/revenue-impact';
 
-// Disable hyphenation — react-pdf defaults to English hyphenation which
-// splits awkwardly in headings. Tracking a separate issue to embed
-// proper TTFs for cross-viewer metric consistency (fontkit rejected
-// the @fontsource WOFFs we tried); PDF-standard Helvetica for now.
-Font.registerHyphenationCallback((word) => [word]);
+// NOTE: Font.registerHyphenationCallback was removed as part of the
+// Vercel SIGKILL investigation (2026-04-22). The call ran inside
+// native fontkit on every text node and is the first-ever Font.* API
+// call in this file — introduced with phase A. If this turns out not
+// to be the cause, restore from commit 525e80d.
 
 /**
  * Audit PDF. Brand-aligned neural brutalist: red (#ff3d00) accents on
