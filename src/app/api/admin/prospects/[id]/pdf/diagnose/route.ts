@@ -66,12 +66,17 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const rawSkip = new URL(req.url).searchParams.get('skip');
+  const url = new URL(req.url);
+  const rawSkip = url.searchParams.get('skip');
   const skips = parseSkipSet(rawSkip);
   const bisect = skipToBisect(skips);
   const skipDesktop: boolean = skips.has('desktop') || skips.has('images');
   const skipMobile:  boolean = skips.has('mobile')  || skips.has('images');
   const stubIssues = skips.has('issues');
+  const rawTake = url.searchParams.get('take');
+  const take = rawTake ? Math.max(0, Math.min(50, Number.parseInt(rawTake, 10) || 0)) : null;
+  const rawOnly = url.searchParams.get('only');
+  const only = rawOnly ? Math.max(1, Math.min(50, Number.parseInt(rawOnly, 10) || 0)) : null;
   const trail = startBreadcrumbTrail(id);
   await trail.log('diagnose:enter', {
     route: '/api/admin/prospects/[id]/pdf/diagnose',
@@ -79,6 +84,8 @@ export async function GET(
     bisect,
     asset_skip: { desktop: skipDesktop, mobile: skipMobile },
     stub_issues: stubIssues,
+    take,
+    only,
   });
 
   const rows = (await sql`
@@ -146,9 +153,18 @@ export async function GET(
     const desktopBuf = toDataUri(desktopShot);
     const mobileBuf = toDataUri(mobileShot);
 
-    const issues = stubIssues
-      ? [{ severity: 'medium' as const, category: 'Test', title: 'stub', detail: 'stub.', fix: 'stub.' }]
-      : (p.audit_data?.issues ?? []);
+    const rawIssues = p.audit_data?.issues ?? [];
+    let issues: typeof rawIssues;
+    if (stubIssues) {
+      issues = [{ severity: 'medium', category: 'Test', title: 'stub', detail: 'stub.', fix: 'stub.' }];
+    } else if (only !== null) {
+      const pick = rawIssues[only - 1];
+      issues = pick ? [pick] : [];
+    } else if (take !== null) {
+      issues = rawIssues.slice(0, take);
+    } else {
+      issues = rawIssues;
+    }
 
     const basePdfArgs = {
       url: p.url,
@@ -196,6 +212,9 @@ export async function GET(
       bytes: bytes.byteLength,
       skip: rawSkip,
       bisect,
+      take,
+      only,
+      issues_rendered: issues.length,
       hint: `SELECT step, ok, elapsed_ms, meta FROM pdf_render_breadcrumbs WHERE request_id = '${trail.requestId}' ORDER BY ts;`,
     });
   } catch (err) {
