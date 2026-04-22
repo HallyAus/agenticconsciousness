@@ -21,6 +21,10 @@
 const TOKEN_URL = (tenant: string) => `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/token`;
 const GRAPH = 'https://graph.microsoft.com/v1.0';
 
+/** Microsoft Graph rejects app-only calls with missing or minimal User-Agent
+ *  in RAOP-enforcing tenants. Setting an explicit branded UA avoids that. */
+const UA = 'AgenticConsciousness-Outreach/1.0 (+https://agenticconsciousness.com.au)';
+
 interface TokenState { token: string; expiresAt: number }
 let cachedToken: TokenState | null = null;
 
@@ -110,7 +114,7 @@ export async function createGraphDraft(args: MessageInput): Promise<CreateDraftR
   const url = `${GRAPH}/users/${encodeURIComponent(c.sender)}/messages`;
   const res = await fetch(url, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', 'User-Agent': UA },
     body: JSON.stringify(buildMessagePayload(args, c.sender)),
   });
   if (!res.ok) {
@@ -143,7 +147,7 @@ export async function sendGraphMail(args: SendMailArgs): Promise<SendMailResult>
     const url = `${GRAPH}/users/${encodeURIComponent(c.sender)}/messages/${encodeURIComponent(args.replyToMessageId)}/reply`;
     const res = await fetch(url, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', 'User-Agent': UA },
       body: JSON.stringify({ message }),
     });
     if (!res.ok) {
@@ -156,7 +160,7 @@ export async function sendGraphMail(args: SendMailArgs): Promise<SendMailResult>
   const createUrl = `${GRAPH}/users/${encodeURIComponent(c.sender)}/messages`;
   const createRes = await fetch(createUrl, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', 'User-Agent': UA },
     body: JSON.stringify(message),
   });
   if (!createRes.ok) {
@@ -168,7 +172,7 @@ export async function sendGraphMail(args: SendMailArgs): Promise<SendMailResult>
   const sendUrl = `${GRAPH}/users/${encodeURIComponent(c.sender)}/messages/${encodeURIComponent(draft.id)}/send`;
   const sendRes = await fetch(sendUrl, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}`, 'User-Agent': UA },
   });
   if (!sendRes.ok) {
     const text = await sendRes.text().catch(() => '');
@@ -180,14 +184,14 @@ export async function sendGraphMail(args: SendMailArgs): Promise<SendMailResult>
 async function lookupLastSentInThread(token: string, sender: string, anchorMessageId: string): Promise<SendMailResult> {
   const anchorRes = await fetch(
     `${GRAPH}/users/${encodeURIComponent(sender)}/messages/${encodeURIComponent(anchorMessageId)}?$select=conversationId`,
-    { headers: { Authorization: `Bearer ${token}` } },
+    { headers: { Authorization: `Bearer ${token}`, 'User-Agent': UA } },
   );
   if (!anchorRes.ok) throw new Error('Could not look up conversationId after reply');
   const anchor = (await anchorRes.json()) as { conversationId: string };
 
   const listRes = await fetch(
     `${GRAPH}/users/${encodeURIComponent(sender)}/mailFolders/SentItems/messages?$filter=conversationId eq '${anchor.conversationId}'&$orderby=sentDateTime desc&$top=1&$select=id,conversationId`,
-    { headers: { Authorization: `Bearer ${token}` } },
+    { headers: { Authorization: `Bearer ${token}`, 'User-Agent': UA } },
   );
   if (!listRes.ok) throw new Error('Could not list sent thread items');
   const list = (await listRes.json()) as { value: Array<{ id: string; conversationId: string }> };
@@ -202,7 +206,7 @@ export async function hasReplyInThread(conversationId: string, sinceIso: string)
   const token = await getToken();
   const senderLower = c.sender.toLowerCase();
   const url = `${GRAPH}/users/${encodeURIComponent(c.sender)}/messages?$filter=conversationId eq '${conversationId}' and receivedDateTime ge ${sinceIso}&$top=20&$select=from,receivedDateTime,isDraft`;
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': UA } });
   if (!res.ok) return false;
   const data = (await res.json()) as { value: Array<{ from?: { emailAddress?: { address?: string } }; isDraft?: boolean }> };
   return data.value.some((m) => {

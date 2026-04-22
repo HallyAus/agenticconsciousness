@@ -68,7 +68,8 @@ export async function GET(req: NextRequest) {
   }
 
   // Step 2 — GET /users/{sender} — basic mailbox visibility
-  const H = { Authorization: `Bearer ${token}` };
+  const UA = 'AgenticConsciousness-Outreach/1.0 (+https://agenticconsciousness.com.au)';
+  const H = { Authorization: `Bearer ${token}`, 'User-Agent': UA };
   try {
     const r = await fetch(
       `https://graph.microsoft.com/v1.0/users/${encodeURIComponent(sender)}?$select=id,displayName,mail,userPrincipalName`,
