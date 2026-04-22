@@ -1504,6 +1504,26 @@ function AuditDocument({
               TYPICAL LOCAL AGENCY QUOTE / {SPRINT_CONFIG.agencyAnchor.weeksLow} TO {SPRINT_CONFIG.agencyAnchor.weeksHigh} WEEKS
             </Text>
           </View>
+
+          <View style={styles.trustAnchorRow}>
+            <Text style={styles.trustAnchorKicker}>OUR PRICE</Text>
+            <Text style={styles.trustAnchorNum}>
+              {audFmt.format(SPRINT_CONFIG.priceAud)}
+            </Text>
+            <Text style={styles.trustAnchorNote}>
+              FIXED PRICE / 48 HOURS / EVERYTHING INCLUDED
+            </Text>
+          </View>
+
+          <View style={styles.trustAnchorRow}>
+            <Text style={styles.trustAnchorKicker}>OUR GUARANTEE</Text>
+            <Text style={styles.trustAnchorNum}>
+              Money back if we miss 48 hours
+            </Text>
+            <Text style={styles.trustAnchorNote}>
+              YOU KEEP EVERYTHING WE SHIPPED / NO QUESTIONS
+            </Text>
+          </View>
         </View>
         ) : null}
 
