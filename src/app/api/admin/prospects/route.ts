@@ -16,11 +16,11 @@ import { sql } from '@/lib/pg';
  */
 export async function GET(req: NextRequest) {
   const sort = req.nextUrl.searchParams.get('sort') ?? 'priority';
-  const orderClause =
-    sort === 'updated'
-      ? sql`ORDER BY p.updated_at DESC`
-      : sql`ORDER BY priority_score DESC, p.updated_at DESC`;
+  const sortByUpdated = sort === 'updated';
 
+  // Neon's tagged-template sql doesn't support nested sql-fragment
+  // interpolation for ORDER BY. Use a CASE inside ORDER BY with a param
+  // so one query handles both sort modes.
   const rows = await sql`
     SELECT
       p.id, p.url, p.business_name, p.email, p.email_confidence,
@@ -58,7 +58,26 @@ export async function GET(req: NextRequest) {
       ORDER BY sent_at DESC NULLS LAST, id DESC
       LIMIT 1
     ) s ON true
-    ${orderClause}
+    ORDER BY
+      CASE WHEN ${sortByUpdated} THEN 0 ELSE
+        GREATEST(0, LEAST(100,
+          50
+          + COALESCE(LEAST(40, (100 - p.audit_score) / 2), 0)
+          + CASE
+              WHEN p.email_confidence = 'mailto' THEN 15
+              WHEN p.email_confidence = 'text_same_domain' THEN 10
+              ELSE 0
+            END
+          + CASE WHEN p.audit_score IS NOT NULL THEN 5 ELSE 0 END
+          - CASE
+              WHEN p.status = 'drafted' THEN 20
+              WHEN p.status IN ('sent','followed_up_1','followed_up_2') THEN 40
+              WHEN p.status IN ('unsubscribed','purchased','replied','bounced') THEN 99
+              ELSE 0
+            END
+        ))
+      END DESC,
+      p.updated_at DESC
     LIMIT 200
   ` as Array<Record<string, unknown>>;
   return NextResponse.json({ prospects: rows });
