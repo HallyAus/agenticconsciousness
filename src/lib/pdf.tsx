@@ -366,19 +366,16 @@ const styles = StyleSheet.create({
   },
 
   // --- per-finding cost line ---
-  // NOTE: `alignItems: 'baseline'` with mixed font sizes (9pt + 11pt)
-  // triggered `unsupported number: -1.8e+21` in @react-pdf/pdfkit
-  // during pagination when a Legal-severity finding (which does NOT
-  // render findingCost) followed seven findings that did. Removing
-  // baseline alignment keeps the layout deterministic.
-  findingCost: {
+  // NOTE: borderTopWidth at a page break triggers `clipBorderTop` NaN
+  // in react-pdf when a finding spans a boundary. Use a sibling
+  // divider View instead — filled rectangles paginate safely.
+  findingCostDivider: {
+    height: 1,
+    backgroundColor: RULE,
     marginTop: 8,
-    paddingTop: 6,
-    borderTopWidth: 1,
-    borderRightWidth: 0,
-    borderBottomWidth: 0,
-    borderLeftWidth: 0,
-    borderTopColor: RULE,
+    marginBottom: 6,
+  },
+  findingCost: {
     flexDirection: 'row',
     gap: 8,
   },
@@ -1380,9 +1377,12 @@ function AuditDocument({
                     ? 'WCAG / ACCESSIBILITY'
                     : 'NOT PRICED';
                 return (
-                  <View style={styles.findingCost}>
-                    <Text style={styles.findingCostLabel}>{label}</Text>
-                    <Text style={styles.findingCostValue}>{value}</Text>
+                  <View>
+                    <View style={styles.findingCostDivider} />
+                    <View style={styles.findingCost}>
+                      <Text style={styles.findingCostLabel}>{label}</Text>
+                      <Text style={styles.findingCostValue}>{value}</Text>
+                    </View>
                   </View>
                 );
               })()}
