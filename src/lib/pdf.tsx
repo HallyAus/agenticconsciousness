@@ -351,6 +351,11 @@ const styles = StyleSheet.create({
   },
 
   // --- per-finding cost line ---
+  // NOTE: `alignItems: 'baseline'` with mixed font sizes (9pt + 11pt)
+  // triggered `unsupported number: -1.8e+21` in @react-pdf/pdfkit
+  // during pagination when a Legal-severity finding (which does NOT
+  // render findingCost) followed seven findings that did. Removing
+  // baseline alignment keeps the layout deterministic.
   findingCost: {
     marginTop: 8,
     paddingTop: 6,
@@ -358,17 +363,16 @@ const styles = StyleSheet.create({
     borderTopColor: RULE,
     flexDirection: 'row',
     gap: 8,
-    alignItems: 'baseline',
   },
   findingCostLabel: {
     fontFamily: MONO_BOLD,
-    fontSize: 9,
+    fontSize: 10,
     color: RED,
     letterSpacing: 1.3,
   },
   findingCostValue: {
     fontFamily: SANS_BOLD,
-    fontSize: 11,
+    fontSize: 10,
     color: INK,
   },
 
