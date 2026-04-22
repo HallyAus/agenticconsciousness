@@ -1057,6 +1057,13 @@ function AuditDocument({
   const clampedScore = Math.max(0, Math.min(100, score));
   const hasShots = Boolean(screenshotDesktop || screenshotMobile);
   const vertical = resolveVertical(placeTypes);
+  // Hard cap so the PDF can never exceed a safe number of findings.
+  // 7 findings is the empirical ceiling that reliably renders on Vercel
+  // without hitting the pdfkit -1.87e21 pagination NaN. totalLoss stays
+  // accurate across all findings regardless of what we render.
+  const PDF_MAX_FINDINGS = 7;
+  const renderedIssues = issues.slice(0, PDF_MAX_FINDINGS);
+  const extraFindings = issues.length - renderedIssues.length;
   const totalLoss = estimateAuditTotal({ issues, vertical });
   const audFmt = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
   const hasHealth = brokenLinksCount !== null && brokenLinksCount !== undefined
@@ -1296,6 +1303,7 @@ function AuditDocument({
           <Text style={styles.sectionTitle}>Findings</Text>
           <Text style={styles.sectionMeta}>
             {issues.length} ITEM{issues.length === 1 ? '' : 'S'} / ORDERED BY SEVERITY
+            {extraFindings > 0 ? ` / TOP ${renderedIssues.length} SHOWN` : ''}
           </Text>
         </View>
 
@@ -1310,7 +1318,7 @@ function AuditDocument({
           </View>
         ) : null}
 
-        {!bx.skipFindings && issues.map((issue, i) => {
+        {!bx.skipFindings && renderedIssues.map((issue, i) => {
           const sev = getSev(issue.severity);
           // Wrap=false guarantees no finding splits across a page.
           // Every 5th finding forces a break so pagination happens at a
