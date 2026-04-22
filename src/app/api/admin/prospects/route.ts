@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
       p.last_outbound_at, p.next_touch_due_at, p.reply_detected_at,
       p.draft_web_link, p.draft_created_at,
       p.scheduled_send_at,
+      p.mockup_token, p.mockup_locked, p.mockup_html_previous IS NOT NULL AS has_previous_mockup,
       p.created_at, p.updated_at,
       COALESCE(s.opens_count, 0)  AS opens_count,
       COALESCE(s.clicks_count, 0) AS clicks_count,

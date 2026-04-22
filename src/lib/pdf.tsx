@@ -1,6 +1,12 @@
 import React from 'react';
-import { Document, Image, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
+import { Document, Font, Image, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
 import { stripDashes } from '@/lib/text-hygiene';
+
+// Disable hyphenation — react-pdf defaults to English hyphenation which
+// splits awkwardly in headings. Tracking a separate issue to embed
+// proper TTFs for cross-viewer metric consistency (fontkit rejected
+// the @fontsource WOFFs we tried); PDF-standard Helvetica for now.
+Font.registerHyphenationCallback((word) => [word]);
 
 /**
  * Audit PDF. Brand-aligned neural brutalist: red (#ff3d00) accents on

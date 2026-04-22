@@ -21,6 +21,9 @@ interface Prospect {
   reply_detected_at: string | null;
   draft_web_link: string | null;
   draft_created_at: string | null;
+  mockup_token: string | null;
+  mockup_locked: boolean;
+  has_previous_mockup: boolean;
   opens_count: number;
   clicks_count: number;
   last_opened_at: string | null;
@@ -208,6 +211,34 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
       alert(`Mark-sent failed: ${data.error ?? res.status}`);
+    }
+    refresh();
+  }
+
+  async function handleMockupLock(id: string, currentlyLocked: boolean) {
+    const willLock = !currentlyLocked;
+    const msg = willLock
+      ? 'Lock this mockup? It will NOT regenerate on future reaudits.'
+      : 'Unlock this mockup? It will regenerate on the next reaudit.';
+    if (!confirm(msg)) return;
+    const res = await fetch(`/api/admin/prospects/${id}/mockup-lock`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ locked: willLock }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(`Lock toggle failed: ${data.error ?? res.status}`);
+    }
+    refresh();
+  }
+
+  async function handleMockupRestore(id: string) {
+    if (!confirm('Restore the previous mockup? The current one will be swapped into the "previous" slot.')) return;
+    const res = await fetch(`/api/admin/prospects/${id}/mockup-restore`, { method: 'POST' });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      alert(`Restore failed: ${data.error ?? res.status}`);
     }
     refresh();
   }
@@ -451,6 +482,35 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
                           >
                             PDF
                           </a>
+                        )}
+                        {p.mockup_token && (
+                          <a
+                            href={`/preview/${p.mockup_token}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ ...actionBtn('#555'), textDecoration: 'none', display: 'inline-block' }}
+                            title="Open the generated mockup in a new tab"
+                          >
+                            Mockup
+                          </a>
+                        )}
+                        {p.mockup_token && (
+                          <button
+                            onClick={() => handleMockupLock(p.id, p.mockup_locked)}
+                            style={{ ...actionBtn(p.mockup_locked ? '#22c55e' : '#666'), fontSize: 10 }}
+                            title={p.mockup_locked ? 'Locked — will not regenerate on reaudit. Click to unlock.' : 'Lock this mockup so reaudit does not overwrite it.'}
+                          >
+                            {p.mockup_locked ? 'Locked' : 'Lock'}
+                          </button>
+                        )}
+                        {p.has_previous_mockup && (
+                          <button
+                            onClick={() => handleMockupRestore(p.id)}
+                            style={{ ...actionBtn('#b45309'), fontSize: 10 }}
+                            title="Swap the current mockup with the previously saved one"
+                          >
+                            Undo mockup
+                          </button>
                         )}
                         {p.status === 'audited' && p.email && (
                           <>

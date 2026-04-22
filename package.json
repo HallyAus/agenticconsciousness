@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.90.0",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
     "@neondatabase/serverless": "^1.0.2",
     "@octokit/rest": "^22.0.1",
     "@react-pdf/renderer": "^4.5.1",

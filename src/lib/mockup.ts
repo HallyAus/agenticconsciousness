@@ -26,19 +26,28 @@ Output a single COMPLETE HTML document. Start with <!DOCTYPE html>, end with </h
 
 Return ONLY the HTML. No markdown fences, no commentary, no explanation.
 
-## COLOUR MODE — ALWAYS LIGHT
+## COLOUR MODE — ALWAYS LIGHT. NON-NEGOTIABLE.
 
-The page is light-mode only. Do NOT produce a dark variant, do NOT add a theme toggle.
+This is the single most important rule. Previous generations with the same input have defaulted to a dark colour scheme and had to be thrown out. DO NOT do that. The page background is WHITE. Text is BLACK on white. Full stop.
 
-If the caller provides "Brand colours", those override the defaults — use the first entry as the dominant accent (CTA buttons, kickers, underlines) and reserve the second as a secondary accent. If no brand colours are provided, use #ff3d00 as the accent.
+Specifically DISALLOWED — do not use ANY of these as a section background or as the page body background:
+- #000000, #0a0a0a, #111111, #121212, #1a1a1a, #1f1f1f, #222222
+- Any hex code where all three RGB channels are below 0x40
+- Any CSS named colour "black", "charcoal", "midnight", "onyx"
+- Any gradient that starts or ends on a dark colour
+
+If the caller provides "Brand colours", those override ONLY the accent slot (CTA buttons, kickers, underlines, thin rules). Even if the brand has a black logo, the PAGE is still white — the accent stays on small elements. If no brand colours are provided, use #ff3d00 as the accent.
 
 Base palette (never change):
 - Page background: #ffffff (white). The dominant surface everywhere.
+- Section alternating background: #f6f4f2 (warm neutral) — for breaking up zones only. NEVER dark.
 - Ink / body text: #0a0a0a on white.
-- Soft neutral: #f6f4f2 for alternating section backgrounds.
 - Subtle rule lines: #eeeeee or #d4d4d4.
+- Accent: brand primary colour if given, else #ff3d00.
 
-Black or near-black backgrounds are NOT allowed anywhere — hero, footer, testimonial included. No gradients. No soft shadows. Hard geometric blocks only.
+Sanity check before you output: grep your own HTML for "background:#0", "background-color:#0", "background: #0", "bg:#0", or any six-digit hex whose first two characters are in [0-3]. If any match a body/section/container selector, DELETE that rule or change to #ffffff / #f6f4f2. Do this check mentally before writing the final answer.
+
+No gradients. No soft shadows. Hard geometric blocks only.
 
 ## TYPOGRAPHY
 

@@ -20,6 +20,8 @@ interface EnrichExistingRow {
   business_name: string | null;
   audit_data: { issues?: Array<{ title: string; detail: string; fix: string }> } | null;
   mockup_token: string | null;
+  mockup_html: string | null;
+  mockup_locked: boolean | null;
   source_place_id: string | null;
   phone: string | null;
   address: string | null;
@@ -42,18 +44,22 @@ export async function enrichProspectWithScanAndShots(args: {
   let businessName = args.businessName ?? null;
   let issues = args.issues ?? [];
   let existingMockupToken: string | null = null;
+  let existingMockupHtml: string | null = null;
+  let mockupLocked = false;
   let sourcePlaceId: string | null = null;
   let phone: string | null = null;
   let address: string | null = null;
   let postcode: string | null = null;
   {
     const rows = (await sql`
-      SELECT business_name, audit_data, mockup_token,
+      SELECT business_name, audit_data, mockup_token, mockup_html, mockup_locked,
              source_place_id, phone, address, postcode
       FROM prospects WHERE id = ${prospectId} LIMIT 1
     `) as EnrichExistingRow[];
     if (rows[0]) {
       existingMockupToken = rows[0].mockup_token;
+      existingMockupHtml = rows[0].mockup_html;
+      mockupLocked = rows[0].mockup_locked === true;
       sourcePlaceId = rows[0].source_place_id;
       phone = rows[0].phone;
       address = rows[0].address;
@@ -130,6 +136,15 @@ export async function enrichProspectWithScanAndShots(args: {
     WHERE id = ${prospectId}
   `;
 
+  // Mockup lock: if the user flagged this prospect's mockup as
+  // locked (via the admin UI), do NOT regenerate. Keep whatever HTML
+  // is in the DB — this protects a "cracker" mockup from being
+  // overwritten by a reaudit.
+  if (mockupLocked) {
+    console.log('[audit-enrich] mockup is locked, skipping regen', { prospectId });
+    return;
+  }
+
   // Mockup generation runs after extraction so Claude can compose with
   // real logo + colours + images + reviews. Separate try/catch so
   // mockup failure doesn't nuke the scan / extraction results.
@@ -159,12 +174,18 @@ export async function enrichProspectWithScanAndShots(args: {
     const siteBaseUrl = process.env.SITE_URL || 'https://agenticconsciousness.com.au';
     const previewUrl = `${siteBaseUrl}/preview/${mockupToken}`;
 
+    // Snapshot the current mockup_html into mockup_html_previous BEFORE
+    // overwriting — gives us one-step undo if the new generation turns
+    // out worse than what was there. Only snapshots non-empty content.
+    const snapshotHtml = existingMockupHtml && existingMockupHtml.length > 0 ? existingMockupHtml : null;
+
     // Store first, THEN screenshot the preview URL so ScreenshotOne can
     // fetch it (requires the HTML to already be live in DB).
     await sql`
       UPDATE prospects
       SET mockup_token = ${mockupToken},
           mockup_html = ${mockup.html},
+          mockup_html_previous = COALESCE(${snapshotHtml}, mockup_html_previous),
           mockup_headline = ${mockup.headline},
           mockup_generated_at = NOW(),
           updated_at = NOW()
