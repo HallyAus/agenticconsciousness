@@ -102,6 +102,24 @@ export async function POST(req: NextRequest) {
         )
       `;
 
+      // If this customer was one of our outreach prospects, flip their
+      // status to 'purchased' so we stop drafting follow-ups to someone
+      // who's now paying us.
+      if (email && email !== 'unknown') {
+        try {
+          await sql`
+            UPDATE prospects
+            SET status = 'purchased',
+                next_touch_due_at = NULL,
+                scheduled_send_at = NULL,
+                updated_at = NOW()
+            WHERE lower(email) = lower(${email})
+          `;
+        } catch (err) {
+          console.error('[webhook] prospect purchased flip failed', err instanceof Error ? err.message : err);
+        }
+      }
+
       const dollars = ((session.amount_total || 0) / 100).toLocaleString('en-AU', { minimumFractionDigits: 2 });
       const itemSummary = lineItems.length > 0
         ? lineItems.map((li) => `- ${li.name} x${li.quantity} ($${(li.amountCents / 100).toFixed(2)})`).join('\n')

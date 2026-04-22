@@ -127,11 +127,18 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
     refresh();
   }
 
-  async function handleCreateDraft(id: string, email: string) {
-    if (!confirm(`Create an Outlook draft to ${email}?\n\nSaved to Drafts — review in Outlook on the web when you're ready to send.`)) return;
+  async function handleCreateDraft(id: string, email: string, subjectOverride?: string) {
+    const msg = subjectOverride
+      ? `Create a custom-subject Outlook draft to ${email}?`
+      : `Create an Outlook draft to ${email}?\n\nSaved to Drafts — review in Outlook on the web when you're ready to send.`;
+    if (!confirm(msg)) return;
     setDrafting(id);
     try {
-      const res = await fetch(`/api/admin/prospects/${id}/send`, { method: 'POST' });
+      const res = await fetch(`/api/admin/prospects/${id}/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(subjectOverride ? { subjectOverride } : {}),
+      });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
         alert(`Draft failed: ${data.error ?? res.status}`);
@@ -140,6 +147,31 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
     } finally {
       setDrafting(null);
     }
+  }
+
+  async function handleEditSubject(id: string, email: string) {
+    const subject = prompt('Custom subject line (leave empty to use A/B rotation):', '');
+    if (subject === null) return;
+    handleCreateDraft(id, email, subject.trim() || undefined);
+  }
+
+  async function handleSchedule(id: string) {
+    const dt = prompt(
+      'Schedule draft creation for (local time, e.g. 2026-04-23 10:00):',
+      new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16).replace('T', ' '),
+    );
+    if (!dt) return;
+    const iso = new Date(dt.replace(' ', 'T')).toISOString();
+    if (Number.isNaN(Date.parse(iso))) {
+      alert('Invalid date/time');
+      return;
+    }
+    await fetch(`/api/admin/prospects/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ scheduled_send_at: iso }),
+    });
+    refresh();
   }
 
   async function handleTestDraft(id: string) {
@@ -419,6 +451,25 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
                           >
                             PDF
                           </a>
+                        )}
+                        {p.status === 'audited' && p.email && (
+                          <>
+                            <button
+                              onClick={() => handleEditSubject(p.id, p.email!)}
+                              disabled={drafting === p.id}
+                              style={{ ...actionBtn('#666'), fontSize: 10 }}
+                              title="Custom subject line"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleSchedule(p.id)}
+                              style={{ ...actionBtn('#eab308'), fontSize: 10 }}
+                              title="Schedule draft for later"
+                            >
+                              Schedule
+                            </button>
+                          </>
                         )}
                         {(p.status === 'audited' || p.status === 'audit_failed' || p.status === 'waf_blocked' || p.status === 'drafted') && (
                           <button

@@ -7,7 +7,7 @@
 
 - **Name:** Daniel
 - **Business:** Printforge — 3D design and printing (printforge.com.au)
-- **Location:** Australia
+- **Location:** Ourimbah, Central Coast NSW, Australia
 - **Specialties:** Custom products for tradies, EV owners, families, makers
 
 ## Technical Background

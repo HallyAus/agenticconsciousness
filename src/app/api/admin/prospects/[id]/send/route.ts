@@ -6,6 +6,9 @@ import { isGraphConfigured } from '@/lib/graph';
 import { isDelegatedConnected } from '@/lib/graph-delegated';
 import { buildTouch1, type OutreachIssue } from '@/lib/outreach';
 import { injectPixel, newTrackingToken, rewriteLinks } from '@/lib/email-tracking';
+import { isSuppressed } from '@/lib/suppression';
+import { pickRandomActiveVariant, renderSubject } from '@/lib/subject-variants';
+import { isBlockingVerdict, validateEmail } from '@/lib/email-validate';
 
 /**
  * Admin-only: create a DRAFT email in the sender's mailbox with the audit
@@ -31,10 +34,14 @@ interface ProspectRow {
 }
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
+  const overrides = await req.json().catch(() => ({})) as {
+    subjectOverride?: string;
+    htmlOverride?: string;
+  };
 
   const hasDelegated = await isDelegatedConnected();
   if (!isGraphConfigured() && !hasDelegated) {
@@ -53,6 +60,24 @@ export async function POST(
 
   if (!p.email) return NextResponse.json({ error: 'No email on file' }, { status: 400 });
   if (p.status === 'unsubscribed') return NextResponse.json({ error: 'Prospect has unsubscribed' }, { status: 409 });
+  if (await isSuppressed(p.email)) {
+    await sql`UPDATE prospects SET status = 'unsubscribed', updated_at = NOW() WHERE id = ${id}`;
+    return NextResponse.json({ error: `${p.email} is on the global suppression list.` }, { status: 409 });
+  }
+
+  // Pre-flight email validation (skipped if ABSTRACT_API_KEY not set).
+  // Block only on clearly undeliverable; let 'risky' through so we don't
+  // over-filter role addresses + catch-alls.
+  const validation = await validateEmail(p.email);
+  if (isBlockingVerdict(validation.verdict)) {
+    await sql`
+      UPDATE prospects SET status = 'bounced', updated_at = NOW() WHERE id = ${id}
+    `;
+    return NextResponse.json({
+      error: `Email address is undeliverable (${validation.verdict}). Flipped to 'bounced'.`,
+      validation,
+    }, { status: 409 });
+  }
   if (p.status !== 'audited' && p.status !== 'drafted') {
     return NextResponse.json({ error: `Cannot draft from status ${p.status}` }, { status: 409 });
   }
@@ -74,7 +99,12 @@ export async function POST(
     siteBaseUrl,
   };
 
-  const { subject, html } = buildTouch1(ctx);
+  // Subject: prefer admin override, else A/B variant, else template default.
+  const variant = overrides.subjectOverride ? null : await pickRandomActiveVariant();
+  const built = buildTouch1(ctx);
+  const subject = overrides.subjectOverride?.trim()
+    || (variant ? renderSubject(variant.template, { domain, businessName: p.business_name }) : built.subject);
+  const html = overrides.htmlOverride?.trim() || built.html;
 
   const pdfBuffer = await renderAuditPdf({
     url: p.url,
@@ -109,11 +139,13 @@ export async function POST(
     await sql`
       INSERT INTO prospect_sends (
         prospect_id, touch_num, subject, body_snapshot,
-        graph_message_id, graph_conversation_id, tracking_token
+        graph_message_id, graph_conversation_id, tracking_token,
+        subject_variant_id, subject_variant_label
       )
       VALUES (
         ${id}, 1, ${subject}, ${trackedHtml},
-        ${draft.messageId}, ${draft.conversationId}, ${trackingToken}
+        ${draft.messageId}, ${draft.conversationId}, ${trackingToken},
+        ${variant?.id ?? null}, ${variant?.label ?? null}
       )
     `;
 

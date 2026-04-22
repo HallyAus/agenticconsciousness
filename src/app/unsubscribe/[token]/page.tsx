@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { sql } from '@/lib/pg';
+import { addSuppression } from '@/lib/suppression';
 
 export const metadata: Metadata = {
   title: 'Unsubscribed',
@@ -24,9 +25,15 @@ export default async function TokenUnsubscribe({
           next_touch_due_at = NULL,
           updated_at = NOW()
       WHERE unsub_token = ${token}
-      RETURNING id
-    `) as Array<{ id: string }>;
+      RETURNING id, email
+    `) as Array<{ id: string; email: string | null }>;
     matched = result.length > 0;
+    // Add to global suppression list so Places re-discovery never re-adds them.
+    for (const row of result) {
+      if (row.email) {
+        await addSuppression(row.email, 'unsubscribe_link', 'Clicked unsubscribe link');
+      }
+    }
   }
 
   return (

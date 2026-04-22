@@ -26,6 +26,7 @@ export async function PATCH(
   const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : undefined;
   const notes = typeof body.notes === 'string' ? body.notes : undefined;
   const status = typeof body.status === 'string' ? body.status : undefined;
+  const scheduledSendAt = typeof body.scheduled_send_at === 'string' ? body.scheduled_send_at : undefined;
 
   if (email !== undefined) {
     await sql`UPDATE prospects SET email = ${email}, email_confidence = 'manual', updated_at = NOW() WHERE id = ${id}`;
@@ -35,6 +36,16 @@ export async function PATCH(
   }
   if (status !== undefined) {
     await sql`UPDATE prospects SET status = ${status}, updated_at = NOW() WHERE id = ${id}`;
+  }
+  if (scheduledSendAt !== undefined) {
+    const ts = scheduledSendAt === null || scheduledSendAt === '' ? null : scheduledSendAt;
+    await sql`
+      UPDATE prospects
+      SET scheduled_send_at = ${ts},
+          scheduled_send_source = 'admin_manual',
+          updated_at = NOW()
+      WHERE id = ${id}
+    `;
   }
   return NextResponse.json({ ok: true });
 }

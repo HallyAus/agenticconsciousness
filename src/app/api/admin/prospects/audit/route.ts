@@ -4,6 +4,7 @@ import { sql } from '@/lib/pg';
 import { runStructuredAudit, normaliseUrl } from '@/lib/audit-core';
 import { extractEmailFromHtml } from '@/lib/email-scrape';
 import { notifyAdmin } from '@/lib/email';
+import { isSuppressed } from '@/lib/suppression';
 
 /**
  * Admin-only. Runs an audit against a target URL and stores the result
@@ -80,10 +81,13 @@ async function runAndStore(prospectId: string, url: string): Promise<void> {
     }
 
     const hit = extractEmailFromHtml(result.rawHtmlByUrl, new URL(url).hostname);
+    // If the extracted email is globally suppressed, flip the prospect to
+    // 'unsubscribed' immediately so it never surfaces in outreach.
+    const nextStatus = hit?.email && (await isSuppressed(hit.email)) ? 'unsubscribed' : 'audited';
 
     await sql`
       UPDATE prospects
-      SET status = 'audited',
+      SET status = ${nextStatus},
           email = ${hit?.email ?? null},
           email_confidence = ${hit?.confidence ?? null},
           audit_score = ${result.score},

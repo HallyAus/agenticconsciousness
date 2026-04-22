@@ -296,3 +296,31 @@ export async function isDelegatedConnected(): Promise<boolean> {
   const row = await getStoredAuth();
   return !!row;
 }
+
+/**
+ * Check whether the shared mailbox has any inbound messages in a
+ * given conversationId (i.e. a reply from the prospect) since the
+ * provided ISO timestamp.
+ *
+ * Uses the delegated token so it respects RAOP.
+ */
+export async function delegatedHasReplyInThread(args: {
+  mailboxUpnOrId: string;
+  conversationId: string;
+  sinceIso: string;
+  senderEmail: string;
+}): Promise<boolean> {
+  const token = await getDelegatedAccessToken();
+  if (!token) throw new Error('M365 not connected');
+  const filter = `conversationId eq '${args.conversationId}' and receivedDateTime ge ${args.sinceIso}`;
+  const url = `${GRAPH}/users/${encodeURIComponent(args.mailboxUpnOrId)}/messages?$filter=${encodeURIComponent(filter)}&$top=20&$select=from,receivedDateTime,isDraft`;
+  const r = await fetch(url, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': UA } });
+  if (!r.ok) return false;
+  const data = (await r.json()) as { value: Array<{ from?: { emailAddress?: { address?: string } }; isDraft?: boolean }> };
+  const senderLower = args.senderEmail.toLowerCase();
+  return data.value.some((m) => {
+    if (m.isDraft) return false;
+    const addr = (m.from?.emailAddress?.address ?? '').toLowerCase();
+    return addr && addr !== senderLower;
+  });
+}
