@@ -108,12 +108,17 @@ export async function POST(
     copyrightYear: p.copyright_year,
   };
 
+  // Raw Buffer (not the { data, format } wrapper) — the object form
+  // silently skips embedding on Vercel (Issue #2639 class).
+  const desktopBuf = desktopShot?.data ?? null;
+  const mobileBuf = mobileShot?.data ?? null;
+
   let pdfBuffer: Buffer;
   try {
     pdfBuffer = await renderAuditPdf({
       ...basePdfArgs,
-      screenshotDesktop: desktopShot,
-      screenshotMobile: mobileShot,
+      screenshotDesktop: desktopBuf,
+      screenshotMobile: mobileBuf,
     });
   } catch (err) {
     console.error('[test-draft] PDF render with screenshots failed, retrying without:', err instanceof Error ? err.message : err);

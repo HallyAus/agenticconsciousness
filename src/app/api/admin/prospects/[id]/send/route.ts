@@ -146,12 +146,19 @@ export async function POST(
     copyrightYear: p.copyright_year,
   };
 
+  // Raw Buffer instead of the { data, format } wrapper — the object form
+  // silently skips embedding on Vercel (Issue #2639 class). Raw Buffer
+  // with format guessed from SOI bytes embeds reliably on both local and
+  // serverless runtimes.
+  const desktopBuf = desktopShot?.data ?? null;
+  const mobileBuf = mobileShot?.data ?? null;
+
   console.log('[send] pdf start', {
     id,
     desk_url_present: !!p.screenshot_desktop_url,
     mob_url_present: !!p.screenshot_mobile_url,
-    desk_buf_bytes: desktopShot?.data.byteLength ?? null,
-    mob_buf_bytes: mobileShot?.data.byteLength ?? null,
+    desk_buf_bytes: desktopBuf?.byteLength ?? null,
+    mob_buf_bytes: mobileBuf?.byteLength ?? null,
   });
 
   let pdfBuffer: Buffer;
@@ -159,8 +166,8 @@ export async function POST(
   try {
     pdfBuffer = await renderAuditPdf({
       ...basePdfArgs,
-      screenshotDesktop: desktopShot,
-      screenshotMobile: mobileShot,
+      screenshotDesktop: desktopBuf,
+      screenshotMobile: mobileBuf,
     });
   } catch (err) {
     renderPath = 'fallback';

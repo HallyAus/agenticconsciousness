@@ -55,18 +55,24 @@ export async function GET(
     copyrightYear: p.copyright_year,
   };
 
+  // Unwrap to raw Buffer. The { data, format: 'jpg' } object wrapper
+  // silently skips embedding on Vercel's serverless runtime; raw Buffer
+  // (with format guessed from SOI bytes) embeds reliably in both envs.
+  const desktopBuf = desktopShot?.data ?? null;
+  const mobileBuf = mobileShot?.data ?? null;
+
   console.log('[admin/pdf] start', {
     id,
     desk_url_present: !!p.screenshot_desktop_url,
     mob_url_present: !!p.screenshot_mobile_url,
-    desk_buf_bytes: desktopShot?.data.byteLength ?? null,
-    mob_buf_bytes: mobileShot?.data.byteLength ?? null,
+    desk_buf_bytes: desktopBuf?.byteLength ?? null,
+    mob_buf_bytes: mobileBuf?.byteLength ?? null,
   });
 
   let buf: Buffer;
   let renderPath: 'with-shots' | 'fallback' = 'with-shots';
   try {
-    buf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopShot, screenshotMobile: mobileShot });
+    buf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
   } catch (err) {
     renderPath = 'fallback';
     console.error('[admin/pdf] PRIMARY render with screenshots FAILED:', err instanceof Error ? err.stack ?? err.message : err);

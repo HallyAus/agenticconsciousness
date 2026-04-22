@@ -82,15 +82,22 @@ export async function fetchAsNormalisedJpeg(
       console.error('[fetch-image] normalised zero bytes', url.slice(0, 120));
       return null;
     }
+    // NOTE: mozjpeg is OFF. The optimised encoder produces marker sequences
+    // that pdfkit's JPEG parser (inside @react-pdf/renderer) silently
+    // rejects on Vercel's serverless runtime — the render returns no
+    // error but the image is not embedded. Standard JPEG encoding works.
     const data = await sharp(raw)
       .rotate()
       .resize({ width: maxWidth, withoutEnlargement: true })
-      .jpeg({ quality, progressive: false, mozjpeg: true })
+      .jpeg({ quality, progressive: false, mozjpeg: false, optimiseCoding: false, chromaSubsampling: '4:2:0' })
       .withMetadata({})
       .toBuffer();
+    // Sanity-check: first two bytes must be 0xFF 0xD8 (JPEG SOI).
+    const soi = data.byteLength >= 2 && data[0] === 0xff && data[1] === 0xd8;
     console.log('[fetch-image] normalised ok', {
       rawBytes: raw.byteLength,
       outBytes: data.byteLength,
+      soi,
       maxWidth,
       quality,
       ms: Date.now() - t0,
