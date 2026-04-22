@@ -11,6 +11,8 @@
  */
 
 const PLACES_URL = 'https://places.googleapis.com/v1/places:searchText';
+const PLACE_DETAILS_URL = (placeId: string) =>
+  `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}`;
 
 const FIELD_MASK = [
   'places.id',
@@ -158,4 +160,80 @@ export async function searchPlaces(args: { postcode: string; category: string })
   }
 
   return results;
+}
+
+export interface PlaceReview {
+  author: string;
+  rating: number | null;
+  text: string;
+  relativeTime: string | null;
+  publishTime: string | null;
+}
+
+export interface PlaceDetails {
+  reviews: PlaceReview[];
+  rating: number | null;
+  userRatingCount: number | null;
+}
+
+/**
+ * Fetch Place Details — the Places API (New) returns up to 5 user reviews.
+ * Used by audit-enrich to populate real testimonials in the mockup.
+ *
+ * Fields billed at the Place Details (Pro) SKU (~$17/1000 after free tier)
+ * because `reviews` is a Pro-tier field. Callers should dedupe (we call
+ * once per prospect at audit time, not per preview).
+ */
+export async function getPlaceDetails(placeId: string): Promise<PlaceDetails | null> {
+  const key = process.env.GOOGLE_PLACES_API_KEY;
+  if (!key) return null;
+  if (!placeId) return null;
+
+  const fieldMask = ['reviews', 'rating', 'userRatingCount'].join(',');
+
+  const res = await fetch(`${PLACE_DETAILS_URL(placeId)}?languageCode=en`, {
+    method: 'GET',
+    headers: {
+      'X-Goog-Api-Key': key,
+      'X-Goog-FieldMask': fieldMask,
+    },
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    console.error('[places] details failed', res.status, text.slice(0, 400));
+    return null;
+  }
+
+  const data = (await res.json()) as {
+    reviews?: Array<{
+      rating?: number;
+      text?: { text?: string };
+      originalText?: { text?: string };
+      relativePublishTimeDescription?: string;
+      publishTime?: string;
+      authorAttribution?: { displayName?: string };
+    }>;
+    rating?: number;
+    userRatingCount?: number;
+  };
+
+  const reviews: PlaceReview[] = (data.reviews ?? [])
+    .map((r) => ({
+      author: r.authorAttribution?.displayName ?? 'Google reviewer',
+      rating: r.rating ?? null,
+      text: (r.text?.text ?? r.originalText?.text ?? '').trim(),
+      relativeTime: r.relativePublishTimeDescription ?? null,
+      publishTime: r.publishTime ?? null,
+    }))
+    // Drop empty reviews and 1-star complaints — we're building a
+    // testimonial section, not an ombudsman report.
+    .filter((r) => r.text.length > 20 && (r.rating === null || r.rating >= 4))
+    .slice(0, 5);
+
+  return {
+    reviews,
+    rating: data.rating ?? null,
+    userRatingCount: data.userRatingCount ?? null,
+  };
 }
