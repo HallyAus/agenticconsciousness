@@ -2,8 +2,7 @@ import React from 'react';
 import QRCode from 'qrcode';
 import { Document, Image, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
 import { stripDashes } from '@/lib/text-hygiene';
-import { SPRINT_CONFIG, AVG_JOB_VALUE_BY_VERTICAL } from '@/config/sprint';
-import { estimateFindingLoss, estimateAuditTotal, formatRevenueRange, resolveVertical } from '@/lib/revenue-impact';
+import { SPRINT_CONFIG } from '@/config/sprint';
 
 // NOTE: Font.registerHyphenationCallback was removed as part of the
 // Vercel SIGKILL investigation (2026-04-22). The call ran inside
@@ -1098,15 +1097,12 @@ function AuditDocument({
   const domain = domainFromUrl(url);
   const clampedScore = Math.max(0, Math.min(100, score));
   const hasShots = Boolean(screenshotDesktop || screenshotMobile);
-  const vertical = resolveVertical(placeTypes);
   // Hard cap so the PDF can never exceed a safe number of findings.
   // 7 findings is the empirical ceiling that reliably renders on Vercel
-  // without hitting the pdfkit -1.87e21 pagination NaN. totalLoss stays
-  // accurate across all findings regardless of what we render.
+  // without hitting the pdfkit -1.87e21 pagination NaN.
   const PDF_MAX_FINDINGS = 7;
   const renderedIssues = issues.slice(0, PDF_MAX_FINDINGS);
   const extraFindings = issues.length - renderedIssues.length;
-  const totalLoss = estimateAuditTotal({ issues, vertical });
   const audFmt = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
   const hasHealth = brokenLinksCount !== null && brokenLinksCount !== undefined
     || viewportMetaOk !== null && viewportMetaOk !== undefined
@@ -1127,16 +1123,6 @@ function AuditDocument({
         <Text style={styles.coverKicker}>PREPARED FOR</Text>
         <Text style={styles.coverTitle}>{stripDashes(businessName || domain)}</Text>
         <Text style={styles.coverUrl}>{url}</Text>
-
-        {totalLoss ? (
-          <View style={styles.coverLossHero}>
-            <Text style={styles.coverLossKicker}>ESTIMATED ANNUAL REVENUE LOSS</Text>
-            <Text style={styles.coverLossNum}>{formatRevenueRange(totalLoss)}</Text>
-            <Text style={styles.coverLossNote}>
-              LEAKED TO COMPETITORS EVERY YEAR AT CURRENT STATE
-            </Text>
-          </View>
-        ) : null}
 
         <View style={styles.scoreRow}>
           <View style={styles.scoreBox}>
@@ -1173,11 +1159,9 @@ function AuditDocument({
               <Text style={styles.statSub}>LIGHTHOUSE / MOBILE</Text>
             </View>
             <View style={styles.statCell}>
-              <Text style={styles.statLabel}>EST. ANNUAL LOSS</Text>
-              <Text style={totalLoss ? styles.statValueSmall : styles.statValue}>
-                {totalLoss ? formatRevenueRange(totalLoss) : 'N/A'}
-              </Text>
-              <Text style={styles.statSub}>AT CURRENT STATE</Text>
+              <Text style={styles.statLabel}>ISSUES FOUND</Text>
+              <Text style={styles.statValue}>{issues.length}</Text>
+              <Text style={styles.statSub}>SPECIFIC TO YOUR SITE</Text>
             </View>
             <View style={styles.statCell}>
               <Text style={styles.statLabel}>SPRINT PRICE</Text>
@@ -1334,16 +1318,9 @@ function AuditDocument({
           </Text>
         </View>
 
-        {totalLoss && !bx.skipLossHeadline ? (
-          <View style={styles.lossHeadline}>
-            <Text style={styles.lossHeadlineKicker}>ESTIMATED ANNUAL REVENUE LOSS</Text>
-            <Text style={styles.lossHeadlineNum}>{formatRevenueRange(totalLoss)}</Text>
-            <Text style={styles.lossHeadlineNote}>
-              CONSERVATIVE MODEL, {(AVG_JOB_VALUE_BY_VERTICAL[vertical] ?? AVG_JOB_VALUE_BY_VERTICAL.default).toLocaleString('en-AU')} AVG JOB VALUE /
-              CRITICAL + HIGH FINDINGS ONLY
-            </Text>
-          </View>
-        ) : null}
+        {/* lossHeadline removed 2026-04-23: the big red revenue-loss block
+            read as speculative. Severity is now communicated through the
+            severity chip on each finding. */}
 
         {!bx.skipFindings && renderedIssues.map((issue, i) => {
           const sev = getSev(issue.severity);
@@ -1398,34 +1375,9 @@ function AuditDocument({
                 </View>
               ) : null}
 
-              {(() => {
-                // Every finding renders the same bottom strip. Legal and
-                // low-severity findings show a compliance note instead of
-                // a dollar range. Skipping the block on some findings but
-                // not others triggers a pdfkit NaN when wrap=false cards
-                // of different heights paginate next to each other.
-                const est = estimateFindingLoss({ category: issue.category, severity: issue.severity, vertical });
-                const sevLower = (issue.severity ?? '').toLowerCase();
-                const label = est
-                  ? 'EST. ANNUAL COST'
-                  : sevLower === 'legal'
-                    ? 'COMPLIANCE RISK'
-                    : 'IMPACT';
-                const value = est
-                  ? formatRevenueRange(est)
-                  : sevLower === 'legal'
-                    ? 'WCAG / ACCESSIBILITY'
-                    : 'NOT PRICED';
-                return (
-                  <View>
-                    <View style={styles.findingCostDivider} />
-                    <View style={styles.findingCost}>
-                      <Text style={styles.findingCostLabel}>{label}</Text>
-                      <Text style={styles.findingCostValue}>{value}</Text>
-                    </View>
-                  </View>
-                );
-              })()}
+              {/* Per-finding dollar estimate removed 2026-04-23. Severity
+                  chip on the metaRow communicates impact at a glance
+                  without speculative revenue math. */}
             </View>
           );
         })}
