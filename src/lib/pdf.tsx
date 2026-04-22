@@ -1319,9 +1319,16 @@ function AuditDocument({
 
         {!bx.skipFindings && issues.map((issue, i) => {
           const sev = getSev(issue.severity);
+          // Wrap=false guarantees no finding splits across a page.
+          // Every 5th finding forces a break so pagination happens at a
+          // predictable, page-aligned boundary (prevents the floating
+          // page-fit recalc that produces -1.87e21 NaN).
+          const forceBreak = i > 0 && i % 5 === 0;
           return (
             <View
               key={i}
+              wrap={false}
+              break={forceBreak}
               style={[styles.findingWrap, { backgroundColor: sev.accent }]}
             >
               <View style={[styles.findingSidebar, { backgroundColor: sev.border }]} />
