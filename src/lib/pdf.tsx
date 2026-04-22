@@ -336,6 +336,31 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: '#ffffff',
   },
+  statCellScore:   { backgroundColor: YELLOW_TINT },
+  statCellSpeed:   { backgroundColor: AMBER_TINT },
+  statCellIssues:  { backgroundColor: RED_TINT },
+  statCellPrice:   { backgroundColor: INK },
+  statLabelOnDark: {
+    fontFamily: MONO_BOLD,
+    fontSize: 8,
+    color: '#FB8C00',
+    letterSpacing: 1.4,
+    marginBottom: 6,
+  },
+  statValueOnDark: {
+    fontFamily: SANS_BOLD,
+    fontSize: 22,
+    color: '#ffffff',
+    letterSpacing: -0.5,
+    lineHeight: 1.05,
+  },
+  statSubOnDark: {
+    fontFamily: MONO,
+    fontSize: 8,
+    color: '#bfbfbf',
+    letterSpacing: 1,
+    marginTop: 2,
+  },
   statLabel: {
     fontFamily: MONO_BOLD,
     fontSize: 8,
@@ -441,8 +466,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 230,
     objectFit: 'contain',
-    borderWidth: 1,
-    borderColor: INK,
     backgroundColor: '#ffffff',
   },
   baCaption: {
@@ -506,6 +529,46 @@ const styles = StyleSheet.create({
     borderColor: INK,
     padding: 14,
     backgroundColor: '#ffffff',
+  },
+  trustCardRisk:      { backgroundColor: RED_TINT },
+  trustCardScarcity:  { backgroundColor: YELLOW_TINT },
+  trustAnchorHighlight: {
+    marginTop: 10,
+    padding: 14,
+    backgroundColor: '#FB8C00',
+    borderTopWidth: 0,
+    borderRightWidth: 0,
+    borderBottomWidth: 0,
+    borderLeftWidth: 3,
+    borderLeftColor: '#FB8C00',
+  },
+  trustAnchorHighlightKicker: {
+    fontFamily: MONO_BOLD,
+    fontSize: 9,
+    color: '#ffffff',
+    letterSpacing: 1.5,
+    marginBottom: 4,
+  },
+  trustAnchorHighlightNum: {
+    fontFamily: SANS_BOLD,
+    fontSize: 22,
+    color: '#ffffff',
+    letterSpacing: -0.3,
+    marginBottom: 2,
+  },
+  trustAnchorHighlightNote: {
+    fontFamily: MONO,
+    fontSize: 10,
+    color: '#ffffff',
+    letterSpacing: 1,
+  },
+  trustAnchorNumStrike: {
+    fontFamily: SANS_BOLD,
+    fontSize: 18,
+    color: DIM,
+    letterSpacing: -0.3,
+    marginBottom: 2,
+    textDecoration: 'line-through',
   },
   trustCardKicker: {
     fontFamily: MONO_BOLD,
@@ -655,8 +718,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 560,
     objectFit: 'contain',
-    borderWidth: 1,
-    borderColor: INK,
     backgroundColor: '#ffffff',
     marginBottom: 10,
   },
@@ -667,11 +728,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   shotFullMobile: {
-    width: 260,
-    height: 640,
+    width: 220,
+    height: 500,
     objectFit: 'contain',
-    borderWidth: 1,
-    borderColor: INK,
     backgroundColor: '#ffffff',
   },
   shotCaption: {
@@ -1146,27 +1205,27 @@ function AuditDocument({
         {/* Four headline numbers: score, mobile speed, estimated loss, sprint price. */}
         {!bx.skipStatStrip ? (
           <View style={styles.statStrip}>
-            <View style={styles.statCell}>
+            <View style={[styles.statCell, styles.statCellScore]}>
               <Text style={styles.statLabel}>OVERALL SCORE</Text>
               <Text style={styles.statValue}>{clampedScore}</Text>
               <Text style={styles.statSub}>OUT OF 100</Text>
             </View>
-            <View style={styles.statCell}>
+            <View style={[styles.statCell, styles.statCellSpeed]}>
               <Text style={styles.statLabel}>MOBILE SPEED</Text>
               <Text style={styles.statValue}>
                 {mobileSpeedScore !== null && mobileSpeedScore !== undefined ? mobileSpeedScore : 'TBD'}
               </Text>
               <Text style={styles.statSub}>LIGHTHOUSE / MOBILE</Text>
             </View>
-            <View style={styles.statCell}>
+            <View style={[styles.statCell, styles.statCellIssues]}>
               <Text style={styles.statLabel}>ISSUES FOUND</Text>
               <Text style={styles.statValue}>{issues.length}</Text>
               <Text style={styles.statSub}>SPECIFIC TO YOUR SITE</Text>
             </View>
-            <View style={styles.statCell}>
-              <Text style={styles.statLabel}>SPRINT PRICE</Text>
-              <Text style={styles.statValue}>{audFmt.format(SPRINT_CONFIG.priceAud)}</Text>
-              <Text style={styles.statSub}>FIXED / 48 HOURS</Text>
+            <View style={[styles.statCell, styles.statCellPrice]}>
+              <Text style={styles.statLabelOnDark}>SPRINT PRICE</Text>
+              <Text style={styles.statValueOnDark}>{audFmt.format(SPRINT_CONFIG.priceAud)}</Text>
+              <Text style={styles.statSubOnDark}>FIXED / 48 HOURS</Text>
             </View>
           </View>
         ) : null}
@@ -1250,48 +1309,31 @@ function AuditDocument({
         </Page>
       ) : null}
 
-      {/* Before / After hero: contrasts the prospect's current hero
-          against the mockup we generated for them. Renders only when
-          BOTH screenshots exist (otherwise it would look half-baked). */}
-      {screenshotDesktop && mockupScreenshot ? (
+      {/* AFTER page: full-width mockup of the rebuilt site. The BEFORE
+          already got its two dedicated pages above (desktop + mobile of
+          the current site). */}
+      {mockupScreenshot ? (
         <Page size="A4" style={styles.page}>
           <View style={styles.brandBar} fixed>
             <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
             <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
           </View>
 
-          <View style={styles.shotsHeader}>
-            <Text style={styles.shotsTitle}>Before / After</Text>
-            <Text style={styles.shotsMeta}>YOUR HERO vs WHAT WE WOULD SHIP</Text>
-          </View>
-
-          <View style={styles.baRow}>
-            <View style={styles.baCol}>
-              <Text style={[styles.baTag, styles.baTagBefore]}>BEFORE</Text>
-              <Image src={screenshotDesktop} style={styles.baImg} />
-              <Text style={styles.baCaption}>
-                Your current homepage at desktop width. This is the exact
-                first impression any new visitor gets.
-              </Text>
+          <View style={styles.shotsWrap}>
+            <View style={styles.shotsHeader}>
+              <Text style={styles.shotsTitle}>Your site, after</Text>
+              <Text style={styles.shotsMeta}>MOCKUP / WHAT WE WOULD SHIP</Text>
             </View>
-            <View style={styles.baCol}>
-              <Text style={[styles.baTag, styles.baTagAfter]}>AFTER</Text>
-              <Image src={mockupScreenshot} style={styles.baImg} />
-              <Text style={styles.baCaption}>
-                A mockup of your site rebuilt with the fixes in this audit.
-                Open the same page live at {SPRINT_CONFIG.bookingUrl.replace('/book', '')}/preview/...
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.baBulletRow}>
-            <Text style={styles.baBulletLabel}>WHAT CHANGED</Text>
-            <Text style={styles.baBullet}>+ Specific headline (who you are, who you serve, where you serve them)</Text>
-            <Text style={styles.baBullet}>+ Two distinct calls to action side by side: tap-to-call and book online</Text>
-            <Text style={styles.baBullet}>+ Trust row immediately below the hero: licensed, insured, Google rating</Text>
-            <Text style={styles.baBullet}>+ Real photos from your site, not stock imagery</Text>
-            <Text style={styles.baBullet}>+ Mobile sticky CTA that stays visible while scrolling</Text>
-            <Text style={styles.baBullet}>+ Structured data (LocalBusiness + FAQ JSON-LD) so AI search engines cite you</Text>
+            <Image src={mockupScreenshot} style={styles.shotFullDesktop} />
+            <Text style={styles.shotCaption}>
+              MOCKUP 1440 x 900 / HERO + FIRST SCROLL
+            </Text>
+            <Text style={styles.shotBody}>
+              Same content, rebuilt. Specific headline, two side-by-side
+              calls to action (tap-to-call and book online), trust row
+              immediately under the hero, real photos from your site,
+              and structured data so AI search engines cite you.
+            </Text>
           </View>
 
           <View style={styles.footer} fixed>
@@ -1324,14 +1366,10 @@ function AuditDocument({
 
         {!bx.skipFindings && renderedIssues.map((issue, i) => {
           const sev = getSev(issue.severity);
-          // Wrap=false guarantees no finding splits across a page.
-          // Every 5th finding forces a break so pagination happens at a
-          // predictable, page-aligned boundary (prevents the floating
-          // page-fit recalc that produces -1.87e21 NaN).
-          // Break every 4 findings: deterministic pagination at page-aligned
-          // boundaries. Avoids the wrap=false pressure that reliably trips
-          // the pdfkit -1.87e21 NaN when a 9th finding can't fit.
-          const forceBreak = i > 0 && i % 4 === 0;
+          // Break every 2 findings: keeps each card visually breathable
+          // and avoids the third-card-cut-across-pages issue. Also
+          // sidesteps the pdfkit -1.87e21 pagination NaN.
+          const forceBreak = i > 0 && i % 2 === 0;
           return (
             <View
               key={i}
@@ -1421,8 +1459,11 @@ function AuditDocument({
                 })()}
                 {opp.fix ? (
                   <View style={styles.labelBlockLast}>
-                    <Text style={styles.blockLabel}>HOW WE&apos;D ADD IT</Text>
-                    <Text style={styles.blockBody}>{stripDashes(opp.fix)}</Text>
+                    <View style={styles.labelBlockLastSidebar} />
+                    <View style={styles.labelBlockLastInner}>
+                      <Text style={styles.blockLabel}>HOW WE&apos;D ADD IT</Text>
+                      <Text style={styles.blockBody}>{stripDashes(opp.fix)}</Text>
+                    </View>
                   </View>
                 ) : null}
               </View>
@@ -1444,7 +1485,7 @@ function AuditDocument({
           </Text>
 
           <View style={styles.trustCardRow}>
-            <View style={styles.trustCard}>
+            <View style={[styles.trustCard, styles.trustCardRisk]}>
               <Text style={styles.trustCardKicker}>RISK REVERSAL</Text>
               <Text style={styles.trustCardTitle}>We do not invoice until you sign off on the live site.</Text>
               <Text style={styles.trustCardBody}>
@@ -1453,7 +1494,7 @@ function AuditDocument({
                 is finished.
               </Text>
             </View>
-            <View style={styles.trustCard}>
+            <View style={[styles.trustCard, styles.trustCardScarcity]}>
               <Text style={styles.trustCardKicker}>SCARCITY (HONEST)</Text>
               <Text style={styles.trustCardTitle}>
                 {SPRINT_CONFIG.monthlyCapacity} sprints per month.
@@ -1488,21 +1529,21 @@ function AuditDocument({
           ) : null}
 
           <View style={styles.trustAnchorRow}>
-            <Text style={styles.trustAnchorKicker}>PRICE ANCHOR</Text>
-            <Text style={styles.trustAnchorNum}>
+            <Text style={styles.trustAnchorKicker}>TYPICAL AGENCY QUOTE</Text>
+            <Text style={styles.trustAnchorNumStrike}>
               {audFmt.format(SPRINT_CONFIG.agencyAnchor.lowAud)} to {audFmt.format(SPRINT_CONFIG.agencyAnchor.highAud)}
             </Text>
             <Text style={styles.trustAnchorNote}>
-              TYPICAL LOCAL AGENCY QUOTE / {SPRINT_CONFIG.agencyAnchor.weeksLow} TO {SPRINT_CONFIG.agencyAnchor.weeksHigh} WEEKS
+              {SPRINT_CONFIG.agencyAnchor.weeksLow} TO {SPRINT_CONFIG.agencyAnchor.weeksHigh} WEEKS / QUOTES + REVISIONS + UPSELLS
             </Text>
           </View>
 
-          <View style={styles.trustAnchorRow}>
-            <Text style={styles.trustAnchorKicker}>OUR PRICE</Text>
-            <Text style={styles.trustAnchorNum}>
+          <View style={styles.trustAnchorHighlight}>
+            <Text style={styles.trustAnchorHighlightKicker}>OUR PRICE</Text>
+            <Text style={styles.trustAnchorHighlightNum}>
               {audFmt.format(SPRINT_CONFIG.priceAud)}
             </Text>
-            <Text style={styles.trustAnchorNote}>
+            <Text style={styles.trustAnchorHighlightNote}>
               FIXED PRICE / 48 HOURS / EVERYTHING INCLUDED
             </Text>
           </View>
