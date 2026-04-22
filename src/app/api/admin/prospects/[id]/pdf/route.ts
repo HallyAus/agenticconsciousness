@@ -5,7 +5,24 @@ import { fetchNormalisedJpegDetailed } from '@/lib/fetch-image';
 import { getOrRenderPdf } from '@/lib/pdf-cache';
 import { startBreadcrumbTrail, memorySnapshot } from '@/lib/pdf-breadcrumb';
 import { fingerprintTechStack } from '@/lib/tech-stack';
+import { buildTallMockupUrl } from '@/lib/screenshots';
 import type { OutreachIssue } from '@/lib/outreach';
+
+/** Upgrade legacy mockup_screenshot_url (viewport_height=900) to the
+ *  new tall capture (viewport_height=1800) without forcing a reaudit.
+ *  Called on first /pdf request per prospect after the tall-mockup
+ *  change landed; persists the new URL so subsequent renders hit it
+ *  directly. */
+async function selfHealMockupUrl(prospectId: string, mockupToken: string | null, current: string | null): Promise<string | null> {
+  if (!mockupToken) return current;
+  if (current && !/viewport_height=900(\b|&)/.test(current)) return current;
+  const siteBaseUrl = process.env.SITE_URL || 'https://agenticconsciousness.com.au';
+  const previewUrl = `${siteBaseUrl}/preview/${mockupToken}`;
+  const tall = buildTallMockupUrl(previewUrl);
+  if (!tall) return current;
+  await sql`UPDATE prospects SET mockup_screenshot_url = ${tall}, updated_at = NOW() WHERE id = ${prospectId}`;
+  return tall;
+}
 
 // Cold renders can push past 60s now that we fetch three screenshots
 // (desktop + mobile + mockup) plus QR + multi-page react-pdf. Cached
@@ -32,10 +49,11 @@ export async function GET(
     SELECT url, business_name, audit_score, audit_summary, audit_data,
            screenshot_desktop_url, screenshot_mobile_url, mockup_screenshot_url,
            broken_links_count, viewport_meta_ok, copyright_year,
-           place_data, pdf_url,
+           place_data, pdf_url, mockup_token,
            google_reviews, google_rating, google_review_count
     FROM prospects WHERE id = ${id} LIMIT 1
   `) as Array<{
+    mockup_token: string | null;
     url: string;
     business_name: string | null;
     audit_score: number | null;
@@ -89,10 +107,14 @@ export async function GET(
       renderFn: async () => {
         await trail.log('assets:fetch_start');
 
+        // Self-heal: if mockup URL is still the old viewport_height=900
+        // version, regenerate as 1440x1800 and persist before fetching.
+        const mockupUrl = await selfHealMockupUrl(id, p.mockup_token, p.mockup_screenshot_url);
+
         const [desktopRes, mobileRes, mockupRes] = await Promise.all([
           p.screenshot_desktop_url ? fetchNormalisedJpegDetailed(p.screenshot_desktop_url, { maxWidth: 900 }) : Promise.resolve({ image: null, failure: null }),
           p.screenshot_mobile_url ? fetchNormalisedJpegDetailed(p.screenshot_mobile_url, { maxWidth: 400 }) : Promise.resolve({ image: null, failure: null }),
-          p.mockup_screenshot_url ? fetchNormalisedJpegDetailed(p.mockup_screenshot_url, { maxWidth: 900 }) : Promise.resolve({ image: null, failure: null }),
+          mockupUrl ? fetchNormalisedJpegDetailed(mockupUrl, { maxWidth: 900 }) : Promise.resolve({ image: null, failure: null }),
         ]);
 
         const desktopShot = desktopRes.image;
