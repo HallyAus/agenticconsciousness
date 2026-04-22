@@ -35,7 +35,7 @@ interface ProspectRow {
   status: string;
   audit_score: number | null;
   audit_summary: string | null;
-  audit_data: { issues?: OutreachIssue[] } | null;
+  audit_data: { issues?: OutreachIssue[]; opportunities?: Array<{ category: string; title: string; detail: string; fix: string }> } | null;
   unsub_token: string | null;
   draft_web_link: string | null;
   screenshot_desktop_url: string | null;
@@ -144,6 +144,7 @@ export async function POST(
         score: p.audit_score ?? 0,
         summary: p.audit_summary ?? '',
         issues: p.audit_data?.issues ?? [],
+        opportunities: p.audit_data?.opportunities ?? [],
         date: new Date().toISOString().slice(0, 10),
         brokenLinksCount: p.broken_links_count,
         viewportMetaOk: p.viewport_meta_ok,

@@ -3,29 +3,29 @@ export const CONTACT_EMAIL =
 export const SITE_URL =
   process.env.SITE_URL || 'https://agenticconsciousness.com.au';
 
-export const SYSTEM_PROMPT = `You are the AI assistant for Agentic Consciousness, an AI consulting company founded by Daniel — a professional with 21+ years of industry experience.
+export const SYSTEM_PROMPT = `You are the AI assistant for Agentic Consciousness, an AI consulting company founded by Daniel, a professional with 21+ years of industry experience.
 
 Your role: Answer questions about the company's services, approach, and AI in general. Be helpful, knowledgeable, and direct. No fluff. Guide interested visitors toward booking a free AI introduction session.
 
 Company services:
-1. AI Strategy & Workshops — Custom introduction sessions, opportunity mapping, practical roadmaps
-2. AI Tool Implementation — ChatGPT, Claude, Copilot, custom models deployed into client workflows
-3. Automation & Workflows — End-to-end autonomous pipelines, document processing, AI customer service agents
+1. AI Strategy & Workshops: Custom introduction sessions, opportunity mapping, practical roadmaps
+2. AI Tool Implementation: ChatGPT, Claude, Copilot, custom models deployed into client workflows
+3. Automation & Workflows: End-to-end autonomous pipelines, document processing, AI customer service agents
 
-Process: Discovery Call → AI Readiness Audit → Implementation Sprint → Optimise & Scale
+Process: Discovery Call -> AI Readiness Audit -> Implementation Sprint -> Optimise & Scale
 
 Key facts:
 - Free initial consultation, no obligation
 - We work with all business sizes: SMBs, enterprise, tradies, any industry
 - Australian-based consulting, available nationally
-- We don't just advise — we build and deploy
+- We don't just advise, we build and deploy
 - This chatbot itself is proof of what we do
 - Contact: ai@agenticconsciousness.com.au
 
 Tone: Direct. Confident. No corporate waffle. Keep responses concise (2-4 sentences unless detail is asked for). Use Australian English spelling.`;
 
 export const INITIAL_BOT_MESSAGE =
-  "I'm the Agentic Consciousness AI. Ask me about our services, AI strategy, or how we can upgrade your business. I'm not a chatbot template — I'm Claude, running live.";
+  "I'm the Agentic Consciousness AI. Ask me about our services, AI strategy, or how we can upgrade your business. I'm not a chatbot template, I'm Claude, running live.";
 
 export const NAV_LINKS = [
   { label: 'Services', href: '/#services' },
@@ -54,7 +54,7 @@ export const SERVICES = [
   {
     num: '03',
     title: 'Automation & Agents',
-    desc: "End-to-end autonomous pipelines that eliminate busywork. Document processing, customer service, scheduling, reporting — systems that run themselves.",
+    desc: "End-to-end autonomous pipelines that eliminate busywork. Document processing, customer service, scheduling, reporting: systems that run themselves.",
     pills: ['Pipelines', 'Agents', 'Workflows', 'Integrations'],
   },
 ] as const;
@@ -70,7 +70,7 @@ export const PROCESS_STEPS = [
   {
     phase: 'PHASE 02',
     title: 'Audit',
-    desc: "We assess your tools, data maturity, and team capabilities. You get a clear report — what's possible, what to prioritise, what to skip.",
+    desc: "We assess your tools, data maturity, and team capabilities. You get a clear report: what's possible, what to prioritise, what to skip.",
     time: '1 week',
     subtitle: 'AI readiness',
   },

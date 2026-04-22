@@ -65,6 +65,7 @@ async function runAndStore(prospectId: string, url: string): Promise<void> {
             summary: result.summary,
             score: result.score,
             issues: result.issues,
+            opportunities: result.opportunities,
             pageResults: result.pageResults,
             pagesFetched: result.pagesFetched,
             tookMs: Date.now() - start,

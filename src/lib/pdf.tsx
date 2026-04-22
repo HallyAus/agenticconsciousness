@@ -31,6 +31,7 @@ const RED_TINT = '#fff4f0';
 const AMBER_TINT = '#fdf6e8';
 const YELLOW_TINT = '#fffdf2';
 const GREY_TINT = '#f6f6f6';
+const PURPLE_TINT = '#f5f0fa';
 const INK = '#0a0a0a';
 const BODY = '#1f1f1f';
 const DIM = '#4a4a4a';
@@ -42,6 +43,7 @@ const SEVERITY: Record<string, { chipBg: string; chipFg: string; label: string; 
   high:     { chipBg: '#FB8C00', chipFg: '#ffffff', label: 'HIGH',     accent: AMBER_TINT,  border: '#FB8C00' },
   medium:   { chipBg: '#FDD835', chipFg: '#0a0a0a', label: 'MEDIUM',   accent: YELLOW_TINT, border: '#FDD835' },
   low:      { chipBg: '#757575', chipFg: '#ffffff', label: 'LOW',      accent: GREY_TINT,   border: '#9ca3af' },
+  legal:    { chipBg: '#7c3aed', chipFg: '#ffffff', label: 'LEGAL',    accent: PURPLE_TINT, border: '#7c3aed' },
 };
 
 const MONO = 'Courier';
@@ -261,6 +263,43 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: BODY,
     lineHeight: 1.55,
+  },
+  blockBodyBold: {
+    fontFamily: SANS_BOLD,
+    fontSize: 11,
+    color: INK,
+    lineHeight: 1.55,
+  },
+
+  // --- opportunities ---
+  oppWrap: {
+    marginTop: 10,
+    marginBottom: 14,
+  },
+  oppIntro: {
+    fontSize: 11,
+    color: BODY,
+    lineHeight: 1.55,
+    marginBottom: 14,
+  },
+  opp: {
+    marginBottom: 14,
+    padding: 12,
+    paddingLeft: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: RED,
+    backgroundColor: '#fffaf6',
+  },
+  oppPill: {
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingLeft: 8,
+    paddingRight: 8,
+    fontFamily: MONO_BOLD,
+    fontSize: 9,
+    letterSpacing: 1.2,
+    backgroundColor: RED,
+    color: '#ffffff',
   },
 
   // --- current site (screenshots) ---
@@ -605,6 +644,13 @@ export interface AuditPdfIssue {
   fix: string;
 }
 
+export interface AuditPdfOpportunity {
+  category: string;
+  title: string;
+  detail: string;
+  fix: string;
+}
+
 /**
  * What we pass to @react-pdf/renderer's <Image src>. Per the v4 docs, the
  * canonical server-side shape is `{ data: Buffer, format: 'jpg' }` — it
@@ -623,6 +669,7 @@ export interface AuditPdfArgs {
   score: number;
   summary: string;
   issues: AuditPdfIssue[];
+  opportunities?: AuditPdfOpportunity[];
   date: string;
   screenshotDesktop?: AuditPdfImageSrc;
   screenshotMobile?: AuditPdfImageSrc;
@@ -647,8 +694,23 @@ function domainFromUrl(url: string): string {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
 }
 
+/**
+ * Split a detail paragraph into "first sentence" + "rest" so the PDF can
+ * render the first sentence bold. First sentence = up to and including
+ * the first period, question mark, or exclamation mark that is followed
+ * by a space or end-of-string. Falls back to whole-string bold if we
+ * can't find a terminator.
+ */
+function splitFirstSentence(raw: string): { head: string; tail: string } {
+  const s = raw.trim();
+  if (!s) return { head: '', tail: '' };
+  const m = /^(.+?[.!?])(\s+)([\s\S]+)$/.exec(s);
+  if (!m) return { head: s, tail: '' };
+  return { head: m[1], tail: m[3] };
+}
+
 function AuditDocument({
-  url, businessName, score, summary, issues, date,
+  url, businessName, score, summary, issues, opportunities, date,
   screenshotDesktop, screenshotMobile,
   brokenLinksCount, viewportMetaOk, copyrightYear,
 }: AuditPdfArgs) {
@@ -836,10 +898,18 @@ function AuditDocument({
 
               <Text style={styles.findingTitle}>{stripDashes(issue.title)}</Text>
 
-              <View style={styles.labelBlock}>
-                <Text style={styles.blockLabel}>WHAT WE FOUND</Text>
-                <Text style={styles.blockBody}>{stripDashes(issue.detail)}</Text>
-              </View>
+              {(() => {
+                const { head, tail } = splitFirstSentence(stripDashes(issue.detail));
+                return (
+                  <View style={styles.labelBlock}>
+                    <Text style={styles.blockLabel}>WHAT WE FOUND</Text>
+                    <Text style={styles.blockBody}>
+                      <Text style={styles.blockBodyBold}>{head}</Text>
+                      {tail ? ' ' + tail : ''}
+                    </Text>
+                  </View>
+                );
+              })()}
 
               {issue.fix ? (
                 <View style={styles.labelBlockLast}>
@@ -851,7 +921,55 @@ function AuditDocument({
           );
         })}
 
-        {/* Selected recent work — forced onto its own page */}
+        {/* Opportunities: AI-category items promoted out of Findings.
+            Renders on its own page only when the audit surfaced any. */}
+        {opportunities && opportunities.length > 0 ? (
+          <View style={styles.oppWrap} break>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Opportunities</Text>
+              <Text style={styles.sectionMeta}>UPSIDE / NOT PROBLEMS</Text>
+            </View>
+            <Text style={styles.oppIntro}>
+              Unlike the findings above, these are not issues with your site
+              as it stands. They are upgrades that would move the needle on
+              leads, speed, or customer experience if you chose to add them.
+            </Text>
+            {opportunities.map((opp, i) => (
+              <View key={i} style={styles.opp} wrap={false}>
+                <View style={styles.findingMetaRow}>
+                  <Text style={[styles.findingNumber, { color: RED }]}>
+                    {String(i + 1).padStart(2, '0')}
+                  </Text>
+                  <Text style={styles.oppPill}>OPPORTUNITY</Text>
+                  <Text style={styles.categoryPill}>
+                    / {(opp.category || 'AI').toUpperCase()}
+                  </Text>
+                </View>
+                <Text style={styles.findingTitle}>{stripDashes(opp.title)}</Text>
+                {(() => {
+                  const { head, tail } = splitFirstSentence(stripDashes(opp.detail));
+                  return (
+                    <View style={styles.labelBlock}>
+                      <Text style={styles.blockLabel}>WHAT IT IS</Text>
+                      <Text style={styles.blockBody}>
+                        <Text style={styles.blockBodyBold}>{head}</Text>
+                        {tail ? ' ' + tail : ''}
+                      </Text>
+                    </View>
+                  );
+                })()}
+                {opp.fix ? (
+                  <View style={styles.labelBlockLast}>
+                    <Text style={styles.blockLabel}>HOW WE&apos;D ADD IT</Text>
+                    <Text style={styles.blockBody}>{stripDashes(opp.fix)}</Text>
+                  </View>
+                ) : null}
+              </View>
+            ))}
+          </View>
+        ) : null}
+
+        {/* Selected recent work, forced onto its own page */}
         <View style={styles.portfolioWrap} break>
           <View style={styles.portfolioHeader}>
             <Text style={styles.portfolioTitle}>Selected recent work</Text>

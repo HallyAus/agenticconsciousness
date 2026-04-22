@@ -24,9 +24,26 @@ const MAX_EXTRA_PAGES = 4;
 const PER_PAGE_CHAR_CAP = 20000;
 const WAF_STATUSES = new Set([401, 403, 406, 429, 503]);
 
+export type Severity = 'critical' | 'high' | 'medium' | 'low' | 'legal';
+
 export interface Issue {
   category: string;
-  severity: 'critical' | 'high' | 'medium' | 'low';
+  /** `legal` is reserved for WCAG/accessibility/compliance issues (missing
+   *  alt text, form labels, contrast fails, blocked viewport zoom). Treated
+   *  distinctly from critical — the risk profile is regulatory, not lost
+   *  revenue. Rendered in purple in the PDF. */
+  severity: Severity;
+  title: string;
+  detail: string;
+  fix: string;
+}
+
+/** An Opportunity is a proactive upgrade (AI chatbot, automation, new tool)
+ *  the prospect could add. NOT a problem with their current site. Kept
+ *  separate from `issues` so the findings page reads as problems-to-solve
+ *  and the opportunities page reads as upside. */
+export interface Opportunity {
+  category: string;
   title: string;
   detail: string;
   fix: string;
@@ -38,6 +55,7 @@ export interface AuditResult {
   score: number;
   summary: string;
   issues: Issue[];
+  opportunities: Opportunity[];
   pageResults: Array<{ url: string; status: number | null; ok: boolean }>;
   pagesFetched: number;
   rawHtmlByUrl: Record<string, string>;
@@ -64,16 +82,24 @@ Your job: produce an audit that feels like a paid one-hour consultation from an 
 
 You are given MULTIPLE pages from the site: the homepage plus up to 4 extra pages selected from their sitemap. Before claiming something is MISSING, you MUST first search EVERY provided page. Cite the page you found evidence on.
 
-Analyse in this order: (1) VALUE PROPOSITION & CONVERSION, (2) TRUST & CREDIBILITY, (3) MOBILE FIRST, (4) TECHNICAL SEO, (5) SOCIAL SHARING (Open Graph + Twitter), (6) PERFORMANCE & HYGIENE, (7) DESIGN PROFESSIONALISM, (8) AI OPPORTUNITY (one concrete, high-leverage AI intervention tailored to this specific business).
+Analyse in this order: (1) VALUE PROPOSITION & CONVERSION, (2) TRUST & CREDIBILITY, (3) MOBILE FIRST, (4) LEGAL/ACCESSIBILITY (WCAG 2.2 AA), (5) TECHNICAL SEO, (6) SOCIAL SHARING (Open Graph + Twitter), (7) PERFORMANCE & HYGIENE, (8) DESIGN PROFESSIONALISM, (9) AI OPPORTUNITY (one concrete, high-leverage AI intervention tailored to this specific business).
+
+Severity levels and when to use each:
+- critical: site is actively losing money or failing to function (no clear CTA, site broken on mobile, hero blocks conversion)
+- high: major gap with measurable revenue or trust impact
+- medium: meaningful but not urgent
+- low: polish
+- legal: WCAG/accessibility/compliance failure. Use for: missing alt text on meaningful images, form inputs without labels, colour contrast < 4.5:1 on body text, viewport meta with user-scalable=no or maximum-scale=1 (blocks zoom, WCAG 1.4.4), missing <html lang>. Legal findings surface regulatory/ADA-style risk, not just UX friction.
 
 Hard rules:
 - Every finding MUST quote at least one specific element, phrase, or attribute.
 - Return 6 to 10 issues. Fewer if the site is genuinely strong. Do not pad.
 - One finding per issue. Never conflate two issues into one finding. Split compound issues (e.g. weak title tag AND typos) into separate items.
-- Order by severity (critical, high, medium, low).
-- Include at least one AI opportunity.
+- Order by severity (critical, high, medium, low, legal). Legal sits last even if serious, it renders as its own visual block in the PDF.
+- AI category findings MUST go under category "AI". These render as "Opportunities" (upside upgrades), not problems. At least one.
 - Direct, sharp tone. No hedging.
 - NEVER use em-dashes (U+2014) or en-dashes (U+2013) as punctuation. Use commas, colons, parentheses, or new sentences. Hyphens in compound words are fine.
+- First sentence of "detail" MUST be the most concrete finding, with a specific quote or element. The PDF renders that first sentence in bold, so front-load the signal.
 - NEVER flag a copyright year as "outdated" unless it is strictly LESS than ${year} (not equal to). A "© ${year}" footer is correct, not an error. A "© ${year + 1}" footer is a future-date bug worth flagging.
 - Score honestly 0 to 100. Calibration: 0-30 critical (site is actively harmful), 31-50 poor (major gaps), 51-65 significant gaps, 66-80 solid with room to improve, 81-100 excellent. A site that loads, captures leads, and has basic meta tags should not score below 40.`;
 }
@@ -230,8 +256,8 @@ export async function runStructuredAudit(url: string): Promise<AuditRunResult> {
           items: {
             type: 'object',
             properties: {
-              category: { type: 'string', enum: ['Conversion', 'Trust', 'Mobile', 'SEO', 'Social', 'Performance', 'Design', 'AI'] },
-              severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low'] },
+              category: { type: 'string', enum: ['Conversion', 'Trust', 'Mobile', 'Legal', 'SEO', 'Social', 'Performance', 'Design', 'AI'] },
+              severity: { type: 'string', enum: ['critical', 'high', 'medium', 'low', 'legal'] },
               title: { type: 'string' },
               detail: { type: 'string' },
               fix: { type: 'string' },
@@ -264,20 +290,29 @@ export async function runStructuredAudit(url: string): Promise<AuditRunResult> {
     throw new Error('Claude did not call submit_audit tool');
   }
   const parsed = toolUse.input as { summary?: string; score?: number; issues?: Issue[] };
-  const sevOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
+  // legal sorts last so the findings page leads with revenue-impact items
+  // and compliance sits as its own block at the end.
+  const sevOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3, legal: 4 };
   // Claude sometimes slips em/en dashes + curly quotes into the output. Strip at
   // the audit boundary so every downstream consumer (PDF, emails) gets clean text.
   const clean = (s: string) => stripDashes(s).trim();
-  const issues = (parsed.issues ?? [])
-    .slice()
-    .sort((a, b) => (sevOrder[a.severity] ?? 9) - (sevOrder[b.severity] ?? 9))
-    .map((i) => ({
-      category: clean(i.category),
-      severity: i.severity,
-      title: clean(i.title),
-      detail: clean(i.detail),
-      fix: clean(i.fix),
-    }));
+  const cleaned = (parsed.issues ?? []).map((i) => ({
+    category: clean(i.category),
+    severity: i.severity,
+    title: clean(i.title),
+    detail: clean(i.detail),
+    fix: clean(i.fix),
+  }));
+
+  // Category "AI" findings are upgrades, not problems. Split them out so
+  // the PDF renders them on a distinct "Opportunities" page. Everything
+  // else stays in `issues`, sorted by severity.
+  const opportunities: Opportunity[] = cleaned
+    .filter((i) => i.category.toLowerCase() === 'ai')
+    .map((i) => ({ category: i.category, title: i.title, detail: i.detail, fix: i.fix }));
+  const issues = cleaned
+    .filter((i) => i.category.toLowerCase() !== 'ai')
+    .sort((a, b) => (sevOrder[a.severity] ?? 9) - (sevOrder[b.severity] ?? 9));
 
   return {
     ok: true,
@@ -285,6 +320,7 @@ export async function runStructuredAudit(url: string): Promise<AuditRunResult> {
     score: typeof parsed.score === 'number' ? parsed.score : 0,
     summary: typeof parsed.summary === 'string' ? clean(parsed.summary) : '',
     issues,
+    opportunities,
     pageResults: summary,
     pagesFetched: successful.length,
     rawHtmlByUrl,
