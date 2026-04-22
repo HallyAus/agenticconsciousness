@@ -35,6 +35,7 @@ interface ProspectRow {
   copyright_year: number | null;
   mockup_token: string | null;
   mockup_screenshot_url: string | null;
+  place_data: { types?: string[]; primaryType?: string } | null;
 }
 
 export async function POST(
@@ -61,7 +62,7 @@ export async function POST(
     SELECT id, url, business_name, email, audit_score, audit_summary, audit_data, unsub_token,
            screenshot_desktop_url, screenshot_mobile_url,
            broken_links_count, viewport_meta_ok, copyright_year,
-           mockup_token, mockup_screenshot_url
+           mockup_token, mockup_screenshot_url, place_data
     FROM prospects WHERE id = ${id} LIMIT 1
   `) as ProspectRow[];
   if (rows.length === 0) return NextResponse.json({ error: 'Prospect not found' }, { status: 404 });
@@ -114,6 +115,7 @@ export async function POST(
         brokenLinksCount: p.broken_links_count,
         viewportMetaOk: p.viewport_meta_ok,
         copyrightYear: p.copyright_year,
+        placeTypes: p.place_data?.types ?? (p.place_data?.primaryType ? [p.place_data.primaryType] : null),
       };
 
       try {

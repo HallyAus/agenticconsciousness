@@ -1,6 +1,8 @@
 import React from 'react';
 import { Document, Font, Image, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
 import { stripDashes } from '@/lib/text-hygiene';
+import { SPRINT_CONFIG, AVG_JOB_VALUE_BY_VERTICAL } from '@/config/sprint';
+import { estimateFindingLoss, estimateAuditTotal, formatRevenueRange, resolveVertical } from '@/lib/revenue-impact';
 
 // Disable hyphenation — react-pdf defaults to English hyphenation which
 // splits awkwardly in headings. Tracking a separate issue to embed
@@ -269,6 +271,101 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: INK,
     lineHeight: 1.55,
+  },
+
+  // --- stat strip (page 1 headline numbers) ---
+  statStrip: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 14,
+    marginBottom: 18,
+  },
+  statCell: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: INK,
+    padding: 12,
+    backgroundColor: '#ffffff',
+  },
+  statLabel: {
+    fontFamily: MONO_BOLD,
+    fontSize: 8,
+    color: RED,
+    letterSpacing: 1.4,
+    marginBottom: 6,
+  },
+  statValue: {
+    fontFamily: SANS_BOLD,
+    fontSize: 22,
+    color: INK,
+    letterSpacing: -0.5,
+    lineHeight: 1.05,
+  },
+  statValueSmall: {
+    fontFamily: SANS_BOLD,
+    fontSize: 14,
+    color: INK,
+    letterSpacing: -0.3,
+    lineHeight: 1.15,
+  },
+  statSub: {
+    fontFamily: MONO,
+    fontSize: 8,
+    color: DIM,
+    letterSpacing: 1,
+    marginTop: 2,
+  },
+
+  // --- findings headline (total at risk) ---
+  lossHeadline: {
+    marginTop: 6,
+    marginBottom: 18,
+    padding: 14,
+    backgroundColor: RED,
+  },
+  lossHeadlineKicker: {
+    fontFamily: MONO_BOLD,
+    fontSize: 10,
+    color: '#ffffff',
+    letterSpacing: 2,
+    marginBottom: 6,
+  },
+  lossHeadlineNum: {
+    fontFamily: SANS_BOLD,
+    fontSize: 24,
+    color: '#ffffff',
+    letterSpacing: -0.5,
+    lineHeight: 1.1,
+  },
+  lossHeadlineNote: {
+    fontFamily: MONO,
+    fontSize: 9,
+    color: '#ffffff',
+    letterSpacing: 1.2,
+    marginTop: 6,
+    opacity: 0.9,
+  },
+
+  // --- per-finding cost line ---
+  findingCost: {
+    marginTop: 8,
+    paddingTop: 6,
+    borderTopWidth: 1,
+    borderTopColor: RULE,
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'baseline',
+  },
+  findingCostLabel: {
+    fontFamily: MONO_BOLD,
+    fontSize: 9,
+    color: RED,
+    letterSpacing: 1.3,
+  },
+  findingCostValue: {
+    fontFamily: SANS_BOLD,
+    fontSize: 11,
+    color: INK,
   },
 
   // --- opportunities ---
@@ -676,6 +773,12 @@ export interface AuditPdfArgs {
   brokenLinksCount?: number | null;
   viewportMetaOk?: boolean | null;
   copyrightYear?: number | null;
+  /** Google Places types array for this prospect, used to pick the right
+   *  average-job-value band for revenue impact. Falls back to 'default'. */
+  placeTypes?: string[] | null;
+  /** Mobile Lighthouse score (0-100) or null if not yet fetched. Renders
+   *  in the page-1 stat strip. Phase D wires this through. */
+  mobileSpeedScore?: number | null;
 }
 
 function getSev(raw: string) {
@@ -713,10 +816,14 @@ function AuditDocument({
   url, businessName, score, summary, issues, opportunities, date,
   screenshotDesktop, screenshotMobile,
   brokenLinksCount, viewportMetaOk, copyrightYear,
+  placeTypes, mobileSpeedScore,
 }: AuditPdfArgs) {
   const domain = domainFromUrl(url);
   const clampedScore = Math.max(0, Math.min(100, score));
   const hasShots = Boolean(screenshotDesktop || screenshotMobile);
+  const vertical = resolveVertical(placeTypes);
+  const totalLoss = estimateAuditTotal({ issues, vertical });
+  const audFmt = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
   const hasHealth = brokenLinksCount !== null && brokenLinksCount !== undefined
     || viewportMetaOk !== null && viewportMetaOk !== undefined
     || copyrightYear !== null && copyrightYear !== undefined;
@@ -752,6 +859,34 @@ function AuditDocument({
             <Text style={styles.glanceBody}>{stripDashes(summary)}</Text>
           </View>
         ) : null}
+
+        {/* Four headline numbers: score, mobile speed, estimated loss, sprint price. */}
+        <View style={styles.statStrip}>
+          <View style={styles.statCell}>
+            <Text style={styles.statLabel}>OVERALL SCORE</Text>
+            <Text style={styles.statValue}>{clampedScore}</Text>
+            <Text style={styles.statSub}>OUT OF 100</Text>
+          </View>
+          <View style={styles.statCell}>
+            <Text style={styles.statLabel}>MOBILE SPEED</Text>
+            <Text style={styles.statValue}>
+              {mobileSpeedScore !== null && mobileSpeedScore !== undefined ? mobileSpeedScore : 'TBD'}
+            </Text>
+            <Text style={styles.statSub}>LIGHTHOUSE / MOBILE</Text>
+          </View>
+          <View style={styles.statCell}>
+            <Text style={styles.statLabel}>EST. ANNUAL LOSS</Text>
+            <Text style={totalLoss ? styles.statValueSmall : styles.statValue}>
+              {totalLoss ? formatRevenueRange(totalLoss) : 'N/A'}
+            </Text>
+            <Text style={styles.statSub}>AT CURRENT STATE</Text>
+          </View>
+          <View style={styles.statCell}>
+            <Text style={styles.statLabel}>SPRINT PRICE</Text>
+            <Text style={styles.statValue}>{audFmt.format(SPRINT_CONFIG.priceAud)}</Text>
+            <Text style={styles.statSub}>FIXED / 48 HOURS</Text>
+          </View>
+        </View>
 
         {hasHealth ? (
           <View style={styles.healthStrip}>
@@ -873,6 +1008,17 @@ function AuditDocument({
           </Text>
         </View>
 
+        {totalLoss ? (
+          <View style={styles.lossHeadline}>
+            <Text style={styles.lossHeadlineKicker}>ESTIMATED ANNUAL REVENUE LOSS</Text>
+            <Text style={styles.lossHeadlineNum}>{formatRevenueRange(totalLoss)}</Text>
+            <Text style={styles.lossHeadlineNote}>
+              CONSERVATIVE MODEL, {(AVG_JOB_VALUE_BY_VERTICAL[vertical] ?? AVG_JOB_VALUE_BY_VERTICAL.default).toLocaleString('en-AU')} AVG JOB VALUE /
+              CRITICAL + HIGH FINDINGS ONLY
+            </Text>
+          </View>
+        ) : null}
+
         {issues.map((issue, i) => {
           const sev = getSev(issue.severity);
           return (
@@ -917,6 +1063,17 @@ function AuditDocument({
                   <Text style={styles.blockBody}>{stripDashes(issue.fix)}</Text>
                 </View>
               ) : null}
+
+              {(() => {
+                const est = estimateFindingLoss({ category: issue.category, severity: issue.severity, vertical });
+                if (!est) return null;
+                return (
+                  <View style={styles.findingCost}>
+                    <Text style={styles.findingCostLabel}>EST. ANNUAL COST</Text>
+                    <Text style={styles.findingCostValue}>{formatRevenueRange(est)}</Text>
+                  </View>
+                );
+              })()}
             </View>
           );
         })}

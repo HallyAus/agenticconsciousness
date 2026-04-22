@@ -31,7 +31,7 @@ export async function GET(
     SELECT url, business_name, audit_score, audit_summary, audit_data,
            screenshot_desktop_url, screenshot_mobile_url,
            broken_links_count, viewport_meta_ok, copyright_year,
-           pdf_url
+           place_data, pdf_url
     FROM prospects WHERE id = ${id} LIMIT 1
   `) as Array<{
     url: string;
@@ -44,6 +44,7 @@ export async function GET(
     broken_links_count: number | null;
     viewport_meta_ok: boolean | null;
     copyright_year: number | null;
+    place_data: { types?: string[]; primaryType?: string } | null;
     pdf_url: string | null;
   }>;
   if (rows.length === 0) return new NextResponse('Not found', { status: 404 });
@@ -82,6 +83,7 @@ export async function GET(
         brokenLinksCount: p.broken_links_count,
         viewportMetaOk: p.viewport_meta_ok,
         copyrightYear: p.copyright_year,
+        placeTypes: p.place_data?.types ?? (p.place_data?.primaryType ? [p.place_data.primaryType] : null),
       };
 
       console.log('[admin/pdf] render start', {
