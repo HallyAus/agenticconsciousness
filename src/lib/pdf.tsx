@@ -1,4 +1,5 @@
 import React from 'react';
+import QRCode from 'qrcode';
 import { Document, Font, Image, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
 import { stripDashes } from '@/lib/text-hygiene';
 import { SPRINT_CONFIG, AVG_JOB_VALUE_BY_VERTICAL } from '@/config/sprint';
@@ -366,6 +367,127 @@ const styles = StyleSheet.create({
     fontFamily: SANS_BOLD,
     fontSize: 11,
     color: INK,
+  },
+
+  // --- trust page (risk reversal + scarcity + agency anchor) ---
+  trustWrap: {
+    marginTop: 10,
+    marginBottom: 14,
+  },
+  trustHeader: {
+    borderBottomWidth: 1,
+    borderBottomColor: RULE,
+    paddingBottom: 8,
+    marginBottom: 14,
+  },
+  trustTitle: {
+    fontFamily: SANS_BOLD,
+    fontSize: 22,
+    color: INK,
+    letterSpacing: -0.3,
+  },
+  trustLead: {
+    fontSize: 12,
+    color: BODY,
+    lineHeight: 1.55,
+    marginBottom: 18,
+  },
+  trustCardRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 14,
+  },
+  trustCard: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: INK,
+    padding: 14,
+    backgroundColor: '#ffffff',
+  },
+  trustCardKicker: {
+    fontFamily: MONO_BOLD,
+    fontSize: 9,
+    color: RED,
+    letterSpacing: 1.5,
+    marginBottom: 8,
+  },
+  trustCardTitle: {
+    fontFamily: SANS_BOLD,
+    fontSize: 14,
+    color: INK,
+    marginBottom: 6,
+    letterSpacing: -0.2,
+  },
+  trustCardBody: {
+    fontSize: 11,
+    color: BODY,
+    lineHeight: 1.55,
+  },
+  trustAnchorRow: {
+    marginTop: 10,
+    padding: 14,
+    backgroundColor: PAPER_SOFT,
+    borderLeftWidth: 3,
+    borderLeftColor: RED,
+  },
+  trustAnchorKicker: {
+    fontFamily: MONO_BOLD,
+    fontSize: 9,
+    color: RED,
+    letterSpacing: 1.5,
+    marginBottom: 4,
+  },
+  trustAnchorNum: {
+    fontFamily: SANS_BOLD,
+    fontSize: 18,
+    color: INK,
+    letterSpacing: -0.3,
+    marginBottom: 2,
+  },
+  trustAnchorNote: {
+    fontFamily: MONO,
+    fontSize: 10,
+    color: DIM,
+    letterSpacing: 1,
+  },
+
+  // --- CTA page additions ---
+  ctaAnchorLine: {
+    fontFamily: MONO,
+    fontSize: 10,
+    color: DIM,
+    letterSpacing: 1.5,
+    marginBottom: 8,
+  },
+  ctaQrRow: {
+    flexDirection: 'row',
+    gap: 16,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  ctaQrImage: {
+    width: 100,
+    height: 100,
+  },
+  ctaQrCopy: { flex: 1 },
+  ctaQrLabel: {
+    fontFamily: MONO_BOLD,
+    fontSize: 9,
+    color: RED,
+    letterSpacing: 1.5,
+    marginBottom: 4,
+  },
+  ctaQrHint: {
+    fontSize: 11,
+    color: BODY,
+    lineHeight: 1.5,
+    marginBottom: 6,
+  },
+  ctaQrLinkSmall: {
+    fontFamily: MONO,
+    fontSize: 9,
+    color: DIM,
+    letterSpacing: 0.5,
   },
 
   // --- opportunities ---
@@ -812,12 +934,16 @@ function splitFirstSentence(raw: string): { head: string; tail: string } {
   return { head: m[1], tail: m[3] };
 }
 
+interface AuditDocumentInternalProps extends AuditPdfArgs {
+  qrPngBuffer?: Buffer | null;
+}
+
 function AuditDocument({
   url, businessName, score, summary, issues, opportunities, date,
   screenshotDesktop, screenshotMobile,
   brokenLinksCount, viewportMetaOk, copyrightYear,
-  placeTypes, mobileSpeedScore,
-}: AuditPdfArgs) {
+  placeTypes, mobileSpeedScore, qrPngBuffer,
+}: AuditDocumentInternalProps) {
   const domain = domainFromUrl(url);
   const clampedScore = Math.max(0, Math.min(100, score));
   const hasShots = Boolean(screenshotDesktop || screenshotMobile);
@@ -1126,6 +1252,73 @@ function AuditDocument({
           </View>
         ) : null}
 
+        {/* Trust page: risk reversal + scarcity + agency anchor. Forced
+            onto its own page. Testimonials render only when the config
+            array has real entries (never fabricated). */}
+        <View style={styles.trustWrap} break>
+          <View style={styles.trustHeader}>
+            <Text style={styles.trustTitle}>Why trust us with this</Text>
+          </View>
+          <Text style={styles.trustLead}>
+            A $999 rebuild is only a good deal if we actually deliver. Here
+            is how we make sure you do not carry the risk.
+          </Text>
+
+          <View style={styles.trustCardRow}>
+            <View style={styles.trustCard}>
+              <Text style={styles.trustCardKicker}>RISK REVERSAL</Text>
+              <Text style={styles.trustCardTitle}>We do not invoice until you sign off on the live site.</Text>
+              <Text style={styles.trustCardBody}>
+                You pay on delivery, not before. If the 48-hour rebuild
+                does not land on time, money back and you keep whatever
+                is finished.
+              </Text>
+            </View>
+            <View style={styles.trustCard}>
+              <Text style={styles.trustCardKicker}>SCARCITY (HONEST)</Text>
+              <Text style={styles.trustCardTitle}>
+                {SPRINT_CONFIG.monthlyCapacity} sprints per month.
+                {' '}
+                {SPRINT_CONFIG.remainingThisMonth} remaining this month.
+              </Text>
+              <Text style={styles.trustCardBody}>
+                The 48-hour promise only works with protected calendar
+                space. When the slots are gone, you go on the waitlist
+                for next month. No upsells, no "premium tier".
+              </Text>
+            </View>
+          </View>
+
+          {SPRINT_CONFIG.testimonials.length > 0 ? (
+            <View style={styles.trustCardRow}>
+              {SPRINT_CONFIG.testimonials.slice(0, 2).map((t, i) => (
+                <View key={i} style={styles.trustCard}>
+                  <Text style={styles.trustCardKicker}>TESTIMONIAL</Text>
+                  <Text style={styles.trustCardBody}>
+                    &quot;{stripDashes(t.quote)}&quot;
+                  </Text>
+                  <Text style={[styles.trustCardBody, { marginTop: 8, fontFamily: SANS_BOLD }]}>
+                    {stripDashes(t.author)}
+                  </Text>
+                  <Text style={[styles.trustCardBody, { fontSize: 10, color: DIM }]}>
+                    {stripDashes(t.role)}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
+
+          <View style={styles.trustAnchorRow}>
+            <Text style={styles.trustAnchorKicker}>PRICE ANCHOR</Text>
+            <Text style={styles.trustAnchorNum}>
+              {audFmt.format(SPRINT_CONFIG.agencyAnchor.lowAud)} to {audFmt.format(SPRINT_CONFIG.agencyAnchor.highAud)}
+            </Text>
+            <Text style={styles.trustAnchorNote}>
+              TYPICAL LOCAL AGENCY QUOTE / {SPRINT_CONFIG.agencyAnchor.weeksLow} TO {SPRINT_CONFIG.agencyAnchor.weeksHigh} WEEKS
+            </Text>
+          </View>
+        </View>
+
         {/* Selected recent work, forced onto its own page */}
         <View style={styles.portfolioWrap} break>
           <View style={styles.portfolioHeader}>
@@ -1235,7 +1428,10 @@ function AuditDocument({
         <View style={styles.ctaWrap} wrap={false}>
           <Text style={styles.ctaKicker}>NEXT STEP</Text>
           <Text style={styles.ctaTitle}>Fix every one of these in 48 hours.</Text>
-          <Text style={styles.ctaPrice}>$999</Text>
+          <Text style={styles.ctaAnchorLine}>
+            TYPICAL LOCAL AGENCY QUOTE: {audFmt.format(SPRINT_CONFIG.agencyAnchor.lowAud)} TO {audFmt.format(SPRINT_CONFIG.agencyAnchor.highAud)} / {SPRINT_CONFIG.agencyAnchor.weeksLow} TO {SPRINT_CONFIG.agencyAnchor.weeksHigh} WEEKS
+          </Text>
+          <Text style={styles.ctaPrice}>{audFmt.format(SPRINT_CONFIG.priceAud)}</Text>
           <Text style={styles.ctaBody}>
             Lightning Website Sprint. Mobile-first rebuild, AI-optimised,
             Claude chatbot trained on your content, Core Web Vitals tuned.
@@ -1247,7 +1443,22 @@ function AuditDocument({
             <Text style={styles.ctaBullet}>+ SECURITY PATCHES + UPTIME MONITORING</Text>
             <Text style={styles.ctaBullet}>+ HOSTING + DOMAIN MANAGEMENT</Text>
           </View>
-          <Text style={styles.ctaLink}>AGENTICCONSCIOUSNESS.COM.AU/BOOK</Text>
+
+          {qrPngBuffer ? (
+            <View style={styles.ctaQrRow}>
+              <Image src={qrPngBuffer} style={styles.ctaQrImage} />
+              <View style={styles.ctaQrCopy}>
+                <Text style={styles.ctaQrLabel}>SCAN TO BOOK</Text>
+                <Text style={styles.ctaQrHint}>
+                  Point your phone camera at the code. Opens the booking
+                  page in one tap, pre-filled with this audit.
+                </Text>
+                <Text style={styles.ctaQrLinkSmall}>{SPRINT_CONFIG.bookingUrl}</Text>
+              </View>
+            </View>
+          ) : (
+            <Text style={styles.ctaLink}>AGENTICCONSCIOUSNESS.COM.AU/BOOK</Text>
+          )}
         </View>
 
         <View style={styles.footer} fixed>
@@ -1263,5 +1474,21 @@ function AuditDocument({
 }
 
 export async function renderAuditPdf(args: AuditPdfArgs): Promise<Buffer> {
-  return await renderToBuffer(<AuditDocument {...args} />);
+  // Generate the QR code for the booking URL as a PNG Buffer BEFORE
+  // calling react-pdf. QRCode.toBuffer is async and react-pdf component
+  // rendering is synchronous, so we can't do this inside AuditDocument.
+  // Any failure is non-fatal — the PDF falls back to the plain URL link.
+  let qrPngBuffer: Buffer | null = null;
+  try {
+    qrPngBuffer = await QRCode.toBuffer(SPRINT_CONFIG.bookingUrl, {
+      type: 'png',
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 400,
+      color: { dark: '#0a0a0a', light: '#ffffff' },
+    });
+  } catch (err) {
+    console.error('[pdf] QR generation failed, falling back to URL only:', err instanceof Error ? err.message : err);
+  }
+  return await renderToBuffer(<AuditDocument {...args} qrPngBuffer={qrPngBuffer} />);
 }
