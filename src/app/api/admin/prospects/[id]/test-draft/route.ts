@@ -25,6 +25,11 @@ interface ProspectRow {
   audit_summary: string | null;
   audit_data: { issues?: OutreachIssue[] } | null;
   unsub_token: string | null;
+  screenshot_desktop_url: string | null;
+  screenshot_mobile_url: string | null;
+  broken_links_count: number | null;
+  viewport_meta_ok: boolean | null;
+  copyright_year: number | null;
 }
 
 export async function POST(
@@ -48,7 +53,9 @@ export async function POST(
   }
 
   const rows = (await sql`
-    SELECT id, url, business_name, email, audit_score, audit_summary, audit_data, unsub_token
+    SELECT id, url, business_name, email, audit_score, audit_summary, audit_data, unsub_token,
+           screenshot_desktop_url, screenshot_mobile_url,
+           broken_links_count, viewport_meta_ok, copyright_year
     FROM prospects WHERE id = ${id} LIMIT 1
   `) as ProspectRow[];
   if (rows.length === 0) return NextResponse.json({ error: 'Prospect not found' }, { status: 404 });
@@ -83,6 +90,11 @@ export async function POST(
     summary: p.audit_summary ?? '',
     issues: p.audit_data.issues,
     date: new Date().toISOString().slice(0, 10),
+    screenshotDesktop: p.screenshot_desktop_url,
+    screenshotMobile: p.screenshot_mobile_url,
+    brokenLinksCount: p.broken_links_count,
+    viewportMetaOk: p.viewport_meta_ok,
+    copyrightYear: p.copyright_year,
   });
 
   try {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
+import { Document, Image, Page, Text, View, StyleSheet, renderToBuffer } from '@react-pdf/renderer';
 import { stripDashes } from '@/lib/text-hygiene';
 
 /**
@@ -255,6 +255,68 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: BODY,
     lineHeight: 1.55,
+  },
+
+  // --- current site (screenshots) ---
+  shotsWrap: {
+    marginTop: 6,
+    marginBottom: 22,
+  },
+  shotsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    borderBottomWidth: 1,
+    borderBottomColor: RULE,
+    paddingBottom: 6,
+    marginBottom: 10,
+  },
+  shotsTitle: { fontFamily: SANS_BOLD, fontSize: 14, color: INK, letterSpacing: -0.2 },
+  shotsMeta: { fontFamily: MONO, fontSize: 9, color: DIM, letterSpacing: 1.5 },
+  shotsRow: { flexDirection: 'row', gap: 10 },
+  shotCard: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: INK,
+    padding: 4,
+    backgroundColor: '#ffffff',
+  },
+  shotImg: { width: '100%', height: 160, objectFit: 'cover' },
+  shotImgMobile: { width: '100%', height: 160, objectFit: 'contain' },
+  shotCaption: {
+    fontFamily: MONO,
+    fontSize: 8,
+    color: DIM,
+    letterSpacing: 1.2,
+    marginTop: 4,
+    textAlign: 'center',
+  },
+
+  // --- technical health ---
+  healthStrip: {
+    flexDirection: 'row',
+    gap: 6,
+    marginBottom: 20,
+  },
+  healthBox: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: INK,
+    padding: 8,
+    backgroundColor: '#ffffff',
+  },
+  healthLabel: {
+    fontFamily: MONO_BOLD,
+    fontSize: 8,
+    color: DIM,
+    letterSpacing: 1.3,
+    marginBottom: 3,
+  },
+  healthValue: {
+    fontFamily: SANS_BOLD,
+    fontSize: 13,
+    color: INK,
+    letterSpacing: -0.2,
   },
 
   // --- portfolio strip ---
@@ -523,6 +585,11 @@ export interface AuditPdfArgs {
   summary: string;
   issues: AuditPdfIssue[];
   date: string;
+  screenshotDesktop?: string | null;
+  screenshotMobile?: string | null;
+  brokenLinksCount?: number | null;
+  viewportMetaOk?: boolean | null;
+  copyrightYear?: number | null;
 }
 
 function getSev(raw: string) {
@@ -541,9 +608,17 @@ function domainFromUrl(url: string): string {
   try { return new URL(url).hostname.replace(/^www\./, ''); } catch { return url; }
 }
 
-function AuditDocument({ url, businessName, score, summary, issues, date }: AuditPdfArgs) {
+function AuditDocument({
+  url, businessName, score, summary, issues, date,
+  screenshotDesktop, screenshotMobile,
+  brokenLinksCount, viewportMetaOk, copyrightYear,
+}: AuditPdfArgs) {
   const domain = domainFromUrl(url);
   const clampedScore = Math.max(0, Math.min(100, score));
+  const hasShots = Boolean(screenshotDesktop || screenshotMobile);
+  const hasHealth = brokenLinksCount !== null && brokenLinksCount !== undefined
+    || viewportMetaOk !== null && viewportMetaOk !== undefined
+    || copyrightYear !== null && copyrightYear !== undefined;
 
   return (
     <Document
@@ -574,6 +649,61 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
           <View style={styles.glanceWrap}>
             <Text style={styles.glanceKicker}>AT A GLANCE</Text>
             <Text style={styles.glanceBody}>{stripDashes(summary)}</Text>
+          </View>
+        ) : null}
+
+        {hasShots ? (
+          <View style={styles.shotsWrap}>
+            <View style={styles.shotsHeader}>
+              <Text style={styles.shotsTitle}>Your site, right now</Text>
+              <Text style={styles.shotsMeta}>DESKTOP / MOBILE</Text>
+            </View>
+            <View style={styles.shotsRow}>
+              {screenshotDesktop ? (
+                <View style={styles.shotCard}>
+                  <Image src={screenshotDesktop} style={styles.shotImg} />
+                  <Text style={styles.shotCaption}>DESKTOP 1440 x 900</Text>
+                </View>
+              ) : null}
+              {screenshotMobile ? (
+                <View style={[styles.shotCard, { maxWidth: 160 }]}>
+                  <Image src={screenshotMobile} style={styles.shotImgMobile} />
+                  <Text style={styles.shotCaption}>MOBILE</Text>
+                </View>
+              ) : null}
+            </View>
+          </View>
+        ) : null}
+
+        {hasHealth ? (
+          <View style={styles.healthStrip}>
+            {brokenLinksCount !== null && brokenLinksCount !== undefined ? (
+              <View style={styles.healthBox}>
+                <Text style={styles.healthLabel}>BROKEN LINKS</Text>
+                <Text style={[styles.healthValue, { color: brokenLinksCount > 0 ? '#E53935' : INK }]}>
+                  {brokenLinksCount}
+                </Text>
+              </View>
+            ) : null}
+            {viewportMetaOk !== null && viewportMetaOk !== undefined ? (
+              <View style={styles.healthBox}>
+                <Text style={styles.healthLabel}>MOBILE VIEWPORT</Text>
+                <Text style={[styles.healthValue, { color: viewportMetaOk ? '#1b8739' : '#E53935' }]}>
+                  {viewportMetaOk ? 'OK' : 'MISSING'}
+                </Text>
+              </View>
+            ) : null}
+            {copyrightYear !== null && copyrightYear !== undefined ? (
+              <View style={styles.healthBox}>
+                <Text style={styles.healthLabel}>COPYRIGHT YEAR</Text>
+                <Text style={[
+                  styles.healthValue,
+                  { color: copyrightYear < new Date().getUTCFullYear() ? '#E53935' : INK },
+                ]}>
+                  {copyrightYear}
+                </Text>
+              </View>
+            ) : null}
           </View>
         ) : null}
 
