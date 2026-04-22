@@ -4,6 +4,7 @@ import { renderAuditPdf } from '@/lib/pdf';
 import { fetchNormalisedJpegDetailed } from '@/lib/fetch-image';
 import { getOrRenderPdf } from '@/lib/pdf-cache';
 import { startBreadcrumbTrail, memorySnapshot } from '@/lib/pdf-breadcrumb';
+import { fingerprintTechStack } from '@/lib/tech-stack';
 import type { OutreachIssue } from '@/lib/outreach';
 
 // Cold renders can push past 60s now that we fetch three screenshots
@@ -31,7 +32,8 @@ export async function GET(
     SELECT url, business_name, audit_score, audit_summary, audit_data,
            screenshot_desktop_url, screenshot_mobile_url, mockup_screenshot_url,
            broken_links_count, viewport_meta_ok, copyright_year,
-           place_data, pdf_url
+           place_data, pdf_url,
+           google_reviews, google_rating, google_review_count
     FROM prospects WHERE id = ${id} LIMIT 1
   `) as Array<{
     url: string;
@@ -47,6 +49,9 @@ export async function GET(
     copyright_year: number | null;
     place_data: { types?: string[]; primaryType?: string } | null;
     pdf_url: string | null;
+    google_reviews: Array<{ text?: string; author?: string; rating?: number; relativeTime?: string }> | null;
+    google_rating: string | number | null;
+    google_review_count: number | null;
   }>;
   if (rows.length === 0) {
     await trail.fail('db:prospect_not_found', new Error('no row'));
@@ -133,6 +138,17 @@ export async function GET(
         // crash was always the findings list, not this image.
         const mockupBuf = toDataUri(mockupShot);
 
+        // Tech stack fingerprint (once per render; no DB cache yet).
+        // Failure is never fatal: the techStack page just won't render.
+        const techStack = await fingerprintTechStack(p.url, 10_000).catch((err) => {
+          console.error('[pdf] tech-stack fingerprint failed', err instanceof Error ? err.message : err);
+          return [];
+        });
+
+        const googleRatingNum = p.google_rating !== null && p.google_rating !== undefined
+          ? Number(p.google_rating)
+          : null;
+
         const basePdfArgs = {
           url: p.url,
           businessName: p.business_name,
@@ -146,6 +162,10 @@ export async function GET(
           copyrightYear: p.copyright_year,
           placeTypes: p.place_data?.types ?? (p.place_data?.primaryType ? [p.place_data.primaryType] : null),
           mockupScreenshot: mockupBuf,
+          googleReviews: p.google_reviews ?? null,
+          googleRating: googleRatingNum,
+          googleReviewCount: p.google_review_count,
+          techStack,
         };
 
         await trail.log('doc:args_built', {
@@ -154,6 +174,8 @@ export async function GET(
           mockup_uri_len: mockupBuf?.length ?? null,
           issues: basePdfArgs.issues.length,
           opportunities: basePdfArgs.opportunities.length,
+          google_reviews_len: basePdfArgs.googleReviews?.length ?? 0,
+          tech_stack_len: basePdfArgs.techStack.length,
         });
 
         // This is the canary. If the process SIGKILLs inside react-pdf,

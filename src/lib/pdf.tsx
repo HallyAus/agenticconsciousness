@@ -962,6 +962,110 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
+  // --- reviews page ("Your audience already loves you") ---
+  reviewsLead: {
+    fontSize: 12,
+    color: BODY,
+    lineHeight: 1.55,
+    marginBottom: 14,
+  },
+  reviewAggregate: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    marginBottom: 18,
+    padding: 14,
+    backgroundColor: YELLOW_TINT,
+  },
+  reviewAggregateNum: {
+    fontFamily: SANS_BOLD,
+    fontSize: 40,
+    color: INK,
+    letterSpacing: -1.5,
+    lineHeight: 1,
+  },
+  reviewAggregateStars: {
+    fontFamily: SANS_BOLD,
+    fontSize: 18,
+    color: '#FB8C00',
+    letterSpacing: 1,
+  },
+  reviewAggregateCount: {
+    fontFamily: MONO,
+    fontSize: 10,
+    color: DIM,
+    letterSpacing: 1.2,
+    marginTop: 4,
+  },
+  reviewCard: {
+    padding: 14,
+    backgroundColor: PAPER_SOFT,
+    marginBottom: 10,
+  },
+  reviewStars: {
+    fontFamily: SANS_BOLD,
+    fontSize: 12,
+    color: '#FB8C00',
+    letterSpacing: 1,
+    marginBottom: 6,
+  },
+  reviewText: {
+    fontSize: 11,
+    color: BODY,
+    lineHeight: 1.55,
+    marginBottom: 6,
+  },
+  reviewMeta: {
+    fontFamily: MONO,
+    fontSize: 9,
+    color: DIM,
+    letterSpacing: 1,
+  },
+  reviewsPitch: {
+    marginTop: 14,
+    padding: 14,
+    backgroundColor: INK,
+  },
+  reviewsPitchText: {
+    fontSize: 12,
+    color: '#ffffff',
+    lineHeight: 1.55,
+  },
+
+  // --- tech stack page ("Under the hood") ---
+  techLead: {
+    fontSize: 12,
+    color: BODY,
+    lineHeight: 1.55,
+    marginBottom: 14,
+  },
+  techGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 12,
+  },
+  techChip: {
+    width: '48%',
+    padding: 12,
+    backgroundColor: PAPER_SOFT,
+  },
+  techChipLabel: {
+    fontFamily: MONO_BOLD,
+    fontSize: 9,
+    color: DIM,
+    letterSpacing: 1.5,
+    marginBottom: 4,
+  },
+  techChipValue: {
+    fontFamily: SANS_BOLD,
+    fontSize: 13,
+    color: INK,
+  },
+  techChipBad: {
+    backgroundColor: RED_TINT,
+  },
+
   // --- footer ---
   footer: {
     position: 'absolute',
@@ -1089,6 +1193,14 @@ export interface AuditPdfArgs {
    *  at 1440x900). Rendered as the "after" column on the before/after
    *  hero page. */
   mockupScreenshot?: AuditPdfImageSrc;
+  /** Google Places reviews (top 5 from Place Details). Used by the
+   *  "Your audience already loves you" page. */
+  googleReviews?: Array<{ text?: string; author?: string; rating?: number; relativeTime?: string }> | null;
+  googleRating?: number | null;
+  googleReviewCount?: number | null;
+  /** Tech stack fingerprint (detected CMS / analytics / CDN / key
+   *  tracking pixels). Used by the "Under the hood" page. */
+  techStack?: Array<{ label: string; value: string; good?: boolean }> | null;
   /** Bisection flags. Gate individual page blocks at render time so the
    *  /diagnose route can pinpoint which one triggers the pdfkit number
    *  serialiser's NaN error. Leave undefined in production. */
@@ -1151,8 +1263,10 @@ function AuditDocument({
   screenshotDesktop, screenshotMobile, mockupScreenshot,
   brokenLinksCount, viewportMetaOk, copyrightYear,
   placeTypes, mobileSpeedScore, qrDataUri, bisect,
+  googleReviews, googleRating, googleReviewCount, techStack,
 }: AuditDocumentInternalProps) {
   const bx = bisect ?? {};
+  void placeTypes; void brokenLinksCount; void viewportMetaOk; void copyrightYear;
   const domain = domainFromUrl(url);
   const clampedScore = Math.max(0, Math.min(100, score));
   const hasShots = Boolean(screenshotDesktop || screenshotMobile);
@@ -1334,6 +1448,116 @@ function AuditDocument({
               immediately under the hero, real photos from your site,
               and structured data so AI search engines cite you.
             </Text>
+          </View>
+
+          <View style={styles.footer} fixed>
+            <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>
+            <Text
+              style={styles.pageNum}
+              render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+            />
+          </View>
+        </Page>
+      ) : null}
+
+      {/* Google reviews page (#10 idea). Renders only when Place Details
+          returned at least one review — never fabricated. */}
+      {googleReviews && googleReviews.length > 0 ? (
+        <Page size="A4" style={styles.page}>
+          <View style={styles.brandBar} fixed>
+            <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
+            <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
+          </View>
+
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Your audience already loves you</Text>
+            <Text style={styles.sectionMeta}>GOOGLE REVIEWS / VERBATIM</Text>
+          </View>
+          <Text style={styles.reviewsLead}>
+            Your customers are giving you the exact trust signals a website visitor
+            needs to convert. The problem is none of it is on your homepage.
+          </Text>
+
+          {googleRating && googleReviewCount ? (
+            <View style={styles.reviewAggregate}>
+              <Text style={styles.reviewAggregateNum}>{googleRating.toFixed(1)}</Text>
+              <View>
+                <Text style={styles.reviewAggregateStars}>
+                  {'*'.repeat(Math.round(googleRating))}{' '.repeat(5 - Math.round(googleRating))}
+                </Text>
+                <Text style={styles.reviewAggregateCount}>
+                  {googleReviewCount} GOOGLE REVIEWS
+                </Text>
+              </View>
+            </View>
+          ) : null}
+
+          {googleReviews.slice(0, 3).map((r, i) => (
+            <View key={i} style={styles.reviewCard}>
+              {r.rating ? (
+                <Text style={styles.reviewStars}>
+                  {'*'.repeat(r.rating)}
+                </Text>
+              ) : null}
+              {r.text ? (
+                <Text style={styles.reviewText}>
+                  &quot;{stripDashes(r.text.length > 320 ? r.text.slice(0, 320) + '...' : r.text)}&quot;
+                </Text>
+              ) : null}
+              <Text style={styles.reviewMeta}>
+                {r.author ? stripDashes(r.author).toUpperCase() : 'ANONYMOUS'}
+                {r.relativeTime ? ' / ' + r.relativeTime.toUpperCase() : ''}
+              </Text>
+            </View>
+          ))}
+
+          <View style={styles.reviewsPitch}>
+            <Text style={styles.reviewsPitchText}>
+              We put these on your homepage, tagged &quot;From Google&quot;, right under
+              the hero. Visitors see proof before they scroll. Cheapest conversion
+              lift in your entire audit.
+            </Text>
+          </View>
+
+          <View style={styles.footer} fixed>
+            <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>
+            <Text
+              style={styles.pageNum}
+              render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+            />
+          </View>
+        </Page>
+      ) : null}
+
+      {/* Tech stack fingerprint (#5 idea). Shows detected CMS / CDN /
+          analytics / tracking from a quick HTML scan. Renders only
+          when the route passed techStack data. */}
+      {techStack && techStack.length > 0 ? (
+        <Page size="A4" style={styles.page}>
+          <View style={styles.brandBar} fixed>
+            <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
+            <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
+          </View>
+
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Under the hood</Text>
+            <Text style={styles.sectionMeta}>TECH STACK FINGERPRINT</Text>
+          </View>
+          <Text style={styles.techLead}>
+            We actually looked under the hood. Here is what is running on your
+            site today, and which pieces we would keep, replace, or add.
+          </Text>
+
+          <View style={styles.techGrid}>
+            {techStack.map((t, i) => (
+              <View
+                key={i}
+                style={[styles.techChip, t.good === false ? styles.techChipBad : {}]}
+              >
+                <Text style={styles.techChipLabel}>{t.label.toUpperCase()}</Text>
+                <Text style={styles.techChipValue}>{t.value}</Text>
+              </View>
+            ))}
           </View>
 
           <View style={styles.footer} fixed>
