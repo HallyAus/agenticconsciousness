@@ -9,6 +9,7 @@ import { injectPixel, newTrackingToken, rewriteLinks } from '@/lib/email-trackin
 import { isSuppressed } from '@/lib/suppression';
 import { pickRandomActiveVariant, renderSubject } from '@/lib/subject-variants';
 import { isBlockingVerdict, validateEmail } from '@/lib/email-validate';
+import { fetchAsDataUri } from '@/lib/fetch-image';
 
 /**
  * Admin-only: create a DRAFT email in the sender's mailbox with the audit
@@ -117,6 +118,14 @@ export async function POST(
     || (variant ? renderSubject(variant.template, { domain, businessName: p.business_name }) : built.subject);
   const html = overrides.htmlOverride?.trim() || built.html;
 
+  // Prefetch screenshot URLs into data URIs so react-pdf doesn't have
+  // to fetch remote images at render time (ScreenshotOne can take 5-10s
+  // for first render, which exceeds react-pdf's internal timeout).
+  const [desktopDataUri, mobileDataUri] = await Promise.all([
+    p.screenshot_desktop_url ? fetchAsDataUri(p.screenshot_desktop_url) : Promise.resolve(null),
+    p.screenshot_mobile_url ? fetchAsDataUri(p.screenshot_mobile_url) : Promise.resolve(null),
+  ]);
+
   const pdfBuffer = await renderAuditPdf({
     url: p.url,
     businessName: p.business_name,
@@ -124,8 +133,8 @@ export async function POST(
     summary: p.audit_summary ?? '',
     issues: p.audit_data.issues,
     date: new Date().toISOString().slice(0, 10),
-    screenshotDesktop: p.screenshot_desktop_url,
-    screenshotMobile: p.screenshot_mobile_url,
+    screenshotDesktop: desktopDataUri,
+    screenshotMobile: mobileDataUri,
     brokenLinksCount: p.broken_links_count,
     viewportMetaOk: p.viewport_meta_ok,
     copyrightYear: p.copyright_year,

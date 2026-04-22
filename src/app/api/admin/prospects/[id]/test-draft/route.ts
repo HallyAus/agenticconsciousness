@@ -88,6 +88,11 @@ export async function POST(
   const built = buildTouch1(ctx);
   const subject = `[TEST] ${built.subject}`;
 
+  const [desktopDataUri, mobileDataUri] = await Promise.all([
+    p.screenshot_desktop_url ? (await import('@/lib/fetch-image')).fetchAsDataUri(p.screenshot_desktop_url) : Promise.resolve(null),
+    p.screenshot_mobile_url ? (await import('@/lib/fetch-image')).fetchAsDataUri(p.screenshot_mobile_url) : Promise.resolve(null),
+  ]);
+
   const pdfBuffer = await renderAuditPdf({
     url: p.url,
     businessName: p.business_name,
@@ -95,8 +100,8 @@ export async function POST(
     summary: p.audit_summary ?? '',
     issues: p.audit_data.issues,
     date: new Date().toISOString().slice(0, 10),
-    screenshotDesktop: p.screenshot_desktop_url,
-    screenshotMobile: p.screenshot_mobile_url,
+    screenshotDesktop: desktopDataUri,
+    screenshotMobile: mobileDataUri,
     brokenLinksCount: p.broken_links_count,
     viewportMetaOk: p.viewport_meta_ok,
     copyrightYear: p.copyright_year,
