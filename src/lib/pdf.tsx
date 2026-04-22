@@ -1309,8 +1309,11 @@ function AuditDocument({
   // 7 findings is the empirical ceiling that reliably renders on Vercel
   // without hitting the pdfkit -1.87e21 pagination NaN.
   const PDF_MAX_FINDINGS = 7;
+  const PDF_MAX_OPPORTUNITIES = 2;
   const renderedIssues = issues.slice(0, PDF_MAX_FINDINGS);
   const extraFindings = issues.length - renderedIssues.length;
+  const renderedOpportunities = (opportunities ?? []).slice(0, PDF_MAX_OPPORTUNITIES);
+  const extraOpportunities = (opportunities?.length ?? 0) - renderedOpportunities.length;
   const audFmt = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
   const hasHealth = brokenLinksCount !== null && brokenLinksCount !== undefined
     || viewportMetaOk !== null && viewportMetaOk !== undefined
@@ -1705,18 +1708,21 @@ function AuditDocument({
 
         {/* Opportunities: AI-category items promoted out of Findings.
             Renders on its own page only when the audit surfaced any. */}
-        {opportunities && opportunities.length > 0 && !bx.skipOpportunities ? (
+        {renderedOpportunities.length > 0 && !bx.skipOpportunities ? (
           <View style={styles.oppWrap} break>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Opportunities</Text>
-              <Text style={styles.sectionMeta}>UPSIDE / NOT PROBLEMS</Text>
+              <Text style={styles.sectionMeta}>
+                UPSIDE / NOT PROBLEMS
+                {extraOpportunities > 0 ? ` / TOP ${renderedOpportunities.length} SHOWN` : ''}
+              </Text>
             </View>
             <Text style={styles.oppIntro}>
               Unlike the findings above, these are not issues with your site
               as it stands. They are upgrades that would move the needle on
               leads, speed, or customer experience if you chose to add them.
             </Text>
-            {opportunities.map((opp, i) => (
+            {renderedOpportunities.map((opp, i) => (
               <View key={i} style={styles.opp}>
                 <View style={styles.findingMetaRow}>
                   <Text style={[styles.findingNumber, { color: RED }]}>
