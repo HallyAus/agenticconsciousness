@@ -47,7 +47,7 @@ function complianceFooter(ctx: OutreachContext): string {
     <p class="ac-dim" style="color:#888;font-size:11px;line-height:1.5;margin-top:28px;border-top:1px solid #eee;padding-top:12px">
       ${esc(ctx.sourceLine)}<br>
       If you'd rather not hear from me again, <a href="${unsubUrl}" style="color:#888;text-decoration:underline">unsubscribe here</a> and I won't email you again.<br>
-      Daniel Hall · Agentic Consciousness · Australia · daniel@agenticconsciousness.com.au
+      Daniel · Agentic Consciousness · Ourimbah, NSW · daniel@agenticconsciousness.com.au
     </p>`;
 }
 
@@ -72,8 +72,9 @@ export function buildTouch1(ctx: OutreachContext): { subject: string; html: stri
       Hi ${greeting},
     </p>
     <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
-      I'm Daniel , I build AI-optimised websites for Australian small businesses.
-      I ran a proper audit across ${esc(ctx.domain)} this morning. Three things
+      I'm Daniel, a local on the Central Coast (Ourimbah). I build
+      AI-optimised websites for Australian small businesses. I ran a
+      proper audit across ${esc(ctx.domain)} this morning. Three things
       jumped out that I reckon are costing you leads right now:
     </p>
     <ol style="padding-left:20px;margin:0 0 16px;color:#222;font-size:15px;line-height:1.55">
