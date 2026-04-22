@@ -9,18 +9,28 @@
 
 export async function fetchAsDataUri(url: string, timeoutMs = 25_000): Promise<string | null> {
   if (!url) return null;
+  const t0 = Date.now();
   try {
     const res = await fetch(url, {
       signal: AbortSignal.timeout(timeoutMs),
       headers: { Accept: 'image/*' },
     });
     if (!res.ok) {
-      console.error('[fetch-image] non-ok', res.status, url.slice(0, 100));
+      console.error('[fetch-image] non-ok', res.status, url.slice(0, 120));
       return null;
     }
     const contentType = res.headers.get('content-type') ?? 'image/jpeg';
     const buf = Buffer.from(await res.arrayBuffer());
-    if (buf.byteLength === 0) return null;
+    if (buf.byteLength === 0) {
+      console.error('[fetch-image] zero bytes', url.slice(0, 120));
+      return null;
+    }
+    console.log('[fetch-image] ok', {
+      bytes: buf.byteLength,
+      contentType,
+      ms: Date.now() - t0,
+      host: (() => { try { return new URL(url).host; } catch { return '?'; } })(),
+    });
     return `data:${contentType};base64,${buf.toString('base64')}`;
   } catch (err) {
     console.error('[fetch-image] failed', err instanceof Error ? err.message : err);
