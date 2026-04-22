@@ -88,7 +88,26 @@ async function checkDmarc(domain: string): Promise<RecordCheck> {
   }
 }
 
-export async function GET() {
+// In-memory cache so the admin panel does not hammer DNS on every
+// page refresh. TTL 1h is plenty; DNS changes are rare and the admin
+// can force-refresh with ?refresh=1 when a record is being edited.
+const DOMAIN_HEALTH_TTL_MS = 60 * 60 * 1000;
+let cached: { report: DomainHealthReport; expiresAt: number } | null = null;
+
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const forceRefresh = url.searchParams.get('refresh') === '1';
+  const now = Date.now();
+
+  if (!forceRefresh && cached && cached.expiresAt > now) {
+    return NextResponse.json(cached.report, {
+      headers: {
+        'Cache-Control': 'private, max-age=3600',
+        'X-Cache': 'hit',
+      },
+    });
+  }
+
   const [spf, dkim, dmarc] = await Promise.all([
     checkSpf(DOMAIN),
     checkDkim(DOMAIN),
@@ -101,5 +120,11 @@ export async function GET() {
     dmarc,
     checkedAt: new Date().toISOString(),
   };
-  return NextResponse.json(report);
+  cached = { report, expiresAt: now + DOMAIN_HEALTH_TTL_MS };
+  return NextResponse.json(report, {
+    headers: {
+      'Cache-Control': 'private, max-age=3600',
+      'X-Cache': 'miss',
+    },
+  });
 }

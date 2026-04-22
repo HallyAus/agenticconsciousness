@@ -244,7 +244,11 @@ export async function generateMockup(input: MockupInput): Promise<MockupResult> 
     return parts.length > 0 ? parts.join(' · ') : '(no Google rating)';
   })();
 
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const currentYear = new Date().getUTCFullYear();
   const userPrompt = `Build the mockup for this prospect.
+
+TODAY'S DATE: ${todayIso} (current year is ${currentYear}). Use this for copyright lines, "established 20XX" dates, and any relative time references. Do NOT use a year earlier than ${currentYear}.
 
 Prospect URL: ${input.url}
 Business name: ${input.businessName ?? '(unknown — infer from site content)'}
