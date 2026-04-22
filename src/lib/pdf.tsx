@@ -956,6 +956,22 @@ export interface AuditPdfArgs {
    *  at 1440x900). Rendered as the "after" column on the before/after
    *  hero page. */
   mockupScreenshot?: AuditPdfImageSrc;
+  /** Bisection flags. Gate individual page blocks at render time so the
+   *  /diagnose route can pinpoint which one triggers the pdfkit number
+   *  serialiser's NaN error. Leave undefined in production. */
+  bisect?: PdfBisectFlags;
+}
+
+export interface PdfBisectFlags {
+  skipStatStrip?: boolean;
+  skipHealthStrip?: boolean;
+  skipLossHeadline?: boolean;
+  skipOpportunities?: boolean;
+  skipTrustPage?: boolean;
+  skipPortfolio?: boolean;
+  skipCta?: boolean;
+  skipShots?: boolean;
+  skipFindings?: boolean;
 }
 
 function getSev(raw: string) {
@@ -1001,8 +1017,9 @@ function AuditDocument({
   url, businessName, score, summary, issues, opportunities, date,
   screenshotDesktop, screenshotMobile, mockupScreenshot,
   brokenLinksCount, viewportMetaOk, copyrightYear,
-  placeTypes, mobileSpeedScore, qrDataUri,
+  placeTypes, mobileSpeedScore, qrDataUri, bisect,
 }: AuditDocumentInternalProps) {
+  const bx = bisect ?? {};
   const domain = domainFromUrl(url);
   const clampedScore = Math.max(0, Math.min(100, score));
   const hasShots = Boolean(screenshotDesktop || screenshotMobile);
@@ -1046,34 +1063,36 @@ function AuditDocument({
         ) : null}
 
         {/* Four headline numbers: score, mobile speed, estimated loss, sprint price. */}
-        <View style={styles.statStrip}>
-          <View style={styles.statCell}>
-            <Text style={styles.statLabel}>OVERALL SCORE</Text>
-            <Text style={styles.statValue}>{clampedScore}</Text>
-            <Text style={styles.statSub}>OUT OF 100</Text>
+        {!bx.skipStatStrip ? (
+          <View style={styles.statStrip}>
+            <View style={styles.statCell}>
+              <Text style={styles.statLabel}>OVERALL SCORE</Text>
+              <Text style={styles.statValue}>{clampedScore}</Text>
+              <Text style={styles.statSub}>OUT OF 100</Text>
+            </View>
+            <View style={styles.statCell}>
+              <Text style={styles.statLabel}>MOBILE SPEED</Text>
+              <Text style={styles.statValue}>
+                {mobileSpeedScore !== null && mobileSpeedScore !== undefined ? mobileSpeedScore : 'TBD'}
+              </Text>
+              <Text style={styles.statSub}>LIGHTHOUSE / MOBILE</Text>
+            </View>
+            <View style={styles.statCell}>
+              <Text style={styles.statLabel}>EST. ANNUAL LOSS</Text>
+              <Text style={totalLoss ? styles.statValueSmall : styles.statValue}>
+                {totalLoss ? formatRevenueRange(totalLoss) : 'N/A'}
+              </Text>
+              <Text style={styles.statSub}>AT CURRENT STATE</Text>
+            </View>
+            <View style={styles.statCell}>
+              <Text style={styles.statLabel}>SPRINT PRICE</Text>
+              <Text style={styles.statValue}>{audFmt.format(SPRINT_CONFIG.priceAud)}</Text>
+              <Text style={styles.statSub}>FIXED / 48 HOURS</Text>
+            </View>
           </View>
-          <View style={styles.statCell}>
-            <Text style={styles.statLabel}>MOBILE SPEED</Text>
-            <Text style={styles.statValue}>
-              {mobileSpeedScore !== null && mobileSpeedScore !== undefined ? mobileSpeedScore : 'TBD'}
-            </Text>
-            <Text style={styles.statSub}>LIGHTHOUSE / MOBILE</Text>
-          </View>
-          <View style={styles.statCell}>
-            <Text style={styles.statLabel}>EST. ANNUAL LOSS</Text>
-            <Text style={totalLoss ? styles.statValueSmall : styles.statValue}>
-              {totalLoss ? formatRevenueRange(totalLoss) : 'N/A'}
-            </Text>
-            <Text style={styles.statSub}>AT CURRENT STATE</Text>
-          </View>
-          <View style={styles.statCell}>
-            <Text style={styles.statLabel}>SPRINT PRICE</Text>
-            <Text style={styles.statValue}>{audFmt.format(SPRINT_CONFIG.priceAud)}</Text>
-            <Text style={styles.statSub}>FIXED / 48 HOURS</Text>
-          </View>
-        </View>
+        ) : null}
 
-        {hasHealth ? (
+        {hasHealth && !bx.skipHealthStrip ? (
           <View style={styles.healthStrip}>
             {brokenLinksCount !== null && brokenLinksCount !== undefined ? (
               <View style={styles.healthBox}>
@@ -1114,7 +1133,7 @@ function AuditDocument({
         </View>
       </Page>
 
-      {screenshotDesktop ? (
+      {screenshotDesktop && !bx.skipShots ? (
         <Page size="A4" style={styles.page}>
           <View style={styles.brandBar} fixed>
             <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
@@ -1146,7 +1165,7 @@ function AuditDocument({
         </Page>
       ) : null}
 
-      {screenshotMobile ? (
+      {screenshotMobile && !bx.skipShots ? (
         <Page size="A4" style={styles.page}>
           <View style={styles.brandBar} fixed>
             <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
@@ -1247,7 +1266,7 @@ function AuditDocument({
           </Text>
         </View>
 
-        {totalLoss ? (
+        {totalLoss && !bx.skipLossHeadline ? (
           <View style={styles.lossHeadline}>
             <Text style={styles.lossHeadlineKicker}>ESTIMATED ANNUAL REVENUE LOSS</Text>
             <Text style={styles.lossHeadlineNum}>{formatRevenueRange(totalLoss)}</Text>
@@ -1258,7 +1277,7 @@ function AuditDocument({
           </View>
         ) : null}
 
-        {issues.map((issue, i) => {
+        {!bx.skipFindings && issues.map((issue, i) => {
           const sev = getSev(issue.severity);
           return (
             <View
@@ -1319,7 +1338,7 @@ function AuditDocument({
 
         {/* Opportunities: AI-category items promoted out of Findings.
             Renders on its own page only when the audit surfaced any. */}
-        {opportunities && opportunities.length > 0 ? (
+        {opportunities && opportunities.length > 0 && !bx.skipOpportunities ? (
           <View style={styles.oppWrap} break>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Opportunities</Text>
@@ -1368,6 +1387,7 @@ function AuditDocument({
         {/* Trust page: risk reversal + scarcity + agency anchor. Forced
             onto its own page. Testimonials render only when the config
             array has real entries (never fabricated). */}
+        {!bx.skipTrustPage ? (
         <View style={styles.trustWrap} break>
           <View style={styles.trustHeader}>
             <Text style={styles.trustTitle}>Why trust us with this</Text>
@@ -1431,8 +1451,10 @@ function AuditDocument({
             </Text>
           </View>
         </View>
+        ) : null}
 
         {/* Selected recent work, forced onto its own page */}
+        {!bx.skipPortfolio ? (
         <View style={styles.portfolioWrap} break>
           <View style={styles.portfolioHeader}>
             <Text style={styles.portfolioTitle}>Selected recent work</Text>
@@ -1457,6 +1479,7 @@ function AuditDocument({
             ))}
           </View>
         </View>
+        ) : null}
 
         {/* How we'd fix this */}
         <View style={styles.howWrap} wrap={false}>
@@ -1538,6 +1561,7 @@ function AuditDocument({
           </View>
         </View>
 
+        {!bx.skipCta ? (
         <View style={styles.ctaWrap} wrap={false}>
           <Text style={styles.ctaKicker}>NEXT STEP</Text>
           <Text style={styles.ctaTitle}>Fix every one of these in 48 hours.</Text>
@@ -1573,6 +1597,7 @@ function AuditDocument({
             <Text style={styles.ctaLink}>AGENTICCONSCIOUSNESS.COM.AU/BOOK</Text>
           )}
         </View>
+        ) : null}
 
         <View style={styles.footer} fixed>
           <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>

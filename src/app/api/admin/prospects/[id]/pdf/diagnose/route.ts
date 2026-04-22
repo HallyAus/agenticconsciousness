@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/pg';
-import { renderAuditPdf } from '@/lib/pdf';
+import { renderAuditPdf, type PdfBisectFlags } from '@/lib/pdf';
 import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
 import { startBreadcrumbTrail, memorySnapshot } from '@/lib/pdf-breadcrumb';
 import type { OutreachIssue } from '@/lib/outreach';
@@ -31,18 +31,54 @@ import type { OutreachIssue } from '@/lib/outreach';
  */
 export const maxDuration = 300;
 
-type SkipFlag = 'images' | 'desktop' | 'mobile' | 'issues' | null;
+/**
+ * Accepted `?skip=` values (comma-separated, any combination):
+ *   Asset-level:  desktop | mobile | images
+ *   Document-level (via bisect flags passed to <AuditDocument>):
+ *     statstrip | healthstrip | lossheadline | findings | opportunities
+ *     | trustpage | portfolio | cta | shots | all
+ *   Content-level: issues   (replaces issues array with a single stub)
+ *
+ * Example: ?skip=statstrip,lossheadline,trustpage,portfolio,cta
+ */
+function parseSkipSet(raw: string | null): Set<string> {
+  if (!raw) return new Set();
+  return new Set(raw.toLowerCase().split(',').map((s) => s.trim()).filter(Boolean));
+}
+
+function skipToBisect(skips: Set<string>): PdfBisectFlags {
+  const all = skips.has('all');
+  return {
+    skipStatStrip:    all || skips.has('statstrip'),
+    skipHealthStrip:  all || skips.has('healthstrip'),
+    skipLossHeadline: all || skips.has('lossheadline'),
+    skipFindings:     all || skips.has('findings'),
+    skipOpportunities: all || skips.has('opportunities'),
+    skipTrustPage:    all || skips.has('trustpage'),
+    skipPortfolio:    all || skips.has('portfolio'),
+    skipCta:          all || skips.has('cta'),
+    skipShots:        all || skips.has('shots'),
+  };
+}
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const skip = (new URL(req.url).searchParams.get('skip') ?? null) as SkipFlag;
+  const rawSkip = new URL(req.url).searchParams.get('skip');
+  const skips = parseSkipSet(rawSkip);
+  const bisect = skipToBisect(skips);
+  const skipDesktop: boolean = skips.has('desktop') || skips.has('images');
+  const skipMobile:  boolean = skips.has('mobile')  || skips.has('images');
+  const stubIssues = skips.has('issues');
   const trail = startBreadcrumbTrail(id);
   await trail.log('diagnose:enter', {
     route: '/api/admin/prospects/[id]/pdf/diagnose',
-    skip,
+    skip: rawSkip,
+    bisect,
+    asset_skip: { desktop: skipDesktop, mobile: skipMobile },
+    stub_issues: stubIssues,
   });
 
   const rows = (await sql`
@@ -87,12 +123,12 @@ export async function GET(
   }
 
   try {
-    await trail.log('assets:fetch_start', { skip });
+    await trail.log('assets:fetch_start', { skip: rawSkip });
 
-    const fetchDesktop = (skip === 'images' || skip === 'desktop' || !p.screenshot_desktop_url)
+    const fetchDesktop = (skipDesktop || !p.screenshot_desktop_url)
       ? Promise.resolve(null)
       : fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null);
-    const fetchMobile = (skip === 'images' || skip === 'mobile' || !p.screenshot_mobile_url)
+    const fetchMobile = (skipMobile || !p.screenshot_mobile_url)
       ? Promise.resolve(null)
       : fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null);
 
@@ -110,7 +146,7 @@ export async function GET(
     const desktopBuf = toDataUri(desktopShot);
     const mobileBuf = toDataUri(mobileShot);
 
-    const issues = skip === 'issues'
+    const issues = stubIssues
       ? [{ severity: 'medium' as const, category: 'Test', title: 'stub', detail: 'stub.', fix: 'stub.' }]
       : (p.audit_data?.issues ?? []);
 
@@ -129,6 +165,7 @@ export async function GET(
       mockupScreenshot: null,
       screenshotDesktop: desktopBuf,
       screenshotMobile: mobileBuf,
+      bisect,
     };
 
     await trail.log('doc:args_built', {
@@ -136,14 +173,14 @@ export async function GET(
       mob_uri_len: mobileBuf?.length ?? null,
       issues: basePdfArgs.issues.length,
       opportunities: basePdfArgs.opportunities.length,
-      skip,
+      bisect,
     });
 
     await trail.log('render:about_to_call_renderToBuffer', {
       memory: memorySnapshot(),
       has_desktop: Boolean(desktopBuf),
       has_mobile: Boolean(mobileBuf),
-      skip,
+      bisect,
     });
 
     const bytes = await renderAuditPdf(basePdfArgs);
@@ -157,7 +194,8 @@ export async function GET(
       ok: true,
       request_id: trail.requestId,
       bytes: bytes.byteLength,
-      skip,
+      skip: rawSkip,
+      bisect,
       hint: `SELECT step, ok, elapsed_ms, meta FROM pdf_render_breadcrumbs WHERE request_id = '${trail.requestId}' ORDER BY ts;`,
     });
   } catch (err) {
