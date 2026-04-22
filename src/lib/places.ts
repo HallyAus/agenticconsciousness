@@ -61,6 +61,46 @@ export function isPlacesConfigured(): boolean {
   return Boolean(process.env.GOOGLE_PLACES_API_KEY);
 }
 
+/**
+ * Filter out results we never want to outreach:
+ *   - petrol / gas stations (chain-owned or generic)
+ *   - major chain brands in AU (supermarkets, hardware, fast food, retail, chain cafés,
+ *     chain childcare, chain garden centres)
+ *
+ * Chain detection is name-based and intentionally conservative — false positives are
+ * preferable to outreaching a franchise. Add new patterns at will.
+ */
+const CHAIN_NAME_PATTERNS: RegExp[] = [
+  // Petrol
+  /\b(bp|shell|caltex|ampol|7-eleven|seven eleven|mobil|united petroleum|liberty oil|metro petroleum|puma energy)\b/i,
+  // Supermarkets + convenience
+  /\b(woolworths|coles|aldi|iga|foodworks|costco|harris farm)\b/i,
+  // Hardware / big box
+  /\b(bunnings|total tools|mitre 10|home timber|tradelink|reece)\b/i,
+  // Fast food / coffee chains
+  /\b(mcdonald|kfc|subway|hungry jack|domino|pizza hut|red rooster|oporto|nando|guzman|starbucks|gloria jean|coffee club|muffin break|michel'?s patisserie|jamaica blue|the coffee club)\b/i,
+  // Retail chains
+  /\b(kmart|target\b|big w|harvey norman|jb hi-?fi|officeworks|the good guys|spotlight|rebel sport|anaconda|chemist warehouse|priceline|terry white)\b/i,
+  // Childcare chains
+  /\b(goodstart|g8 education|only about children|kids academy|petit early learning)\b/i,
+  // Garden / nursery chains
+  /\b(flower power|grow master|waldecks|the garden gurus)\b/i,
+  // Banks + telcos that sometimes show up
+  /\b(commonwealth bank|westpac|nab|anz|telstra|optus|vodafone)\b/i,
+];
+
+const PETROL_TYPES = new Set(['gas_station']);
+
+function isExcluded(p: PlaceResult): boolean {
+  if (p.types.some((t) => PETROL_TYPES.has(t))) return true;
+  if (p.primaryType && PETROL_TYPES.has(p.primaryType)) return true;
+  const name = p.displayName ?? '';
+  for (const pat of CHAIN_NAME_PATTERNS) {
+    if (pat.test(name)) return true;
+  }
+  return false;
+}
+
 export async function searchPlaces(args: { postcode: string; category: string }): Promise<PlaceResult[]> {
   const key = process.env.GOOGLE_PLACES_API_KEY;
   if (!key) throw new Error('GOOGLE_PLACES_API_KEY not set');
@@ -95,7 +135,7 @@ export async function searchPlaces(args: { postcode: string; category: string })
     for (const raw of data.places ?? []) {
       if (seen.has(raw.id)) continue;
       seen.add(raw.id);
-      results.push({
+      const place: PlaceResult = {
         id: raw.id,
         displayName: raw.displayName?.text ?? '',
         formattedAddress: raw.formattedAddress ?? null,
@@ -107,7 +147,9 @@ export async function searchPlaces(args: { postcode: string; category: string })
         types: raw.types ?? [],
         businessStatus: raw.businessStatus ?? null,
         location: raw.location ?? null,
-      });
+      };
+      if (isExcluded(place)) continue;
+      results.push(place);
     }
     if (!data.nextPageToken) break;
     pageToken = data.nextPageToken;

@@ -31,6 +31,9 @@ const CATEGORY_SUGGESTIONS = [
   'plumbers', 'electricians', 'roofers', 'painters', 'landscapers',
   'mechanics', 'dentists', 'physios', 'accountants', 'cafés',
   'hair salons', 'gyms', 'real estate agents', 'solicitors', 'vets',
+  'garden centres', 'nurseries', 'childcare centres', 'florists',
+  'tilers', 'carpenters', 'bakeries', 'butchers', 'chiropractors',
+  'personal trainers', 'pet groomers', 'cleaners',
 ];
 
 export default function FindProspectsPanel(props: { onAdded?: () => void }) {
