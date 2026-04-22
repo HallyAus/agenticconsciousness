@@ -1308,12 +1308,10 @@ function AuditDocument({
   // Hard cap so the PDF can never exceed a safe number of findings.
   // 7 findings is the empirical ceiling that reliably renders on Vercel
   // without hitting the pdfkit -1.87e21 pagination NaN.
-  const PDF_MAX_FINDINGS = 7;
-  const PDF_MAX_OPPORTUNITIES = 2;
-  const renderedIssues = issues.slice(0, PDF_MAX_FINDINGS);
-  const extraFindings = issues.length - renderedIssues.length;
-  const renderedOpportunities = (opportunities ?? []).slice(0, PDF_MAX_OPPORTUNITIES);
-  const extraOpportunities = (opportunities?.length ?? 0) - renderedOpportunities.length;
+  const renderedIssues = issues;
+  const extraFindings = 0;
+  const renderedOpportunities = opportunities ?? [];
+  const extraOpportunities = 0;
   const audFmt = new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD', maximumFractionDigits: 0 });
   const hasHealth = brokenLinksCount !== null && brokenLinksCount !== undefined
     || viewportMetaOk !== null && viewportMetaOk !== undefined

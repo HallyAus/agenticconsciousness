@@ -56,14 +56,15 @@ export function startBreadcrumbTrail(prospectId: string): BreadcrumbTrail {
     const elapsed = Date.now() - startedAt;
     const errorName = err instanceof Error ? err.name : 'Unknown';
     const errorMessage = err instanceof Error ? err.message : String(err);
-    const stackFirstLine = err instanceof Error && err.stack
-      ? err.stack.split('\n')[1]?.trim() ?? ''
-      : '';
+    const stackLines = err instanceof Error && err.stack
+      ? err.stack.split('\n').slice(1, 31).map((s) => s.trim())
+      : [];
     const fullMeta = {
       ...(meta ?? {}),
       error_name: errorName,
       error_message: errorMessage,
-      stack_first_line: stackFirstLine,
+      stack_first_line: stackLines[0] ?? '',
+      stack: stackLines,
     };
     try {
       await sql`
