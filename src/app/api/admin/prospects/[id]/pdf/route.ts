@@ -5,9 +5,10 @@ import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
 import { getOrRenderPdf } from '@/lib/pdf-cache';
 import type { OutreachIssue } from '@/lib/outreach';
 
-// Screenshot prefetch + sharp + render can add a few seconds when
-// ScreenshotOne is cold. 60s is plenty; the cached path is milliseconds.
-export const maxDuration = 60;
+// Cold renders can push past 60s now that we fetch three screenshots
+// (desktop + mobile + mockup) plus QR + multi-page react-pdf. Cached
+// hits are milliseconds. 300s is Vercel Pro max.
+export const maxDuration = 300;
 
 /**
  * Returns the audit PDF for admin preview.
@@ -54,56 +55,60 @@ export async function GET(
 
   const domain = new URL(p.url).hostname.replace(/^www\./, '');
 
-  // Fast-path redirect if we already have a blob URL. No body work needed.
-  if (p.pdf_url) {
-    console.log('[admin/pdf] 302 cached', { id, url: p.pdf_url });
-    return NextResponse.redirect(p.pdf_url, 302);
+  // NO fast-path 302 redirect anymore. Vercel Blob serves with
+  // Content-Disposition: attachment by default, which forces the
+  // browser to download instead of preview the PDF. Instead we
+  // always fetch the cached bytes (or render fresh) and serve
+  // inline from THIS route with our own headers.
+  let cached;
+  try {
+    cached = await getOrRenderPdf({
+      prospectId: id,
+      domain,
+      renderFn: async () => {
+        const [desktopShot, mobileShot, mockupShot] = await Promise.all([
+          p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+          p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+          p.mockup_screenshot_url ? fetchAsNormalisedJpeg(p.mockup_screenshot_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+        ]);
+        const desktopBuf = desktopShot?.data ?? null;
+        const mobileBuf = mobileShot?.data ?? null;
+        const mockupBuf = mockupShot?.data ?? null;
+
+        const basePdfArgs = {
+          url: p.url,
+          businessName: p.business_name,
+          score: p.audit_score ?? 0,
+          summary: p.audit_summary ?? '',
+          issues: p.audit_data?.issues ?? [],
+          opportunities: p.audit_data?.opportunities ?? [],
+          date: new Date().toISOString().slice(0, 10),
+          brokenLinksCount: p.broken_links_count,
+          viewportMetaOk: p.viewport_meta_ok,
+          copyrightYear: p.copyright_year,
+          placeTypes: p.place_data?.types ?? (p.place_data?.primaryType ? [p.place_data.primaryType] : null),
+          mockupScreenshot: mockupBuf,
+        };
+
+        console.log('[admin/pdf] render start', {
+          id,
+          desk_buf_bytes: desktopBuf?.byteLength ?? null,
+          mob_buf_bytes: mobileBuf?.byteLength ?? null,
+          mockup_buf_bytes: mockupBuf?.byteLength ?? null,
+        });
+
+        try {
+          return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
+        } catch (err) {
+          console.error('[admin/pdf] PRIMARY render FAILED, retrying without shots:', err instanceof Error ? err.stack ?? err.message : err);
+          return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: null, screenshotMobile: null, mockupScreenshot: null });
+        }
+      },
+    });
+  } catch (err) {
+    console.error('[admin/pdf] full pipeline FAILED:', err instanceof Error ? err.stack ?? err.message : err);
+    return new NextResponse('PDF render failed, check Vercel logs', { status: 500 });
   }
-
-  // Cache miss — render, upload, store. Returns bytes so we can stream
-  // on the same request rather than forcing a second round-trip.
-  const cached = await getOrRenderPdf({
-    prospectId: id,
-    domain,
-    renderFn: async () => {
-      const [desktopShot, mobileShot, mockupShot] = await Promise.all([
-        p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-        p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
-        p.mockup_screenshot_url ? fetchAsNormalisedJpeg(p.mockup_screenshot_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-      ]);
-      const desktopBuf = desktopShot?.data ?? null;
-      const mobileBuf = mobileShot?.data ?? null;
-      const mockupBuf = mockupShot?.data ?? null;
-
-      const basePdfArgs = {
-        url: p.url,
-        businessName: p.business_name,
-        score: p.audit_score ?? 0,
-        summary: p.audit_summary ?? '',
-        issues: p.audit_data?.issues ?? [],
-        opportunities: p.audit_data?.opportunities ?? [],
-        date: new Date().toISOString().slice(0, 10),
-        brokenLinksCount: p.broken_links_count,
-        viewportMetaOk: p.viewport_meta_ok,
-        copyrightYear: p.copyright_year,
-        placeTypes: p.place_data?.types ?? (p.place_data?.primaryType ? [p.place_data.primaryType] : null),
-        mockupScreenshot: mockupBuf,
-      };
-
-      console.log('[admin/pdf] render start', {
-        id,
-        desk_buf_bytes: desktopBuf?.byteLength ?? null,
-        mob_buf_bytes: mobileBuf?.byteLength ?? null,
-      });
-
-      try {
-        return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
-      } catch (err) {
-        console.error('[admin/pdf] PRIMARY render FAILED, retrying without shots:', err instanceof Error ? err.stack ?? err.message : err);
-        return await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: null, screenshotMobile: null });
-      }
-    },
-  });
 
   return new NextResponse(new Uint8Array(cached.bytes), {
     headers: {
