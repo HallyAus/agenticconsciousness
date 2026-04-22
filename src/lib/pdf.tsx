@@ -1316,11 +1316,13 @@ function AuditDocument({
           // Every 5th finding forces a break so pagination happens at a
           // predictable, page-aligned boundary (prevents the floating
           // page-fit recalc that produces -1.87e21 NaN).
-          const forceBreak = i > 0 && i % 5 === 0;
+          // Break every 4 findings: deterministic pagination at page-aligned
+          // boundaries. Avoids the wrap=false pressure that reliably trips
+          // the pdfkit -1.87e21 NaN when a 9th finding can't fit.
+          const forceBreak = i > 0 && i % 4 === 0;
           return (
             <View
               key={i}
-              wrap={false}
               break={forceBreak}
               style={[styles.findingWrap, { backgroundColor: sev.accent }]}
             >
