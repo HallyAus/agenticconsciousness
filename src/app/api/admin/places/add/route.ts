@@ -6,7 +6,7 @@ import { extractEmailFromHtml } from '@/lib/email-scrape';
 import type { PlaceResult } from '@/lib/places';
 import { enrichProspectWithScanAndShots } from '@/lib/audit-enrich';
 
-export const maxDuration = 90;
+export const maxDuration = 300;
 
 /**
  * Admin-only. Convert a Google Place into a prospect row and kick off the

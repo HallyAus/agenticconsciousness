@@ -8,7 +8,7 @@ import { isSuppressed } from '@/lib/suppression';
 import { runSiteScan } from '@/lib/site-scan';
 import { captureScreenshots } from '@/lib/screenshots';
 
-export const maxDuration = 90;
+export const maxDuration = 300;
 
 /**
  * Admin-only. Runs an audit against a target URL and stores the result

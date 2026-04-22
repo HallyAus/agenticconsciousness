@@ -5,8 +5,9 @@ import { runStructuredAudit } from '@/lib/audit-core';
 import { extractEmailFromHtml } from '@/lib/email-scrape';
 import { enrichProspectWithScanAndShots } from '@/lib/audit-enrich';
 
-// Audit after() includes Claude audit + scan + shots + mockup (~90s worst case)
-export const maxDuration = 90;
+// Claude audit + site scan + screenshots + Claude mockup + mockup
+// screenshot can add up to 2-3 minutes. 300 is Vercel pro max.
+export const maxDuration = 300;
 
 /**
  * Admin-only: re-run the audit against an existing prospect's URL.

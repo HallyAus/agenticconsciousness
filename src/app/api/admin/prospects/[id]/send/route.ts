@@ -123,27 +123,40 @@ export async function POST(
     || (variant ? renderSubject(variant.template, { domain, businessName: p.business_name }) : built.subject);
   const html = overrides.htmlOverride?.trim() || built.html;
 
-  // Prefetch screenshot URLs into data URIs so react-pdf doesn't have
-  // to fetch remote images at render time (ScreenshotOne can take 5-10s
-  // for first render, which exceeds react-pdf's internal timeout).
+  // Prefetch screenshots to data URIs. If the prefetch + PDF render
+  // fails, retry without screenshots so Draft doesn't 500.
   const [desktopDataUri, mobileDataUri] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsDataUri(p.screenshot_desktop_url) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsDataUri(p.screenshot_mobile_url) : Promise.resolve(null),
+    p.screenshot_desktop_url ? fetchAsDataUri(p.screenshot_desktop_url).catch(() => null) : Promise.resolve(null),
+    p.screenshot_mobile_url ? fetchAsDataUri(p.screenshot_mobile_url).catch(() => null) : Promise.resolve(null),
   ]);
 
-  const pdfBuffer = await renderAuditPdf({
+  const basePdfArgs = {
     url: p.url,
     businessName: p.business_name,
     score: p.audit_score ?? 0,
     summary: p.audit_summary ?? '',
     issues: p.audit_data.issues,
     date: new Date().toISOString().slice(0, 10),
-    screenshotDesktop: desktopDataUri,
-    screenshotMobile: mobileDataUri,
     brokenLinksCount: p.broken_links_count,
     viewportMetaOk: p.viewport_meta_ok,
     copyrightYear: p.copyright_year,
-  });
+  };
+
+  let pdfBuffer: Buffer;
+  try {
+    pdfBuffer = await renderAuditPdf({
+      ...basePdfArgs,
+      screenshotDesktop: desktopDataUri,
+      screenshotMobile: mobileDataUri,
+    });
+  } catch (err) {
+    console.error('[send] PDF render with screenshots failed, retrying without:', err instanceof Error ? err.message : err);
+    pdfBuffer = await renderAuditPdf({
+      ...basePdfArgs,
+      screenshotDesktop: null,
+      screenshotMobile: null,
+    });
+  }
 
   // Wire tracking: stamp a token, rewrite links through tracker, inject pixel.
   const trackingToken = newTrackingToken();
