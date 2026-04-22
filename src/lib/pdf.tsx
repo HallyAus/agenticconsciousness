@@ -57,8 +57,8 @@ const SANS_BOLD = 'Helvetica-Bold';
 const styles = StyleSheet.create({
   // --- page shell ---
   page: {
-    padding: 44,
-    paddingBottom: 56,
+    padding: 48,
+    paddingBottom: 60,
     fontSize: 11,
     color: BODY,
     backgroundColor: '#ffffff',
@@ -202,11 +202,13 @@ const styles = StyleSheet.create({
   },
 
   // --- individual finding ---
+  // borderLeftWidth 6 is the severity colour bar (filled from sev.border
+  // inline). Thick enough to scan as a bar, not a border.
   finding: {
     marginBottom: 14,
-    padding: 12,
-    paddingLeft: 16,
-    borderLeftWidth: 4,
+    padding: 14,
+    paddingLeft: 18,
+    borderLeftWidth: 6,
   },
   findingMetaRow: {
     flexDirection: 'row',
@@ -784,9 +786,9 @@ const styles = StyleSheet.create({
   // --- footer ---
   footer: {
     position: 'absolute',
-    bottom: 22,
-    left: 44,
-    right: 44,
+    bottom: 24,
+    left: 48,
+    right: 48,
     borderTopWidth: 1,
     borderTopColor: RULE,
     paddingTop: 8,
