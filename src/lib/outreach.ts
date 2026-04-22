@@ -32,6 +32,8 @@ export interface OutreachContext {
   unsubToken: string;
   sourceLine: string;
   siteBaseUrl: string;
+  mockupToken?: string | null;
+  mockupScreenshotUrl?: string | null;
 }
 
 function esc(s: string): string {
@@ -105,6 +107,28 @@ export function buildTouch1(ctx: OutreachContext): { subject: string; html: stri
       ${issueCountWord} things that are probably costing you leads. Nothing
       complicated, just stuff that adds up.
     </p>
+    ${ctx.mockupToken ? `
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 10px">
+      <strong>Rather than talk about it, I built you a rough version of how
+      it could look instead:</strong>
+    </p>
+    <p style="margin:0 0 14px">
+      <a href="${ctx.siteBaseUrl}/preview/${ctx.mockupToken}"
+         style="display:inline-block;background:#ff3d00;color:#fff;text-decoration:none;
+                padding:12px 22px;font-weight:900;letter-spacing:2px;text-transform:uppercase;
+                font-size:13px">
+        SEE YOUR NEW SITE -&gt;
+      </a>
+    </p>
+    ${ctx.mockupScreenshotUrl ? `
+    <p style="margin:0 0 14px">
+      <a href="${ctx.siteBaseUrl}/preview/${ctx.mockupToken}">
+        <img src="${ctx.mockupScreenshotUrl}"
+             alt="Mockup preview"
+             style="max-width:100%;height:auto;border:1px solid #0a0a0a;display:block" />
+      </a>
+    </p>` : ''}
+    ` : ''}
     <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 10px">
       The top three:
     </p>

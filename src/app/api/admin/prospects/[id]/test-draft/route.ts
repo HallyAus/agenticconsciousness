@@ -30,6 +30,8 @@ interface ProspectRow {
   broken_links_count: number | null;
   viewport_meta_ok: boolean | null;
   copyright_year: number | null;
+  mockup_token: string | null;
+  mockup_screenshot_url: string | null;
 }
 
 export async function POST(
@@ -55,7 +57,8 @@ export async function POST(
   const rows = (await sql`
     SELECT id, url, business_name, email, audit_score, audit_summary, audit_data, unsub_token,
            screenshot_desktop_url, screenshot_mobile_url,
-           broken_links_count, viewport_meta_ok, copyright_year
+           broken_links_count, viewport_meta_ok, copyright_year,
+           mockup_token, mockup_screenshot_url
     FROM prospects WHERE id = ${id} LIMIT 1
   `) as ProspectRow[];
   if (rows.length === 0) return NextResponse.json({ error: 'Prospect not found' }, { status: 404 });
@@ -78,6 +81,8 @@ export async function POST(
     unsubToken: p.unsub_token,
     sourceLine: `[TEST DRAFT] Would have been sent to ${p.email ?? '(unknown)'} because they are publicly listed on ${domain}.`,
     siteBaseUrl,
+    mockupToken: p.mockup_token,
+    mockupScreenshotUrl: p.mockup_screenshot_url,
   };
 
   const built = buildTouch1(ctx);
