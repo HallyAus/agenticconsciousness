@@ -7,7 +7,7 @@
 
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { fetchAsNormalisedJpegUri } from '../src/lib/fetch-image';
+import { fetchAsNormalisedJpeg } from '../src/lib/fetch-image';
 import { renderAuditPdf } from '../src/lib/pdf';
 
 const DESKTOP = 'https://api.screenshotone.com/take?access_key=a4f95766af6ffe126d3c&url=http%3A%2F%2Fwww.evolvelectrical.com%2F&viewport_width=1440&viewport_height=900&device_scale_factor=1&image_width=900&format=jpg&image_quality=70&block_ads=true&block_cookie_banners=true&block_trackers=true&cache=true&cache_ttl=2592000&full_page=false&delay=2&timeout=30&signature=308801cdb716fc0869a7bdc3edb8cff2af077875ba5201b12581638222a862c9';
@@ -17,11 +17,13 @@ async function main(): Promise<void> {
   const t0 = Date.now();
 
   // Exactly what send/route.ts does now.
-  const [desktopUri, mobileUri] = await Promise.all([
-    fetchAsNormalisedJpegUri(DESKTOP, { maxWidth: 900 }).catch(() => null),
-    fetchAsNormalisedJpegUri(MOBILE, { maxWidth: 400 }).catch(() => null),
+  const [desktopShot, mobileShot] = await Promise.all([
+    fetchAsNormalisedJpeg(DESKTOP, { maxWidth: 900 }).catch(() => null),
+    fetchAsNormalisedJpeg(MOBILE, { maxWidth: 400 }).catch(() => null),
   ]);
-  console.log('desktop uri len:', desktopUri?.length, 'mobile uri len:', mobileUri?.length);
+  const desktopBuf = desktopShot?.data ?? null;
+  const mobileBuf = mobileShot?.data ?? null;
+  console.log('desktop buf bytes:', desktopBuf?.byteLength, 'mobile buf bytes:', mobileBuf?.byteLength);
 
   const basePdfArgs = {
     url: 'http://www.evolvelectrical.com/',
@@ -41,7 +43,7 @@ async function main(): Promise<void> {
 
   let pdf: Buffer;
   try {
-    pdf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopUri, screenshotMobile: mobileUri });
+    pdf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
     console.log('PRIMARY OK');
   } catch (err) {
     console.error('PRIMARY FAIL, retry:', err instanceof Error ? err.stack : err);

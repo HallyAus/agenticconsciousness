@@ -9,7 +9,7 @@ import { injectPixel, newTrackingToken, rewriteLinks } from '@/lib/email-trackin
 import { isSuppressed } from '@/lib/suppression';
 import { pickRandomActiveVariant, renderSubject } from '@/lib/subject-variants';
 import { isBlockingVerdict, validateEmail } from '@/lib/email-validate';
-import { fetchAsNormalisedJpegUri } from '@/lib/fetch-image';
+import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
 
 // Allow up to 60s for send: audit is already done, but two ScreenshotOne
 // prefetches + PDF render + Graph draft creation can add up when
@@ -123,16 +123,17 @@ export async function POST(
     || (variant ? renderSubject(variant.template, { domain, businessName: p.business_name }) : built.subject);
   const html = overrides.htmlOverride?.trim() || built.html;
 
-  // Sharp-normalised baseline-JPEG data URI string. Buffers crashed
-  // react-pdf's border layout on Vercel ("unsupported number" NaN from
-  // moveTo inside clipBorderTop); the data URI string path keeps the
-  // layout math stable and strips EXIF + ICC to avoid the jpeg-exif
-  // crash class. Render fallback still retries without screenshots on
-  // any failure so the Draft always lands.
-  const [desktopUri, mobileUri] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsNormalisedJpegUri(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsNormalisedJpegUri(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+  // Raw Buffer path — this is the shape that worked before we
+  // introduced the <View break> page-break. The break prop is what
+  // triggered the NaN border crash, not the Buffer. Shots now live on
+  // a dedicated <Page> component in pdf.tsx so the page break is
+  // structural, not layout-arithmetic.
+  const [desktopShot, mobileShot] = await Promise.all([
+    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
   ]);
+  const desktopBuf = desktopShot?.data ?? null;
+  const mobileBuf = mobileShot?.data ?? null;
 
   const basePdfArgs = {
     url: p.url,
@@ -150,8 +151,8 @@ export async function POST(
     id,
     desk_url_present: !!p.screenshot_desktop_url,
     mob_url_present: !!p.screenshot_mobile_url,
-    desk_uri_len: desktopUri?.length ?? null,
-    mob_uri_len: mobileUri?.length ?? null,
+    desk_buf_bytes: desktopBuf?.byteLength ?? null,
+    mob_buf_bytes: mobileBuf?.byteLength ?? null,
   });
 
   let pdfBuffer: Buffer;
@@ -159,8 +160,8 @@ export async function POST(
   try {
     pdfBuffer = await renderAuditPdf({
       ...basePdfArgs,
-      screenshotDesktop: desktopUri,
-      screenshotMobile: mobileUri,
+      screenshotDesktop: desktopBuf,
+      screenshotMobile: mobileBuf,
     });
   } catch (err) {
     renderPath = 'fallback';

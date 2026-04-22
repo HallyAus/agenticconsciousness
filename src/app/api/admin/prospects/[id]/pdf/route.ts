@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/pg';
 import { renderAuditPdf } from '@/lib/pdf';
-import { fetchAsNormalisedJpegUri } from '@/lib/fetch-image';
+import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
 import type { OutreachIssue } from '@/lib/outreach';
 
 // Screenshot prefetch can add a few seconds when ScreenshotOne renders
@@ -36,13 +36,17 @@ export async function GET(
   const p = rows[0];
   if (!p.audit_data?.issues?.length) return new NextResponse('Audit not ready', { status: 409 });
 
-  // Sharp-normalised baseline-JPEG data URI string. Buffers crash
-  // react-pdf's border layout on Vercel (NaN moveTo from clipBorderTop);
-  // data URI strings keep everything in scalar space.
-  const [desktopUri, mobileUri] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsNormalisedJpegUri(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsNormalisedJpegUri(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+  // Raw Buffer via the canonical {data, format} wrapper — unwrap to
+  // Buffer at the Image call site. This shape worked on Vercel before
+  // we introduced the <View break> page-break in commit 36d234b; the
+  // break prop is what triggered the NaN border crash, not the Buffer
+  // shape. Shots now live on a dedicated <Page> instead.
+  const [desktopShot, mobileShot] = await Promise.all([
+    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
   ]);
+  const desktopBuf = desktopShot?.data ?? null;
+  const mobileBuf = mobileShot?.data ?? null;
 
   const basePdfArgs = {
     url: p.url,
@@ -60,14 +64,14 @@ export async function GET(
     id,
     desk_url_present: !!p.screenshot_desktop_url,
     mob_url_present: !!p.screenshot_mobile_url,
-    desk_uri_len: desktopUri?.length ?? null,
-    mob_uri_len: mobileUri?.length ?? null,
+    desk_buf_bytes: desktopBuf?.byteLength ?? null,
+    mob_buf_bytes: mobileBuf?.byteLength ?? null,
   });
 
   let buf: Buffer;
   let renderPath: 'with-shots' | 'fallback' = 'with-shots';
   try {
-    buf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopUri, screenshotMobile: mobileUri });
+    buf = await renderAuditPdf({ ...basePdfArgs, screenshotDesktop: desktopBuf, screenshotMobile: mobileBuf });
   } catch (err) {
     renderPath = 'fallback';
     console.error('[admin/pdf] PRIMARY render with screenshots FAILED:', err instanceof Error ? err.stack ?? err.message : err);

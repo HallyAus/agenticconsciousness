@@ -90,11 +90,13 @@ export async function POST(
   const built = buildTouch1(ctx);
   const subject = `[TEST] ${built.subject}`;
 
-  const { fetchAsNormalisedJpegUri } = await import('@/lib/fetch-image');
-  const [desktopUri, mobileUri] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsNormalisedJpegUri(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsNormalisedJpegUri(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+  const { fetchAsNormalisedJpeg } = await import('@/lib/fetch-image');
+  const [desktopShot, mobileShot] = await Promise.all([
+    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
   ]);
+  const desktopBuf = desktopShot?.data ?? null;
+  const mobileBuf = mobileShot?.data ?? null;
 
   const basePdfArgs = {
     url: p.url,
@@ -112,8 +114,8 @@ export async function POST(
   try {
     pdfBuffer = await renderAuditPdf({
       ...basePdfArgs,
-      screenshotDesktop: desktopUri,
-      screenshotMobile: mobileUri,
+      screenshotDesktop: desktopBuf,
+      screenshotMobile: mobileBuf,
     });
   } catch (err) {
     console.error('[test-draft] PDF render with screenshots failed, retrying without:', err instanceof Error ? err.message : err);

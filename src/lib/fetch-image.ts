@@ -50,24 +50,31 @@ export async function fetchAsDataUri(url: string, timeoutMs = 25_000): Promise<s
   }
 }
 
+export interface NormalisedJpeg {
+  data: Buffer;
+  format: 'jpg';
+}
+
 /**
- * Fetch a remote image and return it as a sharp-normalised baseline JPEG
- * data URI string, ready to feed `<Image src={...}>` on @react-pdf v4.
+ * Fetch a remote image and return a sharp-normalised baseline JPEG
+ * Buffer wrapped as `{ data, format: 'jpg' }` — the canonical shape for
+ * @react-pdf v4 server-side use.
  *
  * Sharp pipeline:
- *   - rotate() bakes EXIF orientation (so pdfkit doesn't rotate twice).
+ *   - rotate() bakes EXIF orientation.
  *   - resize(maxWidth) caps the dimensions.
- *   - jpeg() encodes as baseline (progressive: false), WITHOUT mozjpeg
- *     or optimiseCoding, chroma 4:2:0 — produces the most compatible
+ *   - jpeg() encodes baseline (progressive: false), NO mozjpeg, NO
+ *     optimiseCoding, chroma 4:2:0 — produces the most compatible
  *     marker sequence for pdfkit's JPEG parser on Vercel's sharp build.
- *   - withMetadata({}) strips EXIF + ICC entirely.
+ *   - withMetadata({}) strips EXIF + ICC.
  *
- * Returns null on failure (bad URL, zero bytes, sharp throw).
+ * Returns null on failure (bad URL, zero bytes, sharp throw, missing
+ * SOI marker).
  */
-export async function fetchAsNormalisedJpegUri(
+export async function fetchAsNormalisedJpeg(
   url: string,
   opts: { maxWidth?: number; quality?: number; timeoutMs?: number } = {},
-): Promise<string | null> {
+): Promise<NormalisedJpeg | null> {
   const { maxWidth = 900, quality = 75, timeoutMs = 25_000 } = opts;
   if (!url) return null;
   const t0 = Date.now();
@@ -105,7 +112,7 @@ export async function fetchAsNormalisedJpegUri(
       ms: Date.now() - t0,
       host: (() => { try { return new URL(url).host; } catch { return '?'; } })(),
     });
-    return `data:image/jpeg;base64,${data.toString('base64')}`;
+    return { data, format: 'jpg' };
   } catch (err) {
     console.error('[fetch-image] normalised failed', err instanceof Error ? err.message : err);
     return null;
