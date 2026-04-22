@@ -3,27 +3,39 @@ import { Document, Page, Text, View, StyleSheet, renderToBuffer } from '@react-p
 import { stripDashes } from '@/lib/text-hygiene';
 
 /**
- * Audit PDF. Neural brutalist aesthetic: pure #000 on #fff, hard severity
- * colours, heavy monospace kickers, score as hero on page one.
+ * Audit PDF. Brand-aligned neural brutalist: red (#ff3d00) accents on
+ * near-black ink, per-severity tinted finding backgrounds so the eye
+ * scans the critical items first.
  *
- * House rules enforced:
- *   - No em/en dashes anywhere. Text is run through stripDashes on entry.
- *   - No fancy arrows. "->" is used.
- *   - No hardcoded year. scoreBand / CTA reference runtime date only.
+ * House rules:
+ *   - No em/en dashes. All copy goes through stripDashes on entry.
+ *   - No fancy arrows. Only "->" / ":" ASCII is used.
+ *   - No hardcoded year. scoreBand + CTA reference runtime date only.
  *   - Score calibration: 0-30 critical, 31-50 poor, 51-65 gaps,
  *     66-80 solid, 81-100 excellent.
+ *
+ * Type hierarchy:
+ *   - 11pt body paragraphs (findingDetail, fixText, glanceBody, ctaBody)
+ *   - 10pt sub-labels and meta (kickers, categoryPill, bullets)
+ *   - 9pt severity chips + footer (intentional micro)
  */
 
-const BLACK = '#000000';
-const WHITE = '#ffffff';
-const DIM = '#555555';
-const RULE = '#000000';
+const RED = '#ff3d00';
+const RED_TINT = '#fff4f0';
+const AMBER_TINT = '#fdf6e8';
+const YELLOW_TINT = '#fffdf2';
+const GREY_TINT = '#f6f6f6';
+const INK = '#0a0a0a';
+const BODY = '#1f1f1f';
+const DIM = '#4a4a4a';
+const RULE = '#cccccc';
+const PAPER_SOFT = '#f6f4f2';
 
-const SEVERITY: Record<string, { bg: string; fg: string; label: string }> = {
-  critical: { bg: '#E53935', fg: '#ffffff', label: 'CRITICAL' },
-  high:     { bg: '#FB8C00', fg: '#ffffff', label: 'HIGH' },
-  medium:   { bg: '#FDD835', fg: '#000000', label: 'MEDIUM' },
-  low:      { bg: '#757575', fg: '#ffffff', label: 'LOW' },
+const SEVERITY: Record<string, { chipBg: string; chipFg: string; label: string; accent: string; border: string }> = {
+  critical: { chipBg: '#E53935', chipFg: '#ffffff', label: 'CRITICAL', accent: RED_TINT,    border: '#E53935' },
+  high:     { chipBg: '#FB8C00', chipFg: '#ffffff', label: 'HIGH',     accent: AMBER_TINT,  border: '#FB8C00' },
+  medium:   { chipBg: '#FDD835', chipFg: '#0a0a0a', label: 'MEDIUM',   accent: YELLOW_TINT, border: '#FDD835' },
+  low:      { chipBg: '#757575', chipFg: '#ffffff', label: 'LOW',      accent: GREY_TINT,   border: '#9ca3af' },
 };
 
 const MONO = 'Courier';
@@ -34,35 +46,35 @@ const SANS_BOLD = 'Helvetica-Bold';
 const styles = StyleSheet.create({
   // --- page shell ---
   page: {
-    padding: 48,
+    padding: 44,
     paddingBottom: 56,
     fontSize: 11,
-    color: BLACK,
-    backgroundColor: WHITE,
+    color: BODY,
+    backgroundColor: '#ffffff',
     fontFamily: SANS,
-    lineHeight: 1.5,
+    lineHeight: 1.55,
   },
 
-  // --- brand bar (every page) ---
+  // --- brand bar ---
   brandBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 2,
-    borderBottomColor: BLACK,
+    borderBottomColor: RED,
     paddingBottom: 10,
-    marginBottom: 28,
+    marginBottom: 24,
   },
   brandMark: {
     fontFamily: MONO_BOLD,
     fontSize: 11,
-    color: BLACK,
+    color: INK,
     letterSpacing: 1,
   },
   brandKicker: {
     fontFamily: MONO,
     fontSize: 10,
-    color: BLACK,
+    color: RED,
     letterSpacing: 2,
   },
 
@@ -70,74 +82,88 @@ const styles = StyleSheet.create({
   coverKicker: {
     fontFamily: MONO,
     fontSize: 10,
-    color: BLACK,
+    color: RED,
     letterSpacing: 2,
     marginBottom: 8,
   },
   coverTitle: {
     fontFamily: SANS_BOLD,
-    fontSize: 32,
-    color: BLACK,
-    lineHeight: 1.05,
+    fontSize: 30,
+    color: INK,
+    lineHeight: 1.08,
     letterSpacing: -0.5,
     marginBottom: 6,
   },
   coverUrl: {
     fontFamily: MONO,
     fontSize: 11,
-    color: BLACK,
-    marginBottom: 28,
+    color: RED,
+    marginBottom: 22,
   },
 
-  // --- score block (hero) ---
-  scoreWrap: {
+  // --- score block ---
+  scoreRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    marginBottom: 20,
-    gap: 20,
+    gap: 18,
+    marginBottom: 10,
+  },
+  scoreBox: {
+    borderWidth: 3,
+    borderColor: RED,
+    padding: 14,
+    paddingHorizontal: 18,
+    alignItems: 'flex-start',
+  },
+  scoreLabel: {
+    fontFamily: MONO_BOLD,
+    fontSize: 10,
+    color: RED,
+    letterSpacing: 2,
+    marginBottom: 4,
   },
   scoreNumber: {
     fontFamily: SANS_BOLD,
-    fontSize: 96,
-    color: BLACK,
+    fontSize: 64,
+    color: INK,
     lineHeight: 0.95,
-    letterSpacing: -3,
+    letterSpacing: -2,
   },
-  scoreSuffix: {
+  scoreOutOf: {
     fontFamily: MONO,
-    fontSize: 12,
-    color: BLACK,
-    letterSpacing: 1,
-    marginBottom: 14,
+    fontSize: 10,
+    color: DIM,
+    letterSpacing: 1.5,
+    marginTop: 4,
   },
   scoreBand: {
+    flex: 1,
     fontFamily: SANS_BOLD,
     fontSize: 13,
-    color: BLACK,
-    letterSpacing: 0,
-    marginBottom: 22,
-    textTransform: 'uppercase',
+    color: INK,
     lineHeight: 1.3,
+    paddingBottom: 10,
   },
 
   // --- at a glance ---
   glanceWrap: {
+    padding: 14,
+    backgroundColor: PAPER_SOFT,
     borderLeftWidth: 3,
-    borderLeftColor: BLACK,
-    paddingLeft: 14,
-    paddingVertical: 2,
-    marginBottom: 30,
+    borderLeftColor: RED,
+    marginTop: 18,
+    marginBottom: 26,
   },
   glanceKicker: {
-    fontFamily: MONO,
-    fontSize: 9,
-    color: BLACK,
+    fontFamily: MONO_BOLD,
+    fontSize: 10,
+    color: RED,
     letterSpacing: 2,
     marginBottom: 6,
   },
   glanceBody: {
     fontSize: 11,
-    color: BLACK,
+    color: BODY,
     lineHeight: 1.6,
   },
 
@@ -146,41 +172,40 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'baseline',
-    borderBottomWidth: 2,
-    borderBottomColor: BLACK,
-    paddingBottom: 6,
-    marginBottom: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: RULE,
+    paddingBottom: 8,
+    marginBottom: 14,
   },
   sectionTitle: {
     fontFamily: SANS_BOLD,
     fontSize: 18,
-    color: BLACK,
+    color: INK,
     letterSpacing: -0.3,
   },
   sectionMeta: {
     fontFamily: MONO,
-    fontSize: 9,
-    color: BLACK,
-    letterSpacing: 2,
+    fontSize: 10,
+    color: DIM,
+    letterSpacing: 1.5,
   },
 
   // --- individual finding ---
   finding: {
-    marginBottom: 22,
-    paddingBottom: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    marginBottom: 14,
+    padding: 12,
+    paddingLeft: 16,
+    borderLeftWidth: 4,
   },
   findingMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   findingNumber: {
     fontFamily: MONO_BOLD,
     fontSize: 11,
-    color: BLACK,
     letterSpacing: 1,
   },
   severityPill: {
@@ -200,37 +225,36 @@ const styles = StyleSheet.create({
   },
   findingTitle: {
     fontFamily: SANS_BOLD,
-    fontSize: 14,
-    color: BLACK,
+    fontSize: 13,
+    color: INK,
     lineHeight: 1.25,
-    marginBottom: 10,
+    marginBottom: 8,
     letterSpacing: -0.2,
   },
 
-  // labelled blocks — WHAT WE FOUND / WHAT TO DO
+  // labelled blocks (WHAT WE FOUND / WHAT TO DO)
   labelBlock: {
     marginBottom: 8,
   },
   labelBlockLast: {
     marginBottom: 0,
+    borderLeftWidth: 2,
+    borderLeftColor: RED,
+    paddingLeft: 10,
+    paddingTop: 3,
+    paddingBottom: 3,
   },
   blockLabel: {
     fontFamily: MONO_BOLD,
     fontSize: 9,
-    color: BLACK,
+    color: RED,
     letterSpacing: 1.5,
     marginBottom: 3,
   },
   blockBody: {
     fontSize: 11,
-    color: BLACK,
+    color: BODY,
     lineHeight: 1.55,
-  },
-  blockBodyMono: {
-    fontSize: 10,
-    color: BLACK,
-    lineHeight: 1.55,
-    fontFamily: MONO,
   },
 
   // --- CTA ---
@@ -238,26 +262,34 @@ const styles = StyleSheet.create({
     marginTop: 8,
     padding: 18,
     borderWidth: 2,
-    borderColor: BLACK,
+    borderColor: RED,
+    backgroundColor: PAPER_SOFT,
   },
   ctaKicker: {
-    fontFamily: MONO,
+    fontFamily: MONO_BOLD,
     fontSize: 10,
-    color: BLACK,
+    color: RED,
     letterSpacing: 2,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   ctaTitle: {
     fontFamily: SANS_BOLD,
     fontSize: 16,
-    color: BLACK,
-    marginBottom: 10,
+    color: INK,
+    marginBottom: 8,
     lineHeight: 1.2,
     letterSpacing: -0.3,
   },
+  ctaPrice: {
+    fontFamily: SANS_BOLD,
+    fontSize: 22,
+    color: RED,
+    marginBottom: 4,
+    letterSpacing: -0.5,
+  },
   ctaBody: {
     fontSize: 11,
-    color: BLACK,
+    color: BODY,
     lineHeight: 1.55,
     marginBottom: 10,
   },
@@ -266,22 +298,15 @@ const styles = StyleSheet.create({
   },
   ctaBullet: {
     fontSize: 10,
-    color: BLACK,
-    lineHeight: 1.45,
+    color: INK,
+    lineHeight: 1.5,
     fontFamily: MONO,
-    marginBottom: 3,
-  },
-  ctaPrice: {
-    fontFamily: SANS_BOLD,
-    fontSize: 22,
-    color: BLACK,
-    marginBottom: 4,
-    letterSpacing: -0.5,
+    marginBottom: 2,
   },
   ctaLink: {
     fontFamily: MONO_BOLD,
     fontSize: 12,
-    color: BLACK,
+    color: RED,
     letterSpacing: 0.5,
     marginTop: 4,
   },
@@ -290,13 +315,13 @@ const styles = StyleSheet.create({
   footer: {
     position: 'absolute',
     bottom: 22,
-    left: 48,
-    right: 48,
+    left: 44,
+    right: 44,
     borderTopWidth: 1,
     borderTopColor: RULE,
     paddingTop: 8,
     fontSize: 9,
-    color: BLACK,
+    color: DIM,
     flexDirection: 'row',
     justifyContent: 'space-between',
     fontFamily: MONO,
@@ -325,11 +350,6 @@ function getSev(raw: string) {
   return SEVERITY[(raw ?? 'medium').toLowerCase()] ?? SEVERITY.medium;
 }
 
-/**
- * Rescaled per Daniel's brief.
- * 0-30 critical  | 31-50 poor  | 51-65 significant gaps
- * 66-80 solid    | 81-100 excellent
- */
 function scoreBand(score: number): string {
   if (score >= 81) return 'Excellent. A few polish items below.';
   if (score >= 66) return 'Solid, with room to improve.';
@@ -353,27 +373,24 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
       subject="Website audit"
     >
       <Page size="A4" style={styles.page}>
-        {/* Brand bar */}
         <View style={styles.brandBar} fixed>
           <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
           <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
         </View>
 
-        {/* Cover block */}
         <Text style={styles.coverKicker}>PREPARED FOR</Text>
-        <Text style={styles.coverTitle}>
-          {stripDashes(businessName || domain)}
-        </Text>
+        <Text style={styles.coverTitle}>{stripDashes(businessName || domain)}</Text>
         <Text style={styles.coverUrl}>{url}</Text>
 
-        {/* Hero score */}
-        <View style={styles.scoreWrap}>
-          <Text style={styles.scoreNumber}>{clampedScore}</Text>
-          <Text style={styles.scoreSuffix}>OUT OF 100</Text>
+        <View style={styles.scoreRow}>
+          <View style={styles.scoreBox}>
+            <Text style={styles.scoreLabel}>OVERALL</Text>
+            <Text style={styles.scoreNumber}>{clampedScore}</Text>
+            <Text style={styles.scoreOutOf}>OUT OF 100</Text>
+          </View>
+          <Text style={styles.scoreBand}>{scoreBand(clampedScore)}</Text>
         </View>
-        <Text style={styles.scoreBand}>{scoreBand(clampedScore)}</Text>
 
-        {/* At a glance */}
         {summary ? (
           <View style={styles.glanceWrap}>
             <Text style={styles.glanceKicker}>AT A GLANCE</Text>
@@ -381,7 +398,6 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
           </View>
         ) : null}
 
-        {/* Findings */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Findings</Text>
           <Text style={styles.sectionMeta}>
@@ -392,12 +408,19 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
         {issues.map((issue, i) => {
           const sev = getSev(issue.severity);
           return (
-            <View key={i} style={styles.finding} wrap={false}>
+            <View
+              key={i}
+              style={[
+                styles.finding,
+                { borderLeftColor: sev.border, backgroundColor: sev.accent },
+              ]}
+              wrap={false}
+            >
               <View style={styles.findingMetaRow}>
-                <Text style={styles.findingNumber}>
+                <Text style={[styles.findingNumber, { color: sev.border }]}>
                   {String(i + 1).padStart(2, '0')}
                 </Text>
-                <Text style={[styles.severityPill, { backgroundColor: sev.bg, color: sev.fg }]}>
+                <Text style={[styles.severityPill, { backgroundColor: sev.chipBg, color: sev.chipFg }]}>
                   {sev.label}
                 </Text>
                 <Text style={styles.categoryPill}>
@@ -422,7 +445,6 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
           );
         })}
 
-        {/* CTA */}
         <View style={styles.ctaWrap} wrap={false}>
           <Text style={styles.ctaKicker}>NEXT STEP</Text>
           <Text style={styles.ctaTitle}>Fix every one of these in 48 hours.</Text>
@@ -441,11 +463,8 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
           <Text style={styles.ctaLink}>AGENTICCONSCIOUSNESS.COM.AU/BOOK</Text>
         </View>
 
-        {/* Footer */}
         <View style={styles.footer} fixed>
-          <Text>
-            Agentic Consciousness / agenticconsciousness.com.au / {date}
-          </Text>
+          <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>
           <Text
             style={styles.pageNum}
             render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}

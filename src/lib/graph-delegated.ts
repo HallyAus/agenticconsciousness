@@ -250,6 +250,14 @@ export async function createDelegatedDraft(args: DelegatedDraftArgs): Promise<De
     subject: args.subject,
     body: { contentType: 'HTML', content: args.html },
     toRecipients: [{ emailAddress: { address: args.to } }],
+    // Delegated flow: signed-in user is daniel@printforge.com.au, but the
+    // draft lives in the Agentic shared mailbox. Setting `from` here tells
+    // Outlook to display and send as the shared mailbox (requires SendAs
+    // permission on the mailbox, which comes with FullAccess delegate
+    // assignment). Without this, Outlook defaults From to the signed-in
+    // user and prospects see email from @printforge.com.au.
+    from: { emailAddress: { address: args.mailboxUpnOrId } },
+    sender: { emailAddress: { address: args.mailboxUpnOrId } },
     attachments: args.pdf
       ? [
           {
