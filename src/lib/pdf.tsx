@@ -257,6 +257,129 @@ const styles = StyleSheet.create({
     lineHeight: 1.55,
   },
 
+  // --- portfolio strip ---
+  portfolioWrap: {
+    marginTop: 10,
+    marginBottom: 14,
+  },
+  portfolioHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline',
+    borderBottomWidth: 1,
+    borderBottomColor: RULE,
+    paddingBottom: 6,
+    marginBottom: 12,
+  },
+  portfolioTitle: {
+    fontFamily: SANS_BOLD,
+    fontSize: 18,
+    color: INK,
+    letterSpacing: -0.3,
+  },
+  portfolioMeta: {
+    fontFamily: MONO,
+    fontSize: 10,
+    color: DIM,
+    letterSpacing: 1.5,
+  },
+  portfolioIntro: {
+    fontSize: 11,
+    color: BODY,
+    lineHeight: 1.55,
+    marginBottom: 12,
+  },
+  portfolioGrid: {
+    flexDirection: 'column',
+    gap: 8,
+  },
+  projCard: {
+    flexDirection: 'row',
+    gap: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: INK,
+    backgroundColor: '#ffffff',
+  },
+  projNameBlock: {
+    width: 140,
+  },
+  projName: {
+    fontFamily: SANS_BOLD,
+    fontSize: 12,
+    color: INK,
+    marginBottom: 2,
+    letterSpacing: -0.2,
+  },
+  projUrl: {
+    fontFamily: MONO,
+    fontSize: 9,
+    color: RED,
+    letterSpacing: 0.3,
+  },
+  projBody: { flex: 1 },
+  projTagline: {
+    fontFamily: SANS_BOLD,
+    fontSize: 11,
+    color: INK,
+    marginBottom: 3,
+    lineHeight: 1.35,
+  },
+  projOutcome: {
+    fontSize: 10,
+    color: BODY,
+    lineHeight: 1.45,
+  },
+
+  // --- how we'd fix this ---
+  howWrap: {
+    marginTop: 18,
+    marginBottom: 18,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: INK,
+    backgroundColor: '#ffffff',
+  },
+  howKicker: {
+    fontFamily: MONO_BOLD,
+    fontSize: 10,
+    color: RED,
+    letterSpacing: 2,
+    marginBottom: 8,
+  },
+  howTitle: {
+    fontFamily: SANS_BOLD,
+    fontSize: 16,
+    color: INK,
+    marginBottom: 12,
+    letterSpacing: -0.3,
+  },
+  stepRow: {
+    flexDirection: 'row',
+    marginBottom: 10,
+    gap: 10,
+  },
+  stepNum: {
+    fontFamily: MONO_BOLD,
+    fontSize: 11,
+    color: RED,
+    width: 24,
+    letterSpacing: 1,
+  },
+  stepBody: { flex: 1 },
+  stepTitle: {
+    fontFamily: SANS_BOLD,
+    fontSize: 12,
+    color: INK,
+    marginBottom: 2,
+    letterSpacing: -0.2,
+  },
+  stepDetail: {
+    fontSize: 11,
+    color: BODY,
+    lineHeight: 1.5,
+  },
+
   // --- CTA ---
   ctaWrap: {
     marginTop: 8,
@@ -328,6 +451,62 @@ const styles = StyleSheet.create({
   },
   pageNum: { fontFamily: MONO },
 });
+
+interface PortfolioProject {
+  name: string;
+  url: string;
+  displayUrl: string;
+  tagline: string;
+  outcome: string;
+}
+
+/** Subset of the homepage Portfolio projects, chosen for credibility in
+ *  a cold-outreach PDF. Keeps the list in-file so the PDF renders
+ *  serverless without filesystem reads. */
+const PORTFOLIO_PROJECTS: PortfolioProject[] = [
+  {
+    name: 'ReachPilot',
+    url: 'https://www.reachpilot.com.au',
+    displayUrl: 'reachpilot.com.au',
+    tagline: 'AI Social Media Scheduling + Marketing Automation',
+    outcome: 'One AI writes posts across 9 platforms in your brand voice. Shipped Q1 2026.',
+  },
+  {
+    name: 'SaaSValidatr',
+    url: 'https://saasvalidatr.com',
+    displayUrl: 'saasvalidatr.com',
+    tagline: 'AI-Powered Idea Validation for Small Teams',
+    outcome: 'Team vote + AI score in under 30 seconds. Production on Vercel + Neon.',
+  },
+  {
+    name: 'SellMyOwnHome',
+    url: 'https://sellmyownhome.ai',
+    displayUrl: 'sellmyownhome.ai',
+    tagline: 'AI For-Sale-By-Owner Platform (Australia)',
+    outcome: 'Private property sales without the agent fee. FSBO compliance across every AU state.',
+  },
+  {
+    name: 'Flat White Index',
+    url: 'https://flatwhiteindex.com.au',
+    displayUrl: 'flatwhiteindex.com.au',
+    tagline: 'AI-Tracked Flat White Prices Across Sydney',
+    outcome: 'An AI voice agent actually rings Sydney cafes to collect live prices.',
+  },
+  {
+    name: 'Plant Planner',
+    url: 'https://plantplanner.com.au',
+    displayUrl: 'plantplanner.com.au',
+    tagline: 'Free Vegetable Garden Planner for Australia',
+    outcome: 'AI planting calendar for every Australian climate zone. Free forever.',
+  },
+  {
+    name: 'Printforge CRM',
+    url: 'https://crm.printforge.com.au',
+    displayUrl: 'crm.printforge.com.au',
+    tagline: 'Business Management Platform for 3D Print Shops',
+    outcome: 'Quoting, job tracking, invoicing. Idea to live in 6 weeks. Runs daily.',
+  },
+];
 
 export interface AuditPdfIssue {
   category: string;
@@ -444,6 +623,112 @@ function AuditDocument({ url, businessName, score, summary, issues, date }: Audi
             </View>
           );
         })}
+
+        {/* Selected recent work */}
+        <View style={styles.portfolioWrap}>
+          <View style={styles.portfolioHeader}>
+            <Text style={styles.portfolioTitle}>Selected recent work</Text>
+            <Text style={styles.portfolioMeta}>LIVE PRODUCTS / SHIPPED BY US</Text>
+          </View>
+          <Text style={styles.portfolioIntro}>
+            Most consultants have slide decks. These are working apps you can
+            click through right now.
+          </Text>
+          <View style={styles.portfolioGrid}>
+            {PORTFOLIO_PROJECTS.map((p) => (
+              <View key={p.url} style={styles.projCard} wrap={false}>
+                <View style={styles.projNameBlock}>
+                  <Text style={styles.projName}>{p.name}</Text>
+                  <Text style={styles.projUrl}>{p.displayUrl}</Text>
+                </View>
+                <View style={styles.projBody}>
+                  <Text style={styles.projTagline}>{stripDashes(p.tagline)}</Text>
+                  <Text style={styles.projOutcome}>{stripDashes(p.outcome)}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* How we'd fix this */}
+        <View style={styles.howWrap} wrap={false}>
+          <Text style={styles.howKicker}>HOW WE'D FIX THIS FOR YOU</Text>
+          <Text style={styles.howTitle}>Six steps. Forty-eight hours. Done.</Text>
+
+          <View style={styles.stepRow}>
+            <Text style={styles.stepNum}>01</Text>
+            <View style={styles.stepBody}>
+              <Text style={styles.stepTitle}>30-minute discovery call</Text>
+              <Text style={styles.stepDetail}>
+                We jump on a video call so we understand your customers, your
+                offer, and the two or three things you want prospects to do.
+                You brief us, we take notes. No deck, no forms.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.stepRow}>
+            <Text style={styles.stepNum}>02</Text>
+            <View style={styles.stepBody}>
+              <Text style={styles.stepTitle}>Content + brand handoff</Text>
+              <Text style={styles.stepDetail}>
+                You send logo, photos, service list, and any testimonials you
+                have. If you are missing any of it, we write it or generate it
+                for you. We do not wait on you to get unstuck.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.stepRow}>
+            <Text style={styles.stepNum}>03</Text>
+            <View style={styles.stepBody}>
+              <Text style={styles.stepTitle}>Day 1: rebuild (hours 0 to 24)</Text>
+              <Text style={styles.stepDetail}>
+                Fresh site, mobile-first layout, every issue in this audit
+                resolved. Core Web Vitals tuned, structured data wired,
+                Open Graph cards set, accessibility passed.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.stepRow}>
+            <Text style={styles.stepNum}>04</Text>
+            <View style={styles.stepBody}>
+              <Text style={styles.stepTitle}>Day 2: AI + polish (hours 24 to 48)</Text>
+              <Text style={styles.stepDetail}>
+                Claude chatbot trained on your services and pricing so
+                prospects get answers at 11pm. Lead capture wired into your
+                inbox. Analytics in. Final QA pass.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.stepRow}>
+            <Text style={styles.stepNum}>05</Text>
+            <View style={styles.stepBody}>
+              <Text style={styles.stepTitle}>Launch + handover</Text>
+              <Text style={styles.stepDetail}>
+                We flip the DNS, you sign off. You get a one-page
+                cheat-sheet with how to update copy, swap images, and
+                what to watch. If something breaks in the first 48 hours,
+                money back.
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.stepRow}>
+            <Text style={styles.stepNum}>06</Text>
+            <View style={styles.stepBody}>
+              <Text style={styles.stepTitle}>12 months of maintenance, included</Text>
+              <Text style={styles.stepDetail}>
+                Monthly copy tweaks and image swaps on request.
+                Security patches, plugin updates, uptime monitoring,
+                backups. If you need a new page we build it.
+                No surprise invoices.
+              </Text>
+            </View>
+          </View>
+        </View>
 
         <View style={styles.ctaWrap} wrap={false}>
           <Text style={styles.ctaKicker}>NEXT STEP</Text>

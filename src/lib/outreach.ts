@@ -1,5 +1,3 @@
-import { emailTemplate } from '@/lib/email';
-
 /**
  * Cold-outreach email templates. Three touches across 7 days:
  *   #1 Day 0   , value-led soft intro, 3 top issues, PDF attached, no price
@@ -10,6 +8,10 @@ import { emailTemplate } from '@/lib/email';
  * to satisfy the Australian Spam Act 2003. Inferred-consent basis is
  * only valid when the recipient's email is publicly listed on the
  * domain we're emailing, which our scraper confirms.
+ *
+ * Outreach emails deliberately SKIP the branded emailTemplate (no AC
+ * wordmark header). They must read like a personal note from Daniel,
+ * not a newsletter.
  */
 
 export interface OutreachIssue {
@@ -28,8 +30,8 @@ export interface OutreachContext {
   summary: string;
   issues: OutreachIssue[];
   unsubToken: string;
-  sourceLine: string;        // "we found your email publicly listed on ..."
-  siteBaseUrl: string;       // e.g. https://agenticconsciousness.com.au
+  sourceLine: string;
+  siteBaseUrl: string;
 }
 
 function esc(s: string): string {
@@ -44,16 +46,37 @@ function topIssues(issues: OutreachIssue[], n: number): OutreachIssue[] {
 function complianceFooter(ctx: OutreachContext): string {
   const unsubUrl = `${ctx.siteBaseUrl}/unsubscribe/${ctx.unsubToken}`;
   return `
-    <p class="ac-dim" style="color:#888;font-size:11px;line-height:1.5;margin-top:28px;border-top:1px solid #eee;padding-top:12px">
+    <p style="color:#888;font-size:11px;line-height:1.5;margin-top:28px;border-top:1px solid #eee;padding-top:12px">
       ${esc(ctx.sourceLine)}<br>
       If you'd rather not hear from me again, <a href="${unsubUrl}" style="color:#888;text-decoration:underline">unsubscribe here</a> and I won't email you again.<br>
-      Daniel · Agentic Consciousness · Ourimbah, NSW · daniel@agenticconsciousness.com.au
+      Daniel &middot; Agentic Consciousness &middot; Ourimbah, NSW &middot; daniel@agenticconsciousness.com.au
     </p>`;
+}
+
+/** Plain wrapper: no branded header, just a readable letter. */
+function plainEmail(content: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agentic Consciousness</title>
+</head>
+<body style="margin:0;padding:32px 20px;background:#ffffff;color:#222;font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.6">
+<div style="max-width:560px;margin:0 auto">
+${content}
+</div>
+</body>
+</html>`;
 }
 
 export function buildTouch1(ctx: OutreachContext): { subject: string; html: string } {
   const top = topIssues(ctx.issues, 3);
-  const subject = `3 things costing you leads on ${ctx.domain}`;
+  const criticalCount = ctx.issues.filter((i) => i.severity?.toLowerCase() === 'critical').length;
+  const highCount = ctx.issues.filter((i) => i.severity?.toLowerCase() === 'high').length;
+  const subject = criticalCount > 0
+    ? `Quick note on ${ctx.domain} (a few critical things)`
+    : `Quick note on ${ctx.domain}`;
 
   const issueHtml = top
     .map(
@@ -66,45 +89,43 @@ export function buildTouch1(ctx: OutreachContext): { subject: string; html: stri
     .join('');
 
   const greeting = ctx.businessName ? `the team at ${esc(ctx.businessName)}` : 'there';
+  const issueCountWord = criticalCount + highCount > 0
+    ? `${criticalCount + highCount} critical and high-priority`
+    : `a few`;
 
-  const html = emailTemplate(`
-    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
+  const html = plainEmail(`
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
       Hi ${greeting},
     </p>
-    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
-      I'm Daniel, a local on the Central Coast (Ourimbah). I build
-      AI-optimised websites for Australian small businesses. I ran a
-      proper audit across ${esc(ctx.domain)} this morning. Three things
-      jumped out that I reckon are costing you leads right now:
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
+      I'm Daniel, a local on the Central Coast (Ourimbah).
     </p>
-    <ol style="padding-left:20px;margin:0 0 16px;color:#222;font-size:15px;line-height:1.55">
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
+      I had a proper look at ${esc(ctx.domain)} this morning and spotted
+      ${issueCountWord} things that are probably costing you leads. Nothing
+      complicated, just stuff that adds up.
+    </p>
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 10px">
+      The top three:
+    </p>
+    <ol style="padding-left:20px;margin:0 0 18px;color:#222;font-size:15px;line-height:1.55">
       ${issueHtml}
     </ol>
-    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
-      The full report is attached , ${ctx.issues.length} findings, scored ${ctx.score}/100,
-      every one with a specific fix you can hand to your current web person.
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
+      I've attached the full PDF, ${ctx.issues.length} findings in total,
+      each with what we found and exactly what to do about it. Step by step.
+      No login, no form, just the PDF.
     </p>
-    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 6px">
-      <strong>If you'd rather we just fix the lot:</strong>
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
+      If you'd rather we just fix the lot for you, the PDF has a page at the
+      end with what we'd do and how we'd do it (48 hours, $999, 12 months of
+      maintenance included).
     </p>
-    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
-      Our Lightning Website Sprint is a flat <strong>$999</strong> , we rebuild
-      the whole site mobile-first, AI-optimised, Claude chatbot embedded, live
-      in 48 hours. <strong>Includes full 12-month maintenance</strong> (copy
-      tweaks, image swaps, security patches, uptime monitoring). Money-back
-      guarantee if it's not live in 48 hours.
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
+      Either way, hit reply if anything's unclear. If it's not your
+      priority right now, bin the email, no follow up, no worries.
     </p>
-    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
-      <a href="${ctx.siteBaseUrl}/book" style="color:#ff3d00;font-weight:700;text-decoration:none">
-        ${ctx.siteBaseUrl}/book →
-      </a>
-    </p>
-    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 14px">
-      Or just hit reply. Happy to walk through which of the audit issues would
-      move the needle fastest for you. If it's not the right time, bin this ,
-      no follow-up, no worries.
-    </p>
-    <p style="color:#222;font-size:15px;line-height:1.6;margin:0 0 4px">
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 4px">
       Daniel
     </p>
     ${complianceFooter(ctx)}
@@ -114,31 +135,32 @@ export function buildTouch1(ctx: OutreachContext): { subject: string; html: stri
 }
 
 export function buildTouch2(ctx: OutreachContext): { subject: string; html: string } {
-  const subject = `Re: 3 things costing you leads on ${ctx.domain}`;
-  const html = emailTemplate(`
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      Following up on the audit I sent , not sure if it landed in junk or you've
-      been slammed this week.
+  const subject = `Re: Quick note on ${ctx.domain}`;
+  const html = plainEmail(`
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
+      Following up on the audit I sent. Not sure if it landed in junk or
+      you've been slammed this week.
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
       If any of the issues resonated, the offer is a flat
       <strong>$999 Lightning Website Sprint</strong>: 48-hour turnaround,
       mobile-first, AI-optimised, Claude chatbot trained on your content,
       plus <strong>full 12-month maintenance included</strong> (copy tweaks,
-      image swaps, security patches, uptime monitoring). Every issue in the
-      audit is covered. Money-back guarantee if it's not live in 48 hours.
+      image swaps, security patches, uptime monitoring). Every issue in
+      the audit is covered. Money-back guarantee if it is not live in
+      48 hours.
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
       Have a look:
       <a href="${ctx.siteBaseUrl}/book" style="color:#ff3d00;font-weight:700">
         ${ctx.siteBaseUrl}/book
       </a>
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      Or just reply and tell me which issue bothers you most , I'll answer
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
+      Or just reply and tell me which issue bothers you most. I'll answer
       straight, no pitch.
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 4px">
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 4px">
       Daniel
     </p>
     ${complianceFooter(ctx)}
@@ -147,24 +169,25 @@ export function buildTouch2(ctx: OutreachContext): { subject: string; html: stri
 }
 
 export function buildTouch3(ctx: OutreachContext): { subject: string; html: string } {
-  const subject = `Re: 3 things costing you leads on ${ctx.domain}`;
-  const html = emailTemplate(`
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
-      Last note from me , if now isn't the right time, all good, I'll stop
+  const subject = `Re: Quick note on ${ctx.domain}`;
+  const html = plainEmail(`
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
+      Last note from me. If now isn't the right time, all good. I'll stop
       emailing. I just wanted to leave you the link in case it's useful
       later:
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
       <a href="${ctx.siteBaseUrl}/book" style="color:#ff3d00;font-weight:700">
         ${ctx.siteBaseUrl}/book
       </a>
-      , $999 flat, 48 hours, 12 months of maintenance included, fixes every issue in the audit.
+      : $999 flat, 48 hours, 12 months of maintenance included, fixes every
+      issue in the audit.
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 14px">
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 14px">
       If there was something specific in the audit you wanted a plain-English
-      explanation of, reply and I'll write it up , no obligation either way.
+      explanation of, reply and I'll write it up. No obligation either way.
     </p>
-    <p class="ac-body" style="color:#222;font-size:15px;line-height:1.65;margin:0 0 4px">
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 4px">
       Daniel
     </p>
     ${complianceFooter(ctx)}

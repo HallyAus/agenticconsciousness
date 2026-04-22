@@ -333,22 +333,30 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
                     </Td>
                     <Td>{p.phone ?? '—'}</Td>
                     <Td>
-                      {p.opens_count > 0 ? (
-                        <span style={{ color: '#22c55e', fontWeight: 700 }} title={fmtDate(p.last_opened_at)}>
-                          {p.opens_count}
-                        </span>
-                      ) : (
-                        <span style={{ color: '#666' }}>0</span>
-                      )}
+                      <a
+                        href={`/admin/prospects/${p.id}/activity`}
+                        style={{
+                          color: p.opens_count > 0 ? '#22c55e' : '#666',
+                          fontWeight: p.opens_count > 0 ? 700 : 400,
+                          textDecoration: 'none',
+                        }}
+                        title={p.opens_count > 0 ? `Last: ${fmtDate(p.last_opened_at)} (click to see activity)` : 'See activity'}
+                      >
+                        {p.opens_count}
+                      </a>
                     </Td>
                     <Td>
-                      {p.clicks_count > 0 ? (
-                        <span style={{ color: '#3b82f6', fontWeight: 700 }} title={fmtDate(p.last_clicked_at)}>
-                          {p.clicks_count}
-                        </span>
-                      ) : (
-                        <span style={{ color: '#666' }}>0</span>
-                      )}
+                      <a
+                        href={`/admin/prospects/${p.id}/activity`}
+                        style={{
+                          color: p.clicks_count > 0 ? '#3b82f6' : '#666',
+                          fontWeight: p.clicks_count > 0 ? 700 : 400,
+                          textDecoration: 'none',
+                        }}
+                        title={p.clicks_count > 0 ? `Last: ${fmtDate(p.last_clicked_at)} (click to see activity)` : 'See activity'}
+                      >
+                        {p.clicks_count}
+                      </a>
                     </Td>
                     <Td>{fmtDate(p.last_outbound_at)}</Td>
                     <Td>{fmtDate(p.updated_at)}</Td>
