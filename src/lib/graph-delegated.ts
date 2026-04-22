@@ -248,7 +248,7 @@ export async function createDelegatedDraft(args: DelegatedDraftArgs): Promise<De
 
   const message = {
     subject: args.subject,
-    body: { contentType: 'HTML', content: args.html },
+    body: { contentType: 'html', content: args.html },
     toRecipients: [{ emailAddress: { address: args.to } }],
     // Delegated flow: signed-in user is daniel@printforge.com.au, but the
     // draft lives in the Agentic shared mailbox. Setting `from` here tells

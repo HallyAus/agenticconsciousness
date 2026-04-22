@@ -82,7 +82,7 @@ function buildMessagePayload(args: MessageInput, _sender: string) {
   // a SendAs permission check on some tenant configurations.
   return {
     subject: args.subject,
-    body: { contentType: 'HTML', content: args.html },
+    body: { contentType: 'html', content: args.html },
     toRecipients: [{ emailAddress: { address: args.to } }],
     attachments: args.pdf
       ? [
