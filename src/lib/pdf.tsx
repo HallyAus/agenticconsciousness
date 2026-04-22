@@ -371,6 +371,54 @@ const styles = StyleSheet.create({
     color: INK,
   },
 
+  // --- before / after hero page ---
+  baRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 14,
+    marginBottom: 12,
+  },
+  baCol: { flex: 1 },
+  baTag: {
+    fontFamily: MONO_BOLD,
+    fontSize: 9,
+    letterSpacing: 1.5,
+    marginBottom: 6,
+  },
+  baTagBefore: { color: '#E53935' },
+  baTagAfter: { color: '#1b8739' },
+  baImg: {
+    width: '100%',
+    height: 230,
+    objectFit: 'contain',
+    borderWidth: 1,
+    borderColor: INK,
+    backgroundColor: '#ffffff',
+  },
+  baCaption: {
+    fontSize: 10,
+    color: BODY,
+    lineHeight: 1.5,
+    marginTop: 6,
+  },
+  baBulletRow: {
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  baBulletLabel: {
+    fontFamily: MONO_BOLD,
+    fontSize: 9,
+    color: RED,
+    letterSpacing: 1.5,
+    marginBottom: 6,
+  },
+  baBullet: {
+    fontSize: 11,
+    color: BODY,
+    lineHeight: 1.5,
+    marginBottom: 4,
+  },
+
   // --- trust page (risk reversal + scarcity + agency anchor) ---
   trustWrap: {
     marginTop: 10,
@@ -903,6 +951,10 @@ export interface AuditPdfArgs {
   /** Mobile Lighthouse score (0-100) or null if not yet fetched. Renders
    *  in the page-1 stat strip. Phase D wires this through. */
   mobileSpeedScore?: number | null;
+  /** Mockup preview screenshot (captured ScreenshotOne of /preview/[token]
+   *  at 1440x900). Rendered as the "after" column on the before/after
+   *  hero page. */
+  mockupScreenshot?: AuditPdfImageSrc;
 }
 
 function getSev(raw: string) {
@@ -942,7 +994,7 @@ interface AuditDocumentInternalProps extends AuditPdfArgs {
 
 function AuditDocument({
   url, businessName, score, summary, issues, opportunities, date,
-  screenshotDesktop, screenshotMobile,
+  screenshotDesktop, screenshotMobile, mockupScreenshot,
   brokenLinksCount, viewportMetaOk, copyrightYear,
   placeTypes, mobileSpeedScore, qrPngBuffer,
 }: AuditDocumentInternalProps) {
@@ -1111,6 +1163,60 @@ function AuditDocument({
               not a tap-to-call link, you are losing the majority of
               your leads before they ever see the copy.
             </Text>
+          </View>
+
+          <View style={styles.footer} fixed>
+            <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>
+            <Text
+              style={styles.pageNum}
+              render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`}
+            />
+          </View>
+        </Page>
+      ) : null}
+
+      {/* Before / After hero: contrasts the prospect's current hero
+          against the mockup we generated for them. Renders only when
+          BOTH screenshots exist (otherwise it would look half-baked). */}
+      {screenshotDesktop && mockupScreenshot ? (
+        <Page size="A4" style={styles.page}>
+          <View style={styles.brandBar} fixed>
+            <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
+            <Text style={styles.brandKicker}>WEBSITE AUDIT</Text>
+          </View>
+
+          <View style={styles.shotsHeader}>
+            <Text style={styles.shotsTitle}>Before / After</Text>
+            <Text style={styles.shotsMeta}>YOUR HERO vs WHAT WE WOULD SHIP</Text>
+          </View>
+
+          <View style={styles.baRow}>
+            <View style={styles.baCol}>
+              <Text style={[styles.baTag, styles.baTagBefore]}>BEFORE</Text>
+              <Image src={screenshotDesktop} style={styles.baImg} />
+              <Text style={styles.baCaption}>
+                Your current homepage at desktop width. This is the exact
+                first impression any new visitor gets.
+              </Text>
+            </View>
+            <View style={styles.baCol}>
+              <Text style={[styles.baTag, styles.baTagAfter]}>AFTER</Text>
+              <Image src={mockupScreenshot} style={styles.baImg} />
+              <Text style={styles.baCaption}>
+                A mockup of your site rebuilt with the fixes in this audit.
+                Open the same page live at {SPRINT_CONFIG.bookingUrl.replace('/book', '')}/preview/...
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.baBulletRow}>
+            <Text style={styles.baBulletLabel}>WHAT CHANGED</Text>
+            <Text style={styles.baBullet}>+ Specific headline (who you are, who you serve, where you serve them)</Text>
+            <Text style={styles.baBullet}>+ Two distinct calls to action side by side: tap-to-call and book online</Text>
+            <Text style={styles.baBullet}>+ Trust row immediately below the hero: licensed, insured, Google rating</Text>
+            <Text style={styles.baBullet}>+ Real photos from your site, not stock imagery</Text>
+            <Text style={styles.baBullet}>+ Mobile sticky CTA that stays visible while scrolling</Text>
+            <Text style={styles.baBullet}>+ Structured data (LocalBusiness + FAQ JSON-LD) so AI search engines cite you</Text>
           </View>
 
           <View style={styles.footer} fixed>

@@ -29,7 +29,7 @@ export async function GET(
   const { id } = await params;
   const rows = (await sql`
     SELECT url, business_name, audit_score, audit_summary, audit_data,
-           screenshot_desktop_url, screenshot_mobile_url,
+           screenshot_desktop_url, screenshot_mobile_url, mockup_screenshot_url,
            broken_links_count, viewport_meta_ok, copyright_year,
            place_data, pdf_url
     FROM prospects WHERE id = ${id} LIMIT 1
@@ -41,6 +41,7 @@ export async function GET(
     audit_data: { issues?: OutreachIssue[]; opportunities?: Array<{ category: string; title: string; detail: string; fix: string }> } | null;
     screenshot_desktop_url: string | null;
     screenshot_mobile_url: string | null;
+    mockup_screenshot_url: string | null;
     broken_links_count: number | null;
     viewport_meta_ok: boolean | null;
     copyright_year: number | null;
@@ -65,12 +66,14 @@ export async function GET(
     prospectId: id,
     domain,
     renderFn: async () => {
-      const [desktopShot, mobileShot] = await Promise.all([
+      const [desktopShot, mobileShot, mockupShot] = await Promise.all([
         p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
         p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
+        p.mockup_screenshot_url ? fetchAsNormalisedJpeg(p.mockup_screenshot_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
       ]);
       const desktopBuf = desktopShot?.data ?? null;
       const mobileBuf = mobileShot?.data ?? null;
+      const mockupBuf = mockupShot?.data ?? null;
 
       const basePdfArgs = {
         url: p.url,
@@ -84,6 +87,7 @@ export async function GET(
         viewportMetaOk: p.viewport_meta_ok,
         copyrightYear: p.copyright_year,
         placeTypes: p.place_data?.types ?? (p.place_data?.primaryType ? [p.place_data.primaryType] : null),
+        mockupScreenshot: mockupBuf,
       };
 
       console.log('[admin/pdf] render start', {
