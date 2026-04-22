@@ -716,7 +716,7 @@ const styles = StyleSheet.create({
   // we show the whole capture without cropping.
   shotFullDesktop: {
     width: '100%',
-    height: 560,
+    height: 490,
     objectFit: 'contain',
     backgroundColor: '#ffffff',
     marginBottom: 10,
@@ -1485,14 +1485,11 @@ function AuditDocument({
               <Text style={styles.shotsMeta}>MOCKUP / WHAT WE WOULD SHIP</Text>
             </View>
             <Image src={mockupScreenshot} style={styles.shotFullDesktop} />
-            <Text style={styles.shotCaption}>
-              MOCKUP 1440 x 900 / HERO + FIRST SCROLL
-            </Text>
+            <Text style={styles.shotCaption}>MOCKUP / HERO + FIRST SCROLL</Text>
             <Text style={styles.shotBody}>
-              Same content, rebuilt. Specific headline, two side-by-side
-              calls to action (tap-to-call and book online), trust row
-              immediately under the hero, real photos from your site,
-              and structured data so AI search engines cite you.
+              Same content, rebuilt. Specific headline, tap-to-call and
+              book-online CTAs, trust row under the hero, and structured
+              data so AI search engines cite you.
             </Text>
           </View>
 
