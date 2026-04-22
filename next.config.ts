@@ -3,6 +3,11 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
+  // @react-pdf/renderer v4 breaks under Next 15+ App Router bundling
+  // (ReactReconciler 0.31 gets double-bundled, throws PDFDocument is not
+  // a constructor on Vercel). Externalising it makes renderToBuffer work
+  // inside serverless routes. See react-pdf issues #2966, #3074.
+  serverExternalPackages: ['@react-pdf/renderer'],
   images: {
     formats: ['image/avif', 'image/webp'],
   },

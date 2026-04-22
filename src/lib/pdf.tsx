@@ -578,6 +578,18 @@ export interface AuditPdfIssue {
   fix: string;
 }
 
+/**
+ * What we pass to @react-pdf/renderer's <Image src>. Per the v4 docs, the
+ * canonical server-side shape is `{ data: Buffer, format: 'jpg' }` — it
+ * bypasses the base64 decode + format-sniff paths that crash on some
+ * real-world JPEGs. Data-URI strings and raw Buffers also work.
+ */
+export type AuditPdfImageSrc =
+  | string
+  | Buffer
+  | { data: Buffer; format: 'jpg' | 'png' }
+  | null;
+
 export interface AuditPdfArgs {
   url: string;
   businessName?: string | null;
@@ -585,8 +597,8 @@ export interface AuditPdfArgs {
   summary: string;
   issues: AuditPdfIssue[];
   date: string;
-  screenshotDesktop?: string | null;
-  screenshotMobile?: string | null;
+  screenshotDesktop?: AuditPdfImageSrc;
+  screenshotMobile?: AuditPdfImageSrc;
   brokenLinksCount?: number | null;
   viewportMetaOk?: boolean | null;
   copyrightYear?: number | null;

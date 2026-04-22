@@ -11,6 +11,9 @@ secrets/
 .beads/beads.db
 .beads/dolt/
 
+# Local repro script outputs (scripts/repro-*.ts generate these)
+scripts/out-*.pdf
+
 # OS
 .DS_Store
 Thumbs.db

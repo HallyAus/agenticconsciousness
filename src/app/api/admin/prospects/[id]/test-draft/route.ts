@@ -90,24 +90,39 @@ export async function POST(
   const built = buildTouch1(ctx);
   const subject = `[TEST] ${built.subject}`;
 
-  const [desktopDataUri, mobileDataUri] = await Promise.all([
-    p.screenshot_desktop_url ? (await import('@/lib/fetch-image')).fetchAsDataUri(p.screenshot_desktop_url) : Promise.resolve(null),
-    p.screenshot_mobile_url ? (await import('@/lib/fetch-image')).fetchAsDataUri(p.screenshot_mobile_url) : Promise.resolve(null),
+  const { fetchAsNormalisedJpeg } = await import('@/lib/fetch-image');
+  const [desktopShot, mobileShot] = await Promise.all([
+    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
   ]);
 
-  const pdfBuffer = await renderAuditPdf({
+  const basePdfArgs = {
     url: p.url,
     businessName: p.business_name,
     score: p.audit_score,
     summary: p.audit_summary ?? '',
     issues: p.audit_data.issues,
     date: new Date().toISOString().slice(0, 10),
-    screenshotDesktop: desktopDataUri,
-    screenshotMobile: mobileDataUri,
     brokenLinksCount: p.broken_links_count,
     viewportMetaOk: p.viewport_meta_ok,
     copyrightYear: p.copyright_year,
-  });
+  };
+
+  let pdfBuffer: Buffer;
+  try {
+    pdfBuffer = await renderAuditPdf({
+      ...basePdfArgs,
+      screenshotDesktop: desktopShot,
+      screenshotMobile: mobileShot,
+    });
+  } catch (err) {
+    console.error('[test-draft] PDF render with screenshots failed, retrying without:', err instanceof Error ? err.message : err);
+    pdfBuffer = await renderAuditPdf({
+      ...basePdfArgs,
+      screenshotDesktop: null,
+      screenshotMobile: null,
+    });
+  }
 
   try {
     const draft = await createDraftAuto({

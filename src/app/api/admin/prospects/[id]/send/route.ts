@@ -9,7 +9,7 @@ import { injectPixel, newTrackingToken, rewriteLinks } from '@/lib/email-trackin
 import { isSuppressed } from '@/lib/suppression';
 import { pickRandomActiveVariant, renderSubject } from '@/lib/subject-variants';
 import { isBlockingVerdict, validateEmail } from '@/lib/email-validate';
-import { fetchAsDataUri } from '@/lib/fetch-image';
+import { fetchAsNormalisedJpeg } from '@/lib/fetch-image';
 
 // Allow up to 60s for send: audit is already done, but two ScreenshotOne
 // prefetches + PDF render + Graph draft creation can add up when
@@ -123,11 +123,15 @@ export async function POST(
     || (variant ? renderSubject(variant.template, { domain, businessName: p.business_name }) : built.subject);
   const html = overrides.htmlOverride?.trim() || built.html;
 
-  // Prefetch screenshots to data URIs. If the prefetch + PDF render
-  // fails, retry without screenshots so Draft doesn't 500.
-  const [desktopDataUri, mobileDataUri] = await Promise.all([
-    p.screenshot_desktop_url ? fetchAsDataUri(p.screenshot_desktop_url).catch(() => null) : Promise.resolve(null),
-    p.screenshot_mobile_url ? fetchAsDataUri(p.screenshot_mobile_url).catch(() => null) : Promise.resolve(null),
+  // Prefetch screenshots as canonical `{ data, format: 'jpg' }` buffers.
+  // sharp normalises to baseline JPEG with EXIF + ICC stripped, which is
+  // what @react-pdf/renderer v4 expects server-side — data URIs trigger
+  // jpeg-exif "Unknown version" crashes on some real-world payloads.
+  // If prefetch + PDF render fails, retry without so the Draft still
+  // lands (just without the site screenshots).
+  const [desktopShot, mobileShot] = await Promise.all([
+    p.screenshot_desktop_url ? fetchAsNormalisedJpeg(p.screenshot_desktop_url, { maxWidth: 900 }).catch(() => null) : Promise.resolve(null),
+    p.screenshot_mobile_url ? fetchAsNormalisedJpeg(p.screenshot_mobile_url, { maxWidth: 400 }).catch(() => null) : Promise.resolve(null),
   ]);
 
   const basePdfArgs = {
@@ -146,8 +150,8 @@ export async function POST(
   try {
     pdfBuffer = await renderAuditPdf({
       ...basePdfArgs,
-      screenshotDesktop: desktopDataUri,
-      screenshotMobile: mobileDataUri,
+      screenshotDesktop: desktopShot,
+      screenshotMobile: mobileShot,
     });
   } catch (err) {
     console.error('[send] PDF render with screenshots failed, retrying without:', err instanceof Error ? err.message : err);
