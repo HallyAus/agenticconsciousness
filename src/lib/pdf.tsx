@@ -1404,7 +1404,7 @@ function AuditDocument({
               leads, speed, or customer experience if you chose to add them.
             </Text>
             {opportunities.map((opp, i) => (
-              <View key={i} style={styles.opp} wrap={false}>
+              <View key={i} style={styles.opp}>
                 <View style={styles.findingMetaRow}>
                   <Text style={[styles.findingNumber, { color: RED }]}>
                     {String(i + 1).padStart(2, '0')}
@@ -1540,7 +1540,7 @@ function AuditDocument({
           </Text>
           <View style={styles.portfolioGrid}>
             {PORTFOLIO_PROJECTS.map((p) => (
-              <View key={p.url} style={styles.projCard} wrap={false}>
+              <View key={p.url} style={styles.projCard}>
                 <View style={styles.projNameBlock}>
                   <Text style={styles.projName}>{p.name}</Text>
                   <Text style={styles.projUrl}>{p.displayUrl}</Text>
