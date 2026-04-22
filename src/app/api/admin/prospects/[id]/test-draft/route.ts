@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/pg';
 import { renderAuditPdf } from '@/lib/pdf';
-import { createGraphDraft, isGraphConfigured } from '@/lib/graph';
+import { createDraftAuto } from '@/lib/graph-auto';
+import { isGraphConfigured } from '@/lib/graph';
+import { isDelegatedConnected } from '@/lib/graph-delegated';
 import { buildTouch1, type OutreachIssue } from '@/lib/outreach';
 
 /**
@@ -31,9 +33,10 @@ export async function POST(
 ) {
   const { id } = await params;
 
-  if (!isGraphConfigured()) {
+  const hasDelegated = await isDelegatedConnected();
+  if (!isGraphConfigured() && !hasDelegated) {
     return NextResponse.json(
-      { error: 'Microsoft 365 not configured. Set M365_* env vars.' },
+      { error: 'Microsoft 365 not connected. Click "Connect Microsoft 365" in /admin.' },
       { status: 503 },
     );
   }
@@ -83,7 +86,7 @@ export async function POST(
   });
 
   try {
-    const draft = await createGraphDraft({
+    const draft = await createDraftAuto({
       to,
       subject,
       html: built.html,
