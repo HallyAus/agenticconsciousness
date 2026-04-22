@@ -721,6 +721,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     marginBottom: 10,
   },
+  // AFTER page mockup: taller since the source capture is 1440x1800
+  // (two scrolls of the mockup). objectFit contain so the full image
+  // fits without cropping.
+  shotFullMockup: {
+    width: '100%',
+    height: 640,
+    objectFit: 'contain',
+    backgroundColor: '#ffffff',
+    marginBottom: 10,
+  },
   // Mobile page: centered, narrower, tall.
   shotFullMobileWrap: {
     alignItems: 'center',
@@ -1484,7 +1494,7 @@ function AuditDocument({
               <Text style={styles.shotsTitle}>Your site, after</Text>
               <Text style={styles.shotsMeta}>MOCKUP / WHAT WE WOULD SHIP</Text>
             </View>
-            <Image src={mockupScreenshot} style={styles.shotFullDesktop} />
+            <Image src={mockupScreenshot} style={styles.shotFullMockup} />
             <Text style={styles.shotCaption}>MOCKUP / HERO + FIRST SCROLL</Text>
             <Text style={styles.shotBody}>
               Same content, rebuilt. Specific headline, tap-to-call and

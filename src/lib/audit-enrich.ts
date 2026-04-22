@@ -10,7 +10,7 @@
 import crypto from 'node:crypto';
 import { sql } from '@/lib/pg';
 import { runSiteScan } from '@/lib/site-scan';
-import { captureScreenshots } from '@/lib/screenshots';
+import { captureScreenshots, buildTallMockupUrl } from '@/lib/screenshots';
 import { generateMockup } from '@/lib/mockup';
 import { extractSiteBranding } from '@/lib/site-scrape';
 import { getPlaceDetails, type PlaceReview } from '@/lib/places';
@@ -192,14 +192,23 @@ export async function enrichProspectWithScanAndShots(args: {
       WHERE id = ${prospectId}
     `;
 
-    const mockupShots = await captureScreenshots(previewUrl).catch((err) => {
-      console.error('[audit-enrich] mockup screenshot failed', err instanceof Error ? err.message : err);
-      return { desktop: null, mobile: null };
-    });
+    // Use the tall mockup capture (1440x1800) so the AFTER page in the
+    // PDF shows hero + 2 scrolls, not just the hero. Falls back to the
+    // standard captureScreenshots if buildTallMockupUrl returns null
+    // (env unset).
+    const tallMockup = buildTallMockupUrl(previewUrl);
+    let mockupDesktop: string | null = tallMockup;
+    if (!mockupDesktop) {
+      const pair = await captureScreenshots(previewUrl).catch((err) => {
+        console.error('[audit-enrich] mockup screenshot failed', err instanceof Error ? err.message : err);
+        return { desktop: null, mobile: null };
+      });
+      mockupDesktop = pair.desktop;
+    }
 
     await sql`
       UPDATE prospects
-      SET mockup_screenshot_url = ${mockupShots.desktop},
+      SET mockup_screenshot_url = ${mockupDesktop},
           updated_at = NOW()
       WHERE id = ${prospectId}
     `;

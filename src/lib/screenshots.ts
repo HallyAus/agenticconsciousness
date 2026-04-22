@@ -54,6 +54,33 @@ export interface ScreenshotPair {
 }
 
 /**
+ * Captures a taller mockup shot for the AFTER page in the PDF.
+ * 1440x1800 viewport means we get hero + first scroll + second scroll
+ * in a single image, so the AFTER reads as a real rebuild and not
+ * just a hero thumbnail.
+ */
+export function buildTallMockupUrl(targetUrl: string): string | null {
+  if (!isScreenshotConfigured()) return null;
+  return buildUrl({
+    url: targetUrl,
+    viewport_width: 1440,
+    viewport_height: 1800,
+    device_scale_factor: 1,
+    image_width: 900,
+    format: 'jpg',
+    image_quality: 75,
+    block_ads: true,
+    block_cookie_banners: true,
+    block_trackers: true,
+    cache: true,
+    cache_ttl: 2592000,
+    full_page: false,
+    delay: 3,
+    timeout: 40,
+  });
+}
+
+/**
  * Returns PRE-SIGNED URLs that ScreenshotOne will render on-demand and
  * cache. We don't store bytes; we persist the URL. Every load hits
  * ScreenshotOne's CDN, counting against free tier until cache-hit.
