@@ -665,7 +665,7 @@ function AuditDocument({
         ) : null}
 
         {hasShots ? (
-          <View style={styles.shotsWrap}>
+          <View style={styles.shotsWrap} break>
             <View style={styles.shotsHeader}>
               <Text style={styles.shotsTitle}>Your site, right now</Text>
               <Text style={styles.shotsMeta}>DESKTOP / MOBILE</Text>
