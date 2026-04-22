@@ -22,12 +22,16 @@ HARD RULES
 
 1. Output a single COMPLETE HTML document. Start with <!DOCTYPE html>, end with </html>. All CSS inline in <style> tag. No external fonts, no external images, no external scripts, no fetch/XHR. Fully self-contained.
 
-2. Use ONLY these colours unless the prospect's real brand clearly dictates otherwise:
-   - Background: #0a0a0a (black) or #ffffff (white)
-   - Ink: #0a0a0a or #ffffff depending on bg
-   - Brand red: #ff3d00
-   - Soft: #f6f4f2
-   No gradients. No soft shadows. Hard geometric blocks.
+2. Colour mode is LIGHT. Always. Do not invert, do not produce a dark
+   variant, do not add a theme toggle. Palette:
+   - Page background: #ffffff (white) — the dominant surface.
+   - Ink / body text: #0a0a0a (near-black) on white.
+   - Brand red accent: #ff3d00 — use sparingly for CTAs, rules, kickers.
+   - Soft neutral: #f6f4f2 — for alternating section backgrounds.
+   - Subtle rule lines: #eeeeee or #d4d4d4.
+   Black backgrounds are NOT allowed anywhere in the design, including
+   hero, footer, or testimonial sections. No gradients. No soft shadows.
+   Hard geometric blocks only.
 
 3. Typography: system stack 'Helvetica Neue', Arial, sans-serif. For monospace kickers use ui-monospace, 'Courier New', monospace. Heavy weights (800-900) for display. Tight letter-spacing on display text (-0.5 to -1px).
 
