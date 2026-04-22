@@ -1065,6 +1065,38 @@ const styles = StyleSheet.create({
   techChipBad: {
     backgroundColor: RED_TINT,
   },
+  techChipGood: {
+    backgroundColor: '#eaf7ec',
+  },
+  gapRowGood: {
+    fontFamily: SANS_BOLD,
+    fontSize: 14,
+    color: '#1b8739',
+    letterSpacing: -0.2,
+  },
+  gapRowBad: {
+    fontFamily: SANS_BOLD,
+    fontSize: 14,
+    color: '#E53935',
+    letterSpacing: -0.2,
+  },
+  gapHeaderRow: {
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  gapHeader: {
+    fontFamily: SANS_BOLD,
+    fontSize: 14,
+    color: INK,
+    letterSpacing: -0.2,
+  },
+  gapHeaderMeta: {
+    fontFamily: MONO,
+    fontSize: 9,
+    color: DIM,
+    letterSpacing: 1.3,
+    marginTop: 2,
+  },
 
   // --- footer ---
   footer: {
@@ -1201,6 +1233,9 @@ export interface AuditPdfArgs {
   /** Tech stack fingerprint (detected CMS / analytics / CDN / key
    *  tracking pixels). Used by the "Under the hood" page. */
   techStack?: Array<{ label: string; value: string; good?: boolean }> | null;
+  /** Content integrity signals (yes/no checks derived from audit data).
+   *  Used by the "Quick integrity check" section. */
+  contentGaps?: Array<{ label: string; value: string; good: boolean }> | null;
   /** Bisection flags. Gate individual page blocks at render time so the
    *  /diagnose route can pinpoint which one triggers the pdfkit number
    *  serialiser's NaN error. Leave undefined in production. */
@@ -1263,7 +1298,7 @@ function AuditDocument({
   screenshotDesktop, screenshotMobile, mockupScreenshot,
   brokenLinksCount, viewportMetaOk, copyrightYear,
   placeTypes, mobileSpeedScore, qrDataUri, bisect,
-  googleReviews, googleRating, googleReviewCount, techStack,
+  googleReviews, googleRating, googleReviewCount, techStack, contentGaps,
 }: AuditDocumentInternalProps) {
   const bx = bisect ?? {};
   void placeTypes; void brokenLinksCount; void viewportMetaOk; void copyrightYear;
@@ -1532,7 +1567,7 @@ function AuditDocument({
       {/* Tech stack fingerprint (#5 idea). Shows detected CMS / CDN /
           analytics / tracking from a quick HTML scan. Renders only
           when the route passed techStack data. */}
-      {techStack && techStack.length > 0 ? (
+      {(techStack && techStack.length > 0) || (contentGaps && contentGaps.length > 0) ? (
         <Page size="A4" style={styles.page}>
           <View style={styles.brandBar} fixed>
             <Text style={styles.brandMark}>AGENTIC CONSCIOUSNESS_</Text>
@@ -1548,17 +1583,41 @@ function AuditDocument({
             site today, and which pieces we would keep, replace, or add.
           </Text>
 
-          <View style={styles.techGrid}>
-            {techStack.map((t, i) => (
-              <View
-                key={i}
-                style={[styles.techChip, t.good === false ? styles.techChipBad : {}]}
-              >
-                <Text style={styles.techChipLabel}>{t.label.toUpperCase()}</Text>
-                <Text style={styles.techChipValue}>{t.value}</Text>
+          {techStack && techStack.length > 0 ? (
+            <View style={styles.techGrid}>
+              {techStack.map((t, i) => (
+                <View
+                  key={i}
+                  style={[styles.techChip, t.good === false ? styles.techChipBad : {}]}
+                >
+                  <Text style={styles.techChipLabel}>{t.label.toUpperCase()}</Text>
+                  <Text style={styles.techChipValue}>{t.value}</Text>
+                </View>
+              ))}
+            </View>
+          ) : null}
+
+          {contentGaps && contentGaps.length > 0 ? (
+            <View>
+              <View style={styles.gapHeaderRow}>
+                <Text style={styles.gapHeader}>Quick integrity check</Text>
+                <Text style={styles.gapHeaderMeta}>PASS / FAIL SIGNALS BENEATH THE FINDINGS</Text>
               </View>
-            ))}
-          </View>
+              <View style={styles.techGrid}>
+                {contentGaps.map((g, i) => (
+                  <View
+                    key={i}
+                    style={[styles.techChip, g.good ? styles.techChipGood : styles.techChipBad]}
+                  >
+                    <Text style={styles.techChipLabel}>{g.label.toUpperCase()}</Text>
+                    <Text style={g.good ? styles.gapRowGood : styles.gapRowBad}>
+                      {g.good ? '+ ' : 'x '}{g.value}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ) : null}
 
           <View style={styles.footer} fixed>
             <Text>Agentic Consciousness / agenticconsciousness.com.au / {date}</Text>

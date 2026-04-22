@@ -149,6 +149,27 @@ export async function GET(
           ? Number(p.google_rating)
           : null;
 
+        // Content-integrity signals (#6). Derived from hard fields + a
+        // keyword scan of audit findings. Chips render red/green on the
+        // "Under the hood" page.
+        const issuesBlob = (p.audit_data?.issues ?? [])
+          .map((iss) => `${iss.title} ${iss.detail} ${iss.fix}`)
+          .join(' ')
+          .toLowerCase();
+        const mentions = (re: RegExp) => re.test(issuesBlob);
+        const currentYear = new Date().getUTCFullYear();
+        const legalCount = (p.audit_data?.issues ?? []).filter((i) => (i.severity ?? '').toLowerCase() === 'legal').length;
+        const contentGaps = [
+          { label: 'HTTPS', good: p.url.startsWith('https://'), value: p.url.startsWith('https://') ? 'ENABLED' : 'MISSING' },
+          { label: 'MOBILE VIEWPORT', good: p.viewport_meta_ok === true, value: p.viewport_meta_ok === true ? 'CONFIGURED' : 'NEEDS FIX' },
+          { label: 'BROKEN LINKS', good: (p.broken_links_count ?? 0) === 0, value: `${p.broken_links_count ?? 0} FOUND` },
+          { label: 'COPYRIGHT YEAR', good: p.copyright_year === currentYear, value: p.copyright_year ? String(p.copyright_year) : 'MISSING' },
+          { label: 'SOCIAL PREVIEWS', good: !mentions(/og:image|open graph|og tag|twitter card/), value: mentions(/og:image|open graph|og tag|twitter card/) ? 'MISSING' : 'PRESENT' },
+          { label: 'SEO METADATA', good: !mentions(/meta description|title tag/), value: mentions(/meta description|title tag/) ? 'GAPS' : 'OK' },
+          { label: 'IMAGE ALT TEXT', good: !mentions(/alt attribute|alt text|empty alt/), value: mentions(/alt attribute|alt text|empty alt/) ? 'GAPS' : 'OK' },
+          { label: 'ACCESSIBILITY', good: legalCount === 0, value: legalCount === 0 ? 'COMPLIANT' : `${legalCount} WCAG ISSUES` },
+        ];
+
         const basePdfArgs = {
           url: p.url,
           businessName: p.business_name,
@@ -166,6 +187,7 @@ export async function GET(
           googleRating: googleRatingNum,
           googleReviewCount: p.google_review_count,
           techStack,
+          contentGaps,
         };
 
         await trail.log('doc:args_built', {
