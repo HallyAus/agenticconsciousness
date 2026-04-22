@@ -11,6 +11,11 @@ import { pickRandomActiveVariant, renderSubject } from '@/lib/subject-variants';
 import { isBlockingVerdict, validateEmail } from '@/lib/email-validate';
 import { fetchAsDataUri } from '@/lib/fetch-image';
 
+// Allow up to 60s for send: audit is already done, but two ScreenshotOne
+// prefetches + PDF render + Graph draft creation can add up when
+// ScreenshotOne is rendering a cold URL.
+export const maxDuration = 60;
+
 /**
  * Admin-only: create a DRAFT email in the sender's mailbox with the audit
  * PDF attached. Returns a `webLink` that deep-links to the draft in Outlook

@@ -8,6 +8,8 @@ import { isSuppressed } from '@/lib/suppression';
 import { runSiteScan } from '@/lib/site-scan';
 import { captureScreenshots } from '@/lib/screenshots';
 
+export const maxDuration = 90;
+
 /**
  * Admin-only. Runs an audit against a target URL and stores the result
  * as a `prospect` row. Gated by the /admin middleware (Basic Auth).

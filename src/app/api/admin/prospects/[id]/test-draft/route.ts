@@ -6,6 +6,8 @@ import { isGraphConfigured } from '@/lib/graph';
 import { isDelegatedConnected } from '@/lib/graph-delegated';
 import { buildTouch1, type OutreachIssue } from '@/lib/outreach';
 
+export const maxDuration = 60;
+
 /**
  * Admin-only: create a TEST draft for a prospect — same email body + PDF,
  * but addressed to an email supplied in the request body (typically one of

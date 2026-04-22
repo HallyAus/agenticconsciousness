@@ -6,6 +6,8 @@ import { extractEmailFromHtml } from '@/lib/email-scrape';
 import type { PlaceResult } from '@/lib/places';
 import { enrichProspectWithScanAndShots } from '@/lib/audit-enrich';
 
+export const maxDuration = 90;
+
 /**
  * Admin-only. Convert a Google Place into a prospect row and kick off the
  * audit pipeline. Dedups on source_place_id — if already added, returns

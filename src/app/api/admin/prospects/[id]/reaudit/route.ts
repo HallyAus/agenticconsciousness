@@ -5,6 +5,9 @@ import { runStructuredAudit } from '@/lib/audit-core';
 import { extractEmailFromHtml } from '@/lib/email-scrape';
 import { enrichProspectWithScanAndShots } from '@/lib/audit-enrich';
 
+// Audit after() includes Claude audit + scan + shots + mockup (~90s worst case)
+export const maxDuration = 90;
+
 /**
  * Admin-only: re-run the audit against an existing prospect's URL.
  * Preserves everything except audit fields. Status flips to 'auditing'
