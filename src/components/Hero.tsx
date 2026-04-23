@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useLayoutEffect } from 'react';
+import Link from 'next/link';
 import ScrollReveal from '@/components/ScrollReveal';
 import AiGreeting from '@/components/AiGreeting';
 import AnimatedCounter from '@/components/AnimatedCounter';
@@ -61,12 +62,12 @@ export default function Hero() {
       </ScrollReveal>
 
       <ScrollReveal delay={0.15}>
-        <a
+        <Link
           href="/#contact"
           className="inline-block font-display text-[0.95rem] font-black tracking-[2px] uppercase py-[1.1rem] px-10 no-underline transition-colors duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a] mb-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ac-red"
         >
           Book a 30-min discovery call &rarr;
-        </a>
+        </Link>
         <div className="font-mono text-[0.8rem] max-sm:text-xs text-text-dim tracking-[2px] uppercase mb-10">
           Free &middot; No obligation &middot; 30 minutes &middot; Australia-wide
         </div>

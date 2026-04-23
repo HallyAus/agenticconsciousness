@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Services from '@/components/Services';
 import Process from '@/components/Process';
@@ -409,18 +410,18 @@ export default async function LandingPage({ params }: { params: Promise<{ slug: 
 
           <ScrollReveal delay={0.15}>
             <div className="flex gap-4 max-sm:flex-col">
-              <a
+              <Link
                 href="/#contact"
                 className="inline-block font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a]"
               >
                 Free consultation &rarr;
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/#services"
                 className="inline-block font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 no-underline transition-all duration-200 bg-transparent border-2 border-ac-red text-ac-red hover:bg-ac-red hover:text-white"
               >
                 See services
-              </a>
+              </Link>
             </div>
           </ScrollReveal>
         </section>

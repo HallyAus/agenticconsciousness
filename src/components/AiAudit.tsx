@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Link from 'next/link';
 import AiLoading from '@/components/AiLoading';
 import { trackEvent } from '@/lib/tracking';
 import { useCsrf } from '@/lib/useCsrf';
@@ -335,12 +336,12 @@ export default function AiAudit() {
                   <p className="text-[0.85rem] text-text-dim leading-[1.7] font-light mb-4">
                     {result.nextStep}
                   </p>
-                  <a
+                  <Link
                     href="/#contact"
                     className="inline-block bg-ac-red text-white font-black tracking-[2px] uppercase text-[0.8rem] max-sm:text-xs px-6 py-3 hover:opacity-90 transition-opacity duration-200"
                   >
                     Book Free Consultation
-                  </a>
+                  </Link>
                 </div>
               </div>
             )}

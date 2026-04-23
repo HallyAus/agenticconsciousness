@@ -1,6 +1,7 @@
 import ScrollReveal from '@/components/ScrollReveal';
 import GlitchTitle from '@/components/GlitchTitle';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Project {
   name: string;
@@ -217,9 +218,9 @@ export default function Portfolio() {
           <div className="mt-10 text-center">
             <p className="text-text-dim text-[0.85rem] font-light">
               Want to see something specific? Ask the chatbot, or{' '}
-              <a href="/#contact" className="text-ac-red no-underline hover:underline">
+              <Link href="/#contact" className="text-ac-red no-underline hover:underline">
                 book a free discovery call
-              </a>
+              </Link>
               .
             </p>
           </div>

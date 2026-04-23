@@ -57,12 +57,12 @@ export default function Nav() {
       {/* Desktop CTA */}
       <div className="flex items-center gap-3 max-md:hidden">
         <ThemeToggle />
-        <a
+        <Link
           href="/#contact"
           className="inline-block bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-5 no-underline transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
         >
           Talk to us
-        </a>
+        </Link>
       </div>
 
       {/* Mobile hamburger */}
@@ -107,13 +107,13 @@ export default function Nav() {
 
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <a
+            <Link
               href="/#contact"
               className="inline-block bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-6 no-underline transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] text-center flex-1"
               onClick={() => setMenuOpen(false)}
             >
               Talk to us
-            </a>
+            </Link>
           </div>
         </div>
       )}
