@@ -58,7 +58,7 @@ npm run start     # production server
 
 - **Domain:** agenticconsciousness.com.au
 - **Contact email:** ai@agenticconsciousness.com.au
-- **Owner:** Daniel Hall — 21+ years industry experience
+- **Owner:** Daniel — 21+ years industry experience
 
 ## Workflow
 

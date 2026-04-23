@@ -55,7 +55,7 @@ function signature(ctx: OutreachContext): string {
       <tr>
         <td style="padding:4px 16px 4px 0;border-right:3px solid #ff3d00;vertical-align:top">
           <div style="font-weight:700;font-size:14px;color:#0a0a0a;letter-spacing:-0.2px;line-height:1.3">
-            Daniel Hall
+            Daniel
           </div>
           <div style="font-size:12px;color:#666;margin-top:3px;line-height:1.4">
             Founder, Agentic Consciousness
