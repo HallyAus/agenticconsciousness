@@ -4,98 +4,100 @@
 
 ## Last Updated
 
-- **Date:** 2026-04-23 (autonomous debug + marketing pass)
+- **Date:** 2026-04-23 (PDF polish + UX audit + content scrub)
 - **Branch:** master (clean, all pushed)
-- **Head:** `14971a4`
-- **Focus:** Killed the pdfkit `-1.87e+21` NaN on Vercel for three test prospects, then shipped a large marketing/visual polish pass (orange OUR PRICE, strike anchor, coloured stat cells, Google reviews page, "Under the hood" tech stack page, Quick integrity check grid, AFTER-only mockup page, findings break every 2). Audit prompt hardened so opportunities are specific to each prospect. Rendered findings capped at 7, opportunities capped at 2 as a workaround for the underlying pagination NaN (root cause still unknown).
-
-## Bug fixed: pdfkit `-1.87e+21` NaN
-
-The crash the previous session diagnosed as a silent SIGKILL was actually a catchable JS `Error` at `@react-pdf/pdfkit/lib/pdfkit.js:275` (the number serialiser, which rejects any value outside `±1e21`). The pre-breadcrumb route swallowed the error as a generic 500. Once the breadcrumb table was in place, the real error surfaced on the very first diagnostic run. All guesses that led with SIGKILL (worker threads, OOM memory bumps) would have been wasted time.
-
-What actually fixed it:
-- **Findings cap at 7** (`src/lib/pdf.tsx` `PDF_MAX_FINDINGS` constant). Empirical ceiling from bisect: `?take=7` renders, `?take=8` crashes on both impactplants and 56electrical. `totalLoss` still computed across all findings so the headline number stays accurate. Header now shows "TOP 7 SHOWN" when the full audit has more.
-- **`break` every 4 findings + `wrap=false` removed**. Deterministic page-aligned breaks instead of wherever natural pagination decides to split.
-- **All sparse-border styles explicit-zeroed** (`brandBar`, `sectionHeader`, `shotsHeader`, `portfolioHeader`, `trustHeader`, `footer`, `opp`, `finding`, `findingCost`, `labelBlockLast`). Per diegomura/react-pdf#3130 the 4.3+ shorthand resolver leaks extreme values for unset border sides. Explicit `0` on every side is required.
-- **`alignItems: 'baseline'`** swapped to `'flex-end'` on `sectionHeader`, `shotsHeader`, `portfolioHeader`. Baseline math with mixed font sizes is a known NaN trigger.
-- **`findingCost`, `labelBlockLast`, `glanceWrap`, `finding`** converted to **filled sidebar View pattern** (no more `borderLeftWidth` on a View with backgrounds). Same class of clipBorderLeft NaN the research agent flagged.
-- **`@react-pdf/renderer` restored to `^4.5.1`** after the 4.1.6 pin produced a `unitsPerEm` undefined crash from duplicate `@react-pdf/font` majors in node_modules. The pin was the wrong move; the family must deduplicate.
-
-Red herrings that did NOT fix it (ruled out one-by-one):
-1. `Font.registerHyphenationCallback` removal
-2. `alignItems: 'baseline'` on `findingCost`
-3. Uniform card shape (every finding renders `findingCost` even when `estimateFindingLoss` is null)
-4. Explicit `0` on border sides alone (needed structural refactor as well)
-5. Sidebar refactor alone (needed cap + break alongside)
-
-## Autonomous polish also shipped
-
-`cb7923a feat(pdf): cover loss hero, drop healthStrip, add CTA scarcity`:
-- **Cover loss hero**: black block with red kicker and large revenue-loss range, appears directly under business name / url. Frames the document around cost of inaction.
-- **Dropped healthStrip**: broken links / viewport / copyright year. Low-signal technical data that already surfaces as specific findings.
-- **CTA scarcity**: "ONLY N SLOTS LEFT THIS MONTH" below the $999 price when `SPRINT_CONFIG.remainingThisMonth > 0`. Honest scarcity, not fabricated.
-
-## Quality gate
-
-- **Typecheck:** clean (`npx tsc --noEmit`).
-- **Build:** clean (last checked at `9714c81`; no new warnings after).
-- **E2E verify:** evolvelectrical / 56electrical / impactplants all render 200 OK with `Content-Type: application/pdf` and bytes > 180 KB.
-
-## Open items for next session
-
-1. **Review the PDF visually.** I only verified it renders. Daniel should open each to check the cover hero reads right, stat strip looks balanced, before/after page looks clean, and the new CTA scarcity doesn't feel cheesy. Three test URLs:
-   - https://agenticconsciousness.com.au/api/admin/prospects/960fdf70-0f05-448d-ab5a-1c6463018142/pdf (evolvelectrical)
-   - https://agenticconsciousness.com.au/api/admin/prospects/8bb3d070-9cee-4f9a-a448-0119d3ecf0a8/pdf (56electrical)
-   - https://agenticconsciousness.com.au/api/admin/prospects/1ef41692-5619-4aae-98bc-fdfa9f941852/pdf (impactplants)
-2. **Cap at 7 is a workaround, not a fix.** The root cause of why react-pdf's pagination recalc produces the deterministic `-1.87e21` on finding #8 is still unknown. If future audits reliably produce 8+ issues and we want every finding visible, deeper debugging (monkey-patch `PDFObject.number` to log the originating code path, or switch to pdf-lib post-process for findings) is needed.
-3. **Retire `/diagnose` route + bisect flags?** Admin-gated, zero production cost, kept intentionally for next regression. Delete via a one-line commit when desired: remove `src/app/api/admin/prospects/[id]/pdf/diagnose/` and the `bisect` branches in `pdf.tsx`. I would keep them.
-4. **ScreenshotOne reliability.** The desktop screenshot fetch was transiently returning null in earlier renders, producing PDFs without the desktop page. Added 3-retry backoff in `fetchNormalisedJpegDetailed` and per-image `assets:*_missing` breadcrumbs so next drop-out shows up immediately in Neon.
-5. **Phase D (Lighthouse)** — still waiting on `PAGESPEED_API_KEY` for real mobileSpeedScore.
-6. **`CRON_SECRET`** still unset; cron follow-ups 401.
-
-## Key files / context for next session
-
-- **PDF render**: `src/lib/pdf.tsx` (~1800 lines). `PDF_MAX_FINDINGS = 7` near the top of AuditDocument. Per-finding JSX uses `renderedIssues.map`, not `issues.map`.
-- **Breadcrumb system**: `src/lib/pdf-breadcrumb.ts` (awaited Neon INSERT per step, survives SIGKILL).
-- **Breadcrumb table**: `pdf_render_breadcrumbs` on Neon `sweet-salad-59526830`. Query by `request_id` returned in the 500 body or `X-Request-Id` header.
-- **Diagnose route**: `src/app/api/admin/prospects/[id]/pdf/diagnose/route.ts`. CSV `?skip=` + `?take=N` + `?only=K` for bisect. Returns JSON, no side effects.
-- **Bisect flags in Document**: `PdfBisectFlags` interface in pdf.tsx. `skipStatStrip`, `skipFindings`, etc. Safe to keep; only activated via diagnose route.
-- **Fetch with retry**: `fetchNormalisedJpegDetailed` in `src/lib/fetch-image.ts`. 3 attempts, 0s/2s/4s backoff, 30s per attempt. Returns `{image, failure}`.
-- **Memory playbook**: `C:\Users\User\.claude\projects\D--Claude-Projects-agenticconsciousness\memory\project_react_pdf_crash_playbook.md` — NaN fingerprint table, fix checklist, anti-patterns.
-
-## Env state
-
-Set: `BLOB_READ_WRITE_TOKEN`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `M365_*`, `SCREENSHOT_*`, `GOOGLE_PLACES_API_KEY`, `DATABASE_URL`, `STRIPE_*`, `RESEND_API_KEY`.
-Missing: `CRON_SECRET`, `ABSTRACT_API_KEY`, `PAGESPEED_API_KEY`.
+- **Head:** `a3e54a8`
+- **Focus:** Three concerns. (1) PDF AFTER-page mockup + opportunity #2 were splitting across pages — shrunk mockup to 520pt, page-break before opp #2. (2) Email outreach signature + footer rebuilt with two-column red-divider card and cleaner compliance block. (3) Full UX audit pass on the marketing site — 25 fixes across nav/hero/forms/chatbot/exit-intent/portfolio/pricing/error pages. Plus content scrub: name normalised to "Daniel" (no surname) in email signature, marketing banner, CLAUDE.md.
 
 ## Commits this session (chronological)
 
 ```
-27440c7 fix(pdf): instrument with Neon breadcrumbs + pin react-pdf 4.1.6 + drop hyphenation
-8b77b70 fix(pdf): revert react-pdf to ^4.5.1 — 4.1.6 pin broke sub-package peers
-1334750 feat(pdf): bisect flags for pinpoint isolation of the pdfkit NaN
-9d3f989 feat(pdf): take/only params on diagnose route for per-issue bisect
-46ce057 fix(pdf): drop baseline align + harmonise font sizes on findingCost   [red herring]
-3f3c779 fix(pdf): render findingCost on every finding to unify card shape      [red herring]
-b669e59 fix(pdf): set missing border sides to 0 on finding/findingCost/labelBlockLast
-84a8c00 fix(pdf): explicit border zeros on every sparse-border style
-06b0789 fix(pdf): drop wrap=false from findings to allow natural pagination
-15582e6 feat(pdf): re-enable before/after page now that the wrap=false crash is fixed
-515896d feat(pdf): add OUR PRICE and OUR GUARANTEE anchor rows under agency anchor
-0155850 chore(pdf): fix stale breadcrumb meta from the emergency-override era
-d31bae7 fix(pdf): drop wrap=false from opportunities + portfolio cards too
-893df4f feat(pdf): retry image fetches 3x with backoff + breadcrumb on drop-out
-2406092 fix(pdf): replace findingCost top border with filled divider view
-34f9c0d fix(pdf): replace finding borderLeftWidth with filled sidebar View     [red herring]
-c6ba64b fix(pdf): force page break every 5 findings + wrap=false per finding   [red herring]
-5fe5ebf fix(pdf): simplify finding card to plain column + backgroundColor
-59af79a fix(pdf): break every 4 findings, drop wrap=false
-8005bb6 fix(pdf): alignItems baseline -> flex-end on mixed-font-size rows
-9714c81 fix(pdf): cap rendered findings at 7 as final safety net               [the fix]
-e23e8aa fix(pdf): labelBlockLast + glanceWrap filled sidebars (belt+braces)
-cb7923a feat(pdf): cover loss hero, drop healthStrip, add CTA scarcity
+b93e613 feat(outreach): fix AFTER page overflow + page-break opp #2 + new email signature
+e1de146 fix(ux): full UX audit pass — affordances, feedback, focus, validation
+7bfa8ac fix(content): scrub full name from email signature, banner, CLAUDE.md
+a3e54a8 fix(lint): swap <a href="/..."> for next/link Link on internal CTAs
 ```
+
+## What shipped — UX audit (commit e1de146)
+
+**Critical**
+- Hash-anchor CTAs: `#contact` (no slash) silently failed on every subpage. Fixed in Nav.tsx, Hero.tsx, AiAudit.tsx, Portfolio.tsx, for/[slug]/page.tsx — all → `/#contact` (then converted to `<Link>` in commit a3e54a8 to satisfy Next ESLint).
+- AiAudit.tsx textarea: htmlFor/id pair; pasted overflow stops being silently truncated, shows "Trim N characters to send" + aria-invalid + counter aria-live.
+- Chatbot.tsx focus management: input focuses on open, Escape returns focus to toggle, Tab/Shift-Tab focus trap, aria-modal=true. FAB lifted clear of /book sticky cart. Scroll respects prefers-reduced-motion.
+- ExitIntent.tsx requires 30% scroll-depth before treating an upward mouse move as exit intent. Stops the modal firing on visitors reaching for the address bar.
+
+**High**
+- Chatbot name extraction restricted to "I'm X"/"my name is X"/"call me X" prefixes. Previous regex stored "Hello there" as name.
+- Nav.tsx aria-current="page" + red underline on active link.
+- WebsiteAuditor.tsx URL regex requires real TLD, rejects localhost/IPs. Success state inverts to red bg + checkmark glyph for visible state change.
+- AiGreeting.tsx boot delays cut roughly in half. min-h 4rem → 6rem to stop hero CTA reflow.
+- ExtrasCart.tsx base Sprint locked on (toggle no-op + disabled checkbox). Removed dead-end of un-checkable required item disabling checkout.
+- CTA.tsx phone has `pattern` + autoComplete; message has maxLength; both submit buttons carry aria-busy.
+
+**Medium**
+- Portfolio.tsx aria-label "(opens in new tab)"; LIVE + year badges get 1px white/20 border + backdrop-blur for contrast.
+- PricingCards.tsx "Stripe checkout · 14-day refund · tax invoice emailed" micro-copy under each starter pay button.
+- ExitIntent.tsx close button uses CSS hover/focus-visible (was inline mouse handlers, no keyboard focus).
+- error.tsx renders error.digest as "Reference: ..." line + support email mailto.
+- not-found.tsx 4 quick links (Pricing, Book, Tools, Insights) instead of dead-end.
+- Footer.tsx top-right CTA changed from duplicate mailto-EmailLink to `<Link href="/book">` "Book a sprint".
+
+**Low**
+- AiAudit cooldown trailing ellipsis dropped.
+- EmailCapture.tsx submitting state with disabled button + "SUBSCRIBING..." copy.
+- ScrollProgress.tsx renders for reduced-motion users (it's positional info, not motion theatre).
+
+## What shipped — PDF + email (commit b93e613)
+
+- `pdf.tsx`: `shotFullMockup` height 640 → 520, marginBottom 10 → 8 so the AFTER page caption + body fit on one A4 alongside the image. `break={i > 0}` on opportunities so opp #2+ always start on a fresh page (avoids `wrap={false}` NaN trap).
+- `outreach.ts`: new `signature()` block — two-column table with red 3px divider, name + role on left, site URL + email on right, Outlook-safe table layout. `complianceFooter()` rewritten — separate `<p>`s instead of `<br>`-joined, "Not interested?" unsub line, dimmer legal sender info. Daniel/Ourimbah no longer duplicated since signature carries it.
+
+## What shipped — Content scrub (commit 7bfa8ac)
+
+Three files said "Daniel Hall" — `src/lib/outreach.ts`, `marketing/banners/email/email-signature-600x120.html`, `CLAUDE.md`. All now "Daniel" only. The CLAUDE.md owner line was the source of truth that tripped me into re-introducing the surname when scaffolding the new signature. User-level memory `feedback_name_privacy.md` already had the rule but CLAUDE.md disagreed.
+
+## Quality gate
+
+- **Typecheck**: clean (`npx tsc --noEmit`).
+- **Dash lint**: clean (`node scripts/lint-no-dashes.mjs`).
+- **ESLint**: 13 problems remain (8 errors, 5 warnings). All pre-existing in `src/lib/pdf.tsx` (unused vars, unescaped entities, image alt-text), `src/app/admin/layout.tsx`, `src/components/tools/ToolGate.tsx`, `src/lib/graph.ts`, `src/components/TrackingPixels.tsx`. None caused by this session.
+- **Working tree**: clean. All pushed.
+
+## Open items for next session
+
+1. **Visual review**. I built and lint-tested but didn't open a browser. Spot-check:
+   - Hero CTA still works on subpages (was the headline critical fix).
+   - Nav active-page red underline on `/pricing`, `/book`, `/tools`.
+   - AiAudit textarea overflow message + counter behavior.
+   - Chatbot Tab focus loop on dialog open.
+   - ExitIntent doesn't fire until 30% scrolled (test on home).
+   - PDF AFTER page (any prospect) — image + body should be one page now.
+   - Outreach email signature renders correctly in Outlook web AND a real gmail/yahoo inbox (TNEF test from prior handoff still pending).
+
+2. **Pre-existing ESLint cleanup** (separate commit). 8 errors all in non-UX files; can be killed in a single sweep:
+   - `pdf.tsx`: drop `hasShots` + `hasHealth` unused locals; escape the three `"`/`'` entities; add empty `alt=""` to the four decorative `Image`s.
+   - `tools/ToolGate.tsx`: drop unused `toolId` param.
+   - `lib/graph.ts`: drop unused `_sender`.
+   - `admin/layout.tsx`: convert `<a href="/">` to `<Link>`.
+
+3. **TNEF delivery verification** (carried over). Send `/api/admin/prospects/<id>/test-draft` to a gmail/yahoo address, then click Send in Outlook. Confirm formatted HTML lands without winmail.dat or raw markup. Needs ADMIN creds + a target address — both blocked on user.
+
+4. **Reaudit the three test prospects** in `/admin` to pick up the new opportunity-prompt hardening from earlier sessions. Existing audits still render the generic single-opp.
+
+5. **Pdfkit `-1.87e21` root cause** still unknown. Cap-at-7 on findings + cap-at-2 on opportunities is a workaround. Future audits with 8+ findings would benefit from real fix.
+
+6. **Env still missing**: `CRON_SECRET`, `ABSTRACT_API_KEY`, `PAGESPEED_API_KEY`.
+
+## Key files / context for next session
+
+- **PDF render**: `src/lib/pdf.tsx`. `PDF_MAX_FINDINGS=7` near top. AFTER-page mockup style is `shotFullMockup` (height 520, was 640). Opportunities map uses `break={i > 0}`.
+- **Email templates**: `src/lib/outreach.ts`. Three touches: `buildTouch1`, `buildTouch2`, `buildTouch3`. Each ends with `${signature(ctx)}${complianceFooter(ctx)}`.
+- **Nav active state**: `src/components/Nav.tsx` `isActive(href)` helper compares pathname; hash-anchor links only active when on `/`.
+- **Chatbot focus**: `src/components/Chatbot.tsx` — `inputRef` + `toggleRef` + `handleDialogKeyDown` Tab trap.
+- **ExitIntent gate**: `src/components/ExitIntent.tsx` — `MIN_SCROLL_DEPTH = 0.3` constant.
+- **Memory playbook**: `C:\Users\User\.claude\projects\D--Claude-Projects-agenticconsciousness\memory\project_react_pdf_crash_playbook.md` — react-pdf NaN fingerprint table.
+- **Name rule**: `feedback_name_privacy.md` (user memory) AND `CLAUDE.md` Owner line — kept in sync.
 
 ## Summary (one paragraph)
 
-Autonomous 2-hour debug. Killed the `-1.87e21` pdfkit NaN that had blocked three prospects from rendering PDFs. It was never a SIGKILL, it was a catchable JS error the broad try/catch had been swallowing. Breadcrumb instrumentation (synchronous awaited Neon inserts) surfaced the real error on the first run; bisect flags + `?take=N` + `?only=K` diagnose route narrowed it from "findings area" to "issue 8 at position 8 after 7 preceding findings". Root cause is react-pdf's page-fit recalc when the 8th `wrap={false}` finding can't fit and wraps. Pragmatic fix: cap rendered findings at 7, break every 4 explicitly, remove `wrap={false}`. Shipped alongside a marketing polish pass (revenue-loss hero on cover, CTA scarcity line, dropped low-signal healthStrip). All three test prospects now render 200 OK. Deep root cause still unknown but won't hit at current audit sizes. HEAD `cb7923a`, all pushed, build clean.
+Three commits of polish across the outreach pipeline + a 25-fix UX audit pass on the marketing site. PDF AFTER-page mockup now fits on one A4 (image was 640pt, shrunk to 520pt to leave room for caption + body); opportunity #2 page-breaks cleanly. Email signature rebuilt as a two-column red-divider card with a cleaner compliance block. Full UX pass killed the most consequential bug — every primary CTA on every subpage was silently failing because `href="#contact"` (no slash) anchored to non-existent local sections. Also: chatbot focus management, ExitIntent scroll-depth gate, AiAudit textarea labelled + non-truncating, ExtrasCart base item locked on, error/404 pages no longer dead-ends. Then a content scrub: "Daniel" only, surname removed from outreach signature, marketing banner, and CLAUDE.md (which was the source-of-truth disagreement that caused the regression). Typecheck + dash-lint clean; ESLint has 13 pre-existing issues in pdf.tsx/admin/tools/graph that are next-session work. HEAD `a3e54a8`, all pushed.
