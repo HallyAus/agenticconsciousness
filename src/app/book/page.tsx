@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import ExtrasCart from '@/components/ExtrasCart';
 import WebsiteAuditor from '@/components/WebsiteAuditor';
 
@@ -153,6 +154,36 @@ export default function BookPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* GBP cross-sell. For visitors who don't need (or aren't ready
+          for) a full new site — point them at the cheaper entry. */}
+      <section className="px-10 max-md:px-5 max-sm:px-4 pb-4">
+        <div className="max-w-[1200px] mx-auto">
+          <Link
+            href="/gbp"
+            className="block p-5 max-sm:p-4 no-underline transition-colors duration-200 hover:bg-[color:var(--bg-card-hover)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)]"
+            style={{ background: 'var(--bg-card)', borderLeft: '3px solid var(--red)' }}
+          >
+            <div className="flex items-center justify-between gap-4 max-sm:flex-col max-sm:items-start">
+              <div>
+                <div className="font-mono text-[0.7rem] tracking-[2px] uppercase mb-1" style={{ color: 'var(--red-text)' }}>
+                  Not ready for a full website?
+                </div>
+                <div className="font-display text-[1.1rem] max-sm:text-[1rem] font-black tracking-snug text-text-primary leading-tight">
+                  Get your Google Business Profile properly tuned for $295.
+                </div>
+                <p className="text-text-dim text-[0.8rem] font-light leading-[1.55] mt-1 max-w-[640px]">
+                  Photos, services, posts, review templates, schema. 3-day turnaround.
+                  60-80% of tradie leads start at GBP &mdash; this is the cheapest way to lift call volume.
+                </p>
+              </div>
+              <div className="font-mono text-[0.78rem] tracking-[2px] uppercase shrink-0 text-ac-red">
+                See GBP Tune-up &rarr;
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 

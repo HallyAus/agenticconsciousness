@@ -23,6 +23,9 @@ const packages: Record<string, Pkg> = {
   // ── Website Sprint base (dashboard product) ──
   'website-sprint':         { priceId: 'price_1TO4woPTv8VxN1HBlY6cCy8z', baseCents: 99900 },
 
+  // ── GBP Tune-up (standalone, no-website-needed entry product) ──
+  'gbp-tuneup':             { priceId: 'price_1TPVkuPNeh1RJdBeYUErBgHV', baseCents: 29500 },
+
   // ── Website Sprint extras (dashboard products) ──
   'extra-page':           { priceId: 'price_1TO58lPTv8VxN1HB4aDSAuLX', baseCents: 10000 },
   'blog-cms':             { priceId: 'price_1TO58mPTv8VxN1HBlPYS3HBb', baseCents: 40000 },

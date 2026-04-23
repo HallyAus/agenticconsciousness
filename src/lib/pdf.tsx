@@ -1033,14 +1033,15 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   reviewsPitch: {
-    marginTop: 14,
-    padding: 14,
+    marginTop: 12,
+    padding: 12,
     backgroundColor: INK,
+    width: '100%',
   },
   reviewsPitchText: {
-    fontSize: 12,
+    fontSize: 10.5,
     color: '#ffffff',
-    lineHeight: 1.55,
+    lineHeight: 1.5,
   },
 
   // --- tech stack page ("Under the hood") ---
@@ -1555,7 +1556,7 @@ function AuditDocument({
               ) : null}
               {r.text ? (
                 <Text style={styles.reviewText}>
-                  &quot;{stripDashes(r.text.length > 320 ? r.text.slice(0, 320) + '...' : r.text)}&quot;
+                  &quot;{stripDashes(r.text.length > 200 ? r.text.slice(0, 200) + '...' : r.text)}&quot;
                 </Text>
               ) : null}
               <Text style={styles.reviewMeta}>
