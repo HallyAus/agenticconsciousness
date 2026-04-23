@@ -62,7 +62,7 @@ export default function Hero() {
 
       <ScrollReveal delay={0.15}>
         <a
-          href="#contact"
+          href="/#contact"
           className="inline-block font-display text-[0.95rem] font-black tracking-[2px] uppercase py-[1.1rem] px-10 no-underline transition-colors duration-200 bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a] mb-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ac-red"
         >
           Book a 30-min discovery call &rarr;

@@ -126,6 +126,7 @@ export default function CTA() {
                     <button
                       onClick={handleAnalyse}
                       disabled={!challenge.trim()}
+                      aria-busy={analysing}
                       className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                     >
                       ANALYSE MY CHALLENGE →
@@ -198,6 +199,9 @@ export default function CTA() {
                       aria-label="Phone"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
+                      pattern="[\d\s+()\-]{6,20}"
+                      title="Phone number, digits, spaces, +, ( ), - only"
+                      autoComplete="tel"
                       disabled={submitting}
                     />
                     <textarea
@@ -205,6 +209,7 @@ export default function CTA() {
                       aria-label="Your message"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
+                      maxLength={2000}
                       disabled={submitting}
                     />
 
@@ -218,6 +223,7 @@ export default function CTA() {
                       <button
                         type="submit"
                         disabled={!name.trim() || !email.trim()}
+                        aria-busy={submitting}
                         className="font-display text-[0.85rem] font-black tracking-[2px] uppercase py-[0.9rem] px-8 bg-ac-red text-white transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] disabled:opacity-40 disabled:cursor-not-allowed self-start focus:ring-2 focus:ring-ac-red focus:ring-offset-2 focus:ring-offset-ac-black focus:outline-none"
                       >
                         SEND MY DETAILS →

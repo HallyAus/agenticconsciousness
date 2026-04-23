@@ -147,6 +147,7 @@ export default function Portfolio() {
                 href={p.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={`${p.name} (opens in new tab)`}
                 className={`group flex flex-col bg-ac-card transition-colors duration-200 hover:bg-ac-card-hover no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ac-red ${isHero ? 'col-span-full' : ''}`}
               >
                 <div
@@ -168,10 +169,10 @@ export default function Portfolio() {
                     priority={i === 0}
                     className="object-cover object-top transition-transform duration-[600ms] ease-out group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:transform-none"
                   />
-                  <div className="absolute top-3 left-3 font-mono text-[0.65rem] tracking-[2px] uppercase text-white bg-ac-red py-[2px] px-[6px]">
+                  <div className="absolute top-3 left-3 font-mono text-[0.65rem] tracking-[2px] uppercase text-white bg-ac-red py-[2px] px-[6px] border border-white/20">
                     LIVE
                   </div>
-                  <div className="absolute top-3 right-3 font-mono text-[0.65rem] tracking-[2px] uppercase text-white/80 bg-black/60 py-[2px] px-[6px]">
+                  <div className="absolute top-3 right-3 font-mono text-[0.65rem] tracking-[2px] uppercase text-white/90 bg-black/70 py-[2px] px-[6px] border border-white/20 backdrop-blur-[2px]">
                     {p.year}
                   </div>
                 </div>
@@ -216,7 +217,7 @@ export default function Portfolio() {
           <div className="mt-10 text-center">
             <p className="text-text-dim text-[0.85rem] font-light">
               Want to see something specific? Ask the chatbot, or{' '}
-              <a href="#contact" className="text-ac-red no-underline hover:underline">
+              <a href="/#contact" className="text-ac-red no-underline hover:underline">
                 book a free discovery call
               </a>
               .

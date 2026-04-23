@@ -68,6 +68,10 @@ export default function ExtrasCart() {
   }, []);
 
   function toggle(id: string) {
+    // Base Sprint is required for the 48h delivery guarantee — locked on.
+    // Allowing it to be unchecked produced a "Pick at least one item"
+    // disabled-button dead-end that contradicted the "Required" label.
+    if (id === SPRINT.id) return;
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -263,9 +267,12 @@ function ItemCheckbox({
   onToggle: () => void;
   featured?: boolean;
 }) {
+  // Featured = the base Sprint, which is locked on. Visually mark it as
+  // included rather than "selectable" so users don't try to uncheck it.
+  const locked = featured;
   return (
     <label
-      className={`relative block p-6 max-sm:p-5 cursor-pointer transition-colors duration-200 ${checked ? 'ring-2 ring-inset ring-[color:var(--red)]' : ''}`}
+      className={`relative block p-6 max-sm:p-5 transition-colors duration-200 ${checked ? 'ring-2 ring-inset ring-[color:var(--red)]' : ''} ${locked ? 'cursor-default' : 'cursor-pointer'}`}
       style={{
         background: 'var(--bg-card)',
         borderLeft: featured ? '3px solid var(--red)' : undefined,
@@ -275,8 +282,9 @@ function ItemCheckbox({
         type="checkbox"
         checked={checked}
         onChange={onToggle}
+        disabled={locked}
         className="sr-only peer"
-        aria-label={`Add ${item.name} to cart`}
+        aria-label={locked ? `${item.name} (included)` : `Add ${item.name} to cart`}
       />
       <span
         aria-hidden="true"
@@ -285,6 +293,7 @@ function ItemCheckbox({
           borderColor: 'var(--red)',
           background: checked ? 'var(--red)' : 'transparent',
         }}
+        title={locked ? 'Included with the Sprint' : undefined}
       >
         &#10003;
       </span>

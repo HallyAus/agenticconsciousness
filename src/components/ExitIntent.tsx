@@ -25,6 +25,7 @@ const INDUSTRIES = [
 const SESSION_SHOWN = 'ac_exit_shown';
 const SESSION_SUBMITTED = 'ac_exit_submitted';
 const MIN_PAGE_TIME_MS = 15_000;
+const MIN_SCROLL_DEPTH = 0.3; // 30% of page scrolled before exit-intent qualifies
 const MOBILE_INACTIVITY_MS = 60_000;
 
 const inputStyle: React.CSSProperties = {
@@ -65,6 +66,11 @@ export default function ExitIntent() {
     if (sessionStorage.getItem(SESSION_SUBMITTED)) return true;
     if (Date.now() - loadTimeRef.current < MIN_PAGE_TIME_MS) return true;
     if (isChatOpen()) return true;
+    // Require some engagement before treating an upward mouse move as exit
+    // intent. Stops the modal from firing on someone arriving and reaching
+    // straight for the address bar / a bookmark before they've read anything.
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if (docHeight > 0 && window.scrollY / docHeight < MIN_SCROLL_DEPTH) return true;
     return false;
   }, [isChatOpen, pathname]);
 
@@ -185,16 +191,7 @@ export default function ExitIntent() {
         <button
           onClick={close}
           aria-label="Close"
-          className="absolute top-4 right-4 flex items-center justify-center w-8 h-8 text-[0.8rem] transition-colors duration-200 cursor-pointer"
-          style={{ border: '1px solid var(--border-subtle)', background: 'transparent', color: 'var(--text-dim)' }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--red)';
-            (e.currentTarget as HTMLButtonElement).style.color = 'var(--red)';
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border-subtle)';
-            (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-dim)';
-          }}
+          className="exit-close absolute top-4 right-4 flex items-center justify-center w-8 h-8 text-[0.8rem] transition-colors duration-200 cursor-pointer bg-transparent border border-[color:var(--border-subtle)] text-[color:var(--text-dim)] hover:border-[color:var(--red)] hover:text-[color:var(--red)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[color:var(--red)] focus-visible:border-[color:var(--red)] focus-visible:text-[color:var(--red)]"
         >
           ✕
         </button>

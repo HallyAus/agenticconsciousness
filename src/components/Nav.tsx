@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { NAV_LINKS } from '@/lib/constants';
 import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -16,6 +18,14 @@ export default function Nav() {
     return () => document.removeEventListener('keydown', handler);
   }, [menuOpen]);
 
+  // Match a NAV_LINKS href against current pathname for aria-current.
+  // Hash-anchor links (/#services) only "active" when on the home page.
+  const isActive = (href: string): boolean => {
+    if (href.startsWith('/#')) return pathname === '/';
+    if (href === '/') return pathname === '/';
+    return pathname === href || pathname?.startsWith(href + '/') || false;
+  };
+
   return (
     <nav aria-label="Main navigation" className="fixed top-0 left-0 right-0 z-[1000] px-10 h-[60px] flex justify-between items-center bg-[var(--bg-nav)] backdrop-blur-[12px] border-b-2 border-ac-red max-md:px-5">
       <Link href="/" className="font-display text-[1.1rem] font-black text-text-primary tracking-snug no-underline">
@@ -24,23 +34,31 @@ export default function Nav() {
 
       {/* Desktop links */}
       <ul className="flex gap-10 list-none items-center max-md:hidden">
-        {NAV_LINKS.map((link) => (
-          <li key={link.href}>
-            <a
-              href={link.href}
-              className="text-text-dim no-underline text-[0.85rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary"
-            >
-              {link.label}
-            </a>
-          </li>
-        ))}
+        {NAV_LINKS.map((link) => {
+          const active = isActive(link.href);
+          return (
+            <li key={link.href}>
+              <a
+                href={link.href}
+                aria-current={active ? 'page' : undefined}
+                className={`no-underline text-[0.85rem] font-bold tracking-[2px] uppercase transition-colors duration-200 hover:text-text-primary border-b-2 pb-[2px] ${
+                  active
+                    ? 'text-text-primary border-ac-red'
+                    : 'text-text-dim border-transparent'
+                }`}
+              >
+                {link.label}
+              </a>
+            </li>
+          );
+        })}
       </ul>
 
       {/* Desktop CTA */}
       <div className="flex items-center gap-3 max-md:hidden">
         <ThemeToggle />
         <a
-          href="#contact"
+          href="/#contact"
           className="inline-block bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-5 no-underline transition-all duration-200 hover:bg-white hover:text-[#0a0a0a]"
         >
           Talk to us
@@ -90,7 +108,7 @@ export default function Nav() {
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <a
-              href="#contact"
+              href="/#contact"
               className="inline-block bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-6 no-underline transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] text-center flex-1"
               onClick={() => setMenuOpen(false)}
             >

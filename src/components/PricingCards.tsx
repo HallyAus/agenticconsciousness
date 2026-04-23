@@ -232,6 +232,9 @@ export default function PricingCards() {
               >
                 Pay {offer.price} &rarr;
               </CheckoutButton>
+              <p className="font-mono text-[0.62rem] tracking-[1px] uppercase text-text-dim mt-2 leading-[1.4]">
+                Stripe checkout &middot; 14-day refund &middot; tax invoice emailed
+              </p>
             </div>
           ))}
         </div>

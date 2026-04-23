@@ -5,15 +5,18 @@ import { useState, FormEvent } from 'react';
 export default function EmailCapture() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    if (submitting) return;
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError('Enter a valid email address.');
       return;
     }
 
+    setSubmitting(true);
     try {
       await fetch('/api/subscribe', {
         method: 'POST',
@@ -23,6 +26,8 @@ export default function EmailCapture() {
       setSubmitted(true);
     } catch {
       setError('Could not subscribe. Check your connection and try again.');
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -50,13 +55,16 @@ export default function EmailCapture() {
           onChange={(e) => { setEmail(e.target.value); setError(''); }}
           placeholder="you@business.com.au"
           aria-label="Email address"
-          className="flex-1 bg-ac-card border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim"
+          disabled={submitting}
+          className="flex-1 bg-ac-card border border-border-subtle py-3 px-4 text-text-primary font-display text-[0.85rem] outline-none transition-colors duration-200 focus:border-ac-red placeholder:text-text-dim disabled:opacity-60"
         />
         <button
           type="submit"
-          className="bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase px-6 py-3 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] cursor-pointer border-none"
+          disabled={submitting}
+          aria-busy={submitting}
+          className="bg-ac-red text-white font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase px-6 py-3 transition-all duration-200 hover:bg-white hover:text-[#0a0a0a] cursor-pointer border-none disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          SUBSCRIBE →
+          {submitting ? 'SUBSCRIBING...' : 'SUBSCRIBE →'}
         </button>
       </form>
       {error && <p className="text-ac-red text-[0.8rem] max-sm:text-xs font-mono mt-2">{error}</p>}

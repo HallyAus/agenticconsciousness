@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, FormEvent } from 'react';
+import { usePathname } from 'next/navigation';
 import { CONTACT_EMAIL } from '@/lib/constants';
 
 interface Message {
@@ -16,6 +17,7 @@ function getInitialMessage(storedName: string | null): string {
 }
 
 export default function Chatbot() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [visitorName, setVisitorName] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>(() => {
@@ -25,6 +27,11 @@ export default function Chatbot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  // /book has its own sticky cart at the bottom; lift the FAB clear of it.
+  const liftFab = pathname === '/book';
 
   useEffect(() => {
     const storedName = localStorage.getItem('ac-visitor-name');
@@ -41,14 +48,26 @@ export default function Chatbot() {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) setIsOpen(false);
+      if (e.key === 'Escape' && isOpen) {
+        setIsOpen(false);
+        toggleRef.current?.focus();
+      }
     };
     document.addEventListener('keydown', handler);
     return () => document.removeEventListener('keydown', handler);
   }, [isOpen]);
 
+  // Focus input when dialog opens; restore focus to toggle on close.
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (isOpen) {
+      inputRef.current?.focus();
+    }
+  }, [isOpen]);
+
+  // Scroll new messages into view, respecting reduced-motion preference.
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    messagesEndRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
   }, [messages, isLoading]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -93,14 +112,18 @@ export default function Chatbot() {
       setMessages((prev) => {
         const updated = [...prev, botReply];
 
-        // After first exchange, try to extract name if we don't have one
+        // After first exchange, only extract a name if the user used an
+        // explicit "I'm X" / "my name is X" / "call me X" prefix. Anything
+        // else (greetings, questions, generic statements) is left alone —
+        // the previous regex was happy to store "Hello there" as the name.
         if (!currentName && updated.length === 3) {
           const firstUserMsg = updated[1].content.trim();
-          if (firstUserMsg.length < 30 && !firstUserMsg.includes('?')) {
-            const name = firstUserMsg
-              .replace(/^(i'm|my name is|it's|call me|hey i'm|hi i'm)\s*/i, '')
-              .trim();
-            if (name.length > 0 && name.length < 25 && /^[a-zA-Z\s'-]+$/.test(name)) {
+          const prefixMatch = firstUserMsg.match(
+            /^(?:i'?m|my name is|it'?s|call me|hey,?\s*i'?m|hi,?\s*i'?m)\s+([a-zA-Z][a-zA-Z\s'-]{0,23})\b/i,
+          );
+          if (prefixMatch) {
+            const name = prefixMatch[1].trim();
+            if (name.length > 0) {
               setVisitorName(name);
               localStorage.setItem('ac-visitor-name', name);
             }
@@ -122,15 +145,42 @@ export default function Chatbot() {
     }
   };
 
+  // Tab/Shift-Tab focus trap inside the open dialog. Only two focusable
+  // elements (input + send), so a small loop is enough.
+  const handleDialogKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key !== 'Tab') return;
+    const focusables = Array.from(
+      e.currentTarget.querySelectorAll<HTMLElement>(
+        'input, button:not([disabled])',
+      ),
+    );
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey && active === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
   return (
     <>
       <button
-        className={`fixed bottom-6 right-6 z-[9999] w-14 h-14 border-none text-[1.2rem] font-black cursor-pointer transition-all duration-200 flex items-center justify-center focus:ring-2 focus:ring-ac-red focus:outline-none ${
+        ref={toggleRef}
+        className={`fixed ${liftFab ? 'bottom-28 max-sm:bottom-32' : 'bottom-6'} right-6 z-[9999] w-14 h-14 border-none text-[1.2rem] font-black cursor-pointer transition-all duration-200 flex items-center justify-center focus:ring-2 focus:ring-ac-red focus:outline-none ${
           isOpen
             ? 'bg-white text-ac-black'
             : 'bg-ac-red text-white hover:bg-white hover:text-[#0a0a0a]'
         }`}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          const next = !isOpen;
+          setIsOpen(next);
+          if (!next) toggleRef.current?.focus();
+        }}
         aria-label={isOpen ? 'Close chat' : 'Open AI chat assistant'}
         aria-expanded={isOpen}
       >
@@ -138,7 +188,13 @@ export default function Chatbot() {
       </button>
 
       {isOpen && (
-        <div role="dialog" aria-label="Chat with AI assistant" className="fixed bottom-[5.5rem] right-6 z-[9999] w-[400px] max-w-[calc(100vw-1.5rem)] h-[500px] max-h-[calc(100vh-8rem)] bg-ac-black border-2 border-ac-red flex flex-col overflow-hidden animate-chat-in max-sm:right-0 max-sm:bottom-[4.5rem] max-sm:w-full max-sm:max-w-full max-sm:h-[calc(100vh-6rem)] max-sm:border-l-0 max-sm:border-r-0">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Chat with AI assistant"
+          onKeyDown={handleDialogKeyDown}
+          className={`fixed ${liftFab ? 'bottom-[8.5rem] max-sm:bottom-[8.5rem]' : 'bottom-[5.5rem] max-sm:bottom-[4.5rem]'} right-6 z-[9999] w-[400px] max-w-[calc(100vw-1.5rem)] h-[500px] max-h-[calc(100vh-8rem)] bg-ac-black border-2 border-ac-red flex flex-col overflow-hidden animate-chat-in max-sm:right-0 max-sm:w-full max-sm:max-w-full max-sm:h-[calc(100vh-6rem)] max-sm:border-l-0 max-sm:border-r-0`}>
+
           <div className="py-3 px-4 border-b-2 border-ac-red flex items-center gap-3 bg-ac-card">
             <div className="w-[7px] h-[7px] bg-[var(--status-green)] animate-blink" />
             <div>
@@ -181,6 +237,7 @@ export default function Chatbot() {
             className="p-[0.6rem] border-t-2 border-ac-red flex bg-ac-card"
           >
             <input
+              ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}

@@ -25,8 +25,14 @@ export default function WebsiteAuditor() {
     setError(null);
 
     const normalised = normalise(url);
-    if (!normalised || !/^https?:\/\/[^\s.]+\.[^\s]+/.test(normalised)) {
-      setError('Enter a valid website URL.');
+    // Require at least one dot followed by a 2+ char letter TLD. Rejects
+    // localhost, bare IPs (no TLD letters), and "https://a.b" style typos.
+    if (
+      !normalised ||
+      !/^https?:\/\/[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*\.[a-z]{2,}(?:[/:?#].*)?$/i.test(normalised) ||
+      /^https?:\/\/(?:localhost|127\.|0\.0\.0\.0|\[?::1\]?)/i.test(normalised)
+    ) {
+      setError('Enter a valid public website URL (e.g. yourdomain.com.au).');
       return;
     }
 
@@ -200,23 +206,34 @@ export default function WebsiteAuditor() {
           {/* Step 3: Done */}
           {step === 'done' && (
             <div
-              className="p-6 max-sm:p-5"
-              style={{ border: '2px solid var(--red)', background: 'var(--bg-page)' }}
+              role="status"
+              aria-live="polite"
+              className="p-6 max-sm:p-5 flex gap-5 max-sm:flex-col max-sm:gap-4"
+              style={{ background: 'var(--red)', color: '#fff' }}
             >
-              <div className="font-mono text-[0.72rem] tracking-[2px] uppercase mb-3" style={{ color: 'var(--red-text)' }}>
-                On it &middot; Check your inbox
+              <div
+                aria-hidden="true"
+                className="flex items-center justify-center shrink-0 w-12 h-12 font-black text-[1.6rem]"
+                style={{ background: '#fff', color: 'var(--red)' }}
+              >
+                ✓
               </div>
-              <p className="text-[1rem] text-text-primary font-light leading-[1.7] mb-2">
-                Your audit for <strong style={{ color: 'var(--red-text)' }}>{normalisedUrl}</strong> is
-                running now. It&rsquo;ll land at <strong>{email}</strong> within a couple of minutes.
-              </p>
-              <p className="text-[0.88rem] text-text-dim font-light leading-[1.7]">
-                If it doesn&rsquo;t arrive inside 10 minutes, check spam or email{' '}
-                <a href="mailto:ai@agenticconsciousness.com.au" className="no-underline hover:underline" style={{ color: 'var(--red-text)' }}>
-                  ai@agenticconsciousness.com.au
-                </a>
-                .
-              </p>
+              <div>
+                <div className="font-mono text-[0.72rem] tracking-[2px] uppercase mb-3 opacity-90">
+                  On it &middot; Check your inbox
+                </div>
+                <p className="text-[1rem] font-light leading-[1.7] mb-2">
+                  Your audit for <strong>{normalisedUrl}</strong> is running now. It&rsquo;ll land at{' '}
+                  <strong>{email}</strong> within a couple of minutes.
+                </p>
+                <p className="text-[0.88rem] font-light leading-[1.7] opacity-90">
+                  If it doesn&rsquo;t arrive inside 10 minutes, check spam or email{' '}
+                  <a href="mailto:ai@agenticconsciousness.com.au" className="underline text-white hover:no-underline">
+                    ai@agenticconsciousness.com.au
+                  </a>
+                  .
+                </p>
+              </div>
             </div>
           )}
 

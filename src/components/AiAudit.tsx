@@ -56,8 +56,9 @@ export default function AiAudit() {
   const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const charCount = painPoint.length;
-  const isOverLimit = charCount > 450;
-  const canSubmit = industry && businessSize && painPoint.trim() && !loading && cooldown === 0;
+  const isApproachingLimit = charCount > 450;
+  const isOverLimit = charCount > 500;
+  const canSubmit = industry && businessSize && painPoint.trim() && !isOverLimit && !loading && cooldown === 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -203,22 +204,29 @@ export default function AiAudit() {
 
             {/* Pain point */}
             <div className="flex flex-col gap-2">
-              <label className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
+              <label htmlFor="audit-pain" className="font-mono text-[0.8rem] max-sm:text-xs tracking-[2px] uppercase text-text-dim">
                 Biggest Pain Point
               </label>
               <div className="relative">
                 <textarea
+                  id="audit-pain"
                   value={painPoint}
-                  onChange={(e) => setPainPoint(e.target.value.slice(0, 500))}
+                  onChange={(e) => setPainPoint(e.target.value)}
                   placeholder="e.g. Quoting takes our estimators 3+ hours per job and we're losing work to faster competitors..."
                   rows={5}
-                  className="w-full bg-ac-card border border-border-subtle focus:border-ac-red outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] max-sm:min-h-[100px] transition-colors duration-200 placeholder:text-text-dim"
+                  className={`w-full bg-ac-card border outline-none text-text-primary text-[0.85rem] px-4 py-3 resize-y min-h-[120px] max-sm:min-h-[100px] transition-colors duration-200 placeholder:text-text-dim ${
+                    isOverLimit ? 'border-ac-red' : 'border-border-subtle focus:border-ac-red'
+                  }`}
+                  aria-invalid={isOverLimit}
+                  aria-describedby="audit-pain-counter"
                   required
                 />
                 <div
-                  className={`text-right font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] mt-1 ${isOverLimit ? 'text-ac-red' : 'text-text-dim'}`}
+                  id="audit-pain-counter"
+                  aria-live="polite"
+                  className={`text-right font-mono text-[0.8rem] max-sm:text-xs tracking-[1px] mt-1 ${isApproachingLimit || isOverLimit ? 'text-ac-red' : 'text-text-dim'}`}
                 >
-                  {charCount} / 500
+                  {isOverLimit ? `Trim ${charCount - 500} characters to send` : `${charCount} / 500`}
                 </div>
               </div>
             </div>
@@ -232,7 +240,7 @@ export default function AiAudit() {
               {loading
                 ? 'Analysing your business...'
                 : cooldown > 0
-                  ? `Try again in ${cooldown}s...`
+                  ? `Try again in ${cooldown}s`
                   : 'GET MY AI SNAPSHOT →'}
             </button>
 
@@ -328,7 +336,7 @@ export default function AiAudit() {
                     {result.nextStep}
                   </p>
                   <a
-                    href="#contact"
+                    href="/#contact"
                     className="inline-block bg-ac-red text-white font-black tracking-[2px] uppercase text-[0.8rem] max-sm:text-xs px-6 py-3 hover:opacity-90 transition-opacity duration-200"
                   >
                     Book Free Consultation

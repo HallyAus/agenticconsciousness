@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 
 const STATUS_ITEMS = [
-  { label: 'AI Online', delay: 300 },
-  { label: '8 Tools Active', delay: 700 },
-  { label: 'Models Loaded', delay: 1100 },
+  { label: 'AI Online', delay: 150 },
+  { label: '8 Tools Active', delay: 350 },
+  { label: 'Models Loaded', delay: 550 },
 ];
 
 const GREETINGS = [
@@ -50,13 +50,13 @@ export default function AiGreeting() {
     // Scan line after all statuses
     timers.push(setTimeout(() => {
       setScanComplete(true);
-    }, 1500));
+    }, 750));
 
     // Pick greeting and start typing
     timers.push(setTimeout(() => {
       const g = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
       setGreeting(g);
-    }, 1800));
+    }, 900));
 
     return () => timers.forEach(clearTimeout);
   }, []);
@@ -89,7 +89,7 @@ export default function AiGreeting() {
   }, [greeting]);
 
   return (
-    <div className="min-h-[4rem]">
+    <div className="min-h-[6rem]">
       {/* Status indicators */}
       <div className="flex gap-3 justify-center mb-3">
         {STATUS_ITEMS.map((item, i) => (

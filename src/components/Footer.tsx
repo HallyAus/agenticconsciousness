@@ -54,12 +54,13 @@ export default function Footer() {
             style={{ color: 'var(--red-text)' }}
           />
         </div>
-        <EmailLink
+        <Link
+          href="/book"
           className="inline-block font-display text-[0.8rem] max-sm:text-xs font-black tracking-[2px] uppercase py-3 px-5 no-underline transition-all duration-200 text-white"
           style={{ background: 'var(--red)' }}
         >
-          Book free intro →
-        </EmailLink>
+          Book a sprint →
+        </Link>
       </div>
 
       {/* Tier 1.5 — Brand name */}

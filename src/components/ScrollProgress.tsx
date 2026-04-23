@@ -6,9 +6,9 @@ export default function ScrollProgress() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
-
+    // The bar IS positional information, not decoration. Render it for
+    // reduced-motion users too — they just don't get the visual progress
+    // animation, but the actual scroll position still updates.
     let ticking = false;
     function onScroll() {
       if (!ticking) {
@@ -24,6 +24,7 @@ export default function ScrollProgress() {
       }
     }
 
+    onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
