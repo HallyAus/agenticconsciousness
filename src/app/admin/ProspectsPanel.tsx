@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useImperativeHandle, useState, forwardRef } from 'react';
+import { useCallback, useEffect, useImperativeHandle, useMemo, useState, forwardRef } from 'react';
 
 interface Prospect {
   id: string;
@@ -32,6 +32,8 @@ interface Prospect {
   updated_at: string;
 }
 
+type Tab = 'now' | 'sent' | 'not_now';
+
 const STATUS_COLOUR: Record<string, string> = {
   new: '#666',
   auditing: '#eab308',
@@ -47,9 +49,28 @@ const STATUS_COLOUR: Record<string, string> = {
   skipped: '#666',
 };
 
+const NOW_STATUSES = new Set(['new', 'auditing', 'audited', 'drafted', 'audit_failed', 'waf_blocked']);
+const SENT_STATUSES = new Set(['sent', 'replied', 'purchased']);
+const NOT_NOW_STATUSES = new Set(['skipped', 'unsubscribed', 'bounced']);
+
+function tabFor(status: string): Tab {
+  if (SENT_STATUSES.has(status)) return 'sent';
+  if (NOT_NOW_STATUSES.has(status)) return 'not_now';
+  return 'now';
+}
+
 function fmtDate(iso: string | null): string {
   if (!iso) return '—';
   return new Date(iso).toLocaleString('en-AU', { dateStyle: 'short', timeStyle: 'short' });
+}
+
+function shortUrl(u: string): string {
+  try {
+    const url = new URL(u);
+    return url.hostname.replace(/^www\./, '') + url.pathname.replace(/\/$/, '');
+  } catch {
+    return u;
+  }
 }
 
 export interface ProspectsPanelHandle {
@@ -58,6 +79,7 @@ export interface ProspectsPanelHandle {
 
 const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(_props, ref) {
   const [prospects, setProspects] = useState<Prospect[]>([]);
+  const [tab, setTab] = useState<Tab>('now');
   const [url, setUrl] = useState('');
   const [businessName, setBusinessName] = useState('');
   const [notes, setNotes] = useState('');
@@ -82,6 +104,17 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
     const id = setInterval(refresh, 4000);
     return () => clearInterval(id);
   }, [refresh]);
+
+  const counts = useMemo(() => {
+    const c: Record<Tab, number> = { now: 0, sent: 0, not_now: 0 };
+    for (const p of prospects) c[tabFor(p.status)]++;
+    return c;
+  }, [prospects]);
+
+  const visible = useMemo(
+    () => prospects.filter((p) => tabFor(p.status) === tab),
+    [prospects, tab],
+  );
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -125,8 +158,26 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this prospect?')) return;
+    if (!confirm('Delete this prospect? This is permanent — use Hide if you might come back.')) return;
     await fetch(`/api/admin/prospects/${id}`, { method: 'DELETE' });
+    refresh();
+  }
+
+  async function handleHide(id: string) {
+    await fetch(`/api/admin/prospects/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'skipped' }),
+    });
+    refresh();
+  }
+
+  async function handleUnhide(id: string) {
+    await fetch(`/api/admin/prospects/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'audited' }),
+    });
     refresh();
   }
 
@@ -206,7 +257,7 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
   }
 
   async function handleMarkSent(id: string) {
-    if (!confirm('Mark this as sent? Do this after you\'ve hit Send in Outlook.')) return;
+    if (!confirm('Mark this as sent? Do this after you have hit Send in Outlook.')) return;
     const res = await fetch(`/api/admin/prospects/${id}/mark-sent`, { method: 'POST' });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
@@ -317,265 +368,436 @@ const ProspectsPanel = forwardRef<ProspectsPanelHandle>(function ProspectsPanel(
         </form>
       </section>
 
-      <section>
-        <div style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', color: '#ff3d00', marginBottom: 12 }}>
-          Prospects ({prospects.length})
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: 2, marginBottom: 16, borderBottom: '2px solid #ff3d00' }}>
+        <TabButton active={tab === 'now'} onClick={() => setTab('now')} label="Now" count={counts.now} />
+        <TabButton active={tab === 'sent'} onClick={() => setTab('sent')} label="Sent" count={counts.sent} />
+        <TabButton active={tab === 'not_now'} onClick={() => setTab('not_now')} label="Not now" count={counts.not_now} />
+      </div>
+
+      {visible.length === 0 ? (
+        <div style={{ color: '#666', fontSize: 14, padding: 40, textAlign: 'center', border: '2px dashed #333' }}>
+          {tab === 'now' && 'Nothing needs action. Add prospects above or check Sent / Not now.'}
+          {tab === 'sent' && 'No emails sent yet. Draft + Send from the Now tab.'}
+          {tab === 'not_now' && 'No hidden prospects. Use Hide on a card to park it here.'}
         </div>
-        {prospects.length === 0 ? (
-          <div style={{ color: '#666', fontSize: 14, padding: 40, textAlign: 'center', border: '2px dashed #333' }}>
-            No prospects yet. Search Google Places above, or paste a URL.
-          </div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-              <thead>
-                <tr style={{ borderBottom: '2px solid #ff3d00' }}>
-                  <Th>URL</Th>
-                  <Th>Status</Th>
-                  <Th>Score</Th>
-                  <Th>Email</Th>
-                  <Th>Phone</Th>
-                  <Th>Opens</Th>
-                  <Th>Clicks</Th>
-                  <Th>Last touch</Th>
-                  <Th>Updated</Th>
-                  <Th></Th>
-                </tr>
-              </thead>
-              <tbody>
-                {prospects.map((p) => (
-                  <tr key={p.id} style={{ borderBottom: '1px solid #222' }}>
-                    <Td>
-                      <a href={p.url} target="_blank" rel="noopener noreferrer" style={{ color: '#fafafa', textDecoration: 'none' }}>
-                        {shortUrl(p.url)}
-                      </a>
-                      {p.business_name && (
-                        <div style={{ color: '#999', fontSize: 11 }}>{p.business_name}</div>
-                      )}
-                      {p.postcode && (
-                        <div style={{ color: '#666', fontSize: 10, fontFamily: 'var(--font-mono), monospace' }}>
-                          {p.postcode}{p.discovered_via === 'google_places' ? ' · maps' : ''}
-                        </div>
-                      )}
-                    </Td>
-                    <Td>
-                      <span style={{
-                        fontFamily: 'var(--font-mono), monospace',
-                        fontSize: 10,
-                        letterSpacing: 1.5,
-                        textTransform: 'uppercase',
-                        color: STATUS_COLOUR[p.status] ?? '#fafafa',
-                      }}>
-                        {p.status}
-                      </span>
-                    </Td>
-                    <Td>{p.audit_score !== null ? `${p.audit_score}/100` : '—'}</Td>
-                    <Td>
-                      {p.email ? (
-                        <div>
-                          <div>
-                            {p.email}{' '}
-                            <button
-                              onClick={() => handleEditEmail(p.id, p.email)}
-                              style={{ background: 'transparent', border: 'none', color: '#666', cursor: 'pointer', fontSize: 10 }}
-                              title="Edit email"
-                            >
-                              ✎
-                            </button>
-                          </div>
-                          <div style={{ color: '#666', fontSize: 10 }}>{p.email_confidence}</div>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => handleEditEmail(p.id, null)}
-                          style={{ background: 'transparent', border: '1px dashed #444', color: '#999', padding: '2px 6px', fontSize: 10, fontFamily: 'var(--font-mono), monospace', cursor: 'pointer' }}
-                        >
-                          + add
-                        </button>
-                      )}
-                    </Td>
-                    <Td>{p.phone ?? '—'}</Td>
-                    <Td>
-                      <a
-                        href={`/admin/prospects/${p.id}/activity`}
-                        style={{
-                          color: p.opens_count > 0 ? '#22c55e' : '#666',
-                          fontWeight: p.opens_count > 0 ? 700 : 400,
-                          textDecoration: 'none',
-                        }}
-                        title={p.opens_count > 0 ? `Last: ${fmtDate(p.last_opened_at)} (click to see activity)` : 'See activity'}
-                      >
-                        {p.opens_count}
-                      </a>
-                    </Td>
-                    <Td>
-                      <a
-                        href={`/admin/prospects/${p.id}/activity`}
-                        style={{
-                          color: p.clicks_count > 0 ? '#3b82f6' : '#666',
-                          fontWeight: p.clicks_count > 0 ? 700 : 400,
-                          textDecoration: 'none',
-                        }}
-                        title={p.clicks_count > 0 ? `Last: ${fmtDate(p.last_clicked_at)} (click to see activity)` : 'See activity'}
-                      >
-                        {p.clicks_count}
-                      </a>
-                    </Td>
-                    <Td>{fmtDate(p.last_outbound_at)}</Td>
-                    <Td>{fmtDate(p.updated_at)}</Td>
-                    <Td>
-                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
-                        {p.status === 'audited' && p.email && (
-                          <button
-                            onClick={() => handleCreateDraft(p.id, p.email!)}
-                            disabled={drafting === p.id}
-                            style={actionBtn('#ff3d00')}
-                            title="Create draft in Outlook"
-                          >
-                            {drafting === p.id ? '…' : 'Draft'}
-                          </button>
-                        )}
-                        {p.audit_score !== null && (
-                          <button
-                            onClick={() => handleTestDraft(p.id)}
-                            disabled={drafting === p.id}
-                            style={actionBtn('#8b5cf6')}
-                            title="Send a test draft to your own email"
-                          >
-                            Test
-                          </button>
-                        )}
-                        {p.status === 'drafted' && p.draft_web_link && (
-                          <>
-                            <a
-                              href={p.draft_web_link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ ...actionBtn('#3b82f6'), textDecoration: 'none', display: 'inline-block' }}
-                              title="Open draft in Outlook on the web"
-                            >
-                              Open
-                            </a>
-                            <button
-                              onClick={() => handleMarkSent(p.id)}
-                              style={actionBtn('#22c55e')}
-                              title="Mark as sent after you've hit Send in Outlook"
-                            >
-                              ✓ Sent
-                            </button>
-                            <button
-                              onClick={() => handleCreateDraft(p.id, p.email!)}
-                              disabled={drafting === p.id}
-                              style={{ ...actionBtn('#666'), fontSize: 10 }}
-                              title="Re-create draft (e.g. after edits)"
-                            >
-                              Redraft
-                            </button>
-                          </>
-                        )}
-                        {p.audit_score !== null && (
-                          <a
-                            href={`/api/admin/prospects/${p.id}/pdf`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ ...actionBtn('#555'), textDecoration: 'none', display: 'inline-block' }}
-                          >
-                            PDF
-                          </a>
-                        )}
-                        {p.mockup_token && (
-                          <a
-                            href={`/preview/${p.mockup_token}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ ...actionBtn('#555'), textDecoration: 'none', display: 'inline-block' }}
-                            title="Open the generated mockup in a new tab"
-                          >
-                            Mockup
-                          </a>
-                        )}
-                        {p.mockup_token && (
-                          <button
-                            onClick={() => handleMockupLock(p.id, p.mockup_locked)}
-                            style={{ ...actionBtn(p.mockup_locked ? '#22c55e' : '#666'), fontSize: 10 }}
-                            title={p.mockup_locked ? 'Locked — will not regenerate on reaudit. Click to unlock.' : 'Lock this mockup so reaudit does not overwrite it.'}
-                          >
-                            {p.mockup_locked ? 'Locked' : 'Lock'}
-                          </button>
-                        )}
-                        {p.has_previous_mockup && (
-                          <button
-                            onClick={() => handleMockupRestore(p.id)}
-                            style={{ ...actionBtn('#b45309'), fontSize: 10 }}
-                            title="Swap the current mockup with the previously saved one"
-                          >
-                            Undo mockup
-                          </button>
-                        )}
-                        {p.status === 'audited' && p.email && (
-                          <>
-                            <button
-                              onClick={() => handleEditSubject(p.id, p.email!)}
-                              disabled={drafting === p.id}
-                              style={{ ...actionBtn('#666'), fontSize: 10 }}
-                              title="Custom subject line"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleSchedule(p.id)}
-                              style={{ ...actionBtn('#eab308'), fontSize: 10 }}
-                              title="Schedule draft for later"
-                            >
-                              Schedule
-                            </button>
-                          </>
-                        )}
-                        {(p.status === 'audited' || p.status === 'audit_failed' || p.status === 'waf_blocked' || p.status === 'drafted') && (
-                          <button
-                            onClick={() => handleReaudit(p.id)}
-                            style={{ ...actionBtn('#666'), fontSize: 10 }}
-                            title="Re-run the audit"
-                          >
-                            Reaudit
-                          </button>
-                        )}
-                        <button
-                          onClick={() => handleDelete(p.id)}
-                          style={{
-                            background: 'transparent',
-                            color: '#666',
-                            border: '1px solid #333',
-                            padding: '4px 8px',
-                            fontSize: 10,
-                            fontFamily: 'var(--font-mono), monospace',
-                            letterSpacing: 1,
-                            textTransform: 'uppercase',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          Del
-                        </button>
-                      </div>
-                    </Td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
+      ) : (
+        <div style={{ display: 'grid', gap: 12 }}>
+          {visible.map((p) => (
+            <ProspectCard
+              key={p.id}
+              p={p}
+              tab={tab}
+              drafting={drafting === p.id}
+              onCreateDraft={() => p.email && handleCreateDraft(p.id, p.email)}
+              onTestDraft={() => handleTestDraft(p.id)}
+              onMarkSent={() => handleMarkSent(p.id)}
+              onEditSubject={() => p.email && handleEditSubject(p.id, p.email)}
+              onSchedule={() => handleSchedule(p.id)}
+              onReaudit={() => handleReaudit(p.id)}
+              onHide={() => handleHide(p.id)}
+              onUnhide={() => handleUnhide(p.id)}
+              onDelete={() => handleDelete(p.id)}
+              onEditEmail={() => handleEditEmail(p.id, p.email)}
+              onMockupLock={() => handleMockupLock(p.id, p.mockup_locked)}
+              onMockupRestore={() => handleMockupRestore(p.id)}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 });
 
-function shortUrl(u: string): string {
-  try {
-    const url = new URL(u);
-    return url.hostname.replace(/^www\./, '') + url.pathname.replace(/\/$/, '');
-  } catch {
-    return u;
-  }
+function TabButton({
+  active,
+  onClick,
+  label,
+  count,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  count: number;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        background: active ? '#ff3d00' : 'transparent',
+        color: active ? '#fff' : '#999',
+        border: 'none',
+        padding: '10px 18px',
+        fontFamily: 'var(--font-mono), monospace',
+        fontSize: 11,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        fontWeight: 700,
+        cursor: 'pointer',
+        borderTop: active ? '2px solid #ff3d00' : '2px solid transparent',
+        borderLeft: active ? '2px solid #ff3d00' : '2px solid transparent',
+        borderRight: active ? '2px solid #ff3d00' : '2px solid transparent',
+      }}
+      aria-pressed={active}
+    >
+      {label} <span style={{ opacity: 0.7, marginLeft: 6 }}>({count})</span>
+    </button>
+  );
+}
+
+function ProspectCard({
+  p,
+  tab,
+  drafting,
+  onCreateDraft,
+  onTestDraft,
+  onMarkSent,
+  onEditSubject,
+  onSchedule,
+  onReaudit,
+  onHide,
+  onUnhide,
+  onDelete,
+  onEditEmail,
+  onMockupLock,
+  onMockupRestore,
+}: {
+  p: Prospect;
+  tab: Tab;
+  drafting: boolean;
+  onCreateDraft: () => void;
+  onTestDraft: () => void;
+  onMarkSent: () => void;
+  onEditSubject: () => void;
+  onSchedule: () => void;
+  onReaudit: () => void;
+  onHide: () => void;
+  onUnhide: () => void;
+  onDelete: () => void;
+  onEditEmail: () => void;
+  onMockupLock: () => void;
+  onMockupRestore: () => void;
+}) {
+  return (
+    <article
+      style={{
+        background: '#111',
+        border: '1px solid #333',
+        borderLeft: `4px solid ${STATUS_COLOUR[p.status] ?? '#666'}`,
+        padding: 16,
+      }}
+    >
+      {/* Row 1: business + status + score */}
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, marginBottom: 12, flexWrap: 'wrap' }}>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <a
+            href={p.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#fafafa', textDecoration: 'none', fontWeight: 700, fontSize: 15, letterSpacing: '-0.2px' }}
+          >
+            {shortUrl(p.url)}
+          </a>
+          <div style={{ color: '#999', fontSize: 12, marginTop: 2 }}>
+            {p.business_name ?? '—'}
+            {p.postcode && (
+              <span style={{ color: '#555', fontFamily: 'var(--font-mono), monospace', marginLeft: 8 }}>
+                {p.postcode}{p.discovered_via === 'google_places' ? ' · maps' : ''}
+              </span>
+            )}
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+          {p.audit_score !== null && (
+            <span style={{ fontFamily: 'var(--font-mono), monospace', fontSize: 14, color: '#fafafa', fontWeight: 700 }}>
+              {p.audit_score}/100
+            </span>
+          )}
+          <span
+            style={{
+              fontFamily: 'var(--font-mono), monospace',
+              fontSize: 10,
+              letterSpacing: 1.5,
+              textTransform: 'uppercase',
+              color: '#fff',
+              background: STATUS_COLOUR[p.status] ?? '#666',
+              padding: '3px 8px',
+            }}
+          >
+            {p.status}
+          </span>
+        </div>
+      </header>
+
+      {/* Row 2: contact info inline */}
+      <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', fontSize: 12, color: '#999', marginBottom: 12 }}>
+        <span>
+          <span style={{ color: '#555', marginRight: 6 }}>✉</span>
+          {p.email ? (
+            <>
+              <a href={`mailto:${p.email}`} style={{ color: '#fafafa', textDecoration: 'none' }}>{p.email}</a>
+              <button
+                onClick={onEditEmail}
+                style={{ background: 'transparent', border: 'none', color: '#666', cursor: 'pointer', fontSize: 11, marginLeft: 4 }}
+                title="Edit email"
+              >
+                ✎
+              </button>
+              {p.email_confidence && (
+                <span style={{ color: '#555', fontSize: 10, marginLeft: 4 }}>{p.email_confidence}</span>
+              )}
+            </>
+          ) : (
+            <button
+              onClick={onEditEmail}
+              style={{ background: 'transparent', border: '1px dashed #444', color: '#999', padding: '2px 6px', fontSize: 10, fontFamily: 'var(--font-mono), monospace', cursor: 'pointer' }}
+            >
+              + add email
+            </button>
+          )}
+        </span>
+        <span>
+          <span style={{ color: '#555', marginRight: 6 }}>☎</span>
+          {p.phone ?? '—'}
+        </span>
+        <a
+          href={`/admin/prospects/${p.id}/activity`}
+          style={{ color: p.opens_count > 0 ? '#22c55e' : '#666', textDecoration: 'none', fontWeight: p.opens_count > 0 ? 700 : 400 }}
+          title={p.opens_count > 0 ? `Last opened: ${fmtDate(p.last_opened_at)}` : 'Activity'}
+        >
+          Opens: {p.opens_count}
+        </a>
+        <a
+          href={`/admin/prospects/${p.id}/activity`}
+          style={{ color: p.clicks_count > 0 ? '#3b82f6' : '#666', textDecoration: 'none', fontWeight: p.clicks_count > 0 ? 700 : 400 }}
+          title={p.clicks_count > 0 ? `Last clicked: ${fmtDate(p.last_clicked_at)}` : 'Activity'}
+        >
+          Clicks: {p.clicks_count}
+        </a>
+        <span style={{ color: '#666' }}>
+          Last touch: {fmtDate(p.last_outbound_at)}
+        </span>
+      </div>
+
+      {/* Row 3: actions, grouped left-to-right by intent */}
+      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+        {/* PRIMARY actions per tab */}
+        {tab === 'now' && p.status === 'audited' && p.email && (
+          <PrimaryBtn onClick={onCreateDraft} disabled={drafting} colour="#ff3d00">
+            {drafting ? 'Drafting…' : 'Create draft →'}
+          </PrimaryBtn>
+        )}
+        {tab === 'now' && p.status === 'drafted' && p.draft_web_link && (
+          <>
+            <PrimaryBtn onClick={() => window.open(p.draft_web_link!, '_blank')} colour="#3b82f6">
+              Open in Outlook ↗
+            </PrimaryBtn>
+            <PrimaryBtn onClick={onMarkSent} colour="#22c55e">
+              ✓ Mark sent
+            </PrimaryBtn>
+          </>
+        )}
+        {tab === 'now' && p.status === 'drafted' && p.email && (
+          <SecondaryBtn onClick={onCreateDraft} disabled={drafting} title="Re-create draft">
+            Redraft
+          </SecondaryBtn>
+        )}
+
+        {/* SECONDARY actions */}
+        {p.audit_score !== null && (
+          <SecondaryBtn onClick={onTestDraft} disabled={drafting} title="Send test draft to your email">
+            Test draft
+          </SecondaryBtn>
+        )}
+        {p.audit_score !== null && (
+          <LinkBtn href={`/api/admin/prospects/${p.id}/pdf`} title="Open audit PDF">PDF</LinkBtn>
+        )}
+        {p.mockup_token && (
+          <LinkBtn href={`/preview/${p.mockup_token}`} title="Open mockup preview">Mockup</LinkBtn>
+        )}
+        {p.mockup_token && (
+          <SecondaryBtn
+            onClick={onMockupLock}
+            colour={p.mockup_locked ? '#22c55e' : undefined}
+            title={p.mockup_locked ? 'Locked — will not regenerate on reaudit' : 'Lock so reaudit does not overwrite'}
+          >
+            {p.mockup_locked ? '🔒 Locked' : 'Lock mockup'}
+          </SecondaryBtn>
+        )}
+        {p.has_previous_mockup && (
+          <SecondaryBtn onClick={onMockupRestore} colour="#b45309" title="Swap current mockup with previous">
+            Undo mockup
+          </SecondaryBtn>
+        )}
+        {tab === 'now' && p.status === 'audited' && p.email && (
+          <>
+            <SecondaryBtn onClick={onEditSubject} disabled={drafting} title="Custom subject line">
+              Edit subject
+            </SecondaryBtn>
+            <SecondaryBtn onClick={onSchedule} colour="#eab308" title="Schedule draft for later">
+              Schedule
+            </SecondaryBtn>
+          </>
+        )}
+        {(p.status === 'audited' || p.status === 'audit_failed' || p.status === 'waf_blocked' || p.status === 'drafted' || p.status === 'sent' || p.status === 'replied' || p.status === 'skipped') && (
+          <SecondaryBtn onClick={onReaudit} title="Re-run the audit">Reaudit</SecondaryBtn>
+        )}
+
+        {/* Spacer pushes destructive actions to the right */}
+        <div style={{ flex: 1, minWidth: 12 }} />
+
+        {/* HIDE / UNHIDE / DELETE on the right */}
+        {tab !== 'not_now' && tab !== 'sent' && (
+          <SecondaryBtn onClick={onHide} title="Park this prospect in Not now">
+            Hide
+          </SecondaryBtn>
+        )}
+        {tab === 'not_now' && (
+          <PrimaryBtn onClick={onUnhide} colour="#22c55e">
+            ↩ Bring back
+          </PrimaryBtn>
+        )}
+        <DangerBtn onClick={onDelete} title="Delete permanently">Delete</DangerBtn>
+      </div>
+    </article>
+  );
+}
+
+function PrimaryBtn({
+  children,
+  onClick,
+  disabled,
+  colour = '#ff3d00',
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  colour?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        background: colour,
+        color: '#fff',
+        border: 'none',
+        padding: '8px 14px',
+        fontSize: 12,
+        fontFamily: 'var(--font-mono), monospace',
+        letterSpacing: 1,
+        textTransform: 'uppercase',
+        fontWeight: 700,
+        cursor: disabled ? 'wait' : 'pointer',
+        opacity: disabled ? 0.5 : 1,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SecondaryBtn({
+  children,
+  onClick,
+  disabled,
+  colour,
+  title,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
+  colour?: string;
+  title?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      title={title}
+      style={{
+        background: 'transparent',
+        color: colour ?? '#ccc',
+        border: `1px solid ${colour ?? '#444'}`,
+        padding: '6px 10px',
+        fontSize: 11,
+        fontFamily: 'var(--font-mono), monospace',
+        letterSpacing: 1,
+        textTransform: 'uppercase',
+        cursor: disabled ? 'wait' : 'pointer',
+        opacity: disabled ? 0.5 : 1,
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function DangerBtn({
+  children,
+  onClick,
+  title,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  title?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      title={title}
+      style={{
+        background: 'transparent',
+        color: '#666',
+        border: '1px solid #333',
+        padding: '6px 10px',
+        fontSize: 11,
+        fontFamily: 'var(--font-mono), monospace',
+        letterSpacing: 1,
+        textTransform: 'uppercase',
+        cursor: 'pointer',
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function LinkBtn({
+  children,
+  href,
+  title,
+}: {
+  children: React.ReactNode;
+  href: string;
+  title?: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      title={title}
+      style={{
+        background: 'transparent',
+        color: '#ccc',
+        border: '1px solid #444',
+        padding: '6px 10px',
+        fontSize: 11,
+        fontFamily: 'var(--font-mono), monospace',
+        letterSpacing: 1,
+        textTransform: 'uppercase',
+        textDecoration: 'none',
+        display: 'inline-block',
+      }}
+    >
+      {children}
+    </a>
+  );
 }
 
 const fieldStyle: React.CSSProperties = {
@@ -587,41 +809,5 @@ const fieldStyle: React.CSSProperties = {
   fontSize: 14,
   outline: 'none',
 };
-
-function Th({ children }: { children?: React.ReactNode }) {
-  return (
-    <th style={{
-      textAlign: 'left',
-      padding: '10px 8px',
-      fontFamily: 'var(--font-mono), monospace',
-      fontSize: 10,
-      letterSpacing: 1.5,
-      textTransform: 'uppercase',
-      color: '#ff3d00',
-      fontWeight: 700,
-    }}>
-      {children}
-    </th>
-  );
-}
-
-function Td({ children }: { children?: React.ReactNode }) {
-  return <td style={{ padding: '10px 8px', verticalAlign: 'top' }}>{children}</td>;
-}
-
-function actionBtn(color: string): React.CSSProperties {
-  return {
-    background: color,
-    color: '#fff',
-    border: 'none',
-    padding: '5px 10px',
-    fontSize: 10,
-    fontFamily: 'var(--font-mono), monospace',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    cursor: 'pointer',
-    fontWeight: 700,
-  };
-}
 
 export default ProspectsPanel;

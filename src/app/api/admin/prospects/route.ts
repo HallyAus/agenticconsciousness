@@ -15,8 +15,13 @@ import { sql } from '@/lib/pg';
  * Clamped 0..100.
  */
 export async function GET(req: NextRequest) {
-  const sort = req.nextUrl.searchParams.get('sort') ?? 'priority';
+  // Default to chronological (newest first by created_at) so prospects keep
+  // a stable position in the list — the priority sort was reshuffling them
+  // every time score/status changed and Daniel was hunting for cards.
+  // Pass ?sort=priority or ?sort=updated to opt back into the older modes.
+  const sort = req.nextUrl.searchParams.get('sort') ?? 'created';
   const sortByUpdated = sort === 'updated';
+  const sortByCreated = sort === 'created' || (sort !== 'priority' && sort !== 'updated');
 
   // Neon's tagged-template sql doesn't support nested sql-fragment
   // interpolation for ORDER BY. Use a CASE inside ORDER BY with a param
@@ -60,7 +65,9 @@ export async function GET(req: NextRequest) {
       LIMIT 1
     ) s ON true
     ORDER BY
-      CASE WHEN ${sortByUpdated} THEN 0 ELSE
+      CASE WHEN ${sortByCreated} THEN p.created_at END DESC NULLS LAST,
+      CASE WHEN ${sortByUpdated} THEN p.updated_at END DESC NULLS LAST,
+      CASE WHEN ${!sortByCreated} AND ${!sortByUpdated} THEN
         GREATEST(0, LEAST(100,
           50
           + COALESCE(LEAST(40, (100 - p.audit_score) / 2), 0)
@@ -77,8 +84,8 @@ export async function GET(req: NextRequest) {
               ELSE 0
             END
         ))
-      END DESC,
-      p.updated_at DESC
+      END DESC NULLS LAST,
+      p.created_at DESC
     LIMIT 200
   ` as Array<Record<string, unknown>>;
   return NextResponse.json({ prospects: rows });

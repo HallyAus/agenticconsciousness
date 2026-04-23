@@ -87,7 +87,7 @@ function complianceFooter(ctx: OutreachContext): string {
         ${esc(ctx.sourceLine)}
       </p>
       <p style="color:#888;font-size:11px;line-height:1.6;margin:8px 0 0">
-        Not interested? <a href="${unsubUrl}" style="color:#888;text-decoration:underline">Unsubscribe here</a> and I won't email you again.
+        <a href="${unsubUrl}" style="color:#888;text-decoration:underline">Remove me</a> and I won't email you again.
       </p>
       <p style="color:#aaa;font-size:10px;line-height:1.6;margin:12px 0 0;letter-spacing:0.3px">
         Agentic Consciousness &middot; Ourimbah NSW 2258 &middot; daniel@agenticconsciousness.com.au
