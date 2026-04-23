@@ -721,15 +721,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     marginBottom: 10,
   },
-  // AFTER page mockup: taller since the source capture is 1440x1800
-  // (two scrolls of the mockup). objectFit contain so the full image
-  // fits without cropping.
+  // AFTER page mockup: source capture is 1440x1800 (two scrolls). Sized
+  // so the image, caption, and body text all fit on a single A4 page
+  // alongside the brand bar and footer. Wider would overflow body to
+  // a second page. objectFit contain → centered preview, no cropping.
   shotFullMockup: {
     width: '100%',
-    height: 640,
+    height: 520,
     objectFit: 'contain',
     backgroundColor: '#ffffff',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   // Mobile page: centered, narrower, tall.
   shotFullMobileWrap: {
@@ -1738,7 +1739,7 @@ function AuditDocument({
               leads, speed, or customer experience if you chose to add them.
             </Text>
             {renderedOpportunities.map((opp, i) => (
-              <View key={i} style={styles.opp}>
+              <View key={i} style={styles.opp} break={i > 0}>
                 <View style={styles.findingMetaRow}>
                   <Text style={[styles.findingNumber, { color: RED }]}>
                     {String(i + 1).padStart(2, '0')}

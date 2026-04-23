@@ -45,14 +45,54 @@ function topIssues(issues: OutreachIssue[], n: number): OutreachIssue[] {
   return [...issues].sort((a, b) => (sev[a.severity] ?? 9) - (sev[b.severity] ?? 9)).slice(0, n);
 }
 
+function signature(ctx: OutreachContext): string {
+  return `
+    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 6px">
+      Daniel
+    </p>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"
+           style="margin-top:14px;border-collapse:collapse;font-family:'Helvetica Neue',Arial,sans-serif">
+      <tr>
+        <td style="padding:4px 16px 4px 0;border-right:3px solid #ff3d00;vertical-align:top">
+          <div style="font-weight:700;font-size:14px;color:#0a0a0a;letter-spacing:-0.2px;line-height:1.3">
+            Daniel Hall
+          </div>
+          <div style="font-size:12px;color:#666;margin-top:3px;line-height:1.4">
+            Founder, Agentic Consciousness
+          </div>
+        </td>
+        <td style="padding:4px 0 4px 16px;vertical-align:top;font-size:12px;line-height:1.5">
+          <div>
+            <a href="${ctx.siteBaseUrl}"
+               style="color:#0a0a0a;text-decoration:none;font-weight:600">
+              agenticconsciousness.com.au
+            </a>
+          </div>
+          <div style="color:#666;margin-top:2px">
+            <a href="mailto:daniel@agenticconsciousness.com.au"
+               style="color:#666;text-decoration:none">
+              daniel@agenticconsciousness.com.au
+            </a>
+          </div>
+        </td>
+      </tr>
+    </table>`;
+}
+
 function complianceFooter(ctx: OutreachContext): string {
   const unsubUrl = `${ctx.siteBaseUrl}/unsubscribe/${ctx.unsubToken}`;
   return `
-    <p style="color:#888;font-size:11px;line-height:1.5;margin-top:28px;border-top:1px solid #eee;padding-top:12px">
-      ${esc(ctx.sourceLine)}<br>
-      If you'd rather not hear from me again, <a href="${unsubUrl}" style="color:#888;text-decoration:underline">unsubscribe here</a> and I won't email you again.<br>
-      Daniel &middot; Agentic Consciousness &middot; Ourimbah, NSW &middot; daniel@agenticconsciousness.com.au
-    </p>`;
+    <div style="margin-top:28px;padding-top:14px;border-top:1px solid #eee;font-family:'Helvetica Neue',Arial,sans-serif">
+      <p style="color:#888;font-size:11px;line-height:1.6;margin:0">
+        ${esc(ctx.sourceLine)}
+      </p>
+      <p style="color:#888;font-size:11px;line-height:1.6;margin:8px 0 0">
+        Not interested? <a href="${unsubUrl}" style="color:#888;text-decoration:underline">Unsubscribe here</a> and I won't email you again.
+      </p>
+      <p style="color:#aaa;font-size:10px;line-height:1.6;margin:12px 0 0;letter-spacing:0.3px">
+        Agentic Consciousness &middot; Ourimbah NSW 2258 &middot; daniel@agenticconsciousness.com.au
+      </p>
+    </div>`;
 }
 
 /** Plain wrapper: no branded header, just a readable letter. */
@@ -149,9 +189,7 @@ export function buildTouch1(ctx: OutreachContext): { subject: string; html: stri
       Either way, hit reply if anything's unclear. If it's not your
       priority right now, bin the email, no follow up, no worries.
     </p>
-    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 4px">
-      Daniel
-    </p>
+    ${signature(ctx)}
     ${complianceFooter(ctx)}
   `);
 
@@ -184,9 +222,7 @@ export function buildTouch2(ctx: OutreachContext): { subject: string; html: stri
       Or just reply and tell me which issue bothers you most. I'll answer
       straight, no pitch.
     </p>
-    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 4px">
-      Daniel
-    </p>
+    ${signature(ctx)}
     ${complianceFooter(ctx)}
   `);
   return { subject, html };
@@ -211,9 +247,7 @@ export function buildTouch3(ctx: OutreachContext): { subject: string; html: stri
       If there was something specific in the audit you wanted a plain-English
       explanation of, reply and I'll write it up. No obligation either way.
     </p>
-    <p style="color:#222;font-size:16px;line-height:1.6;margin:0 0 4px">
-      Daniel
-    </p>
+    ${signature(ctx)}
     ${complianceFooter(ctx)}
   `);
   return { subject, html };
