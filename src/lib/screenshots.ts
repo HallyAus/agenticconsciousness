@@ -59,9 +59,14 @@ export interface ScreenshotPair {
  * in a single image, so the AFTER reads as a real rebuild and not
  * just a hero thumbnail.
  */
-export function buildTallMockupUrl(targetUrl: string): string | null {
+export function buildTallMockupUrl(targetUrl: string, cacheKey?: string): string | null {
   if (!isScreenshotConfigured()) return null;
-  return buildUrl({
+  // Mockup HTML at /preview/<token> can change between regenerations.
+  // ScreenshotOne caches by full URL hash, so we bake a cacheKey query
+  // param into the URL when the caller wants a fresh capture (passes a
+  // hash of the new mockup HTML or just Date.now()). Without this the
+  // CDN serves a 30-day-stale capture of the old HTML.
+  const params: Record<string, string | number | boolean> = {
     url: targetUrl,
     viewport_width: 1440,
     viewport_height: 1800,
@@ -77,7 +82,9 @@ export function buildTallMockupUrl(targetUrl: string): string | null {
     full_page: false,
     delay: 3,
     timeout: 40,
-  });
+  };
+  if (cacheKey) params._v = cacheKey;
+  return buildUrl(params);
 }
 
 /**

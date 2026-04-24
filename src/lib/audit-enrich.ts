@@ -224,8 +224,11 @@ export async function enrichProspectWithScanAndShots(args: {
     // Use the tall mockup capture (1440x1800) so the AFTER page in the
     // PDF shows hero + 2 scrolls, not just the hero. Falls back to the
     // standard captureScreenshots if buildTallMockupUrl returns null
-    // (env unset).
-    const tallMockup = buildTallMockupUrl(previewUrl);
+    // (env unset). Pass a hash of the new mockup HTML as cacheKey so
+    // ScreenshotOne returns a fresh capture instead of a 30-day-stale
+    // shot of the previous mockup at the same URL.
+    const cacheKey = crypto.createHash('sha256').update(mockup.html).digest('hex').slice(0, 12);
+    const tallMockup = buildTallMockupUrl(previewUrl, cacheKey);
     let mockupDesktop: string | null = tallMockup;
     if (!mockupDesktop) {
       const pair = await captureScreenshots(previewUrl).catch((err) => {
