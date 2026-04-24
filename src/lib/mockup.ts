@@ -16,7 +16,13 @@ import Anthropic from '@anthropic-ai/sdk';
  * 404. Token minting lives in the caller (audit-enrich), not here.
  */
 
-const MODEL = process.env.AI_MOCKUP_MODEL || 'claude-opus-4-6';
+// Sonnet 4.6 is the right call here: 3x faster than Opus on long HTML
+// generation (~50s vs ~150s for our 16k-token mockups), capable enough
+// for the structured HTML+JSON-LD output, and fits comfortably inside
+// Vercel's 300s function budget alongside the 60-90s audit step.
+// Opus was timing out before the after() background hook could complete.
+// Override with AI_MOCKUP_MODEL=claude-opus-4-7 if you want richer copy.
+const MODEL = process.env.AI_MOCKUP_MODEL || 'claude-sonnet-4-6';
 
 const SYSTEM_PROMPT = `You are a senior web designer + conversion copywriter building a "here is what your new site could look like" mockup for a cold-outreach prospect. You compose COMPLETE, self-contained, production-quality HTML that is simultaneously tight on conversion, strong on brand, and heavily optimised for both traditional SEO and AI-answer-engine (AEO) surfaces.
 

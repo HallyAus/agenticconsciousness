@@ -162,6 +162,11 @@ export async function enrichProspectWithScanAndShots(args: {
   // Mockup generation runs after extraction so Claude can compose with
   // real logo + colours + images + reviews. Separate try/catch so
   // mockup failure doesn't nuke the scan / extraction results.
+  // Granular breadcrumbs added after silent failures on multiple
+  // prospects — each step now logs so we can see where the pipeline
+  // stalls in Vercel logs without needing the breadcrumb table.
+  console.log(`[audit-enrich:mockup] START prospectId=${prospectId} trade=${tradeHint ?? '(none)'} brandColors=${branding.brandColors.length} images=${mockupImages.length}`);
+  const mockupStart = Date.now();
   try {
     const mockup = await generateMockup({
       url,
@@ -180,6 +185,7 @@ export async function enrichProspectWithScanAndShots(args: {
       postcode,
       tradeHint,
     });
+    console.log(`[audit-enrich:mockup] generateMockup OK prospectId=${prospectId} ms=${Date.now() - mockupStart} htmlBytes=${mockup.html.length} headline=${(mockup.headline ?? '').slice(0, 60)}`);
 
     // Stable per-prospect token: reuse the existing one if set, so any
     // already-sent outreach email's /preview/<token> link keeps resolving.
@@ -230,6 +236,7 @@ export async function enrichProspectWithScanAndShots(args: {
           updated_at = NOW()
       WHERE id = ${prospectId}
     `;
+    console.log(`[audit-enrich:mockup] DONE prospectId=${prospectId} totalMs=${Date.now() - mockupStart} screenshotUrl=${mockupDesktop ? 'set' : 'NULL'}`);
   } catch (err) {
     // Surface the FULL error (message + stack + name) so silent mockup
     // failures are visible in Vercel logs. Previous "just .message" was
