@@ -89,7 +89,7 @@ Phone = tel: link. Email = mailto: link. Booking link = https://agenticconscious
 
 ## IMAGES
 
-Use ONLY URLs the caller provides in the "Images" list. Do NOT invent image URLs, do NOT use Unsplash or any other stock. For each image: wrap in a container with \`object-fit: cover\`, fixed aspect ratio, and \`loading="lazy"\` + \`decoding="async"\` on the img tag. Always include a descriptive alt attribute. If fewer than 3 images were provided, use what you have for hero + one service card and let the remaining cards stay text-only.
+Use ONLY URLs the caller provides in the "Images" list. Do NOT invent image URLs. The caller may include both the prospect's own scraped photos AND industry-relevant Unsplash photos as fallbacks — both are pre-vetted; use them all. Prefer URLs earlier in the list (those are more likely to be the prospect's own photos) for the hero, and use later URLs for service-card thumbnails. For each image: wrap in a container with \`object-fit: cover\`, fixed aspect ratio, and \`loading="lazy"\` + \`decoding="async"\` on the img tag. Always include a descriptive alt attribute. If fewer than 3 images were provided, use what you have for hero + one service card and let the remaining cards stay text-only.
 
 ## LOGO
 

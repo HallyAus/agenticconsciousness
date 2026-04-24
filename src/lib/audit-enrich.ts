@@ -15,6 +15,7 @@ import { generateMockup } from '@/lib/mockup';
 import { extractSiteBranding } from '@/lib/site-scrape';
 import { getPlaceDetails, type PlaceReview } from '@/lib/places';
 import { clearPdfCache } from '@/lib/pdf-cache';
+import { pickIndustryFallbackImages } from '@/lib/industry-fallback';
 
 interface EnrichExistingRow {
   business_name: string | null;
@@ -26,6 +27,7 @@ interface EnrichExistingRow {
   phone: string | null;
   address: string | null;
   postcode: string | null;
+  place_data: { primaryType?: string | null; types?: string[] } | null;
 }
 
 export async function enrichProspectWithScanAndShots(args: {
@@ -50,10 +52,11 @@ export async function enrichProspectWithScanAndShots(args: {
   let phone: string | null = null;
   let address: string | null = null;
   let postcode: string | null = null;
+  let placeData: { primaryType?: string | null; types?: string[] } | null = null;
   {
     const rows = (await sql`
       SELECT business_name, audit_data, mockup_token, mockup_html, mockup_locked,
-             source_place_id, phone, address, postcode
+             source_place_id, phone, address, postcode, place_data
       FROM prospects WHERE id = ${prospectId} LIMIT 1
     `) as EnrichExistingRow[];
     if (rows[0]) {
@@ -64,6 +67,7 @@ export async function enrichProspectWithScanAndShots(args: {
       phone = rows[0].phone;
       address = rows[0].address;
       postcode = rows[0].postcode;
+      placeData = rows[0].place_data;
       if (businessName === null) businessName = rows[0].business_name;
       if (issues.length === 0) issues = rows[0].audit_data?.issues ?? issues;
     }
@@ -145,6 +149,31 @@ export async function enrichProspectWithScanAndShots(args: {
     return;
   }
 
+  // Pad the image list with industry-relevant Unsplash photos when site
+  // scraping returned too few real images. Without this, Claude builds a
+  // text-only mockup that looks empty next to the BEFORE screenshot. The
+  // padded photos sit AFTER the real ones in the prompt so Claude
+  // prefers the real images for the hero and uses fallbacks for the
+  // service-card grid below.
+  let mockupImages = branding.images;
+  if (mockupImages.length < 3) {
+    const fallbacks = pickIndustryFallbackImages(
+      placeData,
+      businessName,
+      url,
+      6 - mockupImages.length,
+    );
+    if (fallbacks.length > 0) {
+      mockupImages = [...mockupImages, ...fallbacks];
+      console.log('[audit-enrich] padded mockup images with industry fallbacks', {
+        prospectId,
+        original: branding.images.length,
+        added: fallbacks.length,
+        total: mockupImages.length,
+      });
+    }
+  }
+
   // Mockup generation runs after extraction so Claude can compose with
   // real logo + colours + images + reviews. Separate try/catch so
   // mockup failure doesn't nuke the scan / extraction results.
@@ -157,7 +186,7 @@ export async function enrichProspectWithScanAndShots(args: {
       seo: siteScan?.seo ?? null,
       logoUrl: branding.logoUrl,
       brandColors: branding.brandColors,
-      images: branding.images,
+      images: mockupImages,
       googleReviews,
       googleRating,
       googleReviewCount,
