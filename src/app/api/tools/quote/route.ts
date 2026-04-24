@@ -107,7 +107,7 @@ Quote Type: ${isDetailed ? 'Detailed Proposal' : 'Simple Quote'}`;
     const response = await client.messages.create({
       model: STANDARD_MODEL,
       max_tokens: 1500,
-      system: systemPrompt,
+      system: [{ type: 'text', cache_control: { type: 'ephemeral' }, text: systemPrompt }],
       messages: [{ role: 'user', content: userContent }],
     });
 

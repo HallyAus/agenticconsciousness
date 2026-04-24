@@ -33,7 +33,10 @@ export async function POST(req: NextRequest) {
     const response = await client.messages.create({
       model: STANDARD_MODEL,
       max_tokens: 3000,
-      system: `You are the content writer for Agentic Consciousness, an Australian AI consulting company.
+      system: [{
+        type: 'text',
+        cache_control: { type: 'ephemeral' },
+        text: `You are the content writer for Agentic Consciousness, an Australian AI consulting company.
 
 Write a blog post about the given topic. The article should:
 - Be 800-1200 words
@@ -52,6 +55,7 @@ Respond in valid JSON only, no markdown wrapping:
   "content": "Full article in markdown",
   "tags": ["tag1", "tag2", "tag3"]
 }`,
+      }],
       messages: [
         { role: 'user', content: `Write a blog post about: ${topic}` },
       ],

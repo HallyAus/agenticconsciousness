@@ -84,7 +84,7 @@ Rules:
     const response = await client.messages.create({
       model: FAST_MODEL,
       max_tokens: maxTokensMap[normalizedLength],
-      system: systemPrompt,
+      system: [{ type: 'text', cache_control: { type: 'ephemeral' }, text: systemPrompt }],
       messages: [{ role: 'user', content: userMessage }],
     });
 

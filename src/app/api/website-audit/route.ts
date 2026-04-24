@@ -18,10 +18,11 @@ import { sendEmail, emailTemplate, notifyAdmin } from '@/lib/email';
  * manually follow up.
  */
 
-// Audit model. Opus 4.6 per Anthropic's docs (claude-opus-4-6, legacy but
-// still supported). Override via AI_AUDIT_MODEL env var if you ever want
-// to switch to Opus 4.7 or a dated snapshot without a deploy.
-const MODEL = process.env.AI_AUDIT_MODEL || 'claude-opus-4-6';
+// Audit model. Sonnet 4.6 default — 5x cheaper than Opus on output
+// ($15 vs $75 per million tokens), structured tool-use with a fixed
+// JSON schema is well within Sonnet's range. Override via
+// AI_AUDIT_MODEL env var (e.g. claude-opus-4-7) for richer reasoning.
+const MODEL = process.env.AI_AUDIT_MODEL || 'claude-sonnet-4-6';
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,

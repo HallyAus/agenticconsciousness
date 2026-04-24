@@ -8,7 +8,11 @@ import { stripDashes } from '@/lib/text-hygiene';
  * delivery along.
  */
 
-const MODEL = process.env.AI_AUDIT_MODEL || 'claude-opus-4-6';
+// Sonnet 4.6 default: 5x cheaper than Opus on output ($15 vs $75 per
+// million tokens), plenty capable for structured tool-use output where
+// Claude fills a fixed JSON schema. Override with AI_AUDIT_MODEL=
+// claude-opus-4-7 for richer prioritisation if a specific run needs it.
+const MODEL = process.env.AI_AUDIT_MODEL || 'claude-sonnet-4-6';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 

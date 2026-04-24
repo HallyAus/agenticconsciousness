@@ -75,7 +75,10 @@ export async function POST(req: NextRequest) {
     const response = await client.messages.create({
       model: FAST_MODEL,
       max_tokens: 150,
-      system: `You write short, punchy greetings for Agentic Consciousness, an AI consulting company in Australia.
+      system: [{
+        type: 'text',
+        cache_control: { type: 'ephemeral' },
+        text: `You write short, punchy greetings for Agentic Consciousness, an AI consulting company in Australia.
 
 Rules:
 - Maximum 2 sentences
@@ -90,6 +93,7 @@ Rules:
 - NEVER use "G'day" or stereotypical phrases
 - Make them curious about what AI can do for their business
 - Each greeting should feel unique`,
+      }],
       messages: [
         {
           role: 'user',

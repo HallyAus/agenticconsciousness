@@ -29,7 +29,10 @@ export async function POST(req: NextRequest) {
     const response = await client.messages.create({
       model: STANDARD_MODEL,
       max_tokens: 2000,
-      system: `You are the proposal writer for Agentic Consciousness, an Australian AI consulting company.
+      system: [{
+        type: 'text',
+        cache_control: { type: 'ephemeral' },
+        text: `You are the proposal writer for Agentic Consciousness, an Australian AI consulting company.
 
 Generate a professional proposal. Service: ${service}
 - "Strategy & Workshops" = AI strategy sessions, opportunity mapping, team training. Typically 1-2 weeks, $3,000-$8,000.
@@ -54,6 +57,7 @@ Rules:
 - 3-6 specific line items
 - Terms: payment schedule, IP ownership, confidentiality, cancellation
 - Australian English spelling`,
+      }],
       messages: [
         { role: 'user', content: `Client: ${clientName} at ${clientCompany} (${industry}). Challenge: ${challenge || 'General AI consulting'}` },
       ],

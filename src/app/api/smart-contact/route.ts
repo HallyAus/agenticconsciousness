@@ -57,7 +57,7 @@ Rules:
     const response = await client.messages.create({
       model: FAST_MODEL,
       max_tokens: 500,
-      system: smartContactSystemPrompt,
+      system: [{ type: 'text', cache_control: { type: 'ephemeral' }, text: smartContactSystemPrompt }],
       messages: [
         { role: 'user', content: `Client challenge: ${challenge}` },
       ],

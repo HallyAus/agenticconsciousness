@@ -10,8 +10,10 @@ import Anthropic from '@anthropic-ai/sdk';
 // Fast model for simple, structured tasks
 export const FAST_MODEL = process.env.AI_FAST_MODEL || 'claude-haiku-4-5-20251001';
 
-// Standard model for complex analysis and creative tasks
-export const STANDARD_MODEL = process.env.AI_STANDARD_MODEL || 'claude-sonnet-4-20250514';
+// Standard model for complex analysis and creative tasks. Bumped from
+// the May 2025 Sonnet 4 to Sonnet 4.6 (latest) — same pricing tier,
+// markedly better instruction-following on long structured prompts.
+export const STANDARD_MODEL = process.env.AI_STANDARD_MODEL || 'claude-sonnet-4-6';
 
 /** Lazy-init Anthropic client with API key validation */
 export function getClient(): Anthropic {
