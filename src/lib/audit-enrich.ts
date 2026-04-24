@@ -15,7 +15,6 @@ import { generateMockup } from '@/lib/mockup';
 import { extractSiteBranding } from '@/lib/site-scrape';
 import { getPlaceDetails, type PlaceReview } from '@/lib/places';
 import { clearPdfCache } from '@/lib/pdf-cache';
-import { pickIndustryFallbackImages } from '@/lib/industry-fallback';
 
 interface EnrichExistingRow {
   business_name: string | null;
@@ -27,7 +26,6 @@ interface EnrichExistingRow {
   phone: string | null;
   address: string | null;
   postcode: string | null;
-  place_data: { primaryType?: string | null; types?: string[] } | null;
 }
 
 export async function enrichProspectWithScanAndShots(args: {
@@ -52,11 +50,10 @@ export async function enrichProspectWithScanAndShots(args: {
   let phone: string | null = null;
   let address: string | null = null;
   let postcode: string | null = null;
-  let placeData: { primaryType?: string | null; types?: string[] } | null = null;
   {
     const rows = (await sql`
       SELECT business_name, audit_data, mockup_token, mockup_html, mockup_locked,
-             source_place_id, phone, address, postcode, place_data
+             source_place_id, phone, address, postcode
       FROM prospects WHERE id = ${prospectId} LIMIT 1
     `) as EnrichExistingRow[];
     if (rows[0]) {
@@ -67,7 +64,6 @@ export async function enrichProspectWithScanAndShots(args: {
       phone = rows[0].phone;
       address = rows[0].address;
       postcode = rows[0].postcode;
-      placeData = rows[0].place_data;
       if (businessName === null) businessName = rows[0].business_name;
       if (issues.length === 0) issues = rows[0].audit_data?.issues ?? issues;
     }
@@ -149,30 +145,14 @@ export async function enrichProspectWithScanAndShots(args: {
     return;
   }
 
-  // Pad the image list with industry-relevant Unsplash photos when site
-  // scraping returned too few real images. Without this, Claude builds a
-  // text-only mockup that looks empty next to the BEFORE screenshot. The
-  // padded photos sit AFTER the real ones in the prompt so Claude
-  // prefers the real images for the hero and uses fallbacks for the
-  // service-card grid below.
-  let mockupImages = branding.images;
-  if (mockupImages.length < 3) {
-    const fallbacks = pickIndustryFallbackImages(
-      placeData,
-      businessName,
-      url,
-      6 - mockupImages.length,
-    );
-    if (fallbacks.length > 0) {
-      mockupImages = [...mockupImages, ...fallbacks];
-      console.log('[audit-enrich] padded mockup images with industry fallbacks', {
-        prospectId,
-        original: branding.images.length,
-        added: fallbacks.length,
-        total: mockupImages.length,
-      });
-    }
-  }
+  // We used to pad the image list with industry-relevant Unsplash photos
+  // when site scraping returned too few real images. That backfired: every
+  // people-centric stock photo is a curation minefield (any face becomes
+  // an unintentional targeting signal for the prospect's audience). Now
+  // we ONLY pass the prospect's own scraped photos. The mockup prompt
+  // tells Claude to fill image gaps with brand-coloured CSS gradient
+  // placeholder cards instead — on-brand, zero curation risk.
+  const mockupImages = branding.images;
 
   // Mockup generation runs after extraction so Claude can compose with
   // real logo + colours + images + reviews. Separate try/catch so
@@ -245,6 +225,18 @@ export async function enrichProspectWithScanAndShots(args: {
       WHERE id = ${prospectId}
     `;
   } catch (err) {
-    console.error('[audit-enrich] mockup generation failed', err instanceof Error ? err.message : err);
+    // Surface the FULL error (message + stack + name) so silent mockup
+    // failures are visible in Vercel logs. Previous "just .message" was
+    // hiding the actual cause when generateMockup threw a deeply nested
+    // Anthropic SDK / parse error.
+    const msg = err instanceof Error ? err.message : String(err);
+    const stack = err instanceof Error ? err.stack : undefined;
+    const name = err instanceof Error ? err.name : 'unknown';
+    console.error('[audit-enrich] MOCKUP GENERATION FAILED', JSON.stringify({
+      prospectId,
+      name,
+      msg,
+      stack,
+    }, null, 2));
   }
 }

@@ -89,7 +89,17 @@ Phone = tel: link. Email = mailto: link. Booking link = https://agenticconscious
 
 ## IMAGES
 
-Use ONLY URLs the caller provides in the "Images" list. Do NOT invent image URLs. The caller may include both the prospect's own scraped photos AND industry-relevant Unsplash photos as fallbacks — both are pre-vetted; use them all. Prefer URLs earlier in the list (those are more likely to be the prospect's own photos) for the hero, and use later URLs for service-card thumbnails. For each image: wrap in a container with \`object-fit: cover\`, fixed aspect ratio, and \`loading="lazy"\` + \`decoding="async"\` on the img tag. Always include a descriptive alt attribute. If fewer than 3 images were provided, use what you have for hero + one service card and let the remaining cards stay text-only.
+Use ONLY URLs the caller provides in the "Images" list. Do NOT invent image URLs. Do NOT use Unsplash, Pexels, Pixabay, or any other stock photo source. Do NOT use photos of people from any source. For each image: wrap in a container with \`object-fit: cover\`, fixed aspect ratio, and \`loading="lazy"\` + \`decoding="async"\` on the img tag. Always include a descriptive alt attribute.
+
+When the Images list has fewer items than the layout needs (e.g. only 1 logo provided but you've designed 4 service cards), DO NOT leave the remaining cards image-less. Instead, render a brutalist CSS placeholder block in place of an image:
+
+\`\`\`html
+<div class="card-visual" aria-hidden="true" style="aspect-ratio: 4/3; background: linear-gradient(135deg, var(--brand-1, #ff3d00) 0%, var(--brand-2, #1a1a1a) 100%); display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.85); font-family: system-ui, sans-serif; font-weight: 900; font-size: clamp(1.4rem, 3vw, 2.2rem); letter-spacing: 2px; text-transform: uppercase; text-align: center; padding: 1.5rem;">
+  [SHORT SERVICE LABEL — 1 to 3 words]
+</div>
+\`\`\`
+
+Use the brand's actual primary + secondary colours in the gradient (the caller provides them). The label inside the block is the service name from THAT card (e.g. "Switchboard Upgrades", "EV Charger Install", "Ceiling Fans"). NO stock photos, NO photos of people, NO emoji icons in placeholders — just the gradient + the trade-specific text label.
 
 ## LOGO
 

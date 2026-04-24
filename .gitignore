@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.production
+.env.vercel-pulled
 secrets/
 
 # Private memory (sensitive info — never commit)
