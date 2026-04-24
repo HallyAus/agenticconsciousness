@@ -6,6 +6,7 @@ import { getOrRenderPdf } from '@/lib/pdf-cache';
 import { startBreadcrumbTrail, memorySnapshot } from '@/lib/pdf-breadcrumb';
 import { fingerprintTechStack } from '@/lib/tech-stack';
 import { buildTallMockupUrl } from '@/lib/screenshots';
+import { pickIndustryFallback } from '@/lib/industry-fallback';
 import type { OutreachIssue } from '@/lib/outreach';
 
 /** Upgrade legacy mockup_screenshot_url (viewport_height=900) to the
@@ -117,9 +118,28 @@ export async function GET(
           mockupUrl ? fetchNormalisedJpegDetailed(mockupUrl, { maxWidth: 900 }) : Promise.resolve({ image: null, failure: null }),
         ]);
 
-        const desktopShot = desktopRes.image;
+        let desktopShot = desktopRes.image;
         const mobileShot = mobileRes.image;
         const mockupShot = mockupRes.image;
+
+        // Industry-specific fallback when the live screenshot didn't
+        // come through (firewall block, dead site, ScreenshotOne
+        // timeout). Better to render a relevant stock visual than to
+        // omit the "Your site, right now" page entirely.
+        let desktopIsFallback = false;
+        let desktopFallbackLabel: string | null = null;
+        if (!desktopShot) {
+          const fallback = pickIndustryFallback(p.place_data, p.business_name, p.url);
+          if (fallback) {
+            const fallbackRes = await fetchNormalisedJpegDetailed(fallback.url, { maxWidth: 900 }).catch(() => ({ image: null, failure: null }));
+            if (fallbackRes.image) {
+              desktopShot = fallbackRes.image;
+              desktopIsFallback = true;
+              desktopFallbackLabel = fallback.label;
+              await trail.log('assets:desktop_fallback_used', { slug: fallback.slug, label: fallback.label });
+            }
+          }
+        }
 
         // Report on each image's final outcome. Log a warning
         // breadcrumb when a URL was supplied but the fetch never
@@ -205,6 +225,8 @@ export async function GET(
           copyrightYear: p.copyright_year,
           placeTypes: p.place_data?.types ?? (p.place_data?.primaryType ? [p.place_data.primaryType] : null),
           mockupScreenshot: mockupBuf,
+          screenshotDesktopIsFallback: desktopIsFallback,
+          screenshotDesktopFallbackLabel: desktopFallbackLabel,
           googleReviews: p.google_reviews ?? null,
           googleRating: googleRatingNum,
           googleReviewCount: p.google_review_count,

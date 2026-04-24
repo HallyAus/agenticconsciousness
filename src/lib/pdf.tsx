@@ -1229,6 +1229,14 @@ export interface AuditPdfArgs {
   date: string;
   screenshotDesktop?: AuditPdfImageSrc;
   screenshotMobile?: AuditPdfImageSrc;
+  /** When true, screenshotDesktop is an industry stock photo (we
+   *  couldn't capture the live site). The "Your site, right now" page
+   *  switches to a STOCK / NO PREVIEW caption instead of pretending the
+   *  image is theirs. */
+  screenshotDesktopIsFallback?: boolean;
+  /** Industry label shown on the fallback caption (e.g. "ELECTRICAL").
+   *  Only used when screenshotDesktopIsFallback is true. */
+  screenshotDesktopFallbackLabel?: string | null;
   brokenLinksCount?: number | null;
   viewportMetaOk?: boolean | null;
   copyrightYear?: number | null;
@@ -1313,6 +1321,7 @@ interface AuditDocumentInternalProps extends AuditPdfArgs {
 function AuditDocument({
   url, businessName, score, summary, issues, opportunities, date,
   screenshotDesktop, screenshotMobile, mockupScreenshot,
+  screenshotDesktopIsFallback, screenshotDesktopFallbackLabel,
   brokenLinksCount, viewportMetaOk, copyrightYear,
   placeTypes, mobileSpeedScore, qrDataUri, bisect,
   googleReviews, googleRating, googleReviewCount, techStack, contentGaps,
@@ -1424,16 +1433,25 @@ function AuditDocument({
 
           <View style={styles.shotsWrap}>
             <View style={styles.shotsHeader}>
-              <Text style={styles.shotsTitle}>Your site, right now</Text>
-              <Text style={styles.shotsMeta}>DESKTOP</Text>
+              <Text style={styles.shotsTitle}>
+                {screenshotDesktopIsFallback ? 'Your site, right now' : 'Your site, right now'}
+              </Text>
+              <Text style={styles.shotsMeta}>
+                {screenshotDesktopIsFallback
+                  ? `STOCK ${screenshotDesktopFallbackLabel ?? 'INDUSTRY'} / NO LIVE PREVIEW`
+                  : 'DESKTOP'}
+              </Text>
             </View>
             <Image src={screenshotDesktop} style={styles.shotFullDesktop} />
-            <Text style={styles.shotCaption}>DESKTOP 1440 x 900 / FULL CAPTURE, UNCROPPED</Text>
+            <Text style={styles.shotCaption}>
+              {screenshotDesktopIsFallback
+                ? `STOCK PHOTO / WE COULD NOT CAPTURE A LIVE PREVIEW OF YOUR CURRENT SITE`
+                : 'DESKTOP 1440 x 900 / FULL CAPTURE, UNCROPPED'}
+            </Text>
             <Text style={styles.shotBody}>
-              This is what a new visitor sees on desktop. The findings on
-              the pages ahead map directly back to what is shown here:
-              layout, hierarchy, trust signals, calls to action, and
-              above-the-fold value proposition.
+              {screenshotDesktopIsFallback
+                ? `Your site either blocked our automated visitor or did not load in time. That alone is a finding: real visitors and AI search crawlers see the same wall. The audit on the pages ahead is built from your actual HTML, content, and metadata, not from the image above.`
+                : 'This is what a new visitor sees on desktop. The findings on the pages ahead map directly back to what is shown here: layout, hierarchy, trust signals, calls to action, and above-the-fold value proposition.'}
             </Text>
           </View>
 
