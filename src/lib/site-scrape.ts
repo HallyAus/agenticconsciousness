@@ -174,10 +174,10 @@ async function sampleBrandColors(logoUrl: string): Promise<string[]> {
     const buf = Buffer.from(await r.arrayBuffer());
     if (buf.byteLength === 0) return [];
 
-    // Raw RGB at 32×32 — 1024 pixels, enough to cluster.
+    // Raw RGB at 64x64 — 4096 pixels, more headroom for tiny accents.
     const { data, info } = await sharp(buf)
       .flatten({ background: '#ffffff' })
-      .resize(32, 32, { fit: 'cover' })
+      .resize(64, 64, { fit: 'cover' })
       .raw()
       .toBuffer({ resolveWithObject: true });
 
@@ -187,15 +187,23 @@ async function sampleBrandColors(logoUrl: string): Promise<string[]> {
       const r = data[i];
       const g = data[i + 1];
       const b = data[i + 2];
-      // Drop near-white and near-black (background / text).
       const max = Math.max(r, g, b);
       const min = Math.min(r, g, b);
+      // Drop near-white (background) and near-black (text).
       if (max > 240 && min > 240) continue;
       if (max < 30) continue;
-      // Quantise to 6-step buckets (0x00, 0x33, 0x66, 0x99, 0xcc, 0xff).
-      const qr = Math.round(r / 51) * 51;
-      const qg = Math.round(g / 51) * 51;
-      const qb = Math.round(b / 51) * 51;
+      // Drop near-greyscale (logo antialiasing artefacts on compressed
+      // PNGs/JPEGs). Without this filter every prospect ends up with
+      // #333 / #666 / #999 / #ccc as their "brand colours" and every
+      // mockup looks identical. Saturation = (max - min) / max; require
+      // at least 0.18 to count as a real chromatic colour.
+      if (max - min < max * 0.18) continue;
+      // Quantise to 12-step buckets (finer than 6) so distinct hues
+      // bucket separately instead of all collapsing to the same grey.
+      const step = 23; // ~256/11
+      const qr = Math.round(r / step) * step;
+      const qg = Math.round(g / step) * step;
+      const qb = Math.round(b / step) * step;
       const key = `${qr},${qg},${qb}`;
       buckets.set(key, (buckets.get(key) ?? 0) + 1);
     }
@@ -206,7 +214,6 @@ async function sampleBrandColors(logoUrl: string): Promise<string[]> {
       if (colors.length >= 3) break;
       const [r, g, b] = key.split(',').map(Number);
       const hex = '#' + [r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('');
-      // Skip near-duplicates of colours we already picked.
       if (colors.some((c) => colorsClose(c, hex))) continue;
       colors.push(hex);
     }
@@ -214,6 +221,65 @@ async function sampleBrandColors(logoUrl: string): Promise<string[]> {
   } catch {
     return [];
   }
+}
+
+/** Scan inline styles + style tags in the home HTML for brand colour
+ *  signals. More reliable than logo pixel sampling for sites with weak
+ *  logos because the homepage CSS encodes the actual brand identity
+ *  (button colours, link colours, hero backgrounds). */
+function scanCssForBrandColors(homeHtml: string): string[] {
+  const buckets = new Map<string, number>();
+  const HEX_RE = /#([0-9a-f]{3}|[0-9a-f]{6})\b/gi;
+  // Weight property contexts that carry brand identity heavily.
+  const WEIGHTED_CONTEXTS = [
+    /(?:background(?:-color)?|background-image|fill|stroke|--brand|--primary|--accent)\s*:\s*[^;]*?#([0-9a-f]{3}|[0-9a-f]{6})/gi,
+    /(?:color)\s*:\s*[^;]*?#([0-9a-f]{3}|[0-9a-f]{6})/gi,
+  ];
+  for (const re of WEIGHTED_CONTEXTS) {
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(homeHtml)) !== null) {
+      const hex = expandHex('#' + m[1]);
+      if (!isUsefulBrandColor(hex)) continue;
+      buckets.set(hex, (buckets.get(hex) ?? 0) + 3);
+    }
+  }
+  // Catch-all for any other hex in the HTML, lower weight.
+  let m: RegExpExecArray | null;
+  HEX_RE.lastIndex = 0;
+  while ((m = HEX_RE.exec(homeHtml)) !== null) {
+    const hex = expandHex('#' + m[1]);
+    if (!isUsefulBrandColor(hex)) continue;
+    buckets.set(hex, (buckets.get(hex) ?? 0) + 1);
+  }
+  const sorted = [...buckets.entries()].sort((a, b) => b[1] - a[1]);
+  const colors: string[] = [];
+  for (const [hex] of sorted) {
+    if (colors.length >= 3) break;
+    if (colors.some((c) => colorsClose(c, hex))) continue;
+    colors.push(hex);
+  }
+  return colors;
+}
+
+function expandHex(hex: string): string {
+  if (hex.length === 4) {
+    return '#' + hex.slice(1).split('').map((c) => c + c).join('').toLowerCase();
+  }
+  return hex.toLowerCase();
+}
+
+function isUsefulBrandColor(hex: string): boolean {
+  const v = parseInt(hex.slice(1), 16);
+  const r = (v >> 16) & 0xff;
+  const g = (v >> 8) & 0xff;
+  const b = v & 0xff;
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  // Reject near-white, near-black, and low-saturation greys.
+  if (max > 240 && min > 240) return false;
+  if (max < 30) return false;
+  if (max - min < max * 0.18) return false;
+  return true;
 }
 
 function colorsClose(a: string, b: string): boolean {
@@ -236,6 +302,20 @@ export async function extractSiteBranding(args: {
   const { homeUrl, homeHtml } = args;
   const logoUrl = pickLogoUrl(homeHtml, homeUrl);
   const images = pickContentImages(homeHtml, homeUrl, 6);
-  const brandColors = logoUrl ? await sampleBrandColors(logoUrl) : [];
+
+  // Pull brand colours from BOTH the logo (visual identity) and the
+  // homepage CSS (brand identity at scale). CSS is more reliable when
+  // the logo is small/compressed; logo wins when CSS is bland. Merge
+  // and dedupe, prefer CSS first, cap at 3.
+  const [logoColors, cssColors] = await Promise.all([
+    logoUrl ? sampleBrandColors(logoUrl) : Promise.resolve([]),
+    Promise.resolve(scanCssForBrandColors(homeHtml)),
+  ]);
+  const brandColors: string[] = [];
+  for (const hex of [...cssColors, ...logoColors]) {
+    if (brandColors.length >= 3) break;
+    if (brandColors.some((c) => colorsClose(c, hex))) continue;
+    brandColors.push(hex);
+  }
   return { logoUrl, brandColors, images };
 }

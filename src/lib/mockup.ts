@@ -26,28 +26,58 @@ Output a single COMPLETE HTML document. Start with <!DOCTYPE html>, end with </h
 
 Return ONLY the HTML. No markdown fences, no commentary, no explanation.
 
-## COLOUR MODE — ALWAYS LIGHT. NON-NEGOTIABLE.
+## COLOUR — LIGHT-DOMINANT, BRAND-LED, NEVER GENERIC
 
-This is the single most important rule. Previous generations with the same input have defaulted to a dark colour scheme and had to be thrown out. DO NOT do that. The page background is WHITE. Text is BLACK on white. Full stop.
+Every mockup must feel visually DISTINCT to its prospect. The default
+white-with-red-accent template was producing identical-looking output
+across every prospect. Use the prospect's actual brand colours
+aggressively, not just as a tiny CTA accent.
 
-Specifically DISALLOWED — do not use ANY of these as a section background or as the page body background:
-- #000000, #0a0a0a, #111111, #121212, #1a1a1a, #1f1f1f, #222222
-- Any hex code where all three RGB channels are below 0x40
-- Any CSS named colour "black", "charcoal", "midnight", "onyx"
-- Any gradient that starts or ends on a dark colour
+### Where colours go
 
-If the caller provides "Brand colours", those override ONLY the accent slot (CTA buttons, kickers, underlines, thin rules). Even if the brand has a black logo, the PAGE is still white — the accent stays on small elements. If no brand colours are provided, use #ff3d00 as the accent.
+- **Page background:** #ffffff (white). Dominant surface.
+- **Section alternating background:** rotate between #ffffff, #f6f4f2 (warm neutral), AND a **tinted variant of the brand primary** (e.g. brand colour at ~6% opacity over white, or a 95% lightness version). At least ONE non-hero section should carry a brand-tinted background to break the visual monotony.
+- **Hero treatment:** strong brand-colour usage. Pick one of these hero patterns and commit fully:
+  - (a) White hero, GIANT brand-colour H1, brand-colour underline rules, brand-colour CTA
+  - (b) Brand-colour KICKER strip across the very top (full-bleed thin band, white text), then white hero below
+  - (c) Split hero: left half brand-colour solid block with H1 reversed in white, right half white with image
+  - (d) White hero with a brand-colour DIAGONAL geometric block behind the H1
+  Pick whichever fits the trade and the brand colour intensity. Never the default "white-with-red-CTA" template.
+- **CTAs:** brand primary as button background, white text. Secondary CTA can be outline in brand primary.
+- **Headings + accents:** H2 underlines, kicker lines, decorative rules — all in brand primary.
+- **Section dividers:** thick brand-coloured horizontal rules (4-8px) between major zones, not thin grey lines.
+- **Body text:** #0a0a0a on white sections, #1a1a1a on tinted sections.
+- **Stat strip numbers:** brand primary in giant size.
 
-Base palette (never change):
-- Page background: #ffffff (white). The dominant surface everywhere.
-- Section alternating background: #f6f4f2 (warm neutral) — for breaking up zones only. NEVER dark.
-- Ink / body text: #0a0a0a on white.
-- Subtle rule lines: #eeeeee or #d4d4d4.
-- Accent: brand primary colour if given, else #ff3d00.
+### Hard constraints (still apply)
 
-Sanity check before you output: grep your own HTML for "background:#0", "background-color:#0", "background: #0", "bg:#0", or any six-digit hex whose first two characters are in [0-3]. If any match a body/section/container selector, DELETE that rule or change to #ffffff / #f6f4f2. Do this check mentally before writing the final answer.
+- Page body background MUST stay light (white or tinted-white). NEVER #000/#0a0a0a/#111/#222 etc.
+- ONE section MAY use a strong brand-colour solid background with reversed white text — but only ONE per page (typically the hero band, the "Why Us" block, or the bottom CTA strip). Use this sparingly for punch, not as a default.
+- No fancy soft drop-shadows or blurry glows. Hard geometric blocks only.
+- No rounded corners (border-radius: 0 everywhere, including inputs and CTAs).
 
-No gradients. No soft shadows. Hard geometric blocks only.
+### Brand colour selection logic
+
+The caller provides up to 3 brand colours sampled from the logo + homepage CSS, ordered by importance.
+
+- If TWO OR MORE brand colours are provided: use the first as primary (CTAs, hero accents, dividers), the second as secondary (alternating section backgrounds at low opacity, decorative blocks). Build the page palette around BOTH.
+- If ONE brand colour: use it everywhere as primary. Add a complementary neutral (#1a1a1a or #f6f4f2) for variation.
+- If ZERO brand colours: instead of falling back to #ff3d00 every time, pick a trade-appropriate default:
+  - Electrician → #f4b400 (signal yellow)
+  - Plumber → #1976d2 (utility blue)
+  - Roofer → #5d4037 (terracotta brown)
+  - Painter → #6a1b9a (bold purple) or pull from any colour mentioned in their portfolio copy
+  - Landscaper → #2e7d32 (deep green)
+  - Cleaner → #00897b (teal)
+  - Mechanic → #c62828 (red)
+  - Carpenter → #6d4c41 (warm brown)
+  - Cafe / restaurant → #6d4c41 (espresso)
+  - Hairdresser / beauty → #ad1457 (deep magenta)
+  - Florist → #d81b60 (vibrant pink)
+  - Real estate / lawyer / accountant → #1a237e (navy)
+  - Default if trade unknown: #ff3d00
+
+Sanity check before output: search your own HTML for "background:#0", "background-color:#0", or any hex starting with #00/#01/#02/#03 on a body/section/container. If any match, change it.
 
 ## TYPOGRAPHY
 
@@ -89,6 +119,20 @@ Every mockup MUST include these in this order. Skip only the ones explicitly fla
 11. **Bottom CTA strip** — final dual-button strip ("CALL NOW" + "BOOK ONLINE") with a single value-prop sentence above. Last conversion shot before the footer.
 
 12. **Footer** — copyright current year, ABN if known. Logo, contact info repeated, service links, quick nav, trust markers (insured/licensed badges if real). Micro nav with Privacy, Terms links.
+
+## VARIATION — NEVER PRODUCE THE SAME LAYOUT TWICE
+
+Two prospects of the same trade should still produce visibly different
+mockups. Pick ONE option per axis below based on the prospect's brand,
+trade, and content density. Do not always pick the first option.
+
+- **Hero pattern:** rotate between (a) white-with-giant-coloured-H1, (b) brand-colour kicker strip + white hero, (c) split brand-block-left + image-right, (d) white hero with diagonal brand block
+- **Services layout:** rotate between (a) 3-col grid with images, (b) 2-col grid with bigger cards, (c) alternating left-right blocks (image left, copy right; then reversed), (d) horizontal scroll-snap row
+- **Stat strip layout:** rotate between (a) 4-col equal cards, (b) 2x2 grid with bigger numbers, (c) horizontal text-only line (e.g. "7+ YEARS · 500+ JOBS · 5.0 ON GOOGLE · INSURED")
+- **Who-we-serve layout:** rotate between (a) 4 equal cards, (b) 2x2 with bigger blocks, (c) horizontal numbered list with bold dividers
+- **FAQ layout:** rotate between (a) accordion (details/summary), (b) Q-on-left/A-on-right two-column, (c) flat list with bold Q + indented A
+
+The trade-specific copy AND a different layout combo per prospect together prevent the "every mockup looks the same" problem.
 
 ## TRADE VOCABULARY — NON-NEGOTIABLE
 
@@ -196,6 +240,9 @@ export interface MockupInput {
   phone?: string | null;
   address?: string | null;
   postcode?: string | null;
+  /** Trade hint for default colour palette + vocabulary. e.g. "electrician",
+   *  "plumber", "landscaper". Falls back to keyword inference if null. */
+  tradeHint?: string | null;
 }
 
 export interface MockupResult {
@@ -284,6 +331,7 @@ TODAY'S DATE: ${todayIso} (current year is ${currentYear}). Use this for copyrig
 
 Prospect URL: ${input.url}
 Business name: ${input.businessName ?? '(unknown — infer from site content)'}
+Trade / category: ${input.tradeHint ?? '(unknown — infer from site content; pick trade-default colour palette accordingly)'}
 Phone: ${input.phone ?? '(unknown — pull from scraped content)'}
 Address: ${input.address ?? '(unknown — pull from scraped content)'}
 Postcode / area: ${input.postcode ?? '(unknown)'}

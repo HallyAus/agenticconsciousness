@@ -26,6 +26,7 @@ interface EnrichExistingRow {
   phone: string | null;
   address: string | null;
   postcode: string | null;
+  place_data: { primaryType?: string | null; types?: string[] } | null;
 }
 
 export async function enrichProspectWithScanAndShots(args: {
@@ -50,10 +51,11 @@ export async function enrichProspectWithScanAndShots(args: {
   let phone: string | null = null;
   let address: string | null = null;
   let postcode: string | null = null;
+  let tradeHint: string | null = null;
   {
     const rows = (await sql`
       SELECT business_name, audit_data, mockup_token, mockup_html, mockup_locked,
-             source_place_id, phone, address, postcode
+             source_place_id, phone, address, postcode, place_data
       FROM prospects WHERE id = ${prospectId} LIMIT 1
     `) as EnrichExistingRow[];
     if (rows[0]) {
@@ -64,6 +66,9 @@ export async function enrichProspectWithScanAndShots(args: {
       phone = rows[0].phone;
       address = rows[0].address;
       postcode = rows[0].postcode;
+      tradeHint = rows[0].place_data?.primaryType
+        ?? rows[0].place_data?.types?.[0]
+        ?? null;
       if (businessName === null) businessName = rows[0].business_name;
       if (issues.length === 0) issues = rows[0].audit_data?.issues ?? issues;
     }
@@ -173,6 +178,7 @@ export async function enrichProspectWithScanAndShots(args: {
       phone,
       address,
       postcode,
+      tradeHint,
     });
 
     // Stable per-prospect token: reuse the existing one if set, so any
