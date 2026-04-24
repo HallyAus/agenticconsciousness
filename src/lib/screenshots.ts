@@ -62,10 +62,12 @@ export interface ScreenshotPair {
 export function buildTallMockupUrl(targetUrl: string, cacheKey?: string): string | null {
   if (!isScreenshotConfigured()) return null;
   // Mockup HTML at /preview/<token> can change between regenerations.
-  // ScreenshotOne caches by full URL hash, so we bake a cacheKey query
-  // param into the URL when the caller wants a fresh capture (passes a
-  // hash of the new mockup HTML or just Date.now()). Without this the
-  // CDN serves a 30-day-stale capture of the old HTML.
+  // ScreenshotOne caches by the combination of all params, so we use
+  // its documented `cache_key` option (alphanumeric string) to force a
+  // fresh cache entry when the mockup HTML changes. Earlier attempt
+  // with a custom `_v` param failed because ScreenshotOne strictly
+  // validates param names — unknown keys return 400 "_v is not allowed"
+  // which silently dropped the screenshot from the PDF.
   const params: Record<string, string | number | boolean> = {
     url: targetUrl,
     viewport_width: 1440,
@@ -83,7 +85,7 @@ export function buildTallMockupUrl(targetUrl: string, cacheKey?: string): string
     delay: 3,
     timeout: 40,
   };
-  if (cacheKey) params._v = cacheKey;
+  if (cacheKey) params.cache_key = cacheKey;
   return buildUrl(params);
 }
 
