@@ -63,27 +63,49 @@ Every mockup MUST include these in this order. Skip only the ones explicitly fla
 
 1. **Sticky top bar** — logo left (use the provided logo URL if given; otherwise business-name wordmark), phone link + a single "BOOK" CTA on the right. Stays fixed on scroll.
 
-2. **Hero** — MUST be above the fold. Giant specific headline (max 10 words, tells the visitor exactly what you do + who you serve + the local area), one sub-line of value prop, TWO distinct CTAs side-by-side: "CALL NOW" (tel:) and "BOOK ONLINE" (the booking link). Include a real hero image from the provided image list, placed to the right on desktop or below the copy on mobile.
+2. **Hero** — MUST be above the fold. THREE-PART headline: a tiny mono kicker line above (e.g. "ELECTRICIANS · CENTRAL COAST"), then the giant specific H1 (max 10 words, tells the visitor exactly what you do + who you serve + the local area), then ONE sub-line of value prop. Optionally include a 3-5 word PERSONALITY TAGLINE under the value prop in italic (e.g. "Sparks fly when we visit." or "Your lawn, our problem."). TWO distinct CTAs side-by-side: "CALL NOW" (tel:) and "BOOK ONLINE" (the booking link). Include a real hero image from the provided image list, placed to the right on desktop or below the copy on mobile.
 
-3. **Trust row** — a single horizontal strip directly under the hero with 3-5 terse proof points (e.g. "Licensed", "Insured", "Local since 2008", "4.9/5 on Google", "On-time or free"). Use the provided Google rating + review count if available. This is high-CRO — do not skip.
+3. **Stat strip** — directly under the hero, FOUR equal-width stat cards. Each card: a giant number (years/jobs/rating/coverage) and a one-line label below. Examples: "7+ YEARS LOCAL", "500+ JOBS DONE", "5.0 GOOGLE RATING", "INSURED + LICENSED". Pull real numbers from the scraped copy + Google rating + review count. NEVER fabricate stats — if you cannot find a real number for a slot, replace it with a binary credential ("FULLY INSURED", "FAMILY OWNED", "SAME-DAY QUOTES"). This is a high-CRO trust row — do not skip and do not water down.
 
-4. **Services** — 3-6 cards in a grid. Each card: service name (h3), 2-3 line description, small outcome-focused benefit line. Use a small content image per card from the provided image list if you have enough.
+4. **Services** — 3-6 cards in a grid. Each card: an OUTCOME-LED title (H3) — describe what the customer GETS, not what you do (e.g. "Crisp Clean Edges Every Time" not "Edging Service"; "Switchboards That Actually Pass Inspection" not "Switchboard Upgrades"). 2-3 sentence description using REAL TRADE VOCABULARY (see TRADE VOCABULARY section below). Each description ends with a short benefit line in the brand accent colour. Add a small visual per card (real image from the list if available, otherwise the brutalist CSS placeholder block specified in the IMAGES section).
 
-5. **Social proof section** — if Google reviews are provided, use them as a testimonial grid (2-3 visible, each with author, star rating, text, "— from Google"). If no Google reviews, pull the most credible testimonial from their site. If neither, OMIT this section entirely — never fabricate.
+5. **Who we serve** — exactly THIS section, do not skip. Four scenario cards in a grid that segment the buyer journey. Each card: a short scenario title + 2-line description matching the trade. Examples for a tradie:
+   - "Homeowners maintaining their property"
+   - "Real estate agents and property managers"
+   - "End-of-lease tenants chasing bond"
+   - "Strata + commercial one-off jobs"
+   Adapt the four scenarios to whatever the trade actually serves. This is a high-conversion pattern — visitors self-identify which card describes them, then the next CTA hits.
 
-6. **Why us** — 3 short proof points pulled from their actual site copy (years in business, certifications, guarantees, local connection).
+6. **Social proof section** — if Google reviews are provided, use them as a testimonial grid (2-3 visible, each with author, star rating, text, "— from Google"). If no Google reviews, pull the most credible testimonial from their site. If neither, OMIT this section entirely — never fabricate.
 
-7. **Service area / Coverage** — list the suburbs or region they serve. Use real text from their site.
+7. **Founder / About** — short personal narrative in first-person. Tone: humble, hands-on, local. Two short paragraphs (3-4 sentences each). Pulls from any "About us" or founder mentions in the scraped copy. If no founder name found, use a generic but grounded line ("We're a family-owned [trade] business based in [area], on the tools since [year]"). Add 3-4 short bullet benefits below the bio (e.g. "Same-day quotes", "All work guaranteed in writing", "No call-out fee for existing customers", "Trained apprentices on every job"). Then ONE primary CTA below the bullets.
 
-8. **FAQ** — 3-5 real Q&A pairs relevant to the business. Infer from their site content, common customer objections, and the business category. Each Q is a <h3>, each A is a <p>. This section drives AEO (Google AI Overviews + ChatGPT cite FAQ schemas heavily) — make it substantive, not filler.
+8. **Service area / Coverage** — list the suburbs or region they serve. Use real text from their site. Mention the specific local area at least 3 times across the page in total.
 
-9. **Contact** — phone (tel:), email (mailto:), physical address if known, hours if known.
+9. **FAQ** — 3-5 real Q&A pairs relevant to the business. Infer from their site content, common customer objections, and the business category. Each Q is a <h3>, each A is a <p>. Use REAL TRADE VOCABULARY in the answers. This section drives AEO (Google AI Overviews + ChatGPT cite FAQ schemas heavily) — make it substantive, not filler.
 
-10. **Footer** — copyright current year, ABN if known. Micro nav with Privacy, Terms links.
+10. **Contact form** — full-width contact form with: Name, Phone, Email, Suburb, Service-needed dropdown (populate options from the actual services above), short message textarea, big "GET MY FREE QUOTE" submit. Form action="#" — non-functional in the mockup but present.
+
+11. **Bottom CTA strip** — final dual-button strip ("CALL NOW" + "BOOK ONLINE") with a single value-prop sentence above. Last conversion shot before the footer.
+
+12. **Footer** — copyright current year, ABN if known. Logo, contact info repeated, service links, quick nav, trust markers (insured/licensed badges if real). Micro nav with Privacy, Terms links.
+
+## TRADE VOCABULARY — NON-NEGOTIABLE
+
+Generic copy ("we provide quality service") is the #1 reason mockups read as generic. Use REAL trade jargon throughout — terminology that signals expertise to a customer who already knows the problem space. Examples per trade (use whichever applies, infer others from the scraped site):
+
+- **Electrician**: switchboard, RCD, sub-board, three-phase, light-and-power, EV charger install, ceiling fan, smoke alarm compliance, data cabling, fault-finding, after-hours call-out
+- **Plumber**: hot water unit, blocked drains, gas fitting, leaking tap, hydrojet, CCTV drain camera, backflow prevention, sewer/stormwater, hot-water timer
+- **Lawn / landscaper**: mulching, catching, edging, hedging, double-pass, fortnightly visits, slashing, bindii / clover / winter grass control, green waste, irrigation
+- **Painter**: prep + sand, undercoat, two-top-coats, weatherboard, render, ceiling roller, cut-in, drop sheets
+- **Roofer**: ridge cap, valley iron, flashing, gutter clean, leaf guard, Colorbond, terracotta, sarking, downpipe replacement
+- **Carpenter**: stud frame, MDF, dressed pine, mitre, dado, scribed-in, shadowline, architrave
+
+Pick the right vocabulary for THIS trade. If you can't infer the trade from the scraped content, prefer concrete physical nouns over abstract ("we install power points and ceiling fans" beats "we offer comprehensive electrical solutions").
 
 ## CTAs
 
-Every CTA button: dominant-accent background, white text, uppercase, letter-spacing 2px, NO border-radius. Buttons on light backgrounds get a solid fill; never outline-only. The primary CTA ("BOOK") appears at least 3 times on the page: sticky bar, hero, and bottom of page.
+Every CTA button: dominant-accent background, white text, uppercase, letter-spacing 2px, NO border-radius. Buttons on light backgrounds get a solid fill; never outline-only. CTAs MUST appear at least SIX TIMES across the page. Required positions: (1) sticky top bar, (2) hero, (3) under stat strip or services, (4) under "Who we serve", (5) under About / Founder, (6) bottom strip. Alternate between phone-link and book/form CTAs so the visitor always has the next-best action one click away.
 
 Phone = tel: link. Email = mailto: link. Booking link = https://agenticconsciousness.com.au/book.
 
@@ -298,7 +320,11 @@ absolutely no em-dashes. Return HTML only.`;
   const response = await client.messages.create(
     {
       model: MODEL,
-      max_tokens: 12_000,
+      // Bumped 12000 -> 16000 after adding new required sections
+      // (stat strip, who-we-serve, founder, contact form, bottom CTA strip
+      // + trade-vocabulary copy density). Older limit was clipping the
+      // generated HTML mid-section on richer mockups.
+      max_tokens: 16_000,
       system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
       messages: [{ role: 'user', content: userPrompt }],
     },
